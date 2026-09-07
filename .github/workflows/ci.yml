@@ -1,0 +1,56 @@
+name: Cramchy CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+      - "fix/**"
+      - "chore/**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate vercel.json
+        run: python -m json.tool vercel.json > /dev/null
+
+      - name: Check required app files
+        run: |
+          test -f index.html
+          test -f vercel.json
+          grep -qi '<!DOCTYPE html>' index.html
+          grep -qi '<html' index.html
+
+      - name: Reject unresolved merge conflicts
+        run: |
+          if grep -nE '^(<<<<<<<|=======|>>>>>>>)' index.html vercel.json; then
+            echo 'Unresolved merge-conflict markers found.'
+            exit 1
+          fi
+
+      - name: Syntax-check inline JavaScript
+        run: |
+          python <<'PY'
+          import re
+          from pathlib import Path
+
+          html = Path('index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>', html, flags=re.I | re.S)
+          out = Path('/tmp/cramchy-inline-js')
+          out.mkdir(exist_ok=True)
+          for i, script in enumerate(scripts, 1):
+              (out / f'script-{i}.js').write_text(script, encoding='utf-8')
+          print(f'Extracted {len(scripts)} inline script block(s).')
+          PY
+          for file in /tmp/cramchy-inline-js/*.js; do
+            [ -e "$file" ] || continue
+            node --check "$file"
+          done
