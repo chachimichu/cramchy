@@ -1,0 +1,122 @@
+/* Cramchy theme gradients v8 — distinct banner palettes per Appearance theme. */
+
+/* Default / Strawberry Matcha: blush -> apricot -> soft sage */
+body,
+body[data-theme="strawberry-matcha"]{
+  --cram-banner-1:#ffd5e2;
+  --cram-banner-2:#ffe7d3;
+  --cram-banner-3:#d9e8c9;
+  --cram-banner-border:#efc5d0;
+}
+
+/* Strawberry Milk: strawberry cream -> blush -> vanilla */
+body[data-theme="strawberry-milk"]{
+  --cram-banner-1:#ffc9dc;
+  --cram-banner-2:#ffdceb;
+  --cram-banner-3:#fff0d9;
+  --cram-banner-border:#efbdd0;
+}
+
+/* Matcha Latte: warm cream -> oat -> matcha */
+body[data-theme="matcha-latte"]{
+  --cram-banner-1:#fff0cf;
+  --cram-banner-2:#ebe5c6;
+  --cram-banner-3:#c7d9ad;
+  --cram-banner-border:#d6d7b4;
+}
+
+/* Lavender: lilac -> milk violet -> sakura pink */
+body[data-theme="lavender"]{
+  --cram-banner-1:#c9b4ee;
+  --cram-banner-2:#e6d8f8;
+  --cram-banner-3:#ffc9dc;
+  --cram-banner-border:#d7c5e9;
+}
+
+/* Mocha: cocoa milk -> latte -> vanilla cream */
+body[data-theme="mocha"]{
+  --cram-banner-1:#b98970;
+  --cram-banner-2:#dfbea7;
+  --cram-banner-3:#fff0d8;
+  --cram-banner-border:#d1ac98;
+}
+
+/* Blueberry Milk: powder blue -> milk blue -> warm cream */
+body[data-theme="blueberry-milk"]{
+  --cram-banner-1:#a9c4ed;
+  --cram-banner-2:#dbe7f9;
+  --cram-banner-3:#fff0d7;
+  --cram-banner-border:#c4d4ec;
+}
+
+/* Dark Study: plum -> smoky violet -> muted sage */
+body[data-theme="dark-study"]{
+  --cram-banner-1:#493247;
+  --cram-banner-2:#67516e;
+  --cram-banner-3:#68785f;
+  --cram-banner-border:#756277;
+}
+
+/* Hero banners: these are the visual anchors of Home + Planner. */
+.cramchy-home-header.planner-hero-card,
+#view-planner .planner-hero-card{
+  background:linear-gradient(
+    104deg,
+    var(--cram-banner-1) 0%,
+    var(--cram-banner-2) 53%,
+    var(--cram-banner-3) 100%
+  )!important;
+  border-color:var(--cram-banner-border)!important;
+}
+
+/* Keep the hero decoration tiny and airy — no giant circles/cloud blobs. */
+.cramchy-home-header::before,
+#view-planner .planner-hero-card::before{
+  background:
+    radial-gradient(circle at 11% 20%,rgba(255,255,255,.78) 0 2px,transparent 3px),
+    radial-gradient(circle at 56% 14%,rgba(255,255,255,.72) 0 2px,transparent 3px),
+    radial-gradient(circle at 88% 28%,rgba(255,255,255,.60) 0 2px,transparent 3px)!important;
+}
+
+/* Compact exam-season banner: same palette, slightly softer so it supports the hero. */
+.home-exam-banner-compact{
+  background:linear-gradient(
+    116deg,
+    color-mix(in srgb,var(--cram-banner-1) 88%,white) 0%,
+    color-mix(in srgb,var(--cram-banner-2) 90%,white) 55%,
+    color-mix(in srgb,var(--cram-banner-3) 86%,white) 100%
+  )!important;
+  border-color:color-mix(in srgb,var(--cram-banner-border) 82%,transparent)!important;
+}
+
+/* The next-exam / Coming Up surface should follow the theme but remain a content card. */
+#dailyCountdownBox.home-theme-surface,
+.home-coming-panel .home-next-exam{
+  background:linear-gradient(
+    120deg,
+    color-mix(in srgb,var(--cram-banner-1) 48%,var(--app-bg-2,#fffaf3)),
+    color-mix(in srgb,var(--cram-banner-2) 35%,var(--app-bg-2,#fffaf3)) 58%,
+    color-mix(in srgb,var(--cram-banner-3) 42%,var(--app-bg-2,#fffaf3))
+  )!important;
+}
+
+/* Exam Mode's large dashboard hero gets the same selected-theme gradient. */
+body.exam-mode-active #view-dashboard .legacy-dashboard > .hero{
+  background:linear-gradient(
+    108deg,
+    var(--cram-banner-1),
+    var(--cram-banner-2) 55%,
+    var(--cram-banner-3)
+  )!important;
+  border:1px solid var(--cram-banner-border)!important;
+  border-radius:28px!important;
+}
+
+/* Dark theme: don't mix the banner with white. */
+body[data-theme="dark-study"] .home-exam-banner-compact,
+body[data-theme="dark-study"] #dailyCountdownBox.home-theme-surface,
+body[data-theme="dark-study"] .home-coming-panel .home-next-exam{
+  background:linear-gradient(116deg,var(--cram-banner-1),var(--cram-banner-2) 55%,var(--cram-banner-3))!important;
+  border-color:var(--cram-banner-border)!important;
+  color:var(--text-main)!important;
+}
