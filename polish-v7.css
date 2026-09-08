@@ -1,0 +1,89 @@
+/* Cramchy polish v7 — gradient banners, safer exam controls, visible cloud sync. */
+
+/* Bring back the soft gradient banners and remove the oversized decorative orb. */
+.cramchy-home-header.planner-hero-card,
+#view-planner .planner-hero-card{
+  background:linear-gradient(
+    102deg,
+    color-mix(in srgb,var(--app-bg-1,#fdf0f0) 88%,white),
+    color-mix(in srgb,var(--app-bg-2,#fffaf3) 96%,white) 52%,
+    color-mix(in srgb,var(--app-bg-3,#fff6f2) 88%,white)
+  )!important;
+}
+.cramchy-home-header::before,
+#view-planner .planner-hero-card::before{
+  background:
+    radial-gradient(circle at 12% 20%,rgba(255,255,255,.78) 0 2px,transparent 3px),
+    radial-gradient(circle at 61% 15%,rgba(255,255,255,.74) 0 2px,transparent 3px),
+    radial-gradient(circle at 91% 28%,color-mix(in srgb,var(--red-berry,#e85d75) 20%,transparent) 0 3px,transparent 4px)!important;
+}
+.home-theme-surface,
+#dailyCountdownBox.home-theme-surface,
+.home-exam-banner-compact{
+  background:linear-gradient(
+    118deg,
+    color-mix(in srgb,var(--app-bg-1,#fdf0f0) 90%,white),
+    color-mix(in srgb,var(--app-bg-2,#fffaf3) 97%,white) 58%,
+    color-mix(in srgb,var(--app-bg-3,#fff6f2) 88%,white)
+  )!important;
+}
+body[data-theme="dark-study"] .cramchy-home-header.planner-hero-card,
+body[data-theme="dark-study"] #view-planner .planner-hero-card,
+body[data-theme="dark-study"] .home-theme-surface,
+body[data-theme="dark-study"] .home-exam-banner-compact{
+  background:linear-gradient(115deg,var(--app-bg-1),var(--app-bg-2) 55%,var(--app-bg-3))!important;
+}
+
+/* Exam Mode: reset is intentionally danger-coded; exit is intentionally safe/neutral. */
+#resetExamPeriodBtn{
+  background:linear-gradient(135deg,#f7a0a7,#df6f78)!important;
+  color:#fff!important;
+  border:1px solid color-mix(in srgb,#c94f5d 46%,transparent)!important;
+  box-shadow:0 5px 13px rgba(183,70,82,.16)!important;
+}
+#resetExamPeriodBtn:hover{filter:brightness(.97);}
+#exitExamModeTopBtn{
+  background:linear-gradient(135deg,var(--matcha-pale,#e7f0df),color-mix(in srgb,var(--matcha-pale,#e7f0df) 72%,white))!important;
+  color:var(--matcha-dark,#6f8b63)!important;
+  border:1px solid color-mix(in srgb,var(--matcha,#9eb790) 42%,transparent)!important;
+  box-shadow:0 5px 13px color-mix(in srgb,var(--matcha,#9eb790) 15%,transparent)!important;
+}
+#changeExamPeriodBtn{
+  background:color-mix(in srgb,var(--pink-soft,#ffd9e3) 48%,var(--app-bg-2,#fffaf3))!important;
+  color:var(--red-deep,#c8465e)!important;
+  border:1px solid color-mix(in srgb,var(--red-berry,#e85d75) 20%,transparent)!important;
+}
+body[data-theme="dark-study"] #resetExamPeriodBtn{background:linear-gradient(135deg,#994f5d,#713945)!important;color:#fff!important;}
+body[data-theme="dark-study"] #exitExamModeTopBtn{background:linear-gradient(135deg,#354332,#2d392b)!important;color:var(--matcha-dark)!important;}
+
+/* Cloud sync must be visible before the horizontally-scrollable nav links on mobile. */
+@media(max-width:900px){
+  nav.topnav{gap:7px!important;}
+  nav.topnav>.brand{order:0!important;flex:0 0 auto!important;}
+  nav.topnav>#cloudBtn{
+    order:1!important;
+    margin-left:0!important;
+    flex:0 0 auto!important;
+    padding:8px 12px!important;
+    font-size:.74rem!important;
+    border-width:1.5px!important;
+    border-color:color-mix(in srgb,var(--red-berry,#e85d75) 30%,transparent)!important;
+    background:linear-gradient(135deg,color-mix(in srgb,var(--app-bg-2,#fffaf3) 92%,white),color-mix(in srgb,var(--pink-soft,#ffd9e3) 50%,white))!important;
+    box-shadow:0 6px 15px rgba(86,57,68,.11)!important;
+  }
+  nav.topnav>#cloudBtn.synced{
+    background:linear-gradient(135deg,color-mix(in srgb,var(--matcha-pale,#e7f0df) 80%,white),var(--app-bg-2,#fffaf3))!important;
+    color:var(--matcha-dark,#6f8b63)!important;
+    border-color:color-mix(in srgb,var(--matcha,#9eb790) 40%,transparent)!important;
+  }
+  nav.topnav>.navbtn{order:2!important;}
+  nav.topnav>#examNavSet{order:2!important;}
+  nav.topnav>#saveIndicator{order:3!important;}
+}
+
+@media(max-width:520px){
+  nav.topnav{padding:9px 10px!important;}
+  nav.topnav>.brand{padding-right:5px!important;margin-right:0!important;}
+  nav.topnav>.brand .brand-full-logo{max-width:96px!important;}
+  nav.topnav>#cloudBtn{padding:7px 10px!important;font-size:.7rem!important;}
+}
