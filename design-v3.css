@@ -1,0 +1,156 @@
+/* Stable visual layer: no DOM polling required. */
+
+:root{
+  --cram-deep:#5a2432;
+  --cram-muted:#9b737c;
+  --cram-line:#f5d3dc;
+  --cram-rose:#cf5d7b;
+  --cram-ui:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif;
+  --cram-display:'DynaPuff','Plus Jakarta Sans',cursive;
+}
+
+/* Keep normal page text selectable. */
+main,
+main p,
+main span:not(.navbtn),
+main h1,
+main h2,
+main h3,
+main h4,
+main .card,
+main .shell-empty,
+main .shell-empty *{
+  user-select:text!important;
+  -webkit-user-select:text!important;
+}
+
+/* Restore the app's original tab animation without JS constantly rewriting it. */
+main > .view.active{
+  animation:cramchyViewIn .28s ease both!important;
+}
+@keyframes cramchyViewIn{
+  from{opacity:0;transform:translateY(7px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  main > .view.active{animation:none!important}
+}
+
+/* Home fallback + enhanced state. */
+body:not(.cramchy-home-enhanced) #view-dashboard .daily-home > .hero{
+  display:block!important;
+}
+body.cramchy-home-enhanced #view-dashboard .daily-home > .hero{
+  display:none!important;
+}
+body.cramchy-home-enhanced #view-dashboard .daily-home > .daily-hero{
+  display:none!important;
+}
+.cramchy-home-header{
+  position:relative!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-columns:270px minmax(0,1fr)!important;
+  gap:30px!important;
+  align-items:center!important;
+  min-height:250px!important;
+  margin:0 0 18px!important;
+  padding:28px!important;
+  border-radius:32px!important;
+  border:1px solid var(--cram-line)!important;
+  background:linear-gradient(90deg,rgba(255,223,231,.95),rgba(255,247,248,.94) 55%,rgba(255,231,211,.86))!important;
+  box-shadow:0 18px 45px rgba(164,78,100,.12)!important;
+}
+.cramchy-home-header::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 11% 22%,rgba(255,255,255,.72) 0 2px,transparent 3px),
+    radial-gradient(circle at 54% 16%,rgba(255,255,255,.82) 0 2px,transparent 3px),
+    radial-gradient(circle at 73% 34%,rgba(239,137,164,.18) 0 16px,transparent 18px),
+    radial-gradient(circle at 91% 72%,rgba(255,255,255,.44) 0 34px,transparent 36px);
+}
+.cramchy-home-logo-zone,.cramchy-home-copy{position:relative;z-index:1}
+.cramchy-home-logo{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  transform:rotate(-2deg)!important;
+  filter:drop-shadow(0 16px 18px rgba(107,42,58,.16))!important;
+}
+.cramchy-home-copy .daily-title{max-width:690px!important;text-align:left!important}
+.cramchy-home-kicker{
+  margin-bottom:10px!important;
+  color:var(--cram-rose)!important;
+  font:900 .77rem var(--cram-ui)!important;
+  letter-spacing:.22em!important;
+  text-transform:uppercase!important;
+}
+.cramchy-home-copy .daily-title h1{display:none!important}
+.cramchy-home-copy .big-greeting{
+  color:var(--cram-deep)!important;
+  font-family:var(--cram-display)!important;
+  font-size:clamp(2.2rem,4.4vw,4.15rem)!important;
+  line-height:1.04!important;
+  letter-spacing:-.035em!important;
+}
+.cramchy-home-copy .daily-meta{
+  margin-top:13px!important;
+  color:#7c5862!important;
+  font:750 1rem/1.6 var(--cram-ui)!important;
+}
+.cramchy-home-actions{display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin-top:20px!important}
+.cramchy-home-actions .quick-add-main{position:static!important;padding:12px 18px!important}
+.cramchy-home-sparkle{position:absolute;color:#df6686;font-family:var(--cram-display);pointer-events:none}
+.cramchy-home-sparkle.one{right:10px;top:10px;font-size:1.65rem}
+.cramchy-home-sparkle.two{left:15px;top:14px;font-size:1.1rem}
+
+/* Requested: no extra sticker captions. */
+.cramchy-sticker,.planner-sticker{display:none!important}
+
+/* Empty-state personality: these were still inheriting the old UI/serif rules. */
+.shell-empty .big,
+.exam-empty h3,
+.planner-empty,
+#dailyTaskList .big,
+#dailyUpcomingList .big{
+  font-family:var(--cram-display)!important;
+  font-weight:600!important;
+  letter-spacing:-.015em!important;
+  color:var(--cram-deep)!important;
+}
+.shell-empty .big{font-size:1.2rem!important;line-height:1.2!important}
+.planner-empty{font-size:.95rem!important}
+.shell-empty p,.exam-empty p{
+  font-family:var(--cram-ui)!important;
+  font-weight:650!important;
+}
+#emptyAddCourseBtn,#homeAddCourseBtn,#gradeAddCourseBtn,#gwaAddCourseEmpty{
+  font-family:var(--cram-ui)!important;
+  font-weight:900!important;
+}
+
+/* Planner visibility: clean and deterministic. */
+body:not(.planner-mode-active) #view-planner{display:none!important}
+body.planner-mode-active main > .view:not(#view-planner){display:none!important}
+body.planner-mode-active #view-planner{display:block!important;animation:cramchyViewIn .28s ease both!important}
+
+/* Planner interaction polish. */
+.planner-event-pill,.planner-week-event,.planner-agenda-item,.planner-next,.planner-exam-banner,.planner-task-copy{
+  cursor:pointer!important;
+  transition:transform .14s ease,box-shadow .14s ease,filter .14s ease!important;
+}
+.planner-event-pill:hover,.planner-week-event:hover,.planner-agenda-item:hover,.planner-next:hover{
+  transform:translateY(-1px)!important;
+  box-shadow:0 10px 24px rgba(164,78,100,.10)!important;
+}
+
+@media(max-width:760px){
+  .cramchy-home-header{grid-template-columns:1fr!important;padding:19px!important;gap:8px!important}
+  .cramchy-home-logo{width:min(72vw,230px)!important;margin:-6px auto -4px!important}
+  .cramchy-home-copy .daily-title{text-align:center!important;max-width:100%!important}
+  .cramchy-home-copy .big-greeting{font-size:2.1rem!important}
+  .cramchy-home-actions{justify-content:center!important}
+}
