@@ -71,6 +71,10 @@ const KENKEN_MESSAGES = [
 const COLLECTIBLE_ICONS = ['🍓','🍵','🎀','🧋','🍰','🍡','🌸','♡','✨','🫧','🍒','🧁'];
 
 const STORAGE_KEY = 'strawberryMatchaMidtermsState_v1';
+const APP_VERSION = '2026.09.08-stability.1';
+const APP_VERSION_KEY = 'cramchyLastAppVersion';
+const STATE_SCHEMA_VERSION = 2;
+let pendingBootToast = '';
 const SUPABASE_URL = 'https://pjgkadfnvqddfyjmktis.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1hoILah2SpoWwtZ0u2O6UQ_zgRsuNq_';
 const sb = window.supabase ? window.supabase.createClient(
@@ -118,7 +122,9 @@ function freshState(){
     examContext: { academicYear:'2026–2027', term:'Term 1' },
     examData: {},
     archivedTerms: [],
-    academicMigrationVersion: 1
+    academicMigrationVersion: 1,
+    stateSchemaVersion: STATE_SCHEMA_VERSION,
+    lastAppVersion: APP_VERSION
   };
 }
 
@@ -126,13 +132,112 @@ let state = loadState();
 
 function loadState(){
   try{
+    syncAppVersionFlag();
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return freshState();
     const parsed = JSON.parse(raw);
-    return sanitizeState(parsed);
+    const cleaned = sanitizeState(parsed);
+    const changed = applyStateMigrations(cleaned, parsed);
+    if(changed){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   }catch(e){
-    console.warn('Failed to load state, starting fresh.', e);
+    console.warn('Failed to load state, repairing with a fresh safe shape.', e);
+    pendingBootToast = 'Cramchy repaired a loading problem. Your app is safe to use again ✦';
     return freshState();
+  }
+}
+
+function syncAppVersionFlag(){
+  try{
+    const previous = localStorage.getItem(APP_VERSION_KEY);
+    if(previous !== APP_VERSION){
+      localStorage.setItem(APP_VERSION_KEY, APP_VERSION);
+      if(previous) pendingBootToast = 'new Cramchy update loaded ✦';
+      clearRuntimeCaches();
+    }
+  }catch(e){
+    console.warn('Could not update app version flag.', e);
+  }
+}
+
+function applyStateMigrations(cleaned, original){
+  let changed = false;
+  const previousSchema = Number(original?.stateSchemaVersion || 0);
+
+  if(previousSchema < STATE_SCHEMA_VERSION) changed = true;
+  if(cleaned.stateSchemaVersion !== STATE_SCHEMA_VERSION){
+    cleaned.stateSchemaVersion = STATE_SCHEMA_VERSION;
+    changed = true;
+  }
+  if(cleaned.lastAppVersion !== APP_VERSION){
+    cleaned.lastAppVersion = APP_VERSION;
+    changed = true;
+  }
+
+  if(!Array.isArray(cleaned.courses)){ cleaned.courses = []; changed = true; }
+  if(!cleaned.gradebook || typeof cleaned.gradebook !== 'object'){ cleaned.gradebook = {}; changed = true; }
+  cleaned.courses.forEach(course => {
+    if(course && course.id && !cleaned.gradebook[course.id]){
+      cleaned.gradebook[course.id] = { midterms: [], finals: [] };
+      changed = true;
+    }
+    if(course && course.id){
+      const book = cleaned.gradebook[course.id];
+      if(book && typeof book === 'object'){
+        if(!Array.isArray(book.midterms)){ book.midterms = []; changed = true; }
+        if(!Array.isArray(book.finals)){ book.finals = []; changed = true; }
+      }
+    }
+  });
+
+  if(!cleaned.examData || typeof cleaned.examData !== 'object'){ cleaned.examData = {}; changed = true; }
+  if(!cleaned.profile || typeof cleaned.profile !== 'object'){
+    cleaned.profile = freshState().profile;
+    changed = true;
+  }
+  if(!cleaned.examContext || typeof cleaned.examContext !== 'object'){
+    cleaned.examContext = { academicYear: cleaned.profile.academicYear || '2026–2027', term: cleaned.profile.term || 'Term 1' };
+    changed = true;
+  }
+
+  return changed;
+}
+
+async function clearRuntimeCaches(){
+  try{
+    if('caches' in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    }
+  }catch(e){
+    console.warn('Cache cleanup skipped.', e);
+  }
+}
+
+function repairLocalAppData(){
+  try{
+    const before = JSON.stringify(state);
+    state = sanitizeState(state);
+    applyStateMigrations(state, {});
+    ensureAcademicStructure();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(APP_VERSION_KEY, APP_VERSION);
+    clearRuntimeCaches();
+    renderAll();
+    const changed = before !== JSON.stringify(state);
+    showToast(changed ? 'Cramchy repaired your app data ✦' : 'Cramchy data already looks healthy ✦', { longer: true });
+  }catch(e){
+    console.error('Repair failed', e);
+    showToast('repair had a tiny problem. export a backup, then message me.', { longer: true });
+  }
+}
+
+function showBootUpdateNotice(){
+  if(pendingBootToast){
+    setTimeout(() => showToast(pendingBootToast, { longer: true }), 700);
+    pendingBootToast = '';
   }
 }
 
@@ -309,6 +414,8 @@ function sanitizeState(parsed){
     });
   }
   if(['midterms','finals'].includes(parsed.examPeriod)) out.examPeriod = parsed.examPeriod;
+  if(Number.isFinite(+parsed.stateSchemaVersion)) out.stateSchemaVersion = Math.max(0, Math.floor(+parsed.stateSchemaVersion));
+  if(typeof parsed.lastAppVersion === 'string') out.lastAppVersion = parsed.lastAppVersion.slice(0,60);
   return out;
 }
 
@@ -317,6 +424,8 @@ function cryptoId(){ return 'id-' + Math.random().toString(36).slice(2,10) + Dat
 /* ===================== SAVE (debounced with indicator) ===================== */
 let saveTimeout = null;
 function saveState(){
+  state.stateSchemaVersion = STATE_SCHEMA_VERSION;
+  state.lastAppVersion = APP_VERSION;
   const el = document.getElementById('saveIndicator');
   if(el){ el.textContent = 'saving...'; }
   clearTimeout(saveTimeout);
@@ -1297,6 +1406,7 @@ document.getElementById('importFile').addEventListener('change', e => {
     try{
       const parsed = JSON.parse(evt.target.result);
       state = sanitizeState(parsed);
+      applyStateMigrations(state, parsed);
       ensureAcademicStructure();
       saveState();
       renderAll();
@@ -1322,6 +1432,8 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     }
   );
 });
+
+document.getElementById('repairDataBtn')?.addEventListener('click', repairLocalAppData);
 
 function showModal(title, message, onConfirm){
   const overlay = document.createElement('div');
@@ -1384,6 +1496,7 @@ async function loadCloudStateForUser(user){
 
     if(data && data.state){
       state = sanitizeState(data.state);
+      applyStateMigrations(state, data.state);
       ensureAcademicStructure();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       renderAll();
@@ -1731,11 +1844,19 @@ function openCourseModal(courseId=null){
       units:Math.max(0,Math.min(20,Number(scrim.querySelector('#courseUnits').value)||0)),
       room:scrim.querySelector('#courseRoom').value.trim().slice(0,40),
       color:existing?.color||'pink',
+      academicYear:existing?.academicYear||state.profile?.academicYear||'2026–2027',
       term:scrim.querySelector('#courseTerm').value.trim().slice(0,30),
-      schedule:scrim.querySelector('#courseSchedule').value.trim().slice(0,120)
+      schedule:scrim.querySelector('#courseSchedule').value.trim().slice(0,120),
+      schedules:Array.isArray(existing?.schedules)?existing.schedules:[],
+      gradingScheme:existing?.gradingScheme||{ww:30,pt:20,attendance:10,exam:40},
+      gwaFinalGrade:existing?.gwaFinalGrade||'',
+      gwaMode:existing?.gwaMode||'auto'
     };
     if(existing) state.courses=state.courses.map(c=>c.id===existing.id?course:c); else state.courses.push(course);
-    saveState(); renderDynamicCourses(); scrim.remove(); showToast(existing?'course updated ♡':'course added ♡');
+    if(!state.gradebook || typeof state.gradebook !== 'object') state.gradebook = {};
+    if(!state.gradebook[course.id]) state.gradebook[course.id] = { midterms: [], finals: [] };
+    ensureAcademicStructure();
+    saveState(); renderDynamicCourses(); renderDailyHome(); renderGradebook(); scrim.remove(); showToast(existing?'course updated ♡':'course added ♡');
   });
 }
 function renderExamMode(){
@@ -3910,5 +4031,6 @@ initDailyHome();
 initGradesModes();
 initCloudSync();
   initAskCramchy();
+showBootUpdateNotice();
 
 })();
