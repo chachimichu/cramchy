@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-stable-design-3';
+  const VERSION='2026-09-09-stable-design-4';
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
@@ -10,6 +10,12 @@
       const link=document.createElement('link');
       link.rel='stylesheet';
       link.href='design-v3.css?v='+VERSION;
+      document.head.appendChild(link);
+    }
+    if(!document.querySelector('link[href^="home-hero-v4.css"]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='home-hero-v4.css?v='+VERSION;
       document.head.appendChild(link);
     }
   }
@@ -27,6 +33,7 @@
 
   refreshStyles();
   loadScript('app-logo-base.js?v='+VERSION)
+    .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
     .catch(err=>console.error('Cramchy startup failed.',err));
 })();
