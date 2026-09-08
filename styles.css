@@ -433,7 +433,7 @@
 
 
   /* ---------- Hanabi + Kenken: accurate hybrid companions ---------- */
-  .pet-nook{position:fixed; right:12px; bottom:10px; z-index:60; width:144px; min-height:250px; pointer-events:auto;}
+  .pet-nook{position:fixed; right:12px; bottom:96px; z-index:60; width:144px; min-height:250px; pointer-events:auto;}
   .floating-mascot{position:relative; width:100%; background:transparent; border:0; box-shadow:none;}
   .pet-duo{position:relative; display:flex; flex-direction:column; align-items:flex-end; gap:13px; width:100%;}
   .pet-dog-btn{position:relative; display:block; background:transparent; border:0; padding:0; margin:0; cursor:pointer; outline:none;}
@@ -491,7 +491,7 @@
   @keyframes petZzz{0%,100%{transform:translateY(0); opacity:0;}20%,80%{opacity:1;}50%{transform:translateY(-5px); opacity:.95;}}
   @keyframes petBubble{0%{opacity:0; transform:translateY(6px) scale(.96);}15%{opacity:1;}75%{opacity:1;}100%{opacity:0; transform:translateY(-8px) scale(1.02);}}
   @media (prefers-reduced-motion: reduce){.hanabi-base,.kenken-base,.hanabi-tail-layer,.sleep-overlay .zzz,.blink-overlay{animation:none!important;}}
-  @media (max-width:700px){.pet-nook{right:8px; bottom:8px; width:124px; min-height:218px;}.pet-stage{width:110px;}.pet-stage.kenken-stage{width:108px;}.pet-name{font-size:.56rem; padding:2px 6px;}.pet-reaction-bubble{font-size:.57rem; padding:3px 7px;}.pet-control-btn{width:26px;height:26px;}.pet-reveal-btn{width:34px;height:34px;}}
+  @media (max-width:700px){.pet-nook{right:8px; bottom:104px; width:124px; min-height:218px;}.pet-stage{width:110px;}.pet-stage.kenken-stage{width:108px;}.pet-name{font-size:.56rem; padding:2px 6px;}.pet-reaction-bubble{font-size:.57rem; padding:3px 7px;}.pet-control-btn{width:26px;height:26px;}.pet-reveal-btn{width:34px;height:34px;}}
   /* ---------- Chaowi Study Nook ---------- */
   .chaowi-nook{
     position:fixed; left:18px; bottom:12px; z-index:65;
@@ -1147,4 +1147,52 @@
   .cramchy-footer .footer-name{
     margin-top:2px;
   }
+
+
+
+  /* ===================== ASK CRAMCHY ===================== */
+  .ask-cramchy-launcher{
+    position:fixed;right:22px;bottom:calc(22px + env(safe-area-inset-bottom));z-index:9400;
+    display:flex;align-items:center;gap:9px;border:1px solid rgba(200,70,94,.18);
+    background:rgba(255,250,243,.94);color:var(--red-deep);border-radius:999px;
+    padding:11px 15px 11px 12px;box-shadow:0 10px 32px rgba(126,66,77,.18);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font:inherit;font-weight:800;cursor:pointer;
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+  }
+  .ask-cramchy-launcher:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(126,66,77,.22)}
+  .ask-cramchy-launcher:active{transform:translateY(0) scale(.98)}
+  .ask-cramchy-launcher .ask-spark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink-soft),var(--pink-strawberry));box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);overflow:hidden;flex:0 0 34px}.ask-cramchy-launcher .ask-spark img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
+  .ask-cramchy-launcher .ask-label{font-size:.83rem;white-space:nowrap}
+  .ask-cramchy-panel{
+    position:fixed;right:22px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:9399;
+    width:min(390px,calc(100vw - 28px));height:min(570px,calc(100vh - 120px));
+    display:flex;flex-direction:column;overflow:hidden;border-radius:24px;border:1px solid rgba(200,70,94,.16);
+    background:rgba(255,250,243,.985);box-shadow:0 24px 70px rgba(90,42,51,.24);
+    transform-origin:bottom right;animation:askCramchyIn .22s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes askCramchyIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+  .ask-cramchy-head{display:flex;align-items:center;gap:10px;padding:14px 14px 12px;background:linear-gradient(135deg,rgba(255,217,227,.78),rgba(255,246,242,.92));border-bottom:1px solid rgba(200,70,94,.10)}
+  .ask-cramchy-avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry));box-shadow:0 5px 14px rgba(200,70,94,.20);overflow:hidden;flex:0 0 40px}.ask-cramchy-avatar img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
+  .ask-cramchy-title{flex:1;min-width:0}.ask-cramchy-title strong{display:block;color:var(--red-deep);font-size:.94rem}.ask-cramchy-title span{display:block;color:var(--text-soft);font-size:.7rem;margin-top:1px}
+  .ask-cramchy-close{width:34px;height:34px;border:0;background:rgba(255,255,255,.58);border-radius:50%;cursor:pointer;color:var(--text-soft);font-size:1.2rem;line-height:1}
+  .ask-cramchy-messages{flex:1;overflow:auto;padding:15px 14px 8px;scroll-behavior:smooth}
+  .ask-msg{display:flex;margin:0 0 10px;animation:askMsgIn .18s ease both}.ask-msg.user{justify-content:flex-end}
+  @keyframes askMsgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .ask-bubble{max-width:86%;padding:10px 12px;border-radius:17px;font-size:.82rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+  .ask-msg.bot .ask-bubble{background:#fff;border:1px solid rgba(200,70,94,.10);color:var(--text);border-bottom-left-radius:6px}
+  .ask-msg.user .ask-bubble{background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry));color:#fff;border-bottom-right-radius:6px;box-shadow:0 5px 14px rgba(200,70,94,.16)}
+  .ask-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 12px 0}
+  .ask-chip{border:1px solid rgba(200,70,94,.15);background:rgba(255,255,255,.86);color:var(--red-deep);border-radius:999px;padding:7px 9px;font:inherit;font-size:.7rem;font-weight:750;cursor:pointer;transition:.15s ease}
+  .ask-chip:hover{background:var(--pink-blush);transform:translateY(-1px)}
+  .ask-cramchy-compose{display:flex;gap:8px;align-items:flex-end;padding:10px 11px calc(11px + env(safe-area-inset-bottom));border-top:1px solid rgba(200,70,94,.10);background:rgba(255,255,255,.82)}
+  .ask-cramchy-input{flex:1;min-height:42px;max-height:96px;resize:none;border:1px solid rgba(200,70,94,.16);background:#fff;border-radius:15px;padding:10px 11px;color:var(--text);font:inherit;font-size:.82rem;line-height:1.3;outline:none}
+  .ask-cramchy-input:focus{border-color:var(--pink-strawberry);box-shadow:0 0 0 3px rgba(255,143,163,.11)}
+  .ask-cramchy-send{width:42px;height:42px;flex:0 0 42px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry));color:#fff;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 5px 14px rgba(200,70,94,.18)}
+  .ask-cramchy-send:active{transform:scale(.96)}
+  @media(max-width:720px){
+    .ask-cramchy-launcher{right:14px;bottom:calc(16px + env(safe-area-inset-bottom));padding:10px 12px}.ask-cramchy-launcher .ask-label{display:none}
+    .ask-cramchy-panel{left:8px;right:8px;bottom:0;width:auto;height:min(76vh,620px);border-radius:24px 24px 0 0;transform-origin:bottom center;animation:askSheetIn .23s cubic-bezier(.2,.8,.2,1)}
+    @keyframes askSheetIn{from{opacity:.7;transform:translateY(28px)}to{opacity:1;transform:none}}
+  }
+  @media(prefers-reduced-motion:reduce){.ask-cramchy-panel,.ask-msg{animation:none}.ask-cramchy-launcher,.ask-chip{transition:none}}
 
