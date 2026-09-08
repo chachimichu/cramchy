@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 760" role="img" aria-labelledby="title desc">
+  <title id="title">Cramchy logo</title>
+  <desc id="desc">A crisp kawaii study-cat logo with pink bubble lettering spelling cramchy.</desc>
+  <defs>
+    <linearGradient id="pinkText" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd3dd"/>
+      <stop offset="0.45" stop-color="#f7a1b5"/>
+      <stop offset="1" stop-color="#ec7f9c"/>
+    </linearGradient>
+    <linearGradient id="creamCat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#fff0d8"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-30%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#7a3a45" flood-opacity="0.18"/>
+    </filter>
+    <filter id="tinyShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#7a3a45" flood-opacity="0.16"/>
+    </filter>
+    <style>
+      .brown{stroke:#5b2f28;stroke-linecap:round;stroke-linejoin:round}
+      .cream-stroke{stroke:#fff8ea;stroke-linecap:round;stroke-linejoin:round}
+      .brand-text{font-family:'Arial Rounded MT Bold','Avenir Next Rounded','Trebuchet MS',system-ui,sans-serif;font-weight:900;letter-spacing:-22px}
+      .small-ui{font-family:'Trebuchet MS',system-ui,sans-serif;font-weight:800}
+    </style>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <!-- sticker outline for word -->
+    <text x="80" y="640" class="brand-text cream-stroke" font-size="245" stroke-width="76" fill="none">cramchy</text>
+    <text x="80" y="640" class="brand-text brown" font-size="245" stroke-width="42" fill="none">cramchy</text>
+
+    <!-- notebook -->
+    <g transform="translate(188 284) rotate(-9)" filter="url(#tinyShadow)">
+      <rect x="0" y="0" width="174" height="232" rx="28" fill="#ffc5d3" class="cream-stroke" stroke-width="22"/>
+      <rect x="0" y="0" width="174" height="232" rx="28" fill="#ffc5d3" class="brown" stroke-width="14"/>
+      <rect x="48" y="70" width="86" height="88" rx="15" fill="#fff6e7" stroke="#f1abc0" stroke-width="8"/>
+      <path d="M88 96 C96 82 119 86 119 106 C119 128 88 140 88 140 C88 140 57 128 57 106 C57 86 80 82 88 96Z" fill="#e57591" opacity=".72"/>
+      <g class="brown" stroke-width="10">
+        <line x1="-16" y1="50" x2="18" y2="50"/>
+        <line x1="-18" y1="88" x2="20" y2="88"/>
+        <line x1="-16" y1="126" x2="18" y2="126"/>
+        <line x1="-10" y1="164" x2="17" y2="164"/>
+      </g>
+      <path d="M122 31 L142 25 L155 84" fill="none" class="brown" stroke-width="12"/>
+    </g>
+
+    <!-- cat head and ears -->
+    <g transform="translate(426 68)">
+      <path d="M96 262 Q55 171 80 62 Q85 37 106 58 L188 139 Q256 100 346 99 Q433 99 503 140 L586 61 Q610 38 615 69 Q637 172 595 260 Q628 291 625 345 Q621 430 533 476 Q453 517 343 517 Q228 517 149 476 Q63 427 58 344 Q55 292 96 262Z" fill="url(#creamCat)" class="cream-stroke" stroke-width="34"/>
+      <path d="M96 262 Q55 171 80 62 Q85 37 106 58 L188 139 Q256 100 346 99 Q433 99 503 140 L586 61 Q610 38 615 69 Q637 172 595 260 Q628 291 625 345 Q621 430 533 476 Q453 517 343 517 Q228 517 149 476 Q63 427 58 344 Q55 292 96 262Z" fill="url(#creamCat)" class="brown" stroke-width="16"/>
+      <path d="M119 98 Q132 73 153 98 L190 148 Q150 142 116 178Z" fill="#ffb8c6" opacity=".88"/>
+      <path d="M535 150 L574 98 Q596 74 604 111 L600 183 Q570 149 535 150Z" fill="#ffb8c6" opacity=".88"/>
+      <path d="M315 113 Q303 153 309 176 Q317 199 341 187 Q356 179 365 118Z" fill="#ffd3c0" opacity=".82"/>
+      <path d="M380 111 Q367 160 376 183 Q385 205 408 190 Q425 179 437 128Z" fill="#ffd3c0" opacity=".82"/>
+      <path d="M272 315 Q232 287 195 315" fill="none" class="brown" stroke-width="16"/>
+      <ellipse cx="462" cy="313" rx="43" ry="50" fill="#5b2f28"/>
+      <path d="M444 296 L454 309 L469 299 L459 315 L473 327 L456 325 L448 341 L444 324 L428 322 L442 313Z" fill="#fffaf0"/>
+      <path d="M477 327 L482 334 L491 328 L486 337 L493 344 L483 343 L479 352 L476 342 L466 341 L475 336Z" fill="#fffaf0"/>
+      <ellipse cx="205" cy="365" rx="45" ry="31" fill="#ffc7cf" opacity=".75"/>
+      <ellipse cx="506" cy="365" rx="45" ry="31" fill="#ffc7cf" opacity=".75"/>
+      <path d="M340 354 Q357 341 374 354 L357 373Z" fill="#ef8fa4"/>
+      <path d="M357 371 L357 388 M357 388 Q341 407 322 389 M357 388 Q374 407 393 389" fill="none" class="brown" stroke-width="9"/>
+      <path d="M388 398 Q407 420 429 398" fill="none" class="brown" stroke-width="9"/>
+      <path d="M179 355 L92 335 M175 388 L76 393 M185 420 L97 449 M526 355 L608 337 M532 388 L626 393 M522 420 L605 449" fill="none" class="brown" stroke-width="9" opacity=".9"/>
+    </g>
+
+    <!-- paws over word -->
+    <g>
+      <ellipse cx="448" cy="489" rx="66" ry="54" fill="#fff4dc" class="brown" stroke-width="14"/>
+      <ellipse cx="918" cy="491" rx="64" ry="54" fill="#fff4dc" class="brown" stroke-width="14"/>
+      <path d="M421 500 Q450 528 479 500 M892 502 Q920 529 949 502" fill="none" stroke="#d8b294" stroke-width="6" stroke-linecap="round"/>
+    </g>
+
+    <!-- tail and bow -->
+    <g transform="translate(920 180)">
+      <path d="M32 205 C158 148 82 24 199 26 C315 28 280 162 189 138" fill="none" class="cream-stroke" stroke-width="78"/>
+      <path d="M32 205 C158 148 82 24 199 26 C315 28 280 162 189 138" fill="none" class="brown" stroke-width="44"/>
+      <path d="M32 205 C158 148 82 24 199 26 C315 28 280 162 189 138" fill="none" stroke="#fff6df" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+      <g transform="translate(117 147) rotate(-8)">
+        <path d="M48 35 C5 2 -10 56 36 73 C-9 111 28 161 61 93" fill="#ffadc0" class="brown" stroke-width="12"/>
+        <path d="M78 35 C120 2 138 58 91 75 C136 111 99 160 66 93" fill="#ffadc0" class="brown" stroke-width="12"/>
+        <ellipse cx="64" cy="70" rx="25" ry="29" fill="#ffc5d3" class="brown" stroke-width="10"/>
+        <path d="M37 34 Q17 43 29 59 M90 34 Q110 43 98 59" fill="none" stroke="#fff2f5" stroke-width="8" stroke-linecap="round" opacity=".65"/>
+      </g>
+    </g>
+
+    <!-- text fill on top -->
+    <text x="80" y="640" class="brand-text brown" font-size="245" stroke-width="16" fill="url(#pinkText)">cramchy</text>
+    <text x="80" y="640" class="brand-text" font-size="245" fill="url(#pinkText)">cramchy</text>
+
+    <!-- glossy highlights -->
+    <ellipse cx="177" cy="514" rx="34" ry="18" fill="#fff9fb" opacity=".78" transform="rotate(-28 177 514)"/>
+    <ellipse cx="213" cy="487" rx="19" ry="10" fill="#fff9fb" opacity=".58" transform="rotate(-26 213 487)"/>
+    <ellipse cx="532" cy="495" rx="48" ry="18" fill="#fff9fb" opacity=".46" transform="rotate(-16 532 495)"/>
+    <ellipse cx="840" cy="501" rx="44" ry="18" fill="#fff9fb" opacity=".43" transform="rotate(-14 840 501)"/>
+    <ellipse cx="1090" cy="576" rx="50" ry="19" fill="#fff9fb" opacity=".58" transform="rotate(-18 1090 576)"/>
+
+    <!-- cute marks -->
+    <path d="M66 392 L92 427 L134 421 L108 455 L116 497 L77 481 L40 502 L47 459 L15 430 L59 424Z" fill="#ffe8a8" class="brown" stroke-width="11"/>
+    <path d="M497 572 L518 599 L554 592 L532 621 L538 655 L506 642 L475 660 L480 624 L452 601 L488 596Z" fill="#7a3a45"/>
+    <g class="brown" stroke-width="12">
+      <line x1="1166" y1="369" x2="1216" y2="315"/>
+      <line x1="1216" y1="410" x2="1285" y2="384"/>
+    </g>
+    <path d="M314 263 C321 246 348 247 350 269 C351 294 314 309 314 309 C314 309 277 294 279 269 C281 247 307 246 314 263Z" fill="#d85f7e" opacity=".8"/>
+  </g>
+</svg>
