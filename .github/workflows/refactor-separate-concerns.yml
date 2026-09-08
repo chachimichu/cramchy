@@ -1,0 +1,110 @@
+name: Split Cramchy source
+
+on:
+  push:
+    branches:
+      - refactor/separate-concerns
+
+permissions:
+  contents: write
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: refactor/separate-concerns
+
+      - name: Split index.html into HTML, CSS, JavaScript, and assets
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import base64, hashlib, re
+
+          root = Path('.')
+          index = root / 'index.html'
+          if (root / 'styles.css').exists() and (root / 'app.js').exists():
+              print('Source is already separated; nothing to do.')
+              raise SystemExit(0)
+
+          source = index.read_text(encoding='utf-8')
+          original = source
+          assets = root / 'assets'
+          assets.mkdir(exist_ok=True)
+
+          # Cramchy currently has five unique embedded PNG assets. Preserve their
+          # bytes exactly and replace every repeated data URI with a file path.
+          asset_names = [
+              'cramchy-wordmark.png',
+              'cramchy-tagline.png',
+              'hanabi-tail.png',
+              'hanabi.png',
+              'kenken.png',
+          ]
+          seen = {}
+          next_asset = 0
+          pattern = re.compile(r'data:image/png;base64,([A-Za-z0-9+/=]+)')
+
+          def externalize(match):
+              nonlocal_state = None
+              data = base64.b64decode(match.group(1))
+              digest = hashlib.sha256(data).hexdigest()
+              global next_asset
+              if digest not in seen:
+                  if next_asset >= len(asset_names):
+                      raise RuntimeError('Unexpected extra embedded PNG asset')
+                  name = asset_names[next_asset]
+                  next_asset += 1
+                  seen[digest] = name
+                  (assets / name).write_bytes(data)
+              return f'assets/{seen[digest]}'
+
+          source = pattern.sub(externalize, source)
+          if next_asset != len(asset_names):
+              raise RuntimeError(f'Expected 5 unique PNG assets, found {next_asset}')
+
+          style_match = re.search(r'<style>(.*?)</style>', source, flags=re.S)
+          if not style_match:
+              raise RuntimeError('Could not find the main style block')
+          css = style_match.group(1)
+          source = source[:style_match.start()] + '<link rel="stylesheet" href="styles.css">' + source[style_match.end():]
+
+          script_start = source.rfind('<script>')
+          script_end = source.rfind('</script>')
+          if script_start < 0 or script_end < script_start:
+              raise RuntimeError('Could not find the main inline app script')
+          js_start = script_start + len('<script>')
+          js = source[js_start:script_end]
+          source = source[:script_start] + '<script src="app.js"></script>' + source[script_end + len('</script>'):]
+
+          (root / 'styles.css').write_text(css, encoding='utf-8')
+          (root / 'app.js').write_text(js, encoding='utf-8')
+          index.write_text(source, encoding='utf-8')
+
+          if '<style>' in source:
+              raise RuntimeError('An inline style block remains in index.html')
+          if source.rfind('<script>') != -1:
+              raise RuntimeError('An inline app script remains in index.html')
+
+          print(f'index.html: {len(source.encode())} bytes')
+          print(f'styles.css: {len(css.encode())} bytes')
+          print(f'app.js: {len(js.encode())} bytes')
+          print('Separated source successfully.')
+          PY
+
+      - name: Syntax-check separated JavaScript
+        run: node --check app.js
+
+      - name: Commit separated source
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html styles.css app.js assets/
+          git commit -m "Refactor Cramchy into separated source files"
+          git push origin HEAD:refactor/separate-concerns
