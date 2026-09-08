@@ -1,5 +1,5 @@
 (function(){
-  const LOGO_SRC = 'assets/cramchy-logo.webp?v=2026-09-09-logo-1';
+  const LOGO_SRC = 'assets/cramchy-logo-hd.svg?v=2026-09-09-logo-hd-1';
 
   function fixLateNightGreeting(){
     const el = document.getElementById('dailyGreeting');
@@ -53,7 +53,7 @@
   }
 
   const base = document.createElement('script');
-  base.src = 'app-base.js?v=2026-09-09-logo-1';
+  base.src = 'app-base.js?v=2026-09-09-logo-hd-1';
   base.async = false;
   base.onload = applyHomeLogoRefresh;
   base.onerror = () => console.error('Cramchy base app failed to load.');
