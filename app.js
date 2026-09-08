@@ -1,23 +1,20 @@
 (function(){
-  const VERSION='2026-09-09-stable-design-4';
+  const VERSION='2026-09-09-stable-design-5';
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
       const href=link.getAttribute('href')||'';
       if(href.includes('styles.css')) link.setAttribute('href','styles.css?v='+VERSION);
     });
-    if(!document.querySelector('link[href^="design-v3.css"]')){
-      const link=document.createElement('link');
-      link.rel='stylesheet';
-      link.href='design-v3.css?v='+VERSION;
-      document.head.appendChild(link);
-    }
-    if(!document.querySelector('link[href^="home-hero-v4.css"]')){
-      const link=document.createElement('link');
-      link.rel='stylesheet';
-      link.href='home-hero-v4.css?v='+VERSION;
-      document.head.appendChild(link);
-    }
+    const sheets=['design-v3.css','home-hero-v4.css','home-hierarchy-v5.css'];
+    sheets.forEach(file=>{
+      if(!document.querySelector(`link[href^="${file}"]`)){
+        const link=document.createElement('link');
+        link.rel='stylesheet';
+        link.href=file+'?v='+VERSION;
+        document.head.appendChild(link);
+      }
+    });
   }
 
   function loadScript(src){
@@ -35,5 +32,6 @@
   loadScript('app-logo-base.js?v='+VERSION)
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
+    .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .catch(err=>console.error('Cramchy startup failed.',err));
 })();
