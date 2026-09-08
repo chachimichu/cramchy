@@ -1,0 +1,39 @@
+/* Home hero should use the same visual hierarchy as Planner: logo left, big display copy right. */
+.cramchy-home-kicker{display:none!important;}
+.cramchy-home-header{
+  grid-template-columns:270px minmax(0,1fr)!important;
+  gap:28px!important;
+  padding:26px!important;
+  min-height:250px!important;
+  border-radius:32px!important;
+  border:1px solid var(--cram-line,#f5d3dc)!important;
+  background:linear-gradient(90deg,rgba(255,223,231,.94),rgba(255,247,248,.93) 55%,rgba(255,231,211,.84))!important;
+  box-shadow:0 18px 45px rgba(164,78,100,.12)!important;
+}
+.cramchy-home-copy .daily-title{max-width:620px!important;text-align:left!important;}
+.cramchy-home-copy .big-greeting{
+  margin:0!important;
+  color:var(--cram-deep,#5a2432)!important;
+  font-family:var(--cram-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-size:clamp(2.15rem,4vw,4rem)!important;
+  line-height:1.03!important;
+  letter-spacing:-.03em!important;
+}
+.cramchy-home-copy .daily-meta{
+  margin:14px 0 0!important;
+  max-width:620px!important;
+  color:#7c5862!important;
+  font-family:var(--cram-ui,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+  font-size:1rem!important;
+  line-height:1.6!important;
+  font-weight:750!important;
+}
+.cramchy-home-actions{margin-top:20px!important;}
+
+@media(max-width:760px){
+  .cramchy-home-header{grid-template-columns:1fr!important;padding:19px!important;gap:8px!important;}
+  .cramchy-home-logo{width:min(72vw,230px)!important;margin:-6px auto -4px!important;}
+  .cramchy-home-copy .daily-title{text-align:center!important;max-width:100%!important;}
+  .cramchy-home-copy .big-greeting{font-size:2.1rem!important;}
+  .cramchy-home-copy .daily-meta{max-width:100%!important;}
+}
