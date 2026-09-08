@@ -1,12 +1,12 @@
 (function(){
-  const VERSION='2026-09-09-home-command-6';
+  const VERSION='2026-09-09-polish-7';
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
       const href=link.getAttribute('href')||'';
       if(href.includes('styles.css')) link.setAttribute('href','styles.css?v='+VERSION);
     });
-    const sheets=['design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css'];
+    const sheets=['design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css'];
     sheets.forEach(file=>{
       if(!document.querySelector(`link[href^="${file}"]`)){
         const link=document.createElement('link');
@@ -34,5 +34,6 @@
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
+    .then(()=>loadScript('polish-v7.js?v='+VERSION))
     .catch(err=>console.error('Cramchy startup failed.',err));
 })();
