@@ -1,0 +1,61 @@
+body:not(.cramchy-home-enhanced) #view-dashboard .daily-home > .hero{display:block!important;}
+body.cramchy-home-enhanced #view-dashboard .daily-home > .hero{display:none!important;}
+body:not(.planner-mode-active) #view-planner{display:none!important;}
+body.planner-mode-active main > .view:not(#view-planner){display:none!important;}
+body.planner-mode-active #view-planner{display:block!important;}
+
+.empty-state,.empty-state *,.empty,.empty *,.blank-state,.blank-state *,.planner-empty,.planner-empty *,#dailyTaskList,#dailyTaskList *,#dailyUpcomingList,#dailyUpcomingList *{
+  font-family:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif!important;
+}
+.empty-state h1,.empty-state h2,.empty-state h3,.empty h1,.empty h2,.empty h3,.blank-state h1,.blank-state h2,.blank-state h3{
+  font-family:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif!important;
+  font-weight:900!important;
+}
+
+.cramchy-home-header{
+  position:relative!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-columns:270px 1fr!important;
+  gap:28px!important;
+  align-items:center!important;
+  margin:0 0 18px!important;
+  padding:26px!important;
+  border-radius:32px!important;
+  border:1px solid var(--cram-line,#f5d3dc)!important;
+  background:linear-gradient(90deg,rgba(255,223,231,.94),rgba(255,247,248,.93) 55%,rgba(255,231,211,.84))!important;
+  box-shadow:0 18px 45px rgba(164,78,100,.12)!important;
+}
+.cramchy-home-header:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  background:radial-gradient(circle at 11% 22%,rgba(255,255,255,.72) 0 2px,transparent 3px),radial-gradient(circle at 54% 16%,rgba(255,255,255,.8) 0 2px,transparent 3px),radial-gradient(circle at 73% 34%,rgba(239,137,164,.18) 0 16px,transparent 18px)!important;
+}
+.cramchy-home-logo-zone,.cramchy-home-copy{position:relative!important;}
+.cramchy-home-logo{display:block!important;width:100%!important;height:auto!important;transform:rotate(-2deg)!important;filter:drop-shadow(0 16px 18px rgba(107,42,58,.16))!important;}
+.cramchy-home-copy .daily-title{max-width:650px!important;text-align:left!important;}
+.cramchy-home-kicker{color:var(--cram-rose,#cf5d7b)!important;letter-spacing:.24em!important;text-transform:uppercase!important;font-weight:900!important;font-size:.77rem!important;margin-bottom:10px!important;}
+.cramchy-home-copy .daily-title h1{font-family:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif!important;font-size:.88rem!important;text-transform:lowercase!important;letter-spacing:.06em!important;color:var(--cram-muted,#9b737c)!important;font-weight:900!important;margin:0 0 8px!important;}
+.cramchy-home-copy .big-greeting{font-family:'DynaPuff','Plus Jakarta Sans',cursive!important;color:var(--cram-deep,#5a2432)!important;font-size:clamp(2.15rem,4vw,4rem)!important;line-height:1.03!important;letter-spacing:-.03em!important;}
+.cramchy-home-copy .daily-meta{color:#7c5862!important;font-size:1rem!important;line-height:1.6!important;font-weight:750!important;margin-top:12px!important;}
+.cramchy-home-actions{display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin-top:20px!important;}
+.cramchy-home-actions .quick-add-main{position:static!important;padding:12px 18px!important;border-radius:17px!important;background:linear-gradient(135deg,#f48ca5,#df6686)!important;color:#fff!important;font-weight:900!important;}
+.cramchy-sticker{position:absolute!important;left:14px!important;bottom:8px!important;transform:rotate(-7deg)!important;background:rgba(255,253,252,.72)!important;border:1px solid rgba(245,211,220,.9)!important;color:#a86b78!important;border-radius:14px!important;padding:8px 11px!important;font-weight:900!important;font-size:.72rem!important;box-shadow:0 10px 24px rgba(164,78,100,.09)!important;}
+.cramchy-sparkle{position:absolute!important;color:#df6686!important;font-family:'DynaPuff',cursive!important;filter:drop-shadow(0 5px 10px rgba(164,78,100,.12))!important;}
+.sparkle-a{right:14px!important;top:24px!important;font-size:1.55rem!important;}
+.sparkle-b{left:18px!important;top:18px!important;font-size:1.05rem!important;}
+
+.planner-event-pill,.planner-week-event,.planner-agenda-item,.planner-next,.planner-exam-banner,.planner-task-copy{cursor:pointer!important;}
+.planner-event-pill:hover,.planner-week-event:hover,.planner-agenda-item:hover,.planner-next:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(164,78,100,.10)!important;}
+.planner-danger{display:inline-flex!important;}
+#plannerDeleteBtn[style*="display: none"]{display:none!important;}
+
+@media(max-width:760px){
+  .cramchy-home-header{grid-template-columns:1fr!important;text-align:left!important;padding:18px!important;gap:8px!important;}
+  .cramchy-home-logo{width:min(72vw,230px)!important;margin:-6px auto -4px!important;}
+  .cramchy-home-copy .daily-title{text-align:center!important;max-width:100%!important;}
+  .cramchy-home-copy .big-greeting{font-size:2.1rem!important;}
+  .cramchy-home-actions{justify-content:center!important;}
+}
