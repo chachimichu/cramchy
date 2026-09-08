@@ -1,12 +1,12 @@
 (function(){
-  const VERSION='2026-09-09-polish-7';
+  const VERSION='2026-09-09-theme-gradients-8';
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
       const href=link.getAttribute('href')||'';
       if(href.includes('styles.css')) link.setAttribute('href','styles.css?v='+VERSION);
     });
-    const sheets=['design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css'];
+    const sheets=['design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css'];
     sheets.forEach(file=>{
       if(!document.querySelector(`link[href^="${file}"]`)){
         const link=document.createElement('link');
