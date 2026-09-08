@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-theme-gradients-8';
+  const VERSION='2026-09-09-task-home-sync-9';
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
@@ -35,5 +35,6 @@
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
+    .then(()=>loadScript('task-home-sync-v9.js?v='+VERSION))
     .catch(err=>console.error('Cramchy startup failed.',err));
 })();
