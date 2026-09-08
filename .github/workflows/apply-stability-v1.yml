@@ -1,0 +1,30 @@
+name: Apply Cramchy stability patch
+
+on:
+  push:
+    branches:
+      - fix/update-stability-v1
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/update-stability-v1
+
+      - name: Apply stability patch
+        run: |
+          set -euo pipefail
+          if grep -q "2026.09.08-stability.1" app.js; then
+            echo "Stability patch already applied."
+            exit 0
+          fi
+          cat > /tmp/stability.patch.gz.b64 <<'PATCHB64'
+H4sICIsmoGoAA3N0YWJpbGl0eS5wYXRjaADNGttu48b1uf6KWRUNpYiiKclX2bLX6ziJW693u1qnSBeGMSZHFtcUycwMrVVsA+lzLw/NU4EARV+SAn3pS4F+z35BP6HnzAwvutpbBGiMxZKcOefMmXM/M/KDfp80eHpKPE6H3mDc8AZUXsayEUSSXXEqgzhapUnivBU5iJD0MggDOW4kVHoDM73SaDQeQeVnLbe10XC3G+4Waa51XLfTbDkbG1sbLXe91SZ1F/5W6vX6A6tNkFnvNNsdt+1sbbvbm1vNtW1D5ulT0ths2hukDv83XfL06Qrx4khIcvji5OTo8PXxs5Oji+PDF6c90iVvrP/89Y/fWjY+/qUef/pGPX74vR78p378TT3+8G94vP8Lfrz/7u9q6B8/aIA/a6zfWec7KyRbsff6xauDz44ufnX0JaxlCcnp6JJxPn6Ou6LPA18yPhQ9SSW7uGlaOyt1jXjw8uXFF0evescvThER9+242467VUjGmQ+erWUkeUKFPEiSLxgXoI4Co/f64PXRRe/w86PnB6WVWgAQMkkSFvlBdPUsjuXrGEggRUDOtnX28uDZQe/o4uzVCc4MpExEZ3U1eXt1Tf1+dPOV7/fHb4fXMhCOSBN6SQVzvHgOhZdnz06Oe58foE4yKV1eJOllGIgBvQzZRXMQH5/QQauXxL8Zyd+6aevFxtmvL76+eiXS068uCpriErBHQeTHo3xRsj894nicgbQPw4BFsqqspdncsjdJvdlq2dvKXPCPvaPDwxgs+Z3skFtCPeqzYeB9ySjvKH28/+ZbeGxaNkEddqzX8D9pWuTeLgh8QiUF7GyIcm8Q3DAfQUWHvDm3Vxpq3BB/Hhi3MerqkOZK/QEAW0MINKGeN2BDms/N07EBDyfMolM2IGT1HoR6D2aspNPasJvgTc12y24215WAVkg/jTxkhIQx9ZX9Vmu3iCr5+NawNI68Yo1PQ3pVre1oQWiFgTOAxsLYo2FPxpxeMeeKyWPJhtWS42Q4Qb/6BDBqhDOZ8oj0ORMDs/IE2YRywXyg/Mvei1NHfVURcUcL26ALGgUy+JppChoHQOoFHS9kNFKEHgE7oNGVgoVIFY4VYK4sUTWkbDKJC1syiDUjMzIpDjErDltvC0IJ+GfQH2e0axnRe/0w2zSzSkD3HkadKoPFGhnrccicEeVR1fqUBiHsQMZKpdqgbHxwCStpcTtg7ay884fQOUtogJyCG8oBoZoMCLTPCPh3wiYozos6hzqOGUqwAlULIMmExxAghg75Mk45Cp4EQpMGLlJwfnpFg4i8/+57yxjIItO51+Zez616nu0qFRXmbYyNs5sgTsUiQ56KzCXN55hPut2y/z1gClME7QnUnQy1RL82V6wRG5FMtGnigyiUWEG+WlyGDpoPf5VGMhiyQwrhRVQn7KxkUnNs4jBOQ59EscyWQB3daJmSPgi1pH0gB/9KKljuSDEProKIhnphTFmFC/ZpKJgiOqkjHR4B4DQdQhauZjT2ndnoSe7uiIucIZmSNA2N3bnBtVZiQvJU84BOrrmetwwqfy6pTKCLUecjZs45y8j9FDeTOWCRGS6AnoBduqZZ9ckB53TsBEI9cyY8cF3BRK12S6aGsDg735kmmu/iSQYOtuGzyzi+RpXJccLiPpmdw91Z8eVb5kmrtFYB0IU0vWC1KcacfsyPwBeq+pt098htEc/12EcfEf3mBD5+zHL7Jp8/Lzx+GRRySIamYlTFA+mj9ap3zNgZjVkt5ElhPoOl9ZW/GHksY6YcaBQ40DOy19gT4s6A5xkCgjvZttAMJgaWGcFSilo0OT39+RC1+3JkKzl/rr2spptjavnUAkvL55cYWnkpSG59yKhzVspmnsyR8TRMdyLXZcMPx4iJHZsyeMGms9ll7JThutPV9DTTTnkWF51Xbs8g4agCzuvwB6NSViJpgB2TgCjm/qK+nZcBpyoBkJflqSmLQL2hG45pp7pmY7Q/OqIB5CoF7eBYtUjaeu4lj4cBeBkNwyoCOEOa4AvGGYPnM0h4DAdrtQ9Jx4itBZcmRFwHSQICXJKCdc11gmUIhH603gVV0CWDmMiykruoTVXWyjhUHzPV9ATI3JxvSsnb+wyKRSLl7MBYSQ/U6oEiWS7JDy6hNQ9L0R9Tdi0pljiUYIwfgEoX9Q1GhOhFS4U4iEeqiMs6B+hwZ2vkcVYQ+xhxsKIjnQJMDdIQ+mB/DLuNrwUZMBpKmEJQEDWMAm1wTXQZYgS/yLgY5zGvWq/U4lB8YR9QruoLli3NIBlQLOOhrRgXNTx7l8RcwvAl9a7TBNx8wCIyZEKAGuDpLOZr2mxxQSx2z1TReRrLwGPGcLGSm6qGs+2Apl+D4uJUVqs1dLaC72mUOZzYZNN1l/UxVpnXIrxkznAgJVjMkEVSVMNAcTU3uam5vAd+c67aF/OFc5DpQgiFVYo7oKW0TCdzsooqVNcu2OW33W08Mltrrtlb+RnIfd4dKVbeWFlatmxLZ1Tr3AkiL0x9sHXd26pY/5LxIIaWlIA0SwMghxmgrEbWNTns89MAJMKqdQM5W/gasnMr4udUDmBr76qurd/7YN98KbGMASMnAzld7nb18R1o1dLLz9TDcxEdEaLxufaGWyurCiiUjljazU0l/FYm/NWPccXZP9I7+OKIVLEcAwMCR1ddNeSbAHwz5rUFWB+vrqgWSdAbZmwcGI7SMNyZMMUblp/k1E28/sDGQ+Ms7xXy4MdCmPJjL0Wzx475CCIBvD4bH/tVC9k5znZmaemBmhi0fIDpYC2hSopIuRdAg24cx7F2tL2qYJw5dGnjQEifam0rmTfX3A17M7d4ldhIOW/PO01iN9KRlAPHDlRXaSizA6hFSW7y2Gd5nsthDcUl2S5bs1BcPjaRcNSG26223nC7nbs4wisnX6kv1IOO2Zj8n8nIqu071PePbmD6BMINiyDWWB4Y+bVlz6kXVBFNJiLz89inYVUGMoTNmvgO/XwEyuwHfKgDn5Z9fMN4SMdlK9Gnt4bBquUHN8Y0DKzjgfGJUzpEJVhDXKthpqxMEFtrWhDbmebzA0aVGSFm4lNbfu12uWZLkI/S7gT8ozX8v1c0C81hs920m00Qw9bamt0szr0JSWF/olOKpPo1iKot1zZHJ8LjwdD5KmV83INi1JNYAfxc94dniA8Z5oaGKavd3bm1mp3zEcfDzjLkVwCQ4TqwnSF0LVkMXXMLQl4cxrzD3oENwpb3HfV9d2clQQSWmGui3GcUwOXhuzsds0wfMT052Xtkq6sWZNk2sAlZtI02bqNhjAoCq5+GbCmxngFaRLDZcmvZjn80gvY0RdGZrEQKceYQKceYQKceYQKceYQ
