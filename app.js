@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-boot-resilience-11';
+  const VERSION='2026-09-09-planner-cloud-12';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function refreshStyles(){
@@ -51,8 +51,11 @@
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
+    .then(()=>loadScript('planner-cloud-sync-v12.js?v='+VERSION))
+    .then(()=>window.__cramchyPlannerCloudReady||Promise.resolve())
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
+    .then(()=>{ window.__cramchyPlannerCloudMarkLoaded?.(); })
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
