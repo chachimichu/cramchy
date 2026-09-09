@@ -1,5 +1,6 @@
 (function(){
-  const VERSION='2026-09-09-task-home-sync-9';
+  const VERSION='2026-09-09-cache-sync-10';
+  const LEGACY_BASE_URL='app-base.js?v=2026-09-09-logo-raster-1';
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
@@ -28,8 +29,26 @@
     });
   }
 
+  async function forceFreshBaseBundle(){
+    try{
+      if('caches' in window){
+        const keys=await caches.keys();
+        await Promise.all(keys.map(key=>caches.delete(key)));
+      }
+    }catch(e){
+      console.warn('Cramchy runtime cache cleanup skipped.',e);
+    }
+    try{
+      const response=await fetch(LEGACY_BASE_URL,{cache:'reload'});
+      if(!response.ok) throw new Error('Base refresh returned '+response.status);
+    }catch(e){
+      console.warn('Cramchy base refresh fell back to normal loading.',e);
+    }
+  }
+
   refreshStyles();
-  loadScript('app-logo-base.js?v='+VERSION)
+  forceFreshBaseBundle()
+    .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
