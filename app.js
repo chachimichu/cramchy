@@ -1,21 +1,128 @@
 (function(){
-  const VERSION='2026-09-09-exam-nav-active-14';
+  const VERSION='2026-09-09-boot-splash-15';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
+  let splashSafetyTimer=null;
+
+  function installBootSplash(){
+    if(document.getElementById('cramchyBootSplash')) return;
+
+    const style=document.createElement('style');
+    style.id='cramchyBootSplashStyle';
+    style.textContent=`
+      #cramchyBootSplash{
+        position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;
+        background:
+          radial-gradient(circle at 18% 14%,rgba(255,255,255,.96) 0 9%,transparent 31%),
+          radial-gradient(circle at 82% 18%,rgba(255,211,223,.88),transparent 34%),
+          radial-gradient(circle at 45% 94%,rgba(255,228,211,.82),transparent 39%),
+          linear-gradient(135deg,#f8d6df 0%,#fff7f1 46%,#f4ced9 100%);
+        opacity:1;visibility:visible;transition:opacity .28s ease,visibility .28s ease;
+        overflow:hidden;
+      }
+      #cramchyBootSplash::before,#cramchyBootSplash::after{
+        content:"";position:absolute;pointer-events:none;filter:blur(34px);opacity:.72;
+      }
+      #cramchyBootSplash::before{
+        width:280px;height:280px;left:-55px;bottom:6%;background:#f2b9c8;
+        border-radius:44% 56% 63% 37%/52% 40% 60% 48%;
+      }
+      #cramchyBootSplash::after{
+        width:240px;height:240px;right:-35px;top:12%;background:#f7dfcc;
+        border-radius:60% 40% 36% 64%/45% 58% 42% 55%;
+      }
+      #cramchyBootSplash.is-leaving{opacity:0;visibility:hidden;}
+      .cramchy-boot-shell{
+        position:relative;z-index:2;width:min(620px,calc(100vw - 32px));text-align:center;
+        padding:46px 34px 42px;border-radius:40px;
+        background:linear-gradient(180deg,rgba(255,252,248,.94),rgba(255,246,248,.92));
+        border:1px solid rgba(255,255,255,.92);
+        box-shadow:0 30px 80px rgba(118,68,82,.16),0 8px 26px rgba(118,68,82,.07);
+        backdrop-filter:blur(14px);
+      }
+      .cramchy-boot-wordmark{
+        margin:0;color:#c85f7e;font-family:'Playfair Display',Georgia,serif;
+        font-size:clamp(58px,10vw,88px);font-weight:600;line-height:.92;letter-spacing:-.055em;
+        text-shadow:0 8px 24px rgba(166,74,102,.08);
+      }
+      .cramchy-boot-sub{
+        margin-top:12px;color:#a77a84;font-family:'Playfair Display',Georgia,serif;
+        font-size:15px;font-style:italic;font-weight:600;letter-spacing:.18em;
+      }
+      .cramchy-boot-dots{display:flex;justify-content:center;gap:10px;margin:42px 0 18px;}
+      .cramchy-boot-dots span{
+        width:10px;height:10px;border-radius:50%;background:#e788a2;
+        box-shadow:0 5px 12px rgba(181,83,111,.13);animation:cramchyBootDot 1.05s ease-in-out infinite;
+      }
+      .cramchy-boot-dots span:nth-child(2){animation-delay:.15s}.cramchy-boot-dots span:nth-child(3){animation-delay:.3s}
+      .cramchy-boot-copy{
+        color:#a87280;font-family:'Nunito',system-ui,sans-serif;font-size:12px;font-weight:800;
+        letter-spacing:.16em;text-transform:lowercase;
+      }
+      @keyframes cramchyBootDot{0%,100%{opacity:.28;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
+      @media(max-width:600px){
+        .cramchy-boot-shell{width:min(92vw,520px);padding:38px 22px 36px;border-radius:30px}
+        .cramchy-boot-wordmark{font-size:clamp(54px,18vw,76px)}
+        .cramchy-boot-sub{font-size:13px}.cramchy-boot-dots{margin-top:34px}
+      }
+      @media(prefers-reduced-motion:reduce){
+        #cramchyBootSplash{transition:none}.cramchy-boot-dots span{animation:none;opacity:.75}
+      }
+    `;
+    document.head.appendChild(style);
+
+    const splash=document.createElement('div');
+    splash.id='cramchyBootSplash';
+    splash.setAttribute('role','status');
+    splash.setAttribute('aria-live','polite');
+    splash.innerHTML=`
+      <div class="cramchy-boot-shell">
+        <div class="cramchy-boot-wordmark">cramchy.</div>
+        <div class="cramchy-boot-sub">study companion</div>
+        <div class="cramchy-boot-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="cramchy-boot-copy">opening your study space...</div>
+      </div>`;
+    document.body.appendChild(splash);
+
+    splashSafetyTimer=setTimeout(()=>finishBootSplash(),9000);
+  }
+
+  function finishBootSplash(){
+    if(splashSafetyTimer){clearTimeout(splashSafetyTimer);splashSafetyTimer=null;}
+    const splash=document.getElementById('cramchyBootSplash');
+    if(!splash) return;
+    splash.classList.add('is-leaving');
+    setTimeout(()=>{
+      splash.remove();
+      document.getElementById('cramchyBootSplashStyle')?.remove();
+    },320);
+  }
+
+  function loadFreshStylesheet(file){
+    return new Promise(resolve=>{
+      const freshHref=file+'?v='+VERSION;
+      if(document.querySelector(`link[href="${freshHref}"]`)) return resolve();
+
+      const oldLinks=Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+        .filter(link=>(link.getAttribute('href')||'').split('?')[0]===file);
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href=freshHref;
+      link.onload=()=>{
+        oldLinks.forEach(old=>{if(old!==link) old.remove();});
+        resolve();
+      };
+      link.onerror=()=>{
+        link.remove();
+        console.warn('Fresh stylesheet failed to load:',file);
+        resolve();
+      };
+      document.head.appendChild(link);
+    });
+  }
 
   function refreshStyles(){
-    document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
-      const href=link.getAttribute('href')||'';
-      if(href.includes('styles.css')) link.setAttribute('href','styles.css?v='+VERSION);
-    });
-    const sheets=['design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css'];
-    sheets.forEach(file=>{
-      if(!document.querySelector(`link[href^="${file}"]`)){
-        const link=document.createElement('link');
-        link.rel='stylesheet';
-        link.href=file+'?v='+VERSION;
-        document.head.appendChild(link);
-      }
-    });
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css'];
+    return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
   function loadScript(src){
@@ -46,8 +153,9 @@
     }
   }
 
-  refreshStyles();
-  forceFreshBaseBundle()
+  installBootSplash();
+  refreshStyles()
+    .then(()=>forceFreshBaseBundle())
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
@@ -61,5 +169,9 @@
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
     .then(()=>loadScript('task-home-sync-v9.js?v='+VERSION))
-    .catch(err=>console.error('Cramchy startup failed.',err));
+    .then(()=>finishBootSplash())
+    .catch(err=>{
+      console.error('Cramchy startup failed.',err);
+      finishBootSplash();
+    });
 })();
