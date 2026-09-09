@@ -1,0 +1,64 @@
+/* Typography preview v17 — home dashboard only. No layout or copy changes. */
+:root{
+  --font-rounded:'M PLUS Rounded 1c','Plus Jakarta Sans',system-ui,sans-serif;
+}
+
+/* Keep the hero greeting as the one strong chunky display moment. */
+#view-dashboard .cramchy-home-copy.planner-hero-copy h2{
+  font-family:var(--font-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+}
+
+/* Rounded stats + numbers. */
+#view-dashboard .home-status-card .value,
+#view-dashboard #dailyTasksLeft,
+#view-dashboard #dailyExamDays,
+#view-dashboard #dailyStudyTime,
+#view-dashboard #dailyNextClass,
+#view-dashboard .home-next-exam .countdown-big,
+#view-dashboard .home-next-exam .countdown-precise,
+#view-dashboard .home-next-exam [class*='countdown']{
+  font-family:var(--font-rounded)!important;
+  font-weight:800!important;
+  letter-spacing:-.025em!important;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Section headings: still cute, but calmer than the hero. */
+#view-dashboard .home-command-heading h3,
+#view-dashboard .home-exam-banner-compact h3,
+#view-dashboard .home-recommend-card .copy h3,
+#view-dashboard .home-courses-section .home-course h4{
+  font-family:var(--font-rounded)!important;
+  font-weight:800!important;
+  letter-spacing:-.025em!important;
+}
+
+/* Upcoming course titles + key card labels. */
+#view-dashboard .home-upcoming-content .upcoming-item strong,
+#view-dashboard .home-next-exam h3,
+#view-dashboard .home-next-exam strong,
+#view-dashboard .home-next-exam .tag,
+#view-dashboard .home-status-card .label{
+  font-family:var(--font-rounded)!important;
+}
+
+/* Empty-state copy gets a softer rounded voice instead of another chunky display moment. */
+#view-dashboard .home-today-content .empty-state,
+#view-dashboard .home-today-content .empty,
+#view-dashboard .home-today-content [class*='empty']{
+  font-family:var(--font-rounded)!important;
+  font-weight:800!important;
+  letter-spacing:-.015em!important;
+}
+
+/* Keep navigation, buttons, metadata, notes, and body copy clean. */
+#view-dashboard .home-heading-note,
+#view-dashboard .home-status-card .label,
+#view-dashboard .home-upcoming-content .upcoming-item span,
+#view-dashboard .home-courses-section .home-course p,
+#view-dashboard .home-recommend-card .copy p,
+#view-dashboard .home-exam-banner-compact p,
+#view-dashboard .btn,
+#view-dashboard .quick-add-main{
+  font-family:var(--font-ui,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+}
