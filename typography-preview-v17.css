@@ -168,3 +168,76 @@ body.exam-mode-active select{
 #view-dashboard #dailyCountdownBox .countdown-precise{
   font-weight:800!important;
 }
+
+/* Planner requested accents: these are page/panel anchors, so they can be chunky. */
+#view-planner .planner-head h2,
+#view-planner #plannerNextPanel > h3,
+#view-planner .planner-rec > h3{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.032em!important;
+  color:var(--planner-deep,#5a2432)!important;
+}
+#view-planner .planner-head h2{
+  font-size:clamp(1.65rem,3vw,2.25rem)!important;
+}
+#view-planner #plannerNextPanel > h3,
+#view-planner .planner-rec > h3{
+  font-size:1.18rem!important;
+}
+
+/* Exam dashboard spacing: give the big hero box breathing room above the mini stat boxes. */
+body.exam-mode-active #view-dashboard .legacy-dashboard > .hero{
+  margin-bottom:18px!important;
+}
+body.exam-mode-active #view-dashboard .legacy-dashboard > .grid.grid-4{
+  margin-top:18px!important;
+}
+
+/* Exam section headings should feel cute, but use colored dots instead of star glyph bullets. */
+body.exam-mode-active #view-dashboard .legacy-dashboard .section-title,
+body.exam-mode-active #view-schedule .section-title,
+body.exam-mode-active #view-subjects .legacy-subjects-panel .section-title,
+body.exam-mode-active #view-timer .section-title,
+body.exam-mode-active #view-countdown .section-title,
+body.exam-mode-active #view-matcha .section-title{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.03em!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+body.exam-mode-active .section-title.cramchy-dot-heading::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:var(--red-berry,#e85d75);
+  box-shadow:0 0 0 5px color-mix(in srgb,var(--red-berry,#e85d75) 14%,transparent);
+  flex:0 0 auto;
+}
+
+/* Mobile first-open/profile popups should keep equal left and right breathing room. */
+@media(max-width:640px){
+  .modal-backdrop,
+  .profile-backdrop,
+  .welcome-backdrop,
+  .onboarding-backdrop,
+  .auth-backdrop{
+    padding-left:16px!important;
+    padding-right:16px!important;
+    box-sizing:border-box!important;
+  }
+  .modal-content,
+  .profile-modal,
+  .welcome-modal,
+  .onboarding-modal,
+  .auth-modal,
+  [role="dialog"]:not(.planner-modal){
+    width:calc(100vw - 32px)!important;
+    max-width:calc(100vw - 32px)!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+}
