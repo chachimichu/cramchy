@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-typography-soft-18';
+  const VERSION='2026-09-09-page-headers-19';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
