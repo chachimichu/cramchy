@@ -1,4 +1,4 @@
-/* Typography preview v17 — softer Plus Jakarta pass. No font files, no layout or copy changes. */
+/* Typography preview v17 — refined: playful page headers, clean cards. No font files, no layout or copy changes. */
 :root{
   --cramchy-readable:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --cramchy-display:'DynaPuff','Plus Jakarta Sans',cursive;
@@ -8,16 +8,40 @@ body,button,input,select,textarea{
   font-family:var(--cramchy-readable)!important;
 }
 
-/* Keep the hero as the one big playful moment. */
+/* Big Cramchy moments: hero + main page headers only. */
 #view-dashboard .cramchy-home-copy.planner-hero-copy h2,
 #view-dashboard .cramchy-home-header .big-greeting,
-#view-dashboard .hero h1{
+#view-dashboard .hero h1,
+#view-tasks > h2,
+#view-grades > .page-head-row h2,
+#view-subjects .regular-courses-panel > .page-head-row h2,
+#view-subjects .legacy-subjects-panel > h2,
+#view-schedule .page-head-row h2,
+#view-timer > h2,
+#view-countdown > h2,
+#view-matcha > h2,
+#view-exam #examChooser > h2,
+#view-more > h2,
+body.exam-mode-active #examHeroTitle,
+body.exam-mode-active #examScheduleHeading,
+body.exam-mode-active #view-schedule .page-head-row h2,
+body.exam-mode-active #view-subjects .legacy-subjects-panel > h2,
+body.exam-mode-active #view-timer > h2,
+body.exam-mode-active #view-countdown > h2,
+body.exam-mode-active #view-matcha > h2{
   font-family:var(--cramchy-display)!important;
   font-weight:700!important;
   letter-spacing:-.035em!important;
 }
 
-/* Section/card headings: clean and rounded-looking, not spiky or overly chunky. */
+/* Exam chooser cards can stay cute too, because they function like large headers. */
+#view-exam .exam-choice h3{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.03em!important;
+}
+
+/* Section/card headings: clean, smooth, not spiky or overly chunky. */
 #view-dashboard .home-command-heading h3,
 #view-dashboard .home-courses-section .home-command-heading h3,
 #view-dashboard .section-title,
@@ -33,16 +57,16 @@ body,button,input,select,textarea{
 #view-planner .planner-head h2,
 #view-planner .planner-today h3,
 #view-planner .planner-tasks h3,
-#view-grades h2,
 #view-grades h3,
-#view-tasks h2,
-#view-tasks h3,
-#view-courses h2,
-#view-courses h3,
-#view-study h2,
-#view-study h3,
-body.exam-mode-active h2,
-body.exam-mode-active h3{
+#view-tasks .card h3,
+#view-subjects .card h3,
+#view-timer .card h3,
+#view-countdown .card h3,
+#view-more .card h3,
+body.exam-mode-active .card h3,
+body.exam-mode-active .section-title,
+body.exam-mode-active .subject-card h3,
+body.exam-mode-active .exam-card h3{
   font-family:var(--cramchy-readable)!important;
   font-weight:700!important;
   letter-spacing:-.018em!important;
@@ -65,7 +89,7 @@ body.exam-mode-active h3{
   letter-spacing:-.012em!important;
 }
 
-/* Numbers/times: rounded-clean, tabular, and less chunky than DynaPuff. */
+/* Numbers/times: clean, tabular, and smoother than the chunky display font. */
 #view-dashboard .home-status-card .value,
 #view-dashboard .daily-stat .value,
 #view-dashboard #dailyNextClass,
@@ -91,7 +115,7 @@ body.exam-mode-active [class*="countdown"]{
   font-feature-settings:'tnum' 1,'lnum' 1!important;
 }
 
-/* Make empty states cute but not cartoon-heavy. */
+/* Empty states stay cute but not cartoon-heavy. */
 #view-dashboard .empty-state,
 #view-dashboard .empty,
 #view-dashboard [class*="empty"],
