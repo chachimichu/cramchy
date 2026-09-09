@@ -74,6 +74,20 @@
     });
   }
 
+  function cleanExamSectionTitles(){
+    const inExamMode=document.body.classList.contains('exam-mode-active');
+    document.querySelectorAll('.section-title').forEach(title=>{
+      if(!inExamMode){
+        title.classList.remove('cramchy-dot-heading');
+        return;
+      }
+      const raw=String(title.textContent||'').replace(/\s+/g,' ').trim();
+      const cleaned=raw.replace(/^[✧✦♡★☆•\s]+/,'').trim();
+      if(cleaned&&cleaned!==raw) title.textContent=cleaned;
+      title.classList.add('cramchy-dot-heading');
+    });
+  }
+
   function syncExamTabHighlight(){
     const inExamMode=document.body.classList.contains('exam-mode-active');
     const tab=activeExamTab();
@@ -90,6 +104,7 @@
   function syncExamVisuals(){
     syncExamTabHighlight();
     syncExamSelectColors();
+    cleanExamSectionTitles();
   }
 
   function observeExamNavigation(){
