@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-exam-select-colors-17';
+  const VERSION='2026-09-09-typography-soft-18';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
