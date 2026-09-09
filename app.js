@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-boot-splash-15';
+  const VERSION='2026-09-09-boot-splash-16';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -48,24 +48,36 @@
         margin-top:12px;color:#a77a84;font-family:'Playfair Display',Georgia,serif;
         font-size:15px;font-style:italic;font-weight:600;letter-spacing:.18em;
       }
-      .cramchy-boot-dots{display:flex;justify-content:center;gap:10px;margin:42px 0 18px;}
-      .cramchy-boot-dots span{
-        width:10px;height:10px;border-radius:50%;background:#e788a2;
-        box-shadow:0 5px 12px rgba(181,83,111,.13);animation:cramchyBootDot 1.05s ease-in-out infinite;
+      .cramchy-boot-progress{
+        width:min(320px,78%);height:9px;margin:42px auto 18px;padding:2px;
+        border-radius:999px;background:rgba(231,174,190,.28);
+        box-shadow:inset 0 1px 3px rgba(135,75,92,.08),0 5px 15px rgba(181,83,111,.07);
+        overflow:hidden;
       }
-      .cramchy-boot-dots span:nth-child(2){animation-delay:.15s}.cramchy-boot-dots span:nth-child(3){animation-delay:.3s}
+      .cramchy-boot-progress span{
+        display:block;width:100%;height:100%;border-radius:inherit;
+        background:linear-gradient(90deg,#e788a2,#f4adc0,#d96f8d);
+        transform:scaleX(.03);transform-origin:left center;
+        animation:cramchyBootFill 1.75s cubic-bezier(.22,.75,.22,1) infinite;
+        box-shadow:0 0 12px rgba(217,111,141,.18);
+      }
       .cramchy-boot-copy{
         color:#a87280;font-family:'Nunito',system-ui,sans-serif;font-size:12px;font-weight:800;
         letter-spacing:.16em;text-transform:lowercase;
       }
-      @keyframes cramchyBootDot{0%,100%{opacity:.28;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
+      @keyframes cramchyBootFill{
+        0%{transform:scaleX(.03);opacity:.72}
+        72%{transform:scaleX(.88);opacity:1}
+        92%{transform:scaleX(1);opacity:1}
+        100%{transform:scaleX(1);opacity:0}
+      }
       @media(max-width:600px){
         .cramchy-boot-shell{width:min(92vw,520px);padding:38px 22px 36px;border-radius:30px}
         .cramchy-boot-wordmark{font-size:clamp(54px,18vw,76px)}
-        .cramchy-boot-sub{font-size:13px}.cramchy-boot-dots{margin-top:34px}
+        .cramchy-boot-sub{font-size:13px}.cramchy-boot-progress{margin-top:34px;width:min(280px,82%)}
       }
       @media(prefers-reduced-motion:reduce){
-        #cramchyBootSplash{transition:none}.cramchy-boot-dots span{animation:none;opacity:.75}
+        #cramchyBootSplash{transition:none}.cramchy-boot-progress span{animation:none;transform:scaleX(.72);opacity:.85}
       }
     `;
     document.head.appendChild(style);
@@ -78,7 +90,7 @@
       <div class="cramchy-boot-shell">
         <div class="cramchy-boot-wordmark">cramchy.</div>
         <div class="cramchy-boot-sub">study companion</div>
-        <div class="cramchy-boot-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="cramchy-boot-progress" aria-hidden="true"><span></span></div>
         <div class="cramchy-boot-copy">opening your study space...</div>
       </div>`;
     document.body.appendChild(splash);
