@@ -1,0 +1,243 @@
+/* Typography polish v17 — refined: playful page headers, clean cards. No font files, no layout or copy changes. */
+:root{
+  --cramchy-readable:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --cramchy-display:'DynaPuff','Plus Jakarta Sans',cursive;
+}
+
+body,button,input,select,textarea{
+  font-family:var(--cramchy-readable)!important;
+}
+
+/* Big Cramchy moments: hero + main page headers only. */
+#view-dashboard .cramchy-home-copy.planner-hero-copy h2,
+#view-dashboard .cramchy-home-header .big-greeting,
+#view-dashboard .hero h1,
+#view-tasks > h2,
+#view-grades > .page-head-row h2,
+#view-subjects .regular-courses-panel > .page-head-row h2,
+#view-subjects .legacy-subjects-panel > h2,
+#view-schedule .page-head-row h2,
+#view-timer > h2,
+#view-countdown > h2,
+#view-matcha > h2,
+#view-exam #examChooser > h2,
+#view-more > h2,
+body.exam-mode-active #examHeroTitle,
+body.exam-mode-active #examScheduleHeading,
+body.exam-mode-active #view-schedule .page-head-row h2,
+body.exam-mode-active #view-subjects .legacy-subjects-panel > h2,
+body.exam-mode-active #view-timer > h2,
+body.exam-mode-active #view-countdown > h2,
+body.exam-mode-active #view-matcha > h2{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.035em!important;
+}
+
+/* Exam chooser cards can stay cute too, because they function like large headers. */
+#view-exam .exam-choice h3{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.03em!important;
+}
+
+/* Section/card headings: clean, smooth, not spiky or overly chunky. */
+#view-dashboard .home-command-heading h3,
+#view-dashboard .home-courses-section .home-command-heading h3,
+#view-dashboard .section-title,
+#view-dashboard .home-recommend-card .copy h3,
+#view-dashboard .home-exam-banner-compact h3,
+#view-dashboard .closest-exam h3,
+#view-dashboard .exam-card h3,
+#view-dashboard .course-card h3,
+#view-dashboard .task-card h3,
+#view-dashboard .card h3,
+#view-dashboard .card h4,
+#view-planner .planner-panel h3,
+#view-planner .planner-head h2,
+#view-planner .planner-today h3,
+#view-planner .planner-tasks h3,
+#view-grades h3,
+#view-tasks .card h3,
+#view-subjects .card h3,
+#view-timer .card h3,
+#view-countdown .card h3,
+#view-more .card h3,
+body.exam-mode-active .card h3,
+body.exam-mode-active .section-title,
+body.exam-mode-active .subject-card h3,
+body.exam-mode-active .exam-card h3{
+  font-family:var(--cramchy-readable)!important;
+  font-weight:700!important;
+  letter-spacing:-.018em!important;
+}
+
+/* Dashboard cards and course names should read soft, not loud. */
+#view-dashboard .home-courses-section .home-course h4,
+#view-dashboard .home-upcoming-content .upcoming-item strong,
+#view-dashboard .home-next-exam strong,
+#view-dashboard #dailyCourseStrip strong,
+#view-dashboard #dailyCourseStrip h4,
+#view-dashboard .course-card strong,
+#view-dashboard .course-card h4,
+#view-dashboard .task-card strong,
+#view-dashboard .exam-entry-card strong,
+#view-dashboard .smart-study-card strong,
+#view-dashboard .smart-study-card h3{
+  font-family:var(--cramchy-readable)!important;
+  font-weight:700!important;
+  letter-spacing:-.012em!important;
+}
+
+/* Numbers/times: clean, tabular, and smoother than the chunky display font. */
+#view-dashboard .home-status-card .value,
+#view-dashboard .daily-stat .value,
+#view-dashboard #dailyNextClass,
+#view-dashboard #dailyTasksLeft,
+#view-dashboard #dailyExamDays,
+#view-dashboard #dailyStudyTime,
+#view-dashboard #dailyCountdownBox .countdown-big,
+#view-dashboard #dailyCountdownBox .countdown-precise,
+#view-dashboard .home-next-exam .countdown-big,
+#view-dashboard .home-next-exam .countdown-precise,
+#view-planner .planner-days-left b,
+#view-planner .planner-date-num,
+#view-planner .planner-next-date b,
+body.exam-mode-active .countdown-big,
+body.exam-mode-active .countdown-precise,
+body.exam-mode-active .stat-card .num,
+body.exam-mode-active .daily-stat .value,
+body.exam-mode-active [class*="countdown"]{
+  font-family:var(--cramchy-readable)!important;
+  font-weight:800!important;
+  letter-spacing:-.025em!important;
+  font-variant-numeric:tabular-nums!important;
+  font-feature-settings:'tnum' 1,'lnum' 1!important;
+}
+
+/* Empty states stay cute but not cartoon-heavy. */
+#view-dashboard .empty-state,
+#view-dashboard .empty,
+#view-dashboard [class*="empty"],
+#dailyTaskList:empty:before,
+#dailyUpcomingList:empty:before,
+#view-planner .planner-empty,
+body.exam-mode-active .empty-state,
+body.exam-mode-active .empty{
+  font-family:var(--cramchy-readable)!important;
+  font-weight:700!important;
+  letter-spacing:-.012em!important;
+}
+
+/* Buttons and meta labels stay crisp and readable. */
+.navbtn,
+.btn,
+.quick-add-main,
+.cloud-btn,
+.save-indicator,
+.home-heading-note,
+#view-dashboard p,
+#view-dashboard span,
+#view-dashboard small,
+#view-dashboard .label,
+#view-dashboard .daily-meta,
+#view-dashboard .home-course p,
+#view-dashboard .upcoming-item span,
+#view-dashboard .home-recommend-card .copy p,
+#view-planner p,
+#view-planner span,
+#view-planner small,
+body.exam-mode-active p,
+body.exam-mode-active span,
+body.exam-mode-active small,
+body.exam-mode-active label,
+body.exam-mode-active select{
+  font-family:var(--cramchy-readable)!important;
+}
+
+/* Avoid the whole app feeling over-bold. */
+#view-dashboard .home-command-heading h3,
+#view-dashboard .home-courses-section .home-command-heading h3,
+#view-dashboard .home-recommend-card .copy h3,
+#view-dashboard .home-courses-section .home-course h4{
+  font-weight:700!important;
+}
+
+#view-dashboard .home-status-card .value,
+#view-dashboard #dailyCountdownBox .countdown-big,
+#view-dashboard #dailyCountdownBox .countdown-precise{
+  font-weight:800!important;
+}
+
+/* Planner requested accents: these are page/panel anchors, so they can be chunky. */
+#view-planner .planner-head h2,
+#view-planner #plannerNextPanel > h3,
+#view-planner .planner-rec > h3{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.032em!important;
+  color:var(--planner-deep,#5a2432)!important;
+}
+#view-planner .planner-head h2{
+  font-size:clamp(1.65rem,3vw,2.25rem)!important;
+}
+#view-planner #plannerNextPanel > h3,
+#view-planner .planner-rec > h3{
+  font-size:1.18rem!important;
+}
+
+/* Exam dashboard spacing: give the big hero box breathing room above the mini stat boxes. */
+body.exam-mode-active #view-dashboard .legacy-dashboard > .hero{
+  margin-bottom:18px!important;
+}
+body.exam-mode-active #view-dashboard .legacy-dashboard > .grid.grid-4{
+  margin-top:18px!important;
+}
+
+/* Exam section headings should feel cute, but use colored dots instead of star glyph bullets. */
+body.exam-mode-active #view-dashboard .legacy-dashboard .section-title,
+body.exam-mode-active #view-schedule .section-title,
+body.exam-mode-active #view-subjects .legacy-subjects-panel .section-title,
+body.exam-mode-active #view-timer .section-title,
+body.exam-mode-active #view-countdown .section-title,
+body.exam-mode-active #view-matcha .section-title{
+  font-family:var(--cramchy-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.03em!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+body.exam-mode-active .section-title.cramchy-dot-heading::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:var(--red-berry,#e85d75);
+  box-shadow:0 0 0 5px color-mix(in srgb,var(--red-berry,#e85d75) 14%,transparent);
+  flex:0 0 auto;
+}
+
+/* Mobile first-open/profile popups should keep equal left and right breathing room. */
+@media(max-width:640px){
+  .modal-backdrop,
+  .profile-backdrop,
+  .welcome-backdrop,
+  .onboarding-backdrop,
+  .auth-backdrop{
+    padding-left:16px!important;
+    padding-right:16px!important;
+    box-sizing:border-box!important;
+  }
+  .modal-content,
+  .profile-modal,
+  .welcome-modal,
+  .onboarding-modal,
+  .auth-modal,
+  [role="dialog"]:not(.planner-modal){
+    width:calc(100vw - 32px)!important;
+    max-width:calc(100vw - 32px)!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+}
