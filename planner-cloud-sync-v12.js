@@ -141,7 +141,9 @@
   }
 
   async function refreshIfNeeded(){
-    if(document.visibilityState!=='visible'||!currentUser) return;
+    if(document.visibilityState!=='visible') return;
+    const user=await getSignedInUser();
+    if(!user) return;
     await pullCloud({reloadIfChanged:true});
   }
 
