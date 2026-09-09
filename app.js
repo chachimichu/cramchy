@@ -1,6 +1,6 @@
 (function(){
-  const VERSION='2026-09-09-cache-sync-10';
-  const LEGACY_BASE_URL='app-base.js?v=2026-09-09-logo-raster-1';
+  const VERSION='2026-09-09-boot-resilience-11';
+  const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function refreshStyles(){
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
@@ -39,7 +39,7 @@
       console.warn('Cramchy runtime cache cleanup skipped.',e);
     }
     try{
-      const response=await fetch(LEGACY_BASE_URL,{cache:'reload'});
+      const response=await fetch(LEGACY_BASE_URL,{cache:'no-store'});
       if(!response.ok) throw new Error('Base refresh returned '+response.status);
     }catch(e){
       console.warn('Cramchy base refresh fell back to normal loading.',e);
@@ -48,7 +48,9 @@
 
   refreshStyles();
   forceFreshBaseBundle()
+    .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
+    .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
