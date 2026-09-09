@@ -9,6 +9,8 @@
   let saveTimer=null;
   let suppressPlannerWrite=false;
   let plannerLoaded=false;
+  let realtimeChannel=null;
+  let pendingRealtimeRefresh=false;
 
   function normalizeEvents(value){
     if(!Array.isArray(value)) return [];
@@ -49,6 +51,26 @@
     return normalized;
   }
 
+  function plannerIsVisible(){
+    return document.body?.classList.contains('planner-mode-active') || document.querySelector('#view-planner.active');
+  }
+
+  function applyRemoteEvents(events){
+    const normalized=normalizeEvents(events);
+    if(JSON.stringify(readLocalEvents())===JSON.stringify(normalized)) return false;
+
+    writeLocalEvents(normalized);
+    pendingRealtimeRefresh=true;
+    window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-loaded',{
+      detail:{count:normalized.length,realtime:true}
+    }));
+
+    if(plannerLoaded&&plannerIsVisible()){
+      setTimeout(()=>location.reload(),40);
+    }
+    return true;
+  }
+
   async function getSignedInUser(){
     if(!client) return null;
     const {data,error}=await client.auth.getSession();
@@ -82,7 +104,7 @@
   function queuePushFromLocal(){
     if(suppressPlannerWrite) return;
     clearTimeout(saveTimer);
-    saveTimer=setTimeout(()=>pushEvents(readLocalEvents()),450);
+    saveTimer=setTimeout(()=>pushEvents(readLocalEvents()),300);
   }
 
   function installStorageBridge(){
@@ -98,7 +120,7 @@
     };
   }
 
-  async function pullCloud({reloadIfChanged=false}={}){
+  async function pullCloud(){
     if(!client) return [];
     const user=currentUser||await getSignedInUser();
     if(!user) return readLocalEvents();
@@ -124,15 +146,7 @@
         if(insertError) throw insertError;
       }
 
-      const cloudSnapshot=JSON.stringify(cloudEvents);
-      const localSnapshot=JSON.stringify(readLocalEvents());
-      if(localSnapshot!==cloudSnapshot){
-        writeLocalEvents(cloudEvents);
-        window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-loaded',{detail:{count:cloudEvents.length}}));
-        if(reloadIfChanged&&plannerLoaded){
-          location.reload();
-        }
-      }
+      applyRemoteEvents(cloudEvents);
       return cloudEvents;
     }catch(error){
       console.error('Planner cloud load failed.',error);
@@ -140,15 +154,63 @@
     }
   }
 
+  function unsubscribeRealtime(){
+    if(!client||!realtimeChannel) return;
+    client.removeChannel(realtimeChannel);
+    realtimeChannel=null;
+  }
+
+  function subscribeRealtime(user){
+    unsubscribeRealtime();
+    if(!client||!user) return;
+
+    realtimeChannel=client
+      .channel('cramchy-planner-'+user.id)
+      .on('postgres_changes',{
+        event:'*',
+        schema:'public',
+        table:'planner_state',
+        filter:'user_id=eq.'+user.id
+      },payload=>{
+        if(payload.eventType==='DELETE'){
+          applyRemoteEvents([]);
+          return;
+        }
+        if(payload.new&&Array.isArray(payload.new.events)){
+          applyRemoteEvents(payload.new.events);
+        }
+      })
+      .subscribe(status=>{
+        window.dispatchEvent(new CustomEvent('cramchy:planner-realtime-status',{detail:{status}}));
+        if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
+          console.warn('Planner realtime channel status:',status);
+        }
+      });
+  }
+
   async function refreshIfNeeded(){
     if(document.visibilityState!=='visible') return;
     const user=await getSignedInUser();
     if(!user) return;
-    await pullCloud({reloadIfChanged:true});
+    if(!realtimeChannel) subscribeRealtime(user);
+    await pullCloud();
+  }
+
+  function installPlannerNavRefresh(){
+    document.addEventListener('click',event=>{
+      if(!pendingRealtimeRefresh) return;
+      const plannerBtn=event.target.closest('.topnav .navbtn[data-tab="planner"]');
+      if(!plannerBtn) return;
+      pendingRealtimeRefresh=false;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      location.reload();
+    },true);
   }
 
   async function boot(){
     installStorageBridge();
+    installPlannerNavRefresh();
     if(!window.supabase){
       console.warn('Planner cloud sync unavailable: Supabase client missing.');
       return;
@@ -159,19 +221,34 @@
     });
 
     await getSignedInUser();
-    if(currentUser) await pullCloud();
+    if(currentUser){
+      await pullCloud();
+      subscribeRealtime(currentUser);
+    }
 
     client.auth.onAuthStateChange((event,session)=>{
       const nextUser=session?.user||null;
       const changedUser=(nextUser?.id||null)!==(currentUser?.id||null);
       currentUser=nextUser;
-      if(nextUser&&changedUser){
-        setTimeout(()=>pullCloud({reloadIfChanged:true}),0);
+
+      if(!nextUser){
+        unsubscribeRealtime();
+        return;
+      }
+
+      if(changedUser){
+        setTimeout(async()=>{
+          await pullCloud();
+          subscribeRealtime(nextUser);
+        },0);
+      }else if(!realtimeChannel){
+        subscribeRealtime(nextUser);
       }
     });
 
     document.addEventListener('visibilitychange',refreshIfNeeded);
     window.addEventListener('focus',refreshIfNeeded);
+    window.addEventListener('online',refreshIfNeeded);
   }
 
   window.__cramchyPlannerCloudMarkLoaded=function(){plannerLoaded=true;};
