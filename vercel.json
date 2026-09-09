@@ -33,6 +33,12 @@
       ]
     },
     {
+      "source": "/boot-resilience-v11.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
       "source": "/planner-root-compat-v4.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
