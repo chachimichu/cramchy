@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-planner-cloud-12';
+  const VERSION='2026-09-09-planner-realtime-13';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function refreshStyles(){
