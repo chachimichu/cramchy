@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cramchy loading preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#6f3d48;--rose:#d96f8c;--pink:#f6a9bd;--line:#f4cad5;--cream:#fff9f4;}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+body{min-height:100vh;display:grid;place-items:center;overflow:hidden;background:
+radial-gradient(circle at 14% 18%,rgba(255,255,255,.96) 0 7%,transparent 32%),
+radial-gradient(circle at 84% 22%,rgba(255,217,226,.92),transparent 34%),
+radial-gradient(circle at 48% 92%,rgba(255,230,211,.88),transparent 38%),
+linear-gradient(135deg,#fbd6df 0%,#fff5ef 44%,#f7cdd8 100%)}
+body:before{content:"";position:fixed;inset:-12%;background:
+radial-gradient(circle at 18% 66%,rgba(172,138,114,.16) 0 4%,transparent 15%),
+radial-gradient(circle at 82% 68%,rgba(164,109,125,.12) 0 5%,transparent 16%),
+radial-gradient(circle at 24% 24%,rgba(255,255,255,.58) 0 2%,transparent 11%);filter:blur(22px);pointer-events:none}
+.preview-shell{width:min(720px,calc(100vw - 28px));position:relative;z-index:1;display:grid;place-items:center}
+.card{position:relative;width:min(620px,100%);min-height:690px;border-radius:42px;padding:36px 36px 28px;background:linear-gradient(180deg,rgba(255,251,247,.97),rgba(fff,247,248,.95));border:2px solid rgba(255,255,255,.9);box-shadow:0 34px 90px rgba(123,66,82,.22),0 8px 28px rgba(123,66,82,.10);overflow:hidden;isolation:isolate}
+.card:before{content:"";position:absolute;inset:0;z-index:-2;background:
+radial-gradient(circle at 12% 14%,rgba(244,160,182,.16),transparent 23%),
+radial-gradient(circle at 88% 18%,rgba(247,191,151,.17),transparent 24%),
+linear-gradient(180deg,#fffaf6,#fff6f8)}
+.card:after{content:"";position:absolute;inset:0;z-index:-1;opacity:.55;background-image:radial-gradient(rgba(208,104,134,.18) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(to bottom,black,transparent 54%)}
+.bow{position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:31px;filter:drop-shadow(0 5px 8px rgba(154,75,98,.14))}
+.brand{display:block;width:min(330px,72%);height:auto;margin:38px auto 3px;filter:drop-shadow(0 10px 16px rgba(151,72,96,.13))}
+.sub{text-align:center;font-family:'DM Serif Display',serif;font-style:italic;font-size:17px;letter-spacing:.12em;color:#9b6d76;margin-bottom:16px}
+.scene{position:relative;height:330px;margin:2px auto 18px;border-radius:30px;background:
+linear-gradient(180deg,rgba(255,226,232,.66),rgba(255,248,241,.92)),
+radial-gradient(circle at 50% 5%,rgba(255,255,255,.9),transparent 45%);border:1px solid rgba(242,199,210,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.9);overflow:hidden}
+.scene:before,.scene:after{position:absolute;color:#dd7893;font-size:24px;opacity:.78}.scene:before{content:'✦  ♡';left:26px;top:26px;transform:rotate(-7deg)}.scene:after{content:'✧  ♡';right:28px;top:34px;transform:rotate(8deg)}
+.hanabi{position:absolute;left:50%;bottom:-10px;transform:translateX(-54%);width:min(390px,84%);height:auto;filter:drop-shadow(0 18px 22px rgba(108,63,73,.15))}
+.kenken{position:absolute;right:26px;bottom:22px;width:118px;height:auto;transform:rotate(5deg);filter:drop-shadow(0 13px 16px rgba(108,63,73,.13))}
+.mini-note{position:absolute;left:24px;bottom:30px;padding:11px 14px;border-radius:15px;background:rgba(255,255,255,.8);border:1px solid rgba(242,199,210,.85);box-shadow:0 10px 25px rgba(121,72,86,.08);font-size:13px;font-weight:800;color:#a06c79;transform:rotate(-4deg)}
+.progress-wrap{padding:2px 6px 0}.progress{height:34px;border-radius:999px;padding:5px;background:#fff;border:1.5px solid var(--line);box-shadow:0 8px 18px rgba(154,76,98,.08)}
+.track{height:100%;width:72%;border-radius:999px;background:linear-gradient(90deg,#eb8da8,#f6b3c4);display:flex;align-items:center;justify-content:space-evenly;color:white;font-size:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.46);animation:breathe 1.8s ease-in-out infinite alternate}
+@keyframes breathe{from{filter:saturate(.94);transform:scaleX(.985);transform-origin:left}to{filter:saturate(1.08);transform:scaleX(1);transform-origin:left}}
+.loading-copy{text-align:center;margin-top:22px}.loading-copy h1{font-family:'DM Serif Display',serif;font-size:clamp(30px,5vw,42px);font-weight:400;line-height:1.03;margin:0;color:#70434d;letter-spacing:-.02em}.loading-copy p{margin:12px 0 0;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.28em;color:#b7828e}
+.dots{display:inline-flex;gap:6px;margin-left:5px;vertical-align:middle}.dots i{width:5px;height:5px;border-radius:50%;background:#d97791;display:block;animation:dot 1s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.16s}.dots i:nth-child(3){animation-delay:.32s}@keyframes dot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.preview-tag{margin-top:15px;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.82);backdrop-filter:blur(10px);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#875965;box-shadow:0 8px 20px rgba(111,61,72,.08)}
+@media(max-width:600px){body{overflow:auto;padding:14px}.card{min-height:auto;padding:24px 20px 24px;border-radius:30px}.brand{margin-top:34px}.scene{height:270px}.hanabi{width:82%}.kenken{width:92px;right:12px}.mini-note{left:14px;bottom:18px;font-size:11px}.loading-copy h1{font-size:30px}}
+</style>
+</head>
+<body>
+<main class="preview-shell">
+  <section class="card" aria-label="Cramchy loading splash preview">
+    <div class="bow" aria-hidden="true">🎀</div>
+    <img class="brand" src="assets/cramchy-wordmark.png" alt="cramchy.">
+    <div class="sub">study companion</div>
+    <div class="scene">
+      <span class="mini-note">tiny reset before the chaos ♡</span>
+      <img class="hanabi" src="assets/hanabi.png" alt="Hanabi">
+      <img class="kenken" src="assets/kenken.png" alt="Kenken">
+    </div>
+    <div class="progress-wrap">
+      <div class="progress"><div class="track"><span>♡</span><span>🎀</span><span>✦</span><span>🐾</span><span>♡</span><span>✧</span></div></div>
+    </div>
+    <div class="loading-copy">
+      <h1>opening your study space...</h1>
+      <p>please wait <span class="dots"><i></i><i></i><i></i></span></p>
+    </div>
+  </section>
+  <div class="preview-tag">loading screen preview · main untouched</div>
+</main>
+</body>
+</html>
