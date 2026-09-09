@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-exam-select-colors-17';
+  const VERSION='2026-09-09-typography-polish-21';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -133,7 +133,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
