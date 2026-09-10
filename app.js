@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-grades-nu-polish-33';
+  const VERSION='2026-09-10-grades-nu-clean-34';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
