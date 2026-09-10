@@ -12,7 +12,7 @@
       .replace(/&/g,'&amp;')
       .replace(/</g,'&lt;')
       .replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;')
+      .replace(/\"/g,'&quot;')
       .replace(/'/g,'&#039;');
   }
   function pad(num){return String(num).padStart(2,'0');}
@@ -89,27 +89,35 @@
       .slice(0,MAX_ITEMS)
       .map(event=>({...event,homeWhen:whenLabel(event,today),homeDateLine:dateLabel(event,today)}));
   }
-  function ensureSection(){
+  function findTaskCard(){
     const tasks=document.getElementById('dailyTaskList');
-    if(!tasks||!tasks.parentElement) return null;
+    if(!tasks) return null;
+    return tasks.closest('.card')||tasks.closest('.task-card')||tasks.parentElement;
+  }
+  function ensureSection(){
+    const taskCard=findTaskCard();
+    if(!taskCard||!taskCard.parentElement) return null;
     let section=document.getElementById('homePlannerReminders');
-    if(section) return section;
-    section=document.createElement('div');
-    section.id='homePlannerReminders';
-    section.className='home-planner-reminders';
-    section.innerHTML=`
-      <div class="home-planner-reminders-head">
-        <div class="home-planner-reminders-title"><span class="dot" aria-hidden="true"></span><h3>planner reminders</h3></div>
-        <span class="home-planner-reminders-chip">next 7 days</span>
-      </div>
-      <div class="home-planner-reminders-list" id="homePlannerRemindersList"></div>
-      <button class="home-planner-open" type="button" id="homePlannerOpenBtn">open planner</button>`;
-    tasks.insertAdjacentElement('afterend',section);
-    section.querySelector('#homePlannerOpenBtn')?.addEventListener('click',()=>{
-      const plannerBtn=document.querySelector('.topnav .navbtn[data-tab="planner"]');
-      if(plannerBtn){plannerBtn.click();return;}
-      document.querySelector('#view-planner')?.scrollIntoView({behavior:'smooth',block:'start'});
-    });
+    if(!section){
+      section=document.createElement('section');
+      section.id='homePlannerReminders';
+      section.className='home-command-panel home-planner-reminders';
+      section.innerHTML=`
+        <div class="home-planner-reminders-head">
+          <div class="home-planner-reminders-title"><span class="dot" aria-hidden="true"></span><h3>planner reminders</h3></div>
+          <span class="home-planner-reminders-chip">next 7 days</span>
+        </div>
+        <div class="home-planner-reminders-list" id="homePlannerRemindersList"></div>
+        <button class="home-planner-open" type="button" id="homePlannerOpenBtn">open planner</button>`;
+      section.querySelector('#homePlannerOpenBtn')?.addEventListener('click',()=>{
+        const plannerBtn=document.querySelector('.topnav .navbtn[data-tab="planner"]');
+        if(plannerBtn){plannerBtn.click();return;}
+        document.querySelector('#view-planner')?.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    }
+    if(section.previousElementSibling!==taskCard){
+      taskCard.insertAdjacentElement('afterend',section);
+    }
     return section;
   }
   function render(){
