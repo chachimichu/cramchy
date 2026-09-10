@@ -94,14 +94,27 @@
     if(!tasks) return null;
     return tasks.closest('.card')||tasks.closest('.task-card')||tasks.parentElement;
   }
+  function ensureLeftStack(){
+    const grid=document.querySelector('#view-dashboard .home-command-grid');
+    const todayPanel=document.querySelector('#view-dashboard .home-today-panel');
+    if(!grid||!todayPanel) return null;
+
+    if(todayPanel.parentElement?.classList.contains('home-command-left')){
+      return todayPanel.parentElement;
+    }
+
+    const stack=document.createElement('div');
+    stack.className='home-command-left';
+    grid.insertBefore(stack,todayPanel);
+    stack.appendChild(todayPanel);
+    return stack;
+  }
   function ensureSection(){
-    const taskCard=findTaskCard();
-    if(!taskCard||!taskCard.parentElement) return null;
     let section=document.getElementById('homePlannerReminders');
     if(!section){
       section=document.createElement('section');
       section.id='homePlannerReminders';
-      section.className='home-command-panel home-planner-reminders';
+      section.className='home-command-panel home-theme-surface home-planner-reminders';
       section.innerHTML=`
         <div class="home-planner-reminders-head">
           <div class="home-planner-reminders-title"><span class="dot" aria-hidden="true"></span><h3>planner reminders</h3></div>
@@ -114,11 +127,24 @@
         if(plannerBtn){plannerBtn.click();return;}
         document.querySelector('#view-planner')?.scrollIntoView({behavior:'smooth',block:'start'});
       });
+    }else{
+      section.classList.add('home-command-panel','home-theme-surface','home-planner-reminders');
     }
-    if(section.previousElementSibling!==taskCard){
+
+    const leftStack=ensureLeftStack();
+    if(leftStack){
+      const todayPanel=leftStack.querySelector('.home-today-panel');
+      if(section.parentElement!==leftStack || section.previousElementSibling!==todayPanel){
+        todayPanel?.insertAdjacentElement('afterend',section);
+      }
+      return section;
+    }
+
+    const taskCard=findTaskCard();
+    if(taskCard?.parentElement && section.previousElementSibling!==taskCard){
       taskCard.insertAdjacentElement('afterend',section);
     }
-    return section;
+    return section.parentElement?section:null;
   }
   function render(){
     const section=ensureSection();
@@ -141,7 +167,7 @@
           <strong title="${escapeHtml(event.title)}">${escapeHtml(event.title)}</strong>
           <span title="${escapeHtml(event.homeDateLine)}">${escapeHtml(event.homeDateLine)}</span>
         </div>
-        <span class="home-planner-reminder-tag">${escapeHtml(TYPE_LABEL[event.type]||event.type)}</span>
+        <span class="home-planner-reminder-tag ${event.type}">${escapeHtml(TYPE_LABEL[event.type]||event.type)}</span>
       </div>`).join('');
   }
   function scheduleRender(){
@@ -187,7 +213,7 @@
     const waitForHome=()=>{
       tries++;
       render();
-      if(document.getElementById('homePlannerReminders')||tries>=15) return;
+      if(document.getElementById('homePlannerReminders')||tries>=18) return;
       setTimeout(waitForHome,150);
     };
     waitForHome();
