@@ -1,15 +1,38 @@
-/* Home Planner reminders preview v23 — display-only synced Planner events on Home. */
+/* Home Planner reminders preview v23 — separate display-only synced Planner card on Home. */
 .home-planner-reminders{
-  margin-top:16px;
-  padding-top:14px;
-  border-top:1px dashed rgba(239,137,164,.36);
+  margin-top:14px;
+  padding:17px 18px 18px!important;
+  border:1px solid color-mix(in srgb,var(--home-personal,#e9a55d) 24%,transparent)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 92% 12%,color-mix(in srgb,var(--home-personal,#e9a55d) 18%,transparent) 0 18%,transparent 19%),
+    linear-gradient(135deg,color-mix(in srgb,var(--home-personal-soft,#fff2df) 58%,var(--app-bg-2,#fffaf3)),var(--app-bg-2,#fffaf3))!important;
+  box-shadow:0 12px 28px rgba(86,57,68,.07)!important;
+  overflow:hidden;
+}
+body[data-theme="dark-study"] .home-planner-reminders{
+  background:linear-gradient(135deg,var(--app-bg-2),var(--app-bg-3))!important;
+  border-color:var(--pink-soft)!important;
+}
+.home-planner-reminders:after{
+  content:"";
+  position:absolute;
+  right:-30px;
+  bottom:-42px;
+  width:118px;
+  height:118px;
+  border-radius:42% 58% 47% 53%/47% 43% 57% 53%;
+  background:color-mix(in srgb,var(--home-personal,#e9a55d) 14%,transparent);
+  pointer-events:none;
 }
 .home-planner-reminders-head{
+  position:relative;
+  z-index:1;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 .home-planner-reminders-title{
   display:flex;
@@ -21,32 +44,34 @@
   width:10px;
   height:10px;
   border-radius:999px;
-  background:#ef89a4;
-  box-shadow:0 0 0 5px rgba(239,137,164,.13);
+  background:var(--home-personal,#e9a55d);
+  box-shadow:0 0 0 5px color-mix(in srgb,var(--home-personal,#e9a55d) 14%,transparent);
   flex:0 0 auto;
 }
 .home-planner-reminders-title h3{
   margin:0;
-  color:var(--red-deep,#c8465e);
+  color:var(--text-main,#5a3a3f)!important;
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
-  font-size:1.08rem;
+  font-size:1.1rem;
   font-weight:700;
   letter-spacing:-.03em;
   line-height:1.1;
 }
 .home-planner-reminders-chip{
   flex:0 0 auto;
-  border:1px solid rgba(239,137,164,.26);
+  border:1px solid color-mix(in srgb,var(--home-personal,#e9a55d) 24%,transparent);
   border-radius:999px;
-  background:#fff7f9;
-  color:#9a5b6b;
+  background:color-mix(in srgb,var(--app-bg-2,#fffaf3) 82%,white);
+  color:var(--text-soft,#8a6268);
   font-size:.68rem;
-  font-weight:800;
+  font-weight:850;
   padding:5px 9px;
   letter-spacing:.02em;
   white-space:nowrap;
 }
 .home-planner-reminders-list{
+  position:relative;
+  z-index:1;
   display:flex;
   flex-direction:column;
   gap:8px;
@@ -58,15 +83,15 @@
   align-items:center;
   width:100%;
   padding:10px 11px;
-  border:1px solid rgba(245,211,220,.96);
+  border:1px solid color-mix(in srgb,var(--home-personal,#e9a55d) 16%,transparent);
   border-radius:17px;
-  background:linear-gradient(135deg,#fffafa,#fff6f8);
-  box-shadow:0 7px 16px rgba(164,78,100,.06);
+  background:color-mix(in srgb,var(--app-bg-2,#fffaf3) 86%,white);
+  box-shadow:0 7px 16px rgba(164,78,100,.05);
   text-align:left;
 }
 .home-planner-reminder.today{
-  background:linear-gradient(135deg,#fff0f4,#fff8f1);
-  border-color:rgba(239,137,164,.48);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--home-personal-soft,#fff2df) 74%,var(--app-bg-2,#fffaf3)),var(--app-bg-2,#fffaf3));
+  border-color:color-mix(in srgb,var(--home-personal,#e9a55d) 34%,transparent);
 }
 .home-planner-reminder-dot{
   width:11px;
@@ -86,7 +111,7 @@
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
-  color:#5a2432;
+  color:var(--text-main,#5a3a3f);
   font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
   font-size:.88rem;
   font-weight:800;
@@ -97,7 +122,7 @@
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
-  color:#9b737c;
+  color:var(--text-soft,#8a6268);
   font-size:.73rem;
   font-weight:750;
   margin-top:2px;
@@ -110,23 +135,25 @@
   text-overflow:ellipsis;
   white-space:nowrap;
   border-radius:999px;
-  background:#fff;
-  border:1px solid rgba(245,211,220,.96);
-  color:#a05f70;
+  background:color-mix(in srgb,var(--app-bg-2,#fffaf3) 86%,white);
+  border:1px solid color-mix(in srgb,var(--home-personal,#e9a55d) 17%,transparent);
+  color:var(--text-soft,#8a6268);
   font-size:.63rem;
   font-weight:850;
   padding:5px 8px;
   text-transform:lowercase;
 }
 .home-planner-reminders-empty{
+  position:relative;
+  z-index:1;
   display:flex;
   gap:10px;
   align-items:flex-start;
   padding:12px;
-  border:1px dashed rgba(239,137,164,.34);
+  border:1px dashed color-mix(in srgb,var(--home-personal,#e9a55d) 36%,transparent);
   border-radius:17px;
-  background:#fff8fa;
-  color:#8f6872;
+  background:color-mix(in srgb,var(--app-bg-2,#fffaf3) 78%,white);
+  color:var(--text-soft,#8a6268);
 }
 .home-planner-reminders-empty .spark{
   flex:0 0 auto;
@@ -135,41 +162,44 @@
   border-radius:999px;
   display:grid;
   place-items:center;
-  background:#ffe5ec;
-  color:#c8465e;
+  background:color-mix(in srgb,var(--home-personal,#e9a55d) 18%,white);
+  color:var(--text-main,#5a3a3f);
   font-size:.85rem;
 }
 .home-planner-reminders-empty strong{
   display:block;
-  color:#6b3948;
+  color:var(--text-main,#5a3a3f);
   font-size:.86rem;
   font-weight:850;
   letter-spacing:-.01em;
 }
 .home-planner-reminders-empty p{
   margin:2px 0 0;
-  color:#9b737c;
+  color:var(--text-soft,#8a6268);
   font-size:.73rem;
   font-weight:750;
   line-height:1.35;
 }
 .home-planner-open{
+  position:relative;
+  z-index:1;
   margin-top:10px;
   width:100%;
   min-height:38px;
-  border:1px solid rgba(239,137,164,.28);
+  border:1px solid color-mix(in srgb,var(--home-personal,#e9a55d) 25%,transparent);
   border-radius:14px;
-  background:#fff;
-  color:#c8465e;
+  background:color-mix(in srgb,var(--app-bg-2,#fffaf3) 86%,white);
+  color:var(--text-main,#5a3a3f);
   font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
   font-size:.78rem;
   font-weight:850;
   cursor:pointer;
 }
-.home-planner-open:hover{background:#fff2f5;}
+.home-planner-open:hover{background:color-mix(in srgb,var(--home-personal-soft,#fff2df) 68%,var(--app-bg-2,#fffaf3));}
 @media(max-width:560px){
+  .home-planner-reminders{padding:16px!important;}
   .home-planner-reminders-head{align-items:flex-start;}
-  .home-planner-reminders-title h3{font-size:1.02rem;}
+  .home-planner-reminders-title h3{font-size:1.03rem;}
   .home-planner-reminder{grid-template-columns:auto minmax(0,1fr);}
   .home-planner-reminder-tag{grid-column:2;justify-self:start;max-width:100%;margin-top:-3px;}
 }
