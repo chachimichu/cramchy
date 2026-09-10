@@ -1,4 +1,4 @@
-/* Exam Subjects v49 — keep topic rows geometrically stable while status/priority changes rerender them. */
+/* Exam Subjects v50 — keep topic rows geometrically and visually stable while status/priority changes rerender them. */
 body.exam-mode-active #view-subjects .topic-row{
   display:grid!important;
   grid-template-columns:minmax(180px,1fr) 142px 112px 72px 78px!important;
@@ -31,6 +31,43 @@ body.exam-mode-active #view-subjects .topic-row .topic-priority{
   inline-size:100%!important;
   min-height:38px!important;
   white-space:nowrap!important;
+  transition:none!important;
+  animation:none!important;
+}
+
+/* The global app select style uses an !important pale background. During a
+   rerender that could briefly paint before the status/priority color. These
+   more-specific rules give every newly-created select its final color on its
+   very first paint instead of white -> color. */
+body.exam-mode-active #view-subjects .topic-row .topic-status.status-notstarted{
+  background:#ffe1e6!important;
+  background-color:#ffe1e6!important;
+  color:var(--red-deep,#c8465e)!important;
+}
+body.exam-mode-active #view-subjects .topic-row .topic-status.status-inprogress{
+  background:#fff3d6!important;
+  background-color:#fff3d6!important;
+  color:#a67c1e!important;
+}
+body.exam-mode-active #view-subjects .topic-row .topic-status.status-done{
+  background:var(--matcha-pale,#e3efdd)!important;
+  background-color:var(--matcha-pale,#e3efdd)!important;
+  color:var(--matcha-dark,#7fa377)!important;
+}
+body.exam-mode-active #view-subjects .topic-row .topic-priority.priority-low{
+  background:#e3efdd!important;
+  background-color:#e3efdd!important;
+  color:var(--matcha-dark,#7fa377)!important;
+}
+body.exam-mode-active #view-subjects .topic-row .topic-priority.priority-medium{
+  background:#fff0dd!important;
+  background-color:#fff0dd!important;
+  color:#a5702a!important;
+}
+body.exam-mode-active #view-subjects .topic-row .topic-priority.priority-high{
+  background:#ffd6df!important;
+  background-color:#ffd6df!important;
+  color:var(--red-deep,#c8465e)!important;
 }
 
 body.exam-mode-active #view-subjects .topic-row button.attach-toggle,
