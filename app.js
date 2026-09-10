@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-ui-copy-32';
+  const VERSION='2026-09-10-grades-nu-polish-33';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -133,7 +133,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','grades-nu-polish-v1.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -185,6 +185,7 @@
     .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>loadScript('mobile-modal-center-v30.js?v='+VERSION))
     .then(()=>loadScript('ui-copy-normalizer-v1.js?v='+VERSION))
+    .then(()=>loadScript('grades-nu-polish-v1.js?v='+VERSION))
     .then(()=>finishBootSplash())
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
