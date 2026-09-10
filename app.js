@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-quick-gwa-43';
+  const VERSION='2026-09-10-planner-mobile-hotfix-44';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -133,7 +133,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -177,6 +177,7 @@
     .then(()=>window.__cramchyPlannerCloudReady||Promise.resolve())
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
+    .then(()=>loadScript('planner-mobile-hotfix-v44.js?v='+VERSION))
     .then(()=>{ window.__cramchyPlannerCloudMarkLoaded?.(); })
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
