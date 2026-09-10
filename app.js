@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-planner-mobile-hotfix-44';
+  const VERSION='2026-09-10-grades-quick-polish-47';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
