@@ -1,5 +1,14 @@
 (function(){
   const MAP=new Map([
+    ['Projected Term GWA','projected term GWA'],
+    ['Projected term GWA','projected term GWA'],
+    ['Term GWA','term GWA'],
+    ['Course Gradebook','course gradebook'],
+    ['Term GWA Planner','term GWA planner'],
+    ['Quick GWA','quick GWA'],
+    ['Final Grade','final grade'],
+    ['GWA Handling','GWA handling'],
+    ['Honor Points','honor points'],
     ['Home','home'],
     ['Planner','planner'],
     ['Courses','courses'],
