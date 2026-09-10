@@ -1,0 +1,175 @@
+/* Home Planner reminders preview v23 — display-only synced Planner events on Home. */
+.home-planner-reminders{
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px dashed rgba(239,137,164,.36);
+}
+.home-planner-reminders-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.home-planner-reminders-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.home-planner-reminders-title .dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:#ef89a4;
+  box-shadow:0 0 0 5px rgba(239,137,164,.13);
+  flex:0 0 auto;
+}
+.home-planner-reminders-title h3{
+  margin:0;
+  color:var(--red-deep,#c8465e);
+  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-size:1.08rem;
+  font-weight:700;
+  letter-spacing:-.03em;
+  line-height:1.1;
+}
+.home-planner-reminders-chip{
+  flex:0 0 auto;
+  border:1px solid rgba(239,137,164,.26);
+  border-radius:999px;
+  background:#fff7f9;
+  color:#9a5b6b;
+  font-size:.68rem;
+  font-weight:800;
+  padding:5px 9px;
+  letter-spacing:.02em;
+  white-space:nowrap;
+}
+.home-planner-reminders-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.home-planner-reminder{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  width:100%;
+  padding:10px 11px;
+  border:1px solid rgba(245,211,220,.96);
+  border-radius:17px;
+  background:linear-gradient(135deg,#fffafa,#fff6f8);
+  box-shadow:0 7px 16px rgba(164,78,100,.06);
+  text-align:left;
+}
+.home-planner-reminder.today{
+  background:linear-gradient(135deg,#fff0f4,#fff8f1);
+  border-color:rgba(239,137,164,.48);
+}
+.home-planner-reminder-dot{
+  width:11px;
+  height:11px;
+  border-radius:999px;
+  background:#ef89a4;
+  box-shadow:0 0 0 4px rgba(239,137,164,.12);
+}
+.home-planner-reminder-dot.class{background:#8baee8;box-shadow:0 0 0 4px rgba(139,174,232,.13);}
+.home-planner-reminder-dot.task{background:#ef89a4;box-shadow:0 0 0 4px rgba(239,137,164,.13);}
+.home-planner-reminder-dot.exam{background:#ee7279;box-shadow:0 0 0 4px rgba(238,114,121,.13);}
+.home-planner-reminder-dot.study{background:#8eb480;box-shadow:0 0 0 4px rgba(142,180,128,.13);}
+.home-planner-reminder-dot.personal{background:#e9a55d;box-shadow:0 0 0 4px rgba(233,165,93,.13);}
+.home-planner-reminder-main{min-width:0;}
+.home-planner-reminder-main strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#5a2432;
+  font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+  font-size:.88rem;
+  font-weight:800;
+  letter-spacing:-.012em;
+}
+.home-planner-reminder-main span{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#9b737c;
+  font-size:.73rem;
+  font-weight:750;
+  margin-top:2px;
+}
+.home-planner-reminder-tag{
+  justify-self:end;
+  align-self:center;
+  max-width:86px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(245,211,220,.96);
+  color:#a05f70;
+  font-size:.63rem;
+  font-weight:850;
+  padding:5px 8px;
+  text-transform:lowercase;
+}
+.home-planner-reminders-empty{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:12px;
+  border:1px dashed rgba(239,137,164,.34);
+  border-radius:17px;
+  background:#fff8fa;
+  color:#8f6872;
+}
+.home-planner-reminders-empty .spark{
+  flex:0 0 auto;
+  width:27px;
+  height:27px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:#ffe5ec;
+  color:#c8465e;
+  font-size:.85rem;
+}
+.home-planner-reminders-empty strong{
+  display:block;
+  color:#6b3948;
+  font-size:.86rem;
+  font-weight:850;
+  letter-spacing:-.01em;
+}
+.home-planner-reminders-empty p{
+  margin:2px 0 0;
+  color:#9b737c;
+  font-size:.73rem;
+  font-weight:750;
+  line-height:1.35;
+}
+.home-planner-open{
+  margin-top:10px;
+  width:100%;
+  min-height:38px;
+  border:1px solid rgba(239,137,164,.28);
+  border-radius:14px;
+  background:#fff;
+  color:#c8465e;
+  font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+  font-size:.78rem;
+  font-weight:850;
+  cursor:pointer;
+}
+.home-planner-open:hover{background:#fff2f5;}
+@media(max-width:560px){
+  .home-planner-reminders-head{align-items:flex-start;}
+  .home-planner-reminders-title h3{font-size:1.02rem;}
+  .home-planner-reminder{grid-template-columns:auto minmax(0,1fr);}
+  .home-planner-reminder-tag{grid-column:2;justify-self:start;max-width:100%;margin-top:-3px;}
+}
