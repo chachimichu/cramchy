@@ -1,4 +1,21 @@
 (function(){
+  function loadTransitionAssets(){
+    if(!document.getElementById('gradesTransitionV38Css')){
+      const link=document.createElement('link');
+      link.id='gradesTransitionV38Css';
+      link.rel='stylesheet';
+      link.href='grades-transition-v38.css?v=2026-09-10-38';
+      document.head.appendChild(link);
+    }
+    if(!document.getElementById('gradesTransitionV38Js')){
+      const script=document.createElement('script');
+      script.id='gradesTransitionV38Js';
+      script.src='grades-transition-v38.js?v=2026-09-10-38';
+      script.async=false;
+      document.head.appendChild(script);
+    }
+  }
+
   function ensureToolGuide(){
     const view=document.getElementById('view-grades');
     const tabs=view?.querySelector('.grades-main-tabs');
@@ -31,6 +48,7 @@
   }
 
   function install(){
+    loadTransitionAssets();
     refreshHierarchy();
     document.addEventListener('click',event=>{
       if(event.target.closest('#view-grades [data-grades-mode], #view-grades .grade-course-card, [data-tab="grades"], [data-open-tab="grades"]')){
