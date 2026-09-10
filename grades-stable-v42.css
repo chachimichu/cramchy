@@ -15,6 +15,14 @@
   display:revert!important;
 }
 
+/* The old built-in Term GWA is only a fallback renderer. Never let its
+   Honor Points/table UI flash before the custom NU planner replaces it. */
+#view-grades #gwaRoot > .gwa-hero,
+#view-grades #gwaRoot > .gwa-toolbar,
+#view-grades #gwaRoot > .gwa-table-wrap{
+  display:none!important;
+}
+
 /* Step 1 lives ABOVE the switcher, never inside it. */
 #view-grades .grades-tool-guide{
   display:flex!important;
