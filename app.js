@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-home-planner-card-28';
+  const VERSION='2026-09-10-mobile-comfort-29';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
