@@ -1,93 +1,109 @@
-/* Planner mobile hotfix v45 — top-anchored sheet that stays inside the phone viewport. */
+/* Planner modal portal v46 — full-screen overlay like Add Course on desktop and mobile. */
+html.planner-modal-open,
+body.planner-modal-open{
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+
+#plannerModal.planner-modal-backdrop{
+  display:none!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100vh!important;
+  height:100dvh!important;
+  max-width:none!important;
+  min-width:0!important;
+  z-index:2147483000!important;
+  box-sizing:border-box!important;
+  padding:clamp(14px,3vw,24px)!important;
+  background:rgba(70,45,56,.30)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+  overflow:hidden!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  place-items:center!important;
+  justify-items:center!important;
+  align-items:center!important;
+}
+
+#plannerModal.planner-modal-backdrop.open{
+  display:grid!important;
+}
+
+#plannerModal .planner-modal{
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  float:none!important;
+  display:block!important;
+  width:min(560px,calc(100vw - 28px))!important;
+  max-width:560px!important;
+  min-width:0!important;
+  max-height:min(86vh,760px)!important;
+  max-height:min(86dvh,760px)!important;
+  margin:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  box-sizing:border-box!important;
+}
+
+#plannerModal .planner-modal-head{
+  position:sticky!important;
+  top:-1px!important;
+  z-index:5!important;
+  margin:0 0 10px!important;
+  padding:0 0 12px!important;
+  background:linear-gradient(180deg,#fffdfc 0%,#fffdfc 86%,rgba(255,253,252,.94) 100%)!important;
+  border-bottom:1px solid var(--planner-line,#f5d3dc)!important;
+}
+
+#plannerModal .planner-form{
+  min-width:0!important;
+  overflow:visible!important;
+}
+
+#plannerModal .planner-form input,
+#plannerModal .planner-form select,
+#plannerModal .planner-form textarea{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
 @media(max-width:640px){
-  html.planner-mobile-modal-open,
-  body.planner-mobile-modal-open{
-    overflow:hidden!important;
-    overscroll-behavior:none;
-  }
-
   #plannerModal.planner-modal-backdrop{
-    display:none!important;
-    position:fixed!important;
-    inset:0!important;
-    width:100%!important;
-    height:100vh!important;
-    height:100dvh!important;
-    max-width:100%!important;
-    box-sizing:border-box!important;
-    align-items:flex-start!important;
-    justify-content:center!important;
-    padding-top:max(10px,env(safe-area-inset-top,0px))!important;
+    padding-top:max(12px,env(safe-area-inset-top,0px))!important;
     padding-right:max(12px,env(safe-area-inset-right,0px))!important;
-    padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+    padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
     padding-left:max(12px,env(safe-area-inset-left,0px))!important;
-    overflow:hidden!important;
-    overscroll-behavior:contain;
-  }
-
-  #plannerModal.planner-modal-backdrop.open{
-    display:flex!important;
   }
 
   #plannerModal .planner-modal{
-    position:relative!important;
-    inset:auto!important;
-    transform:none!important;
-    display:flex!important;
-    flex-direction:column!important;
-    width:min(520px,100%)!important;
+    width:100%!important;
     max-width:520px!important;
-    min-width:0!important;
     max-height:calc(100vh - 24px)!important;
-    max-height:calc(var(--planner-mobile-visible-height,100dvh) - 24px)!important;
-    margin:0 auto!important;
-    overflow:hidden!important;
-    box-sizing:border-box!important;
-  }
-
-  #plannerModal .planner-modal-head{
-    flex:0 0 auto!important;
-    margin:0!important;
-    padding-bottom:12px!important;
-    border-bottom:1px solid var(--planner-line,#f5d3dc);
-    background:#fffdfc;
-    position:relative;
-    z-index:2;
-  }
-
-  #plannerModal .planner-form{
-    flex:1 1 auto!important;
-    min-height:0!important;
-    overflow-x:hidden!important;
-    overflow-y:auto!important;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior:contain;
-    padding-top:12px!important;
-    padding-right:2px!important;
-    padding-bottom:max(16px,env(safe-area-inset-bottom,0px))!important;
+    max-height:calc(100dvh - 24px)!important;
+    border-radius:24px!important;
+    padding:18px!important;
   }
 
   #plannerModal .planner-form input,
   #plannerModal .planner-form select,
   #plannerModal .planner-form textarea{
-    min-width:0!important;
-    max-width:100%!important;
     font-size:16px!important;
-    box-sizing:border-box!important;
-  }
-
-  #plannerModal .planner-modal-actions{
-    padding-bottom:2px;
   }
 }
 
 @media(max-width:390px){
-  #plannerModal.planner-modal-backdrop{
-    padding-left:10px!important;
-    padding-right:10px!important;
-  }
   #plannerModal .planner-modal{
-    border-radius:22px!important;
-    padding:18px!important;
+    border-radius:20px!important;
+    padding:16px!important;
   }
 }
