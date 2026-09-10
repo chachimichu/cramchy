@@ -1,8 +1,16 @@
-/* Quick GWA v43 — one celebration message + fuller confetti. */
+/* Quick GWA polish v47 — one clean confetti burst + no result flash. */
 #view-grades .grades-main-tabs [data-grades-mode="quickgwa"] span{white-space:normal;}
 
-/* Prevent the old duplicated honor line from ever flashing. */
+/* Never show the old duplicated honor line. */
 #quickGwaRoot .quick-gwa-honor{display:none!important;}
+
+/* Hold the old base message for the mutation microtask so it cannot flash. */
+#quickGwaRoot .quick-gwa-result.show:not(.quick-gwa-polished) .quick-gwa-sub{
+  visibility:hidden!important;
+}
+#quickGwaRoot .quick-gwa-result.show.quick-gwa-polished .quick-gwa-sub{
+  visibility:visible!important;
+}
 #quickGwaRoot .quick-gwa-sub.quick-gwa-congrats{
   margin:10px auto 0!important;
   max-width:620px;
@@ -11,50 +19,53 @@
   line-height:1.4!important;
   font-weight:950!important;
 }
-#quickGwaRoot .quick-gwa-result.show:has(.quick-gwa-congrats){
+
+/* Dean result: soft celebration, no :has() dependency and no second burst. */
+#quickGwaRoot .quick-gwa-result.show.quick-gwa-dean{
   background:linear-gradient(135deg,
     color-mix(in srgb,#ffb6c9 23%,rgba(255,255,255,.88)),
     color-mix(in srgb,#f3c86a 16%,rgba(255,255,255,.88)) 48%,
     color-mix(in srgb,#a8c69f 20%,rgba(255,255,255,.88)))!important;
   box-shadow:0 18px 38px rgba(126,76,91,.10),inset 0 1px 0 rgba(255,255,255,.85)!important;
-  animation:quickGwaCelebrateGlow .7s cubic-bezier(.22,.8,.28,1) both;
+  animation:quickGwaCelebrateGlow .48s ease-out both;
 }
 @keyframes quickGwaCelebrateGlow{
-  0%{box-shadow:0 10px 22px rgba(126,76,91,.04),inset 0 1px 0 rgba(255,255,255,.75)}
-  55%{box-shadow:0 22px 46px rgba(126,76,91,.14),0 0 0 5px rgba(232,93,117,.06),inset 0 1px 0 rgba(255,255,255,.9)}
-  100%{box-shadow:0 18px 38px rgba(126,76,91,.10),inset 0 1px 0 rgba(255,255,255,.85)}
+  from{box-shadow:0 10px 22px rgba(126,76,91,.04),inset 0 1px 0 rgba(255,255,255,.75)}
+  to{box-shadow:0 18px 38px rgba(126,76,91,.10),inset 0 1px 0 rgba(255,255,255,.85)}
 }
 
-.quick-confetti-extra{
-  position:absolute;
-  z-index:3;
-  top:-22px;
-  left:var(--left,50%);
-  width:var(--size,8px);
-  height:calc(var(--size,8px) * 1.55);
-  border-radius:2px;
-  opacity:0;
-  animation:quickGwaPartyFall var(--dur,2s) cubic-bezier(.18,.72,.25,1) var(--delay,0s) forwards;
-  will-change:transform,opacity;
+/* v43 used a second 76-piece confetti burst. Disable it permanently.
+   The original Cramchy 34-piece burst remains the only celebration. */
+.quick-confetti-extra{display:none!important;animation:none!important;}
+
+/* Replace the old single-string pseudo guide with the same real structure as step 01. */
+#gradebookRoot::before{
+  content:none!important;
+  display:none!important;
 }
-.quick-confetti-extra[data-shape="dot"]{
-  width:var(--size,7px);
-  height:var(--size,7px);
-  border-radius:50%;
+#view-grades .grades-subject-guide-v47{
+  display:flex!important;
+  align-items:center;
+  gap:10px;
+  margin:2px 2px 10px!important;
+  color:var(--text-main,#56363d);
 }
-.quick-confetti-extra[data-shape="streamer"]{
-  width:3px;
-  height:calc(var(--size,8px) * 2.5);
-  border-radius:999px;
+#view-grades .grades-subject-guide-v47>div{
+  display:grid;
+  gap:1px;
 }
-@keyframes quickGwaPartyFall{
-  0%{opacity:0;transform:translate3d(0,-10px,0) rotate(0deg)}
-  8%{opacity:1}
-  55%{opacity:1;transform:translate3d(var(--drift,0px),52%,0) rotate(calc(var(--spin,360deg) * .55))}
-  100%{opacity:0;transform:translate3d(var(--drift,0px),440px,0) rotate(var(--spin,360deg))}
+#view-grades .grades-subject-guide-v47 strong{
+  font-size:.82rem!important;
+  font-weight:950!important;
+  line-height:1.15!important;
+}
+#view-grades .grades-subject-guide-v47 small{
+  color:var(--text-soft,#8b6870)!important;
+  font-size:.69rem!important;
+  font-weight:760!important;
+  line-height:1.25!important;
 }
 
 @media(prefers-reduced-motion:reduce){
-  #quickGwaRoot .quick-gwa-result.show:has(.quick-gwa-congrats){animation:none!important;}
-  .quick-confetti-extra{display:none!important;animation:none!important;}
+  #quickGwaRoot .quick-gwa-result.show.quick-gwa-dean{animation:none!important;}
 }

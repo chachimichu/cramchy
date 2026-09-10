@@ -1,7 +1,6 @@
 (function(){
   const FIRST=3.50;
   const SECOND=3.25;
-  const palette=['#e85d75','#ffb6c9','#8fa86c','#f3c86a','#9b82c7','#7198c9','#f3a6b8','#f7d6a4'];
 
   function getGwa(){
     const text=document.querySelector('#quickGwaRoot .quick-gwa-result.show .number')?.textContent?.trim();
@@ -21,75 +20,94 @@
     if(tab){
       const title=tab.querySelector('span');
       const small=tab.querySelector('small');
-      if(title) title.textContent='quick GWA calculator';
-      if(small) small.textContent='final grades only';
+      if(title&&title.textContent!=='quick GWA calculator') title.textContent='quick GWA calculator';
+      if(small&&small.textContent!=='final grades only') small.textContent='final grades only';
     }
     const heading=document.querySelector('#quickGwaRoot .quick-gwa-wrap > .card h3');
-    if(heading) heading.textContent='quick GWA calculator';
+    if(heading&&heading.textContent!=='quick GWA calculator') heading.textContent='quick GWA calculator';
+  }
+
+  function ensureSubjectGuide(){
+    const root=document.getElementById('gradebookRoot');
+    if(!root) return;
+    let guide=root.querySelector(':scope > [data-grades-subject-guide-v47]');
+    if(guide) return;
+    guide=document.createElement('div');
+    guide.className='grades-tool-guide grades-subject-guide-v47';
+    guide.dataset.gradesSubjectGuideV47='';
+    guide.innerHTML='<span class="grades-step-no">02</span><div><strong>choose a subject</strong><small>tap a subject below to open its scores and grade details</small></div>';
+    root.insertBefore(guide,root.firstChild);
   }
 
   function patchResult(){
     patchLabels();
+    ensureSubjectGuide();
     const result=document.querySelector('#quickGwaRoot .quick-gwa-result.show');
     if(!result) return;
+
     result.querySelector('.quick-gwa-honor')?.remove();
     const gwa=getGwa();
-    const sub=result.querySelector('.quick-gwa-sub');
     const message=honorMessage(gwa);
+    const sub=result.querySelector('.quick-gwa-sub');
+
+    result.classList.toggle('quick-gwa-dean',Boolean(message));
     if(sub&&message){
       sub.textContent=message;
       sub.classList.add('quick-gwa-congrats');
     }else if(sub){
       sub.classList.remove('quick-gwa-congrats');
     }
+    result.classList.add('quick-gwa-polished');
   }
 
-  function extraConfetti(){
-    const gwa=getGwa();
-    if(gwa===null||gwa<SECOND) return;
-    const layer=document.getElementById('quickConfettiLayer');
-    if(!layer||layer.dataset.extraBurst==='yes') return;
-    layer.dataset.extraBurst='yes';
-
-    const count=76;
-    for(let i=0;i<count;i++){
-      const piece=document.createElement('span');
-      piece.className='quick-confetti-extra';
-      const shape=i%7===0?'dot':i%5===0?'streamer':'paper';
-      piece.dataset.shape=shape;
-      piece.style.setProperty('--left',`${Math.random()*100}%`);
-      piece.style.setProperty('--drift',`${(Math.random()*150-75).toFixed(0)}px`);
-      piece.style.setProperty('--spin',`${(Math.random()*900-450).toFixed(0)}deg`);
-      piece.style.setProperty('--dur',`${(1.55+Math.random()*1.35).toFixed(2)}s`);
-      piece.style.setProperty('--delay',`${(Math.random()*.38).toFixed(2)}s`);
-      piece.style.setProperty('--size',`${(5+Math.random()*7).toFixed(1)}px`);
-      piece.style.background=palette[i%palette.length];
-      layer.appendChild(piece);
-    }
-    setTimeout(()=>{
-      layer.querySelectorAll('.quick-confetti-extra').forEach(el=>el.remove());
-      delete layer.dataset.extraBurst;
-    },3600);
+  function observeQuickRoot(){
+    const root=document.getElementById('quickGwaRoot');
+    if(!root||root.dataset.quickGwaPolishObserved==='yes') return;
+    root.dataset.quickGwaPolishObserved='yes';
+    new MutationObserver(()=>patchResult()).observe(root,{childList:true});
   }
 
-  function afterQuickRender(withParty=false){
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      patchResult();
-      if(withParty) setTimeout(extraConfetti,80);
-    }));
+  function observeGradebook(){
+    const root=document.getElementById('gradebookRoot');
+    if(!root||root.dataset.subjectGuideObserved==='yes') return;
+    root.dataset.subjectGuideObserved='yes';
+    new MutationObserver(()=>ensureSubjectGuide()).observe(root,{childList:true});
+  }
+
+  function observeTabs(){
+    const tabs=document.querySelector('#view-grades .grades-main-tabs');
+    if(!tabs||tabs.dataset.quickLabelObserved==='yes') return;
+    tabs.dataset.quickLabelObserved='yes';
+    new MutationObserver(()=>patchLabels()).observe(tabs,{childList:true,subtree:true,characterData:true});
   }
 
   function install(){
     patchLabels();
+    ensureSubjectGuide();
+    patchResult();
+    observeQuickRoot();
+    observeGradebook();
+    observeTabs();
+
     document.addEventListener('click',event=>{
       if(event.target.closest('#quickGwaCalculateBtn')){
-        setTimeout(()=>afterQuickRender(true),70);
+        /* Base calculator renders + launches its original confetti first.
+           Patch in the same event cycle so the old result never paints. */
+        queueMicrotask(patchResult);
         return;
       }
-      if(event.target.closest('#view-grades [data-grades-mode="quickgwa"],[data-tab="grades"],[data-open-tab="grades"]')){
-        setTimeout(()=>afterQuickRender(false),260);
+      if(event.target.closest('#gradebookRoot .grade-course-card[data-grade-course]')){
+        queueMicrotask(ensureSubjectGuide);
+        return;
       }
-    },true);
+      if(event.target.closest('#view-grades [data-grades-mode],[data-tab="grades"],[data-open-tab="grades"]')){
+        queueMicrotask(()=>{
+          patchLabels();
+          ensureSubjectGuide();
+          patchResult();
+        });
+      }
+    });
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
