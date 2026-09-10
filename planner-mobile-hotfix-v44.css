@@ -1,38 +1,72 @@
-/* Planner mobile hotfix v44 — keep the add/edit modal truly closed until opened. */
+/* Planner mobile hotfix v45 — top-anchored sheet that stays inside the phone viewport. */
 @media(max-width:640px){
+  html.planner-mobile-modal-open,
+  body.planner-mobile-modal-open{
+    overflow:hidden!important;
+    overscroll-behavior:none;
+  }
+
   #plannerModal.planner-modal-backdrop{
     display:none!important;
     position:fixed!important;
     inset:0!important;
     width:100%!important;
+    height:100vh!important;
+    height:100dvh!important;
     max-width:100%!important;
     box-sizing:border-box!important;
     align-items:flex-start!important;
     justify-content:center!important;
-    padding-top:max(12px,env(safe-area-inset-top,0px))!important;
+    padding-top:max(10px,env(safe-area-inset-top,0px))!important;
     padding-right:max(12px,env(safe-area-inset-right,0px))!important;
-    padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
+    padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
     padding-left:max(12px,env(safe-area-inset-left,0px))!important;
-    overflow-x:hidden!important;
-    overflow-y:auto!important;
-    -webkit-overflow-scrolling:touch;
+    overflow:hidden!important;
     overscroll-behavior:contain;
   }
-  #plannerModal.planner-modal-backdrop.open{display:flex!important;}
+
+  #plannerModal.planner-modal-backdrop.open{
+    display:flex!important;
+  }
+
   #plannerModal .planner-modal{
     position:relative!important;
     inset:auto!important;
     transform:none!important;
+    display:flex!important;
+    flex-direction:column!important;
     width:min(520px,100%)!important;
     max-width:520px!important;
     min-width:0!important;
     max-height:calc(100vh - 24px)!important;
-    max-height:calc(100dvh - 24px)!important;
-    margin:auto 0!important;
-    overflow-y:auto!important;
-    -webkit-overflow-scrolling:touch;
+    max-height:calc(var(--planner-mobile-visible-height,100dvh) - 24px)!important;
+    margin:0 auto!important;
+    overflow:hidden!important;
     box-sizing:border-box!important;
   }
+
+  #plannerModal .planner-modal-head{
+    flex:0 0 auto!important;
+    margin:0!important;
+    padding-bottom:12px!important;
+    border-bottom:1px solid var(--planner-line,#f5d3dc);
+    background:#fffdfc;
+    position:relative;
+    z-index:2;
+  }
+
+  #plannerModal .planner-form{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    padding-top:12px!important;
+    padding-right:2px!important;
+    padding-bottom:max(16px,env(safe-area-inset-bottom,0px))!important;
+  }
+
   #plannerModal .planner-form input,
   #plannerModal .planner-form select,
   #plannerModal .planner-form textarea{
@@ -40,5 +74,20 @@
     max-width:100%!important;
     font-size:16px!important;
     box-sizing:border-box!important;
+  }
+
+  #plannerModal .planner-modal-actions{
+    padding-bottom:2px;
+  }
+}
+
+@media(max-width:390px){
+  #plannerModal.planner-modal-backdrop{
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  #plannerModal .planner-modal{
+    border-radius:22px!important;
+    padding:18px!important;
   }
 }
