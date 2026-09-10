@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-mobile-modal-center-30';
+  const VERSION='2026-09-10-ui-copy-31';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -184,6 +184,7 @@
     .then(()=>loadScript('task-home-sync-v9.js?v='+VERSION))
     .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>loadScript('mobile-modal-center-v30.js?v='+VERSION))
+    .then(()=>loadScript('ui-copy-normalizer-v1.js?v='+VERSION))
     .then(()=>finishBootSplash())
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
