@@ -80,9 +80,9 @@ body.planner-modal-open{
 @media(max-width:640px){
   #plannerModal.planner-modal-backdrop{
     padding-top:max(12px,env(safe-area-inset-top,0px))!important;
-    padding-right:max(12px,env(safe-area-inset-right,0px))!important;
+    padding-right:max(14px,env(safe-area-inset-right,0px))!important;
     padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
-    padding-left:max(12px,env(safe-area-inset-left,0px))!important;
+    padding-left:max(14px,env(safe-area-inset-left,0px))!important;
   }
 
   #plannerModal .planner-modal{
@@ -94,10 +94,31 @@ body.planner-modal-open{
     padding:18px!important;
   }
 
+  /* Native date/time controls can keep an intrinsic width on mobile Safari.
+     Let every grid cell and field shrink inside the modal instead. */
+  #plannerModal .planner-form{
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  #plannerModal .planner-form>label,
+  #plannerModal .planner-modal-actions{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
   #plannerModal .planner-form input,
   #plannerModal .planner-form select,
   #plannerModal .planner-form textarea{
+    display:block!important;
+    width:100%!important;
+    inline-size:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
     font-size:16px!important;
+    box-sizing:border-box!important;
   }
 }
 
