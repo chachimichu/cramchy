@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-ui-copy-31';
+  const VERSION='2026-09-10-ui-copy-32';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
