@@ -34,6 +34,12 @@ body.exam-mode-active #view-matcha > h2{
   letter-spacing:-.035em!important;
 }
 
+/* Study headings stay sentence-case/lowercase even if base markup re-renders. */
+#view-timer > h2,
+#view-timer > .section-title{
+  text-transform:lowercase!important;
+}
+
 /* Exam chooser cards can stay cute too, because they function like large headers. */
 #view-exam .exam-choice h3{
   font-family:var(--cramchy-display)!important;
