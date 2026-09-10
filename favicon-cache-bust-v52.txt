@@ -1,1 +1,0 @@
-temporary cache bust marker for favicon v52; safe to remove later
