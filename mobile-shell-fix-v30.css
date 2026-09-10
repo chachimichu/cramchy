@@ -211,6 +211,42 @@
   #view-dashboard button{
     min-height:36px;
   }
+
+  /* Add Course uses a padded full-screen scrim. Size the card from the
+     scrim's content box instead of 96vw so both phone edges stay even. */
+  .modal-scrim{
+    width:100vw!important;
+    max-width:100vw!important;
+    padding-left:max(16px,env(safe-area-inset-left,0px))!important;
+    padding-right:max(16px,env(safe-area-inset-right,0px))!important;
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  .modal-scrim>.course-modal{
+    width:100%!important;
+    max-width:560px!important;
+    min-width:0!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+  .modal-scrim .course-form-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .modal-scrim .course-form-grid>*{
+    min-width:0!important;
+  }
+  .modal-scrim .course-modal input,
+  .modal-scrim .course-modal select,
+  .modal-scrim .course-modal textarea{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
 }
 
 @media(max-width:390px){
