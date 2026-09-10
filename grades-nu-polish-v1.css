@@ -1,63 +1,54 @@
-/* Grades NU polish preview v2 — clearer, warmer, and less spreadsheet-y. */
+/* Grades NU polish preview v3 — stable switching, gradient-only visuals. */
 #view-grades{
   --grade-berry:#e85d75;
   --grade-matcha:#8fa86c;
   --grade-lav:#9b82c7;
   --grade-blue:#7198c9;
   --grade-peach:#dc9874;
+  position:relative;
 }
+
 #view-grades .page-head-row{margin-bottom:8px;}
 #view-grades .page-head-row h2{
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
   font-size:clamp(2rem,4vw,3.1rem)!important;
   letter-spacing:-.06em!important;
 }
+
+/* NU context: short on purpose. */
 .grades-nu-note-strip{
-  position:relative;
-  overflow:hidden;
   display:grid;
-  grid-template-columns:minmax(0,1fr);
-  gap:4px;
+  gap:3px;
   margin:0 0 14px;
-  padding:15px 17px;
-  border-radius:26px;
-  background:
-    linear-gradient(135deg,
-      color-mix(in srgb,var(--app-bg-1,#fff2f5) 88%,white),
-      color-mix(in srgb,var(--app-bg-2,#fffaf0) 90%,white) 50%,
-      color-mix(in srgb,var(--app-bg-3,#f7f1ff) 86%,white));
-  border:1px solid color-mix(in srgb,var(--grade-berry) 14%,rgba(255,255,255,.7));
-  box-shadow:0 16px 36px rgba(86,57,68,.07),inset 0 1px 0 rgba(255,255,255,.7);
+  padding:14px 16px;
+  border-radius:24px;
+  background:linear-gradient(120deg,
+    color-mix(in srgb,var(--app-bg-1,#fff2f5) 84%,white),
+    color-mix(in srgb,var(--app-bg-2,#fffaf0) 88%,white) 48%,
+    color-mix(in srgb,var(--app-bg-3,#f6f1ff) 84%,white));
+  border:1px solid color-mix(in srgb,var(--grade-berry) 14%,rgba(255,255,255,.72));
+  box-shadow:0 14px 32px rgba(86,57,68,.065),inset 0 1px 0 rgba(255,255,255,.72);
 }
-.grades-nu-note-strip::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(112deg,color-mix(in srgb,var(--grade-berry) 13%,transparent),transparent 47%),
-    linear-gradient(292deg,color-mix(in srgb,var(--grade-matcha) 16%,transparent),transparent 55%);
-  pointer-events:none;
-}
-.grades-nu-note-strip strong,
-.grades-nu-note-strip span{position:relative;z-index:1;}
 .grades-nu-note-strip strong{
   color:var(--text-main,#56363d);
-  font-size:.92rem;
+  font-size:.9rem;
   font-weight:950;
   line-height:1.25;
 }
 .grades-nu-note-strip span{
   color:var(--text-soft,#8b6870);
-  font-size:.76rem;
-  font-weight:750;
-  line-height:1.38;
+  font-size:.75rem;
+  font-weight:760;
+  line-height:1.35;
 }
+
+/* Three tools — Home/Planner-like cards, but no decorative circles. */
 .grades-main-tabs{
   display:grid!important;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px!important;
-  padding:0!important;
+  gap:11px!important;
   margin:10px 0 16px!important;
+  padding:0!important;
   background:transparent!important;
   border:0!important;
   box-shadow:none!important;
@@ -65,82 +56,97 @@
 .grades-main-tabs button{
   --tool-accent:var(--grade-berry);
   position:relative;
-  overflow:hidden;
   min-height:78px!important;
-  padding:15px!important;
-  border-radius:25px!important;
-  border:1px solid color-mix(in srgb,var(--tool-accent) 17%,rgba(255,255,255,.62))!important;
-  background:
-    linear-gradient(135deg,color-mix(in srgb,var(--tool-accent) 12%,rgba(255,255,255,.76)),rgba(255,255,255,.48))!important;
+  padding:15px 16px!important;
+  border-radius:24px!important;
+  border:1px solid color-mix(in srgb,var(--tool-accent) 18%,rgba(255,255,255,.68))!important;
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--tool-accent) 14%,rgba(255,255,255,.82)),
+    color-mix(in srgb,var(--app-bg-2,#fffaf5) 86%,white))!important;
+  box-shadow:0 12px 27px rgba(86,57,68,.055),inset 0 1px 0 rgba(255,255,255,.75)!important;
   color:var(--text-main,#56363d)!important;
-  box-shadow:0 12px 26px rgba(86,57,68,.055),inset 0 1px 0 rgba(255,255,255,.68)!important;
   text-align:left!important;
   cursor:pointer;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
 }
 .grades-main-tabs button:nth-child(2){--tool-accent:var(--grade-matcha);}
 .grades-main-tabs button:nth-child(3){--tool-accent:var(--grade-lav);}
-.grades-main-tabs button::before{
-  content:"";
-  position:absolute;
-  width:70px;height:70px;
-  right:-22px;top:-24px;
-  border-radius:999px;
-  background:color-mix(in srgb,var(--tool-accent) 20%,transparent);
-  filter:blur(1px);
-}
+.grades-main-tabs button::before,
+.grades-main-tabs button::after{display:none!important;content:none!important;}
 .grades-main-tabs button span{
-  position:relative;
-  z-index:1;
   display:block;
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
-  font-size:1.05rem;
+  font-size:1.03rem;
   font-weight:850;
   letter-spacing:-.035em;
-  text-transform:none;
 }
 .grades-main-tabs button small{
-  position:relative;
-  z-index:1;
   display:block;
   margin-top:5px;
   color:var(--text-soft,#8b6870);
   font-size:.68rem;
   font-weight:850;
-  letter-spacing:.01em;
   text-transform:lowercase;
 }
+.grades-main-tabs button:hover{transform:translateY(-1px);}
 .grades-main-tabs button.active{
   transform:translateY(-2px);
-  border-color:color-mix(in srgb,var(--tool-accent) 36%,rgba(255,255,255,.7))!important;
-  background:
-    linear-gradient(135deg,color-mix(in srgb,var(--tool-accent) 22%,rgba(255,255,255,.8)),rgba(255,255,255,.58))!important;
-  box-shadow:0 18px 38px rgba(86,57,68,.085),inset 0 1px 0 rgba(255,255,255,.78)!important;
+  border-color:color-mix(in srgb,var(--tool-accent) 38%,rgba(255,255,255,.7))!important;
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--tool-accent) 23%,rgba(255,255,255,.86)),
+    color-mix(in srgb,var(--app-bg-2,#fffaf5) 78%,white))!important;
+  box-shadow:0 17px 38px rgba(86,57,68,.085),inset 0 1px 0 rgba(255,255,255,.82)!important;
 }
-.grades-mini-guide{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
+
+/* Switching mask prevents the old renderer from flashing for one frame. */
+.grades-switch-loader{
+  display:none;
+  min-height:150px;
   margin:0 0 12px;
-  padding:12px 14px;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.62);
-  background:rgba(255,255,255,.50);
-  box-shadow:0 9px 20px rgba(86,57,68,.045);
+  padding:30px 22px;
+  border-radius:27px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:11px;
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--app-bg-1,#fff2f5) 90%,white),
+    color-mix(in srgb,var(--app-bg-2,#fffaf0) 90%,white),
+    color-mix(in srgb,var(--app-bg-3,#f6f1ff) 90%,white));
+  border:1px solid rgba(255,255,255,.66);
+  box-shadow:0 12px 28px rgba(86,57,68,.05);
 }
-.grades-mini-guide strong{
-  color:var(--text-main,#56363d);
-  font-weight:950;
-  font-size:.86rem;
-}
-.grades-mini-guide span{
+.grades-switch-loader>span{
   color:var(--text-soft,#8b6870);
-  font-size:.74rem;
-  font-weight:760;
-  line-height:1.35;
-  text-align:right;
+  font-size:.76rem;
+  font-weight:900;
+  text-transform:lowercase;
 }
-/* Existing gradebook, but warmer. */
+.grades-switch-bar{
+  width:min(250px,70%);
+  height:7px;
+  overflow:hidden;
+  border-radius:999px;
+  background:color-mix(in srgb,var(--grade-berry) 9%,rgba(255,255,255,.72));
+}
+.grades-switch-bar i{
+  display:block;
+  width:48%;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--grade-berry),var(--grade-matcha),var(--grade-lav));
+  animation:gradesLoadSlide .72s ease-in-out infinite alternate;
+}
+@keyframes gradesLoadSlide{
+  from{transform:translateX(-6%)}
+  to{transform:translateX(112%)}
+}
+#view-grades.grades-is-switching .grades-switch-loader{display:flex;}
+#view-grades.grades-is-switching #gradebookRoot,
+#view-grades.grades-is-switching #gwaRoot,
+#view-grades.grades-is-switching #quickGwaRoot{display:none!important;}
+
+/* Course gradebook: warmer subject cards, gradient only. */
 .grade-course-grid{gap:11px!important;margin-bottom:14px!important;}
 .grade-course-card{
   --course-accent:var(--grade-berry);
@@ -148,21 +154,18 @@
   overflow:hidden;
   border-radius:24px!important;
   padding:15px!important;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--course-accent) 10%,rgba(255,255,255,.76)),rgba(255,255,255,.48))!important;
-  border:1px solid color-mix(in srgb,var(--course-accent) 15%,rgba(255,255,255,.6))!important;
-  box-shadow:0 11px 25px rgba(86,57,68,.052),inset 0 1px 0 rgba(255,255,255,.72)!important;
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--course-accent) 12%,rgba(255,255,255,.82)),
+    color-mix(in srgb,var(--app-bg-2,#fffaf5) 88%,white))!important;
+  border:1px solid color-mix(in srgb,var(--course-accent) 18%,rgba(255,255,255,.68))!important;
+  box-shadow:0 11px 25px rgba(86,57,68,.052),inset 0 1px 0 rgba(255,255,255,.74)!important;
   text-align:left!important;
 }
 .grade-course-card:nth-child(2n){--course-accent:var(--grade-matcha);}
 .grade-course-card:nth-child(3n){--course-accent:var(--grade-lav);}
 .grade-course-card:nth-child(4n){--course-accent:var(--grade-blue);}
-.grade-course-card::after{
-  content:"";
-  position:absolute;
-  width:70px;height:70px;right:-28px;bottom:-32px;
-  border-radius:999px;
-  background:color-mix(in srgb,var(--course-accent) 18%,transparent);
-}
+.grade-course-card::before,
+.grade-course-card::after{display:none!important;content:none!important;}
 .grade-course-card h4{
   color:var(--text-main,#56363d)!important;
   font-weight:950!important;
@@ -176,61 +179,53 @@
 }
 .grade-course-card.active{
   transform:translateY(-2px);
-  border-color:color-mix(in srgb,var(--course-accent) 34%,rgba(255,255,255,.64))!important;
+  border-color:color-mix(in srgb,var(--course-accent) 36%,rgba(255,255,255,.7))!important;
   box-shadow:0 17px 36px rgba(86,57,68,.08),inset 0 1px 0 rgba(255,255,255,.82)!important;
 }
-.grade-overview-card,.category-card,.quick-gwa-card,.quick-gwa-result,.gwa-summary-card{
+.grade-overview-card,
+.category-card,
+.quick-gwa-card,
+.quick-gwa-result{
   border-radius:23px!important;
-  border:1px solid rgba(255,255,255,.62)!important;
-  background:rgba(255,255,255,.52)!important;
-  box-shadow:0 10px 22px rgba(86,57,68,.046),inset 0 1px 0 rgba(255,255,255,.64)!important;
+  border:1px solid rgba(255,255,255,.64)!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.46))!important;
+  box-shadow:0 10px 22px rgba(86,57,68,.046),inset 0 1px 0 rgba(255,255,255,.66)!important;
 }
 .grade-period-tabs{
   padding:7px!important;
   border-radius:22px!important;
-  background:rgba(255,255,255,.42)!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.38))!important;
 }
 .grade-period-tabs button{text-transform:lowercase!important;border-radius:16px!important;}
-/* Redone Term GWA */
+
+/* Term GWA — entirely custom, so the old honor-points table never shows. */
 .grades-gwa-board{display:grid;gap:14px;}
 .grades-gwa-hero-card{
-  position:relative;
-  overflow:hidden;
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(220px,300px);
+  grid-template-columns:minmax(0,1fr) minmax(220px,295px);
   gap:14px;
   align-items:stretch;
   padding:18px;
-  border-radius:30px;
-  background:
-    linear-gradient(135deg,
-      color-mix(in srgb,var(--grade-matcha) 16%,rgba(255,255,255,.78)),
-      rgba(255,255,255,.50) 55%,
-      color-mix(in srgb,var(--grade-blue) 12%,rgba(255,255,255,.66)));
-  border:1px solid color-mix(in srgb,var(--grade-matcha) 18%,rgba(255,255,255,.64));
-  box-shadow:0 17px 40px rgba(86,57,68,.075),inset 0 1px 0 rgba(255,255,255,.72);
+  border-radius:29px;
+  background:linear-gradient(130deg,
+    color-mix(in srgb,var(--grade-matcha) 19%,rgba(255,255,255,.82)),
+    color-mix(in srgb,var(--app-bg-2,#fffaf5) 86%,white) 52%,
+    color-mix(in srgb,var(--grade-blue) 14%,rgba(255,255,255,.80)));
+  border:1px solid color-mix(in srgb,var(--grade-matcha) 19%,rgba(255,255,255,.68));
+  box-shadow:0 17px 40px rgba(86,57,68,.075),inset 0 1px 0 rgba(255,255,255,.76);
 }
-.grades-gwa-hero-card::before{
-  content:"";
-  position:absolute;inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(115deg,color-mix(in srgb,var(--grade-berry) 10%,transparent),transparent 45%),
-    linear-gradient(295deg,color-mix(in srgb,var(--grade-lav) 13%,transparent),transparent 55%);
-}
-.grades-gwa-hero-card>*{position:relative;z-index:1;}
+.grades-gwa-hero-card::before,
+.grades-gwa-hero-card::after{display:none!important;content:none!important;}
 .grades-gwa-kicker{
   display:inline-flex;
-  padding:6px 10px;
-  border-radius:999px;
-  background:rgba(255,255,255,.52);
-  color:var(--text-soft,#8b6870);
+  padding:5px 0;
+  color:var(--grade-matcha);
   font-size:.68rem;
-  font-weight:900;
+  font-weight:950;
   text-transform:lowercase;
 }
 .grades-gwa-hero-card h3{
-  margin:10px 0 5px;
+  margin:8px 0 5px;
   color:var(--text-main,#56363d)!important;
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
   font-size:clamp(1.55rem,3vw,2.25rem);
@@ -239,24 +234,26 @@
 }
 .grades-gwa-hero-card p{
   margin:0;
-  max-width:660px;
+  max-width:650px;
   color:var(--text-soft,#8b6870);
-  font-size:.83rem;
+  font-size:.82rem;
   font-weight:760;
-  line-height:1.45;
+  line-height:1.43;
 }
 .grades-gwa-result{
   display:flex;
   flex-direction:column;
   justify-content:center;
-  min-height:150px;
+  min-height:145px;
   padding:16px;
-  border-radius:25px;
-  background:rgba(255,255,255,.58);
-  border:1px solid rgba(255,255,255,.65);
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(255,255,255,.50));
+  border:1px solid rgba(255,255,255,.72);
   text-align:center;
 }
-.grades-gwa-result span,.grades-gwa-summary-row span,.grades-target-grid span{
+.grades-gwa-result span,
+.grades-gwa-summary-row span,
+.grades-target-grid span{
   color:var(--text-soft,#8b6870);
   font-size:.68rem;
   font-weight:920;
@@ -264,43 +261,46 @@
 }
 .grades-gwa-result strong{
   display:block;
-  margin:2px 0;
+  margin:3px 0;
   color:var(--grade-matcha);
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
-  font-size:2.65rem;
+  font-size:2.62rem;
   letter-spacing:-.06em;
   line-height:1;
 }
-.grades-gwa-result em,.grades-gwa-summary-row em,.grades-target-grid em{
+.grades-gwa-result em,
+.grades-gwa-summary-row em,
+.grades-target-grid em{
   display:block;
   color:var(--text-soft,#8b6870);
   font-size:.69rem;
   font-style:normal;
   font-weight:760;
-  line-height:1.25;
+  line-height:1.28;
 }
 .grades-gwa-toolbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:end;
-  gap:12px;
-  padding:12px;
-  border-radius:24px;
-  background:rgba(255,255,255,.44);
-  border:1px solid rgba(255,255,255,.6);
-  box-shadow:0 9px 22px rgba(86,57,68,.045);
+  display:grid;
+  grid-template-columns:minmax(180px,260px) minmax(0,1fr);
+  gap:11px;
+  align-items:stretch;
 }
-.grades-gwa-mini-formula{
-  padding:11px 13px;
-  border-radius:20px;
-  background:color-mix(in srgb,var(--grade-matcha) 10%,rgba(255,255,255,.56));
-  border:1px solid color-mix(in srgb,var(--grade-matcha) 14%,rgba(255,255,255,.62));
+.grades-gwa-toolbar>.grades-field,
+.grades-nu-formula{
+  padding:12px 14px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.65);
+  background:linear-gradient(135deg,rgba(255,255,255,.66),rgba(255,255,255,.44));
+  box-shadow:0 9px 22px rgba(86,57,68,.044);
+}
+.grades-nu-formula{
+  display:flex;
+  align-items:center;
   color:var(--text-soft,#8b6870);
   font-size:.76rem;
   font-weight:760;
-  line-height:1.38;
+  line-height:1.35;
 }
-.grades-gwa-mini-formula strong{color:var(--text-main,#56363d);font-weight:950;}
+.grades-nu-formula strong{color:var(--text-main,#56363d);font-weight:950;margin-right:4px;}
 .grades-gwa-summary-row{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -309,10 +309,13 @@
 .grades-gwa-summary-row>div{
   padding:14px;
   border-radius:22px;
-  background:rgba(255,255,255,.50);
-  border:1px solid rgba(255,255,255,.62);
+  background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.45));
+  border:1px solid rgba(255,255,255,.65);
   box-shadow:0 8px 20px rgba(86,57,68,.04);
 }
+.grades-gwa-summary-row>div:nth-child(1){background:linear-gradient(135deg,color-mix(in srgb,var(--grade-berry) 10%,rgba(255,255,255,.76)),rgba(255,255,255,.46));}
+.grades-gwa-summary-row>div:nth-child(2){background:linear-gradient(135deg,color-mix(in srgb,var(--grade-matcha) 11%,rgba(255,255,255,.76)),rgba(255,255,255,.46));}
+.grades-gwa-summary-row>div:nth-child(3){background:linear-gradient(135deg,color-mix(in srgb,var(--grade-lav) 10%,rgba(255,255,255,.76)),rgba(255,255,255,.46));}
 .grades-gwa-summary-row strong{
   display:block;
   margin-top:2px;
@@ -321,102 +324,99 @@
   font-size:1.35rem;
   letter-spacing:-.04em;
 }
-.grades-gwa-course-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.grades-gwa-course-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
 .grades-gwa-course-card{
   --card-accent:var(--grade-berry);
-  position:relative;
-  overflow:hidden;
   display:grid;
   gap:12px;
   padding:15px;
   border-radius:27px;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--card-accent) 12%,rgba(255,255,255,.76)),rgba(255,255,255,.50));
-  border:1px solid color-mix(in srgb,var(--card-accent) 18%,rgba(255,255,255,.62));
-  box-shadow:0 13px 30px rgba(86,57,68,.058),inset 0 1px 0 rgba(255,255,255,.68);
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--card-accent) 13%,rgba(255,255,255,.82)),
+    color-mix(in srgb,var(--app-bg-2,#fffaf5) 88%,white));
+  border:1px solid color-mix(in srgb,var(--card-accent) 20%,rgba(255,255,255,.67));
+  box-shadow:0 13px 30px rgba(86,57,68,.058),inset 0 1px 0 rgba(255,255,255,.72);
 }
 .grades-gwa-course-card[data-accent="matcha"]{--card-accent:var(--grade-matcha);}
 .grades-gwa-course-card[data-accent="lavender"]{--card-accent:var(--grade-lav);}
 .grades-gwa-course-card[data-accent="blue"]{--card-accent:var(--grade-blue);}
 .grades-gwa-course-card[data-accent="peach"]{--card-accent:var(--grade-peach);}
-.grades-gwa-course-card::after{
-  content:"";
-  position:absolute;width:92px;height:92px;right:-36px;top:-38px;
-  border-radius:999px;
-  background:color-mix(in srgb,var(--card-accent) 18%,transparent);
-  pointer-events:none;
-}
-.grades-gwa-course-card>*{position:relative;z-index:1;}
+.grades-gwa-course-card::before,
+.grades-gwa-course-card::after{display:none!important;content:none!important;}
 .grades-card-top{
   display:flex;
   justify-content:space-between;
-  gap:12px;
-  align-items:flex-start;
+  gap:10px;
+  align-items:start;
 }
 .grades-card-top h4{
   margin:0;
   color:var(--text-main,#56363d);
   font-size:1rem;
   font-weight:950;
-  line-height:1.14;
+  line-height:1.18;
 }
 .grades-card-top p{
   margin:4px 0 0;
   color:var(--text-soft,#8b6870);
   font-size:.7rem;
-  font-weight:780;
+  font-weight:770;
 }
 .grades-grade-pill{
   flex:0 0 auto;
-  min-width:70px;
+  min-width:68px;
   padding:8px 10px;
-  border-radius:999px;
-  background:rgba(255,255,255,.60);
-  border:1px solid color-mix(in srgb,var(--card-accent) 16%,rgba(255,255,255,.62));
+  border-radius:14px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--card-accent) 19%,rgba(255,255,255,.82)),rgba(255,255,255,.58));
+  border:1px solid color-mix(in srgb,var(--card-accent) 20%,rgba(255,255,255,.68));
   color:var(--card-accent);
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-size:.95rem;
   font-weight:850;
   text-align:center;
 }
-.grades-card-controls,.grades-two-fields{
+.grades-card-controls{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 110px;
-  gap:10px;
+  grid-template-columns:minmax(0,1fr) 90px;
+  gap:9px;
 }
-.grades-two-fields{grid-template-columns:repeat(3,minmax(0,1fr));}
+.grades-mode-fields{display:grid;gap:10px;}
+.grades-two-fields{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+}
 .grades-field label{
   display:block;
   margin-bottom:5px;
   color:var(--text-soft,#8b6870);
-  font-size:.66rem;
+  font-size:.67rem;
   font-weight:920;
   text-transform:lowercase;
 }
-.grades-field input,.grades-field select{
+.grades-field input,
+.grades-field select{
   width:100%;
-  min-height:41px;
-  border-radius:15px;
-  border:1px solid color-mix(in srgb,var(--card-accent,var(--grade-berry)) 14%,rgba(255,255,255,.65));
-  background:rgba(255,255,255,.70);
-  color:var(--text-main,#56363d);
-  padding:8px 10px;
+  min-height:42px;
   box-sizing:border-box;
+  border-radius:14px;
+  border:1px solid color-mix(in srgb,var(--card-accent,var(--grade-berry)) 15%,rgba(255,255,255,.66));
+  background:linear-gradient(135deg,rgba(255,255,255,.84),rgba(255,255,255,.62));
+  color:var(--text-main,#56363d);
   font:inherit;
   font-size:.8rem;
-  font-weight:820;
+  font-weight:800;
+  padding:8px 10px;
 }
-.grades-mode-fields{display:grid;gap:9px;}
-.grades-compute-note,.grades-empty-choice{
-  padding:11px 12px;
-  border-radius:18px;
-  background:rgba(255,255,255,.45);
-  color:var(--text-soft,#8b6870);
-  font-size:.73rem;
-  font-weight:760;
-  line-height:1.35;
+.grades-field input:focus,
+.grades-field select:focus{
+  outline:2px solid color-mix(in srgb,var(--card-accent,var(--grade-berry)) 26%,transparent);
+  outline-offset:1px;
 }
-.grades-empty-choice.wide{text-align:center;padding:26px;}
-.grades-empty-choice.wide strong{display:block;color:var(--text-main,#56363d);font-size:1rem;margin-bottom:4px;}
-.grades-empty-choice.wide span{color:var(--text-soft,#8b6870);font-size:.78rem;font-weight:760;}
 .grades-target-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -424,59 +424,123 @@
 }
 .grades-target-grid>div{
   padding:11px;
-  border-radius:18px;
-  background:rgba(255,255,255,.52);
-  border:1px solid rgba(255,255,255,.58);
+  border-radius:17px;
+  background:linear-gradient(135deg,rgba(255,255,255,.73),rgba(255,255,255,.50));
+  border:1px solid rgba(255,255,255,.68);
 }
 .grades-target-grid strong{
   display:block;
   margin:2px 0;
-  color:var(--card-accent);
+  color:var(--text-main,#56363d);
   font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
-  font-size:1.12rem;
-  letter-spacing:-.04em;
+  font-size:1.05rem;
+  letter-spacing:-.035em;
+}
+.grades-inline-result,
+.grades-empty-choice,
+.grades-card-foot,
+.grades-dean-note{
+  color:var(--text-soft,#8b6870);
+  font-size:.71rem;
+  font-weight:760;
+  line-height:1.35;
+}
+.grades-inline-result,
+.grades-empty-choice{
+  padding:10px 11px;
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.42));
+  border:1px solid rgba(255,255,255,.64);
 }
 .grades-card-foot{
   display:flex;
   justify-content:space-between;
-  gap:8px;
-  color:var(--text-soft,#8b6870);
-  font-size:.68rem;
-  font-weight:780;
-  line-height:1.25;
+  gap:10px;
+  padding-top:2px;
 }
-.grades-card-foot span:first-child{
-  color:var(--card-accent);
-  font-weight:920;
+.grades-card-foot span:first-child{font-weight:900;color:var(--card-accent);}
+.grades-dean-note{
+  padding:11px 13px;
+  border-radius:18px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--grade-lav) 9%,rgba(255,255,255,.68)),rgba(255,255,255,.44));
+  border:1px solid color-mix(in srgb,var(--grade-lav) 14%,rgba(255,255,255,.66));
 }
+.grades-dean-note strong{color:var(--text-main,#56363d);font-weight:950;}
+.grades-gwa-empty{
+  grid-column:1/-1;
+  display:grid;
+  gap:4px;
+  padding:24px;
+  border-radius:24px;
+  text-align:center;
+  background:linear-gradient(135deg,rgba(255,255,255,.66),rgba(255,255,255,.44));
+  border:1px solid rgba(255,255,255,.65);
+}
+.grades-gwa-empty strong{color:var(--text-main,#56363d);}
+.grades-gwa-empty span{color:var(--text-soft,#8b6870);font-size:.76rem;}
+
+/* Quick GWA gets its own lavender gradient so it doesn't feel like the same card repeated. */
+#quickGwaRoot .quick-gwa-wrap>.card:first-child,
+#quickGwaRoot .quick-gwa-card{
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--grade-lav) 12%,rgba(255,255,255,.80)),
+    color-mix(in srgb,var(--app-bg-2,#fffaf5) 89%,white))!important;
+}
+#quickGwaRoot .quick-gwa-result{
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--grade-blue) 12%,rgba(255,255,255,.82)),
+    color-mix(in srgb,var(--grade-lav) 9%,rgba(255,255,255,.70)))!important;
+}
+
+/* Dark Study keeps the same hierarchy with darker gradients. */
 body[data-theme="dark-study"] .grades-nu-note-strip,
 body[data-theme="dark-study"] .grades-main-tabs button,
-body[data-theme="dark-study"] .grades-mini-guide,
-body[data-theme="dark-study"] .grade-course-card,
+body[data-theme="dark-study"] .grades-switch-loader,
 body[data-theme="dark-study"] .grades-gwa-hero-card,
-body[data-theme="dark-study"] .grades-gwa-toolbar,
-body[data-theme="dark-study"] .grades-gwa-mini-formula,
+body[data-theme="dark-study"] .grades-gwa-toolbar>.grades-field,
+body[data-theme="dark-study"] .grades-nu-formula,
 body[data-theme="dark-study"] .grades-gwa-summary-row>div,
 body[data-theme="dark-study"] .grades-gwa-course-card,
 body[data-theme="dark-study"] .grades-target-grid>div,
-body[data-theme="dark-study"] .grades-compute-note,
-body[data-theme="dark-study"] .grades-empty-choice{
-  background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.035))!important;
+body[data-theme="dark-study"] .grades-inline-result,
+body[data-theme="dark-study"] .grades-empty-choice,
+body[data-theme="dark-study"] .grades-dean-note{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--app-bg-2) 88%,#fff 12%),var(--app-bg-3))!important;
   border-color:rgba(255,255,255,.09)!important;
 }
-@media(max-width:900px){
-  .grades-gwa-hero-card{grid-template-columns:1fr;}
-  .grades-gwa-course-list{grid-template-columns:1fr;}
-  .grades-gwa-summary-row,.grades-target-grid{grid-template-columns:1fr;}
+body[data-theme="dark-study"] .grades-gwa-result{
+  background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+  border-color:rgba(255,255,255,.09);
 }
-@media(max-width:680px){
-  .grades-main-tabs{grid-template-columns:1fr!important;gap:9px!important;}
-  .grades-main-tabs button{min-height:66px!important;padding:13px!important;}
-  .grades-mini-guide{display:grid;}
-  .grades-mini-guide span{text-align:left;}
-  .grades-card-controls,.grades-two-fields{grid-template-columns:1fr;}
-  .grades-gwa-toolbar{display:grid;align-items:stretch;}
-  .grades-gwa-hero-card{padding:15px;border-radius:25px;}
-  .grades-gwa-result{min-height:120px;}
-  .grades-gwa-result strong{font-size:2.2rem;}
+
+@media(max-width:900px){
+  .grades-gwa-course-list{grid-template-columns:1fr;}
+  .grades-two-fields{grid-template-columns:1fr 1fr;}
+  .grades-two-fields>.grades-field:last-child{grid-column:1/-1;}
+}
+@media(max-width:760px){
+  .grades-main-tabs{grid-template-columns:1fr!important;gap:8px!important;}
+  .grades-main-tabs button{min-height:62px!important;padding:12px 14px!important;}
+  .grades-gwa-hero-card{grid-template-columns:1fr;}
+  .grades-gwa-result{min-height:112px;}
+  .grades-gwa-toolbar{grid-template-columns:1fr;}
+  .grades-gwa-summary-row{grid-template-columns:1fr 1fr;}
+  .grades-gwa-summary-row>div:last-child{grid-column:1/-1;}
+}
+@media(max-width:520px){
+  .grades-nu-note-strip{padding:13px 14px;border-radius:21px;}
+  .grades-gwa-hero-card{padding:15px;border-radius:24px;}
+  .grades-gwa-course-card{padding:13px;border-radius:23px;}
+  .grades-card-controls{grid-template-columns:1fr 78px;}
+  .grades-two-fields{grid-template-columns:1fr;}
+  .grades-two-fields>.grades-field:last-child{grid-column:auto;}
+  .grades-target-grid{grid-template-columns:1fr;}
+  .grades-card-foot{display:grid;gap:3px;}
+  .grades-gwa-summary-row{grid-template-columns:1fr;}
+  .grades-gwa-summary-row>div:last-child{grid-column:auto;}
+  .grades-switch-loader{min-height:130px;border-radius:23px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .grades-switch-bar i{animation:none;transform:none;width:100%;}
+  .grades-main-tabs button{transition:none;}
 }
