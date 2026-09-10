@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-exam-dedupe-23';
+  const VERSION='2026-09-10-home-planner-reminders-24';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -133,7 +133,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -182,6 +182,7 @@
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
     .then(()=>loadScript('task-home-sync-v9.js?v='+VERSION))
+    .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>finishBootSplash())
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
