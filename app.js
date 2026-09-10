@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-09-typography-polish-21';
+  const VERSION='2026-09-10-exam-dedupe-22';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -172,6 +172,7 @@
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))
+    .then(()=>loadScript('exam-subject-dedupe-v21.js?v='+VERSION))
     .then(()=>loadScript('planner-cloud-sync-v12.js?v='+VERSION))
     .then(()=>window.__cramchyPlannerCloudReady||Promise.resolve())
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
