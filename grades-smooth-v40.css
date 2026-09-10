@@ -1,0 +1,39 @@
+/* Grades smooth switching v40 — no loader, no collapsing panel, no scale shake. */
+
+/* The older Grades helper still toggles this state internally. Neutralize its
+   visual mask so switching never collapses the content area. */
+#view-grades .grades-switch-loader,
+#view-grades.grades-is-switching .grades-switch-loader{
+  display:none!important;
+}
+
+/* Keep only the root that the base Grades switcher has marked visible.
+   This overrides the old switching mask without revealing inactive roots. */
+#view-grades.grades-is-switching #gradebookRoot[style*="display: block"],
+#view-grades.grades-is-switching #gwaRoot[style*="display: block"],
+#view-grades.grades-is-switching #quickGwaRoot[style*="display: block"]{
+  display:block!important;
+}
+
+/* No scaling on tool interaction; it was contributing to the visual shake. */
+#view-grades .grades-main-tabs button,
+#view-grades .grades-main-tabs button:active,
+#view-grades .grades-main-tabs button.active{
+  transform:none!important;
+}
+
+#view-grades .grades-main-tabs button{
+  transition:background .18s ease,color .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+
+/* The incoming panel animation is handled by JS with opacity + translateY only.
+   Keeping transform origin/scale out avoids layout-looking jitter. */
+#view-grades #gradebookRoot,
+#view-grades #gwaRoot,
+#view-grades #quickGwaRoot{
+  will-change:auto!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  #view-grades .grades-main-tabs button{transition:none!important;}
+}
