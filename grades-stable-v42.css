@@ -1,0 +1,251 @@
+/* Grades v42 — stable hierarchy + one shared loader for tabs and subjects. */
+#view-grades{position:relative;}
+
+/* Kill every older loader/mask path from previous experiments. */
+#view-grades .grades-switch-loader,
+#view-grades.grades-is-switching .grades-switch-loader,
+#view-grades #gradesCalmLoader{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+}
+#view-grades.grades-is-switching #gradebookRoot,
+#view-grades.grades-is-switching #gwaRoot,
+#view-grades.grades-is-switching #quickGwaRoot{
+  display:revert!important;
+}
+
+/* The old built-in Term GWA is only a fallback renderer. Never let its
+   Honor Points/table UI flash before the custom NU planner replaces it. */
+#view-grades #gwaRoot > .gwa-hero,
+#view-grades #gwaRoot > .gwa-toolbar,
+#view-grades #gwaRoot > .gwa-table-wrap{
+  display:none!important;
+}
+
+/* Step 1 lives ABOVE the switcher, never inside it. */
+#view-grades .grades-tool-guide{
+  display:flex!important;
+  align-items:center;
+  gap:10px;
+  margin:8px 2px 8px;
+  color:var(--text-main,#56363d);
+}
+#view-grades .grades-tool-guide>div{display:grid;gap:1px;}
+#view-grades .grades-tool-guide strong{
+  font-size:.82rem;
+  font-weight:950;
+  line-height:1.15;
+}
+#view-grades .grades-tool-guide small{
+  color:var(--text-soft,#8b6870);
+  font-size:.69rem;
+  font-weight:760;
+  line-height:1.25;
+}
+#view-grades .grades-step-no{
+  display:grid;
+  place-items:center;
+  min-width:30px;
+  height:24px;
+  padding:0 8px;
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(232,93,117,.17),rgba(155,130,199,.14));
+  border:1px solid rgba(232,93,117,.16);
+  color:var(--text-main,#56363d);
+  font-size:.64rem;
+  font-weight:950;
+  letter-spacing:.04em;
+}
+
+/* True top-level switcher — quiet like navigation, not subject cards. */
+#view-grades .grades-main-tabs{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  padding:6px!important;
+  margin:0 0 18px!important;
+  border-radius:22px!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.66),rgba(255,255,255,.42))!important;
+  border:1px solid rgba(255,255,255,.72)!important;
+  box-shadow:0 10px 24px rgba(86,57,68,.045),inset 0 1px 0 rgba(255,255,255,.72)!important;
+  overflow:hidden;
+}
+#view-grades .grades-main-tabs::before,
+#view-grades .grades-main-tabs::after{content:none!important;display:none!important;}
+#view-grades .grades-main-tabs button{
+  --tool-accent:#e85d75;
+  min-height:56px!important;
+  padding:10px 13px 12px!important;
+  border:0!important;
+  border-radius:16px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:none!important;
+  text-align:left!important;
+  color:var(--text-soft,#8b6870)!important;
+  transition:background .28s ease,color .28s ease,box-shadow .28s ease!important;
+}
+#view-grades .grades-main-tabs button:nth-child(2){--tool-accent:#8fa86c;}
+#view-grades .grades-main-tabs button:nth-child(3){--tool-accent:#9b82c7;}
+#view-grades .grades-main-tabs button::before,
+#view-grades .grades-main-tabs button::after{content:none!important;display:none!important;}
+#view-grades .grades-main-tabs button span{
+  display:block;
+  color:inherit!important;
+  font-size:.91rem!important;
+  font-weight:950!important;
+  line-height:1.12!important;
+  letter-spacing:-.025em!important;
+}
+#view-grades .grades-main-tabs button small{
+  display:block;
+  margin-top:3px!important;
+  color:inherit!important;
+  opacity:.72;
+  font-size:.64rem!important;
+  font-weight:800!important;
+}
+#view-grades .grades-main-tabs button.active{
+  color:var(--text-main,#56363d)!important;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--tool-accent) 18%,rgba(255,255,255,.86)),rgba(255,255,255,.68))!important;
+  box-shadow:0 5px 14px rgba(86,57,68,.065),inset 0 -3px 0 color-mix(in srgb,var(--tool-accent) 72%,transparent)!important;
+}
+
+/* One stage owns all switching. Its height animates instead of collapsing. */
+#gradesContentStage{
+  position:relative;
+  min-height:190px;
+  height:auto;
+  transition:height .34s cubic-bezier(.22,.72,.25,1);
+}
+#gradesContentStage.is-loading{overflow:hidden;}
+#gradesContentStage.is-loading>#gradebookRoot,
+#gradesContentStage.is-loading>#gwaRoot,
+#gradesContentStage.is-loading>#quickGwaRoot{
+  opacity:0!important;
+  pointer-events:none;
+}
+#gradesContentStage.is-ready>#gradebookRoot,
+#gradesContentStage.is-ready>#gwaRoot,
+#gradesContentStage.is-ready>#quickGwaRoot{
+  opacity:1!important;
+  transition:opacity .18s ease;
+}
+
+/* Same small Cramchy loader for main-tool and subject switching. */
+#gradesContentStage .grades-stage-loader{
+  position:absolute;
+  inset:0;
+  z-index:40;
+  display:grid;
+  place-items:start center;
+  padding-top:42px;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--app-bg-1,#fff2f5) 76%,transparent),
+    color-mix(in srgb,var(--app-bg-2,#fffaf0) 70%,transparent) 58%,
+    transparent);
+  transition:opacity .16s ease,visibility .16s ease;
+}
+#gradesContentStage.is-loading .grades-stage-loader{
+  opacity:1;
+  visibility:visible;
+}
+#gradesContentStage.is-ready .grades-stage-loader{opacity:0;}
+.grades-stage-loader-card{
+  width:min(290px,78%);
+  padding:18px 20px 17px;
+  border-radius:24px;
+  text-align:center;
+  background:linear-gradient(145deg,
+    color-mix(in srgb,var(--app-bg-1,#fff2f5) 74%,white),
+    color-mix(in srgb,var(--app-bg-2,#fffaf0) 74%,white));
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 12px 28px rgba(86,57,68,.07),inset 0 1px 0 rgba(255,255,255,.82);
+}
+.grades-stage-word{
+  color:#c85f7e;
+  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-size:1.55rem;
+  font-weight:850;
+  letter-spacing:-.055em;
+  line-height:1;
+}
+.grades-stage-copy{
+  margin-top:5px;
+  color:var(--text-soft,#8b6870);
+  font-size:.69rem;
+  font-weight:850;
+  text-transform:lowercase;
+}
+.grades-stage-bar{
+  height:5px;
+  margin:13px auto 0;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(232,93,117,.10);
+}
+.grades-stage-bar span{
+  display:block;
+  width:38%;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#e85d75,#8fa86c,#9b82c7);
+  animation:gradesStageBar .86s cubic-bezier(.4,0,.2,1) infinite;
+}
+@keyframes gradesStageBar{
+  from{transform:translateX(-115%)}
+  to{transform:translateX(285%)}
+}
+
+/* Step 2 is CSS-stable, so selecting a course never inserts/removes DOM above it. */
+#gradebookRoot::before{
+  content:'02  choose a subject\A     tap a subject below to open its scores and grade details';
+  display:block;
+  white-space:pre-line;
+  margin:2px 2px 10px;
+  color:var(--text-main,#56363d);
+  font-size:.76rem;
+  font-weight:900;
+  line-height:1.35;
+}
+#gradebookRoot .grades-subject-guide{display:none!important;}
+#view-grades .grade-course-grid::before{content:none!important;display:none!important;}
+
+/* Subjects remain clearly stronger than the top navigation. */
+#view-grades .grade-course-grid{
+  gap:11px!important;
+  margin-top:0!important;
+  margin-bottom:16px!important;
+}
+#view-grades .grade-course-card{
+  min-height:98px!important;
+  padding:15px!important;
+  border-radius:23px!important;
+  transform:none!important;
+  box-shadow:0 12px 26px rgba(86,57,68,.052),inset 0 1px 0 rgba(255,255,255,.7)!important;
+  transition:border-color .24s ease,box-shadow .24s ease,background .24s ease!important;
+}
+#view-grades .grade-course-card.active{
+  transform:none!important;
+  box-shadow:0 16px 32px rgba(86,57,68,.085),inset 0 1px 0 rgba(255,255,255,.82)!important;
+  outline:2px solid color-mix(in srgb,var(--course-accent,#e85d75) 20%,transparent)!important;
+  outline-offset:1px;
+}
+
+@media(max-width:760px){
+  #view-grades .grades-main-tabs{grid-template-columns:1fr!important;gap:6px!important;}
+  #view-grades .grades-main-tabs button{min-height:52px!important;}
+  #view-grades .grade-course-grid{grid-template-columns:1fr!important;}
+  #gradesContentStage .grades-stage-loader{padding-top:26px;}
+}
+@media(prefers-reduced-motion:reduce){
+  #gradesContentStage,
+  #view-grades .grades-main-tabs button,
+  #view-grades .grade-course-card,
+  #gradesContentStage .grades-stage-loader{transition:none!important;}
+  .grades-stage-bar span{animation:none!important;transform:none!important;width:72%;}
+}
