@@ -11,12 +11,11 @@
     {grade:'2.5',rounded:78,cutoff:77.5},
     {grade:'2.0',rounded:72,cutoff:71.5}
   ];
-  const CATEGORIES=['ww','pt','attendance','exam'];
-  const DEFAULT_SCHEME={ww:30,pt:20,attendance:10,exam:40};
 
   let suppressGwaObserver=false;
-  let switchTimer=null;
-  let settleTimer=null;
+  let stageBusy=false;
+  let stageStartedAt=0;
+  let stageFinishTimer=null;
   let gradebookPatchQueued=false;
 
   function readJson(key){
@@ -26,7 +25,7 @@
     try{localStorage.setItem(key,JSON.stringify(value));}catch(e){console.warn('Grades save skipped.',e);}
   }
   function escapeHtml(value){
-    return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[ch]));
   }
   function attr(value){return escapeHtml(value).replace(/`/g,'&#96;');}
   function toNumber(value){
@@ -47,13 +46,13 @@
     return n===null?'—':`${n.toFixed(2)}%`;
   }
   function rawToGrade(value){
-    const rounded=roundedRaw(value);
-    if(rounded===null) return '';
-    if(rounded>=96) return '4.0';
-    if(rounded>=90) return '3.5';
-    if(rounded>=84) return '3.0';
-    if(rounded>=78) return '2.5';
-    if(rounded>=72) return '2.0';
+    const p=roundedRaw(value);
+    if(p===null) return '';
+    if(p>=96) return '4.0';
+    if(p>=90) return '3.5';
+    if(p>=84) return '3.0';
+    if(p>=78) return '2.5';
+    if(p>=72) return '2.0';
     return 'R';
   }
   function conversionText(raw){
@@ -69,16 +68,6 @@
     if(g>=3.50) return "Dean's List — First Honors";
     if(g>=3.25) return "Dean's List — Second Honors";
     return '';
-  }
-  function view(){return document.getElementById('view-grades');}
-  function rootFor(mode){
-    return document.getElementById(mode==='gwa'?'gwaRoot':mode==='quickgwa'?'quickGwaRoot':'gradebookRoot');
-  }
-  function visibleRoot(){
-    return ['gradebook','gwa','quickgwa'].map(rootFor).find(el=>el&&getComputedStyle(el).display!=='none')||null;
-  }
-  function currentMode(){
-    return document.querySelector('#view-grades .grades-main-tabs [data-grades-mode].active')?.dataset.gradesMode||'gradebook';
   }
   function profileYear(state){return state.profile?.academicYear||'2026–2027';}
   function profileTerm(state){return state.profile?.term||'Term 1';}
@@ -113,49 +102,8 @@
     const override=toNumber(info.units);
     return override===null?Math.max(0,Number(course.units)||0):Math.max(0,Math.min(20,override));
   }
-  function courseScheme(course){
-    const scheme=course?.gradingScheme&&typeof course.gradingScheme==='object'?course.gradingScheme:DEFAULT_SCHEME;
-    return {
-      ww:Number.isFinite(+scheme.ww)?+scheme.ww:30,
-      pt:Number.isFinite(+scheme.pt)?+scheme.pt:20,
-      attendance:Number.isFinite(+scheme.attendance)?+scheme.attendance:10,
-      exam:Number.isFinite(+scheme.exam)?+scheme.exam:40
-    };
-  }
-  function assessmentPct(item){
-    const total=Number(item?.total)||0;
-    return total>0?(Number(item.score)||0)/total*100:null;
-  }
-  function categoryStats(app,courseId,period,key){
-    const arr=(app.gradebook?.[courseId]?.[period]||[]).filter(a=>a&&a.category===key);
-    let earned=0,total=0;
-    arr.forEach(a=>{earned+=Number(a.score)||0;total+=Number(a.total)||0;});
-    return {count:arr.length,pct:total>0?(earned/total*100):null};
-  }
-  function termGradeFromApp(app,course,period){
-    if(!course) return null;
-    const scheme=courseScheme(course);
-    let sum=0,used=0;
-    CATEGORIES.forEach(key=>{
-      const st=categoryStats(app,course.id,period,key);
-      if(st.pct!==null){
-        const weight=scheme[key]||0;
-        sum+=st.pct*weight;
-        used+=weight;
-      }
-    });
-    return used>0?sum/used:null;
-  }
-  function overallFromApp(app,course){
-    const mid=termGradeFromApp(app,course,'midterms');
-    const fin=termGradeFromApp(app,course,'finals');
-    if(mid!==null&&fin!==null) return (mid+fin)/2;
-    if(mid!==null) return mid;
-    if(fin!==null) return fin;
-    return null;
-  }
 
-  function computeTermCourse(course){
+  function computeCourse(course){
     const info=infoFor(course.id);
     const mode=info.mode||'none';
     let grade='';
@@ -188,7 +136,7 @@
   function computeGwa(courses){
     let units=0,weighted=0,included=0;
     courses.forEach(course=>{
-      const result=computeTermCourse(course);
+      const result=computeCourse(course);
       if(result.included&&result.units>0){
         units+=result.units;
         weighted+=Number(result.grade)*result.units;
@@ -198,10 +146,22 @@
     return {gwa:units>0?weighted/units:null,units,included,pending:Math.max(0,courses.length-included)};
   }
 
+  function view(){return document.getElementById('view-grades');}
+  function currentMode(){
+    return document.querySelector('#view-grades .grades-main-tabs [data-grades-mode].active')?.dataset.gradesMode||'gradebook';
+  }
+  function rootFor(mode){
+    return document.getElementById(mode==='gwa'?'gwaRoot':mode==='quickgwa'?'quickGwaRoot':'gradebookRoot');
+  }
+  function visibleRoot(){
+    return ['gradebook','gwa','quickgwa'].map(rootFor).find(el=>el&&getComputedStyle(el).display!=='none')||null;
+  }
+
   function ensureHeader(){
     const shell=view();
     const tabs=shell?.querySelector('.grades-main-tabs');
     if(!shell||!tabs) return;
+
     const title=shell.querySelector('.page-head-row h2');
     if(title) title.textContent='grades';
 
@@ -212,7 +172,16 @@
       note.dataset.gradesNote='nu';
       tabs.parentNode.insertBefore(note,tabs);
     }
-    note.innerHTML=`<strong>Based on National University's zero-based grading system.</strong><span>Raw percentages round to the nearest whole number before the grade equivalent. Example: 95.50% becomes 96, or 4.0.</span>`;
+    note.innerHTML=`<strong>Based on National University's zero-based grading system.</strong><span>Raw percentages are rounded to the nearest whole number before the grade equivalent. 95.50% becomes 96, or 4.0.</span>`;
+
+    let guide=shell.querySelector('[data-grades-tool-guide]');
+    if(!guide){
+      guide=document.createElement('div');
+      guide.className='grades-tool-guide';
+      guide.dataset.gradesToolGuide='';
+      guide.innerHTML='<span class="grades-step-no">01</span><div><strong>choose what you want to do</strong><small>switch between your gradebook, term GWA, and quick GWA</small></div>';
+      tabs.insertAdjacentElement('beforebegin',guide);
+    }
 
     const labels={
       gradebook:['course gradebook','real scores'],
@@ -224,61 +193,71 @@
       if(copy) btn.innerHTML=`<span>${copy[0]}</span><small>${copy[1]}</small>`;
     });
 
-    ensureCalmLoader(shell,tabs);
+    ensureStage(tabs);
   }
-  function ensureCalmLoader(shell,tabs){
-    if(shell.querySelector('#gradesCalmLoader')) return;
-    const loader=document.createElement('div');
-    loader.id='gradesCalmLoader';
-    loader.className='grades-calm-loader';
-    loader.setAttribute('aria-live','polite');
-    loader.innerHTML=`<div class="grades-calm-card"><div class="grades-calm-word">cramchy.</div><div class="grades-calm-sub">organizing your grades...</div><div class="grades-calm-bar"><span></span></div></div>`;
-    tabs.insertAdjacentElement('afterend',loader);
-  }
-  function beginTabSwitch(){
+
+  function ensureStage(tabs){
     const shell=view();
-    if(!shell) return;
-    const root=visibleRoot();
-    const height=root?Math.max(180,Math.ceil(root.getBoundingClientRect().height)):240;
-    shell.style.setProperty('--grades-calm-height',`${height}px`);
-    shell.dataset.gradesCalm='switching';
-    clearTimeout(switchTimer);
+    if(!shell||shell.querySelector('#gradesContentStage')) return shell?.querySelector('#gradesContentStage')||null;
+    const roots=['gradebookRoot','gwaRoot','quickGwaRoot'].map(id=>document.getElementById(id)).filter(Boolean);
+    if(roots.length!==3) return null;
+
+    const stage=document.createElement('div');
+    stage.id='gradesContentStage';
+    stage.className='grades-content-stage';
+    tabs.insertAdjacentElement('afterend',stage);
+    roots.forEach(root=>stage.appendChild(root));
+
+    const overlay=document.createElement('div');
+    overlay.className='grades-stage-loader';
+    overlay.setAttribute('aria-live','polite');
+    overlay.innerHTML='<div class="grades-stage-loader-card"><div class="grades-stage-word">cramchy.</div><div class="grades-stage-copy">organizing your grades...</div><div class="grades-stage-bar"><span></span></div></div>';
+    stage.appendChild(overlay);
+    return stage;
   }
-  function finishTabSwitch(){
+
+  function beginStage(message='organizing your grades...'){
     const shell=view();
-    if(!shell) return;
-    clearTimeout(switchTimer);
-    switchTimer=setTimeout(()=>{
-      patchVisible();
-      shell.dataset.gradesCalm='';
-      shell.style.removeProperty('--grades-calm-height');
-      const root=visibleRoot();
-      if(root){
-        root.classList.remove('grades-calm-enter');
-        void root.offsetWidth;
-        root.classList.add('grades-calm-enter');
-        setTimeout(()=>root.classList.remove('grades-calm-enter'),240);
-      }
-    },185);
+    const tabs=shell?.querySelector('.grades-main-tabs');
+    const stage=shell?.querySelector('#gradesContentStage')||ensureStage(tabs);
+    if(!stage) return;
+
+    clearTimeout(stageFinishTimer);
+    const current=visibleRoot();
+    const h=current?Math.max(190,Math.ceil(current.getBoundingClientRect().height)):Math.max(190,Math.ceil(stage.getBoundingClientRect().height));
+    stage.style.height=`${h}px`;
+    stage.style.minHeight=`${h}px`;
+    const copy=stage.querySelector('.grades-stage-copy');
+    if(copy) copy.textContent=message;
+    stage.classList.remove('is-ready');
+    stage.classList.add('is-loading');
+    stageStartedAt=performance.now();
+    stageBusy=true;
   }
-  function beginRootSettle(root){
-    if(!root||getComputedStyle(root).display==='none') return;
-    root.style.setProperty('--grades-root-height',`${Math.max(160,Math.ceil(root.getBoundingClientRect().height))}px`);
-    root.classList.add('grades-root-settling');
-    clearTimeout(settleTimer);
-  }
-  function finishRootSettle(root){
-    if(!root) return;
-    clearTimeout(settleTimer);
-    settleTimer=setTimeout(()=>{
-      patchVisible();
-      root.classList.remove('grades-root-settling');
-      root.style.removeProperty('--grades-root-height');
-      root.classList.remove('grades-calm-enter');
-      void root.offsetWidth;
-      root.classList.add('grades-calm-enter');
-      setTimeout(()=>root.classList.remove('grades-calm-enter'),220);
-    },170);
+
+  function settleStage(){
+    const stage=view()?.querySelector('#gradesContentStage');
+    if(!stage){stageBusy=false;return;}
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const next=visibleRoot();
+      const nextH=next?Math.max(190,Math.ceil(next.getBoundingClientRect().height)):190;
+      void stage.offsetHeight;
+      stage.style.height=`${nextH}px`;
+      stage.style.minHeight=`${Math.min(nextH,190)}px`;
+
+      const elapsed=performance.now()-stageStartedAt;
+      const wait=Math.max(90,240-elapsed);
+      clearTimeout(stageFinishTimer);
+      stageFinishTimer=setTimeout(()=>{
+        stage.classList.add('is-ready');
+        setTimeout(()=>{
+          stage.classList.remove('is-loading','is-ready');
+          stage.style.height='auto';
+          stage.style.minHeight='';
+          stageBusy=false;
+        },190);
+      },wait);
+    }));
   }
 
   function modeOptions(selected){
@@ -308,8 +287,9 @@
       <div><span>highest possible</span><strong>${pct(highest)}</strong><em>${highest===null?'add midterm raw':`rounds to ${roundedRaw(highest)} · equivalent ${rawToGrade(highest)}`}</em></div>
     </div>`;
   }
+
   function courseCard(course,index){
-    const result=computeTermCourse(course);
+    const result=computeCourse(course);
     const info=result.info;
     const accents=['berry','matcha','lavender','blue','peach'];
     const accent=accents[index%accents.length];
@@ -329,7 +309,7 @@
         ${targetPanel(info)}
       </div>`;
     }else{
-      details=`<div class="grades-mode-fields"><div class="grades-empty-choice">Nothing yet is okay — this course stays out of your GWA estimate for now.</div></div>`;
+      details='<div class="grades-mode-fields"><div class="grades-empty-choice">Nothing yet is okay — this course simply stays out of your GWA estimate for now.</div></div>';
     }
 
     return `<article class="grades-gwa-course-card" data-accent="${accent}">
@@ -345,6 +325,7 @@
       <div class="grades-card-foot"><span>${result.included?'included in GWA':'not included yet'}</span><span>${escapeHtml(result.detail)}</span></div>
     </article>`;
   }
+
   function renderTermGwa(){
     const root=document.getElementById('gwaRoot');
     if(!root||getComputedStyle(root).display==='none') return;
@@ -362,7 +343,7 @@
         <div class="grades-gwa-copy">
           <div class="grades-gwa-kicker">term GWA planner</div>
           <h3>add whatever grade you have.</h3>
-          <p>Choose final grade, raw percentage, or midterm + finals per course. Cramchy rounds raw grades before assigning the NU equivalent.</p>
+          <p>Final equivalent, raw percentage, or your midterm + finals raw grades — choose what you actually have for each course.</p>
         </div>
         <div class="grades-gwa-result">
           <span>estimated GWA</span>
@@ -392,17 +373,18 @@
     bindTermGwa(root);
     requestAnimationFrame(()=>{suppressGwaObserver=false;});
   }
+
   function bindTermGwa(root){
     root.querySelector('#gradesTermSelect')?.addEventListener('change',e=>{
-      beginRootSettle(root);
+      beginStage('updating your term...');
       setCurrentTerm(e.target.value);
       renderTermGwa();
-      finishRootSettle(root);
+      settleStage();
     });
 
     root.querySelectorAll('[data-term-field]').forEach(el=>{
       el.addEventListener('change',()=>{
-        beginRootSettle(root);
+        beginStage('recalculating your grades...');
         const courseId=el.dataset.course;
         const field=el.dataset.termField;
         let value=el.value;
@@ -412,7 +394,7 @@
         }
         updateInfo(courseId,{[field]:value});
         renderTermGwa();
-        finishRootSettle(root);
+        settleStage();
       });
     });
   }
@@ -424,93 +406,112 @@
     const courses=new Map((app.courses||[]).map(c=>[String(c.id),c]));
 
     root.querySelectorAll('.grade-course-card[data-grade-course]').forEach(card=>{
-      const course=courses.get(String(card.dataset.gradeCourse));
-      if(!course) return;
-      const raw=overallFromApp(app,course);
+      const id=card.dataset.gradeCourse;
+      let raw=null;
+      try{if(typeof overallGrade==='function') raw=overallGrade(id);}catch(e){}
+      if(raw===null||!Number.isFinite(Number(raw))) return;
       const small=card.querySelector('.small');
-      if(raw===null){
-        if(small) small.textContent=`no scores yet · ${course.code||'no code'}`;
-        return;
-      }
-      if(small) small.textContent=`rounds to ${roundedRaw(raw)} · equivalent ${rawToGrade(raw)} · ${course.code||'no code'}`;
+      const course=courses.get(String(id));
+      if(small) small.textContent=`rounded ${roundedRaw(raw)} · equivalent ${rawToGrade(raw)} · ${course?.code||'no code'}`;
     });
 
-    const active=root.querySelector('.grade-course-card.active[data-grade-course]');
-    const course=active?courses.get(String(active.dataset.gradeCourse)):null;
-    if(course){
-      const values=[termGradeFromApp(app,course,'midterms'),termGradeFromApp(app,course,'finals'),overallFromApp(app,course)];
-      root.querySelectorAll('.grade-overview-row .grade-overview-card').forEach((card,index)=>{
-        const raw=values[index];
-        const note=card.querySelector('.small-note');
-        if(!note) return;
-        note.textContent=raw===null?'no scores':conversionText(raw)+(index===2?' · Midterms 50% / Finals 50%':'');
-      });
-    }
+    try{
+      const active=root.querySelector('.grade-course-card.active[data-grade-course]');
+      if(active&&typeof termGrade==='function'&&typeof overallGrade==='function'){
+        const id=active.dataset.gradeCourse;
+        const values=[termGrade(id,'midterms'),termGrade(id,'finals'),overallGrade(id)];
+        root.querySelectorAll('.grade-overview-row .grade-overview-card').forEach((card,index)=>{
+          const raw=values[index];
+          if(raw===null||!Number.isFinite(Number(raw))) return;
+          const note=card.querySelector('.small-note');
+          if(note) note.textContent=`${conversionText(raw)}${index===2?' · Midterms 50% / Finals 50%':''}`;
+        });
+      }
+    }catch(e){}
   }
-  function patchVisible(){
-    ensureHeader();
-    patchGradebook();
-    if(currentMode()==='gwa') renderTermGwa();
-  }
+
   function queueGradebookPatch(){
     if(gradebookPatchQueued) return;
     gradebookPatchQueued=true;
     requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        gradebookPatchQueued=false;
-        patchVisible();
-      });
+      gradebookPatchQueued=false;
+      patchGradebook();
     });
+  }
+
+  function settleAfterBaseSwitch(){
+    setTimeout(()=>{
+      if(currentMode()==='gwa') renderTermGwa();
+      else if(currentMode()==='gradebook') patchGradebook();
+      settleStage();
+    },0);
   }
 
   function installTabSwitch(){
     const tabs=document.querySelector('#view-grades .grades-main-tabs');
-    if(!tabs||tabs.dataset.gradesCalmTabs==='yes') return;
-    tabs.dataset.gradesCalmTabs='yes';
+    if(!tabs||tabs.dataset.gradesStageBound==='yes') return;
+    tabs.dataset.gradesStageBound='yes';
     tabs.addEventListener('click',event=>{
       const button=event.target.closest('[data-grades-mode]');
       if(!button||button.classList.contains('active')) return;
-      beginTabSwitch();
-      setTimeout(()=>{
-        patchVisible();
-        finishTabSwitch();
-      },45);
+      if(stageBusy){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+      beginStage('switching your grade view...');
+      settleAfterBaseSwitch();
     },true);
   }
-  function installGradebookStabilizer(){
+
+  function installGradebookSwitch(){
     document.addEventListener('click',event=>{
-      const trigger=event.target.closest('#view-grades .grade-course-card[data-grade-course], #view-grades [data-grade-period]');
+      const course=event.target.closest('#gradebookRoot .grade-course-card[data-grade-course]');
+      const period=event.target.closest('#gradebookRoot [data-grade-period]');
+      const trigger=course||period;
       if(!trigger) return;
-      const root=document.getElementById('gradebookRoot');
-      beginRootSettle(root);
-      queueGradebookPatch();
-      setTimeout(()=>finishRootSettle(root),50);
+      if(trigger.classList.contains('active')) return;
+      if(stageBusy){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+      beginStage(course?'opening your subject...':'switching grading period...');
+      setTimeout(()=>{
+        patchGradebook();
+        settleStage();
+      },0);
     },true);
   }
-  function installObservers(){
-    const gwa=document.getElementById('gwaRoot');
-    if(gwa&&gwa.dataset.gradesCalmObserved!=='yes'){
-      gwa.dataset.gradesCalmObserved='yes';
-      new MutationObserver(()=>{
-        if(suppressGwaObserver||currentMode()!=='gwa'||getComputedStyle(gwa).display==='none') return;
-        if(gwa.querySelector('[data-term-gwa-render="stable"]')) return;
-        renderTermGwa();
-      }).observe(gwa,{childList:true});
-    }
-    const gb=document.getElementById('gradebookRoot');
-    if(gb&&gb.dataset.gradesPatchObserved!=='yes'){
-      gb.dataset.gradesPatchObserved='yes';
-      new MutationObserver(()=>queueGradebookPatch()).observe(gb,{childList:true,subtree:false});
-    }
+
+  function installGwaObserver(){
+    const root=document.getElementById('gwaRoot');
+    if(!root||root.dataset.stableGwaObserved==='yes') return;
+    root.dataset.stableGwaObserved='yes';
+    new MutationObserver(()=>{
+      if(suppressGwaObserver||currentMode()!=='gwa'||getComputedStyle(root).display==='none') return;
+      if(root.querySelector('[data-term-gwa-render="stable"]')) return;
+      queueMicrotask(()=>renderTermGwa());
+    }).observe(root,{childList:true});
   }
+
+  function installGradebookObserver(){
+    const root=document.getElementById('gradebookRoot');
+    if(!root||root.dataset.gradesPatchObserved==='yes') return;
+    root.dataset.gradesPatchObserved='yes';
+    new MutationObserver(()=>queueGradebookPatch()).observe(root,{childList:true});
+  }
+
   function installEntryGuard(){
     document.addEventListener('click',event=>{
       if(!event.target.closest('[data-tab="grades"],[data-open-tab="grades"]')) return;
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         ensureHeader();
         installTabSwitch();
-        installObservers();
-        patchVisible();
+        installGwaObserver();
+        installGradebookObserver();
+        if(currentMode()==='gwa') renderTermGwa();
+        else patchGradebook();
       }));
     },true);
   }
@@ -518,10 +519,12 @@
   function install(){
     ensureHeader();
     installTabSwitch();
-    installGradebookStabilizer();
-    installObservers();
+    installGradebookSwitch();
+    installGwaObserver();
+    installGradebookObserver();
     installEntryGuard();
-    patchVisible();
+    if(currentMode()==='gwa') renderTermGwa();
+    else patchGradebook();
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
