@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-home-planner-card-25';
+  const VERSION='2026-09-10-home-planner-card-26';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
