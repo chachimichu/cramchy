@@ -3,6 +3,22 @@
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
+  function installFavicon(){
+    const href='/favicon.ico?v=51';
+    const icons=[
+      {rel:'icon',href,sizes:'any'},
+      {rel:'shortcut icon',href}
+    ];
+    icons.forEach(config=>{
+      const existing=document.querySelector(`link[rel="${config.rel}"]`);
+      const link=existing||document.createElement('link');
+      link.rel=config.rel;
+      link.href=config.href;
+      if(config.sizes) link.sizes=config.sizes;
+      if(!existing) document.head.appendChild(link);
+    });
+  }
+
   function installBootSplash(){
     if(document.getElementById('cramchyBootSplash')) return;
 
@@ -165,6 +181,7 @@
     }
   }
 
+  installFavicon();
   installBootSplash();
   refreshStyles()
     .then(()=>forceFreshBaseBundle())
