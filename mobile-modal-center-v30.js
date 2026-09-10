@@ -16,12 +16,16 @@
     '[role="dialog"]'
   ].join(',');
 
+  function isPlannerOverlay(el){
+    return el instanceof HTMLElement && (el.id==='plannerModal'||el.classList.contains('planner-modal-backdrop'));
+  }
+
   function important(el,prop,value){
     if(el&&el.style) el.style.setProperty(prop,value,'important');
   }
 
   function looksLikeOverlay(el){
-    if(!(el instanceof HTMLElement)) return false;
+    if(!(el instanceof HTMLElement)||isPlannerOverlay(el)) return false;
     const name=(String(el.id||'')+' '+String(el.className||'')).toLowerCase();
     if(!OVERLAY_HINTS.some(h=>name.includes(h))) return false;
     const style=getComputedStyle(el);
@@ -36,6 +40,7 @@
   }
 
   function centerOverlay(overlay){
+    if(isPlannerOverlay(overlay))return;
     important(overlay,'inset','0');
     important(overlay,'left','0');
     important(overlay,'right','0');
@@ -89,7 +94,9 @@
     Array.from(document.body.children).forEach(el=>{
       if(looksLikeOverlay(el)) centerOverlay(el);
     });
-    document.querySelectorAll('.modal-backdrop,.profile-backdrop,.welcome-backdrop,.onboarding-backdrop,.auth-backdrop').forEach(centerOverlay);
+    document.querySelectorAll('.modal-backdrop,.profile-backdrop,.welcome-backdrop,.onboarding-backdrop,.auth-backdrop').forEach(el=>{
+      if(!isPlannerOverlay(el))centerOverlay(el);
+    });
   }
 
   function schedule(){
