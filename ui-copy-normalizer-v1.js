@@ -81,7 +81,10 @@
 
   function shouldSkip(el){
     if(!el) return true;
-    return el.closest('script,style,textarea,code,pre,select,.subject-name,.course-name,.course-title,.exam-subject-name,[data-preserve-case]');
+    /* Exam topic rows are rebuilt synchronously when a status/priority changes.
+       Their delete button is lowercased in CSS so mutating its text a beat later
+       cannot trigger a second layout pass. */
+    return el.closest('script,style,textarea,code,pre,select,.subject-name,.course-name,.course-title,.exam-subject-name,.topic-row button.del,[data-preserve-case]');
   }
 
   function applyElementText(el){
