@@ -53,7 +53,6 @@
     ['Low','low'],
     ['Medium','medium'],
     ['High','high'],
-    ['Term','term'],
     ['Academic Year','academic year'],
     ['Exam Mode','exam mode'],
     ['Cramchy recommends','cramchy recommends'],
