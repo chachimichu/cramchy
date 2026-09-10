@@ -1,6 +1,7 @@
 (function(){
   const MAP=new Map([
     ['Home','home'],
+    ['Planner','planner'],
     ['Courses','courses'],
     ['Tasks','tasks'],
     ['Study','study'],
@@ -59,9 +60,7 @@
     ['Enter Exam Mode →','enter exam mode →']
   ]);
 
-  const EXACT_LOWER=new Set([
-    'Home','Courses','Tasks','Study','Grades','More','Dashboard','Subjects','Countdown','Motivation','Collectibles'
-  ]);
+  function escapeRegExp(value){return String(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 
   function normalizeText(text){
     if(!text) return text;
@@ -71,8 +70,6 @@
     });
     return out;
   }
-
-  function escapeRegExp(value){return String(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 
   function shouldSkip(el){
     if(!el) return true;
@@ -85,6 +82,12 @@
     if(['INPUT','TEXTAREA'].includes(tag)){
       if(el.placeholder) el.placeholder=normalizeText(el.placeholder);
       if(el.type==='button'||el.type==='submit'||el.type==='reset') el.value=normalizeText(el.value);
+      return;
+    }
+    if(el.matches('.topnav .navbtn,.exam-nav-set .navbtn')){
+      const before=el.textContent||'';
+      const after=before.trim().toLowerCase();
+      if(after&&after!==before) el.textContent=after;
       return;
     }
     if(el.childNodes.length===1&&el.childNodes[0].nodeType===Node.TEXT_NODE){
