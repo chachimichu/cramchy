@@ -1,0 +1,244 @@
+/* Mobile shell fix v30 — stronger first-open modal centering + calmer phone cards. */
+@media(max-width:640px){
+  html,
+  body{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+
+  body{
+    position:relative;
+  }
+
+  .modal-backdrop,
+  .profile-backdrop,
+  .welcome-backdrop,
+  .onboarding-backdrop,
+  .auth-backdrop,
+  [class*="backdrop" i][class*="modal" i],
+  [class*="backdrop" i][class*="welcome" i],
+  [class*="backdrop" i][class*="onboard" i],
+  [id*="backdrop" i][id*="modal" i],
+  [id*="backdrop" i][id*="welcome" i],
+  [id*="backdrop" i][id*="onboard" i]{
+    inset:0!important;
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    transform:none!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    place-items:center!important;
+    justify-items:center!important;
+    align-items:center!important;
+    padding-block:18px!important;
+    padding-left:calc(20px + env(safe-area-inset-left,0px))!important;
+    padding-right:calc(20px + env(safe-area-inset-right,0px))!important;
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+
+  .modal-content,
+  .profile-modal,
+  .welcome-modal,
+  .onboarding-modal,
+  .auth-modal,
+  .welcome-card,
+  .onboarding-card,
+  .auth-card,
+  [id*="welcome" i][class*="card" i],
+  [id*="onboard" i][class*="card" i],
+  [id*="profile" i][class*="modal" i],
+  [id*="auth" i][class*="modal" i],
+  [role="dialog"]:not(.planner-modal){
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:auto!important;
+    transform:none!important;
+    float:none!important;
+    display:block!important;
+    width:100%!important;
+    max-width:420px!important;
+    min-width:0!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    margin-inline:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  .modal-content *,
+  .profile-modal *,
+  .welcome-modal *,
+  .onboarding-modal *,
+  .auth-modal *,
+  .welcome-card *,
+  .onboarding-card *,
+  .auth-card *,
+  [role="dialog"]:not(.planner-modal) *{
+    max-width:100%;
+    box-sizing:border-box;
+  }
+
+  .modal-content input,
+  .profile-modal input,
+  .welcome-modal input,
+  .onboarding-modal input,
+  .auth-modal input,
+  .welcome-card input,
+  .onboarding-card input,
+  .auth-card input,
+  [role="dialog"]:not(.planner-modal) input,
+  [role="dialog"]:not(.planner-modal) select,
+  [role="dialog"]:not(.planner-modal) textarea{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    font-size:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  main,
+  .view,
+  .daily-home,
+  .legacy-dashboard{
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+
+  #view-dashboard .daily-home{
+    gap:12px!important;
+  }
+
+  #view-dashboard .cramchy-home-header,
+  #view-dashboard .planner-hero-card,
+  #view-dashboard .daily-hero,
+  #view-dashboard .home-command-panel,
+  #view-dashboard .home-planner-reminders,
+  #view-dashboard .home-courses-section,
+  #view-dashboard .exam-entry-card{
+    border-radius:22px!important;
+  }
+
+  #view-dashboard .cramchy-home-header,
+  #view-dashboard .planner-hero-card,
+  #view-dashboard .daily-hero{
+    padding:16px!important;
+  }
+
+  #view-dashboard .home-command-panel,
+  #view-dashboard .home-planner-reminders,
+  #view-dashboard .home-courses-section{
+    padding:14px!important;
+  }
+
+  #view-dashboard .home-command-grid,
+  #view-dashboard .home-command-side,
+  #view-dashboard .home-command-left{
+    gap:12px!important;
+  }
+
+  #view-dashboard .home-command-heading{
+    margin-bottom:9px!important;
+  }
+
+  #view-dashboard .home-command-heading h3,
+  #view-dashboard .home-planner-reminders-title h3{
+    font-size:1.02rem!important;
+    line-height:1.15!important;
+  }
+
+  #view-dashboard .home-heading-note{
+    display:none!important;
+  }
+
+  #view-dashboard .home-status-strip{
+    gap:9px!important;
+    margin:10px 0 12px!important;
+  }
+
+  #view-dashboard .home-status-card{
+    min-height:76px!important;
+    padding:12px 11px 11px 18px!important;
+    border-radius:17px!important;
+    box-shadow:0 7px 16px rgba(86,57,68,.052)!important;
+  }
+
+  #view-dashboard .home-status-card::before{
+    left:9px!important;
+    top:14px!important;
+    width:6px!important;
+    height:6px!important;
+    box-shadow:0 0 0 4px color-mix(in srgb,var(--status-accent) 12%,transparent)!important;
+  }
+
+  #view-dashboard .home-status-card .value{
+    font-size:1.22rem!important;
+    margin-top:5px!important;
+  }
+
+  #view-dashboard .home-status-card .label{
+    font-size:.7rem!important;
+  }
+
+  #view-dashboard .home-today-content .mission-row,
+  #view-dashboard .home-planner-reminder,
+  #view-dashboard .home-upcoming-content .upcoming-item,
+  #view-dashboard .daily-task-row{
+    padding-block:9px!important;
+  }
+
+  #view-dashboard .home-recommend-card{
+    min-height:128px!important;
+    padding:13px 104px 13px 13px!important;
+    border-radius:18px!important;
+  }
+
+  #view-dashboard .home-study-sticker{
+    width:112px!important;
+    right:-18px!important;
+    bottom:-7px!important;
+  }
+
+  #view-dashboard .home-planner-open,
+  #view-dashboard .btn,
+  #view-dashboard button{
+    min-height:36px;
+  }
+}
+
+@media(max-width:390px){
+  .modal-backdrop,
+  .profile-backdrop,
+  .welcome-backdrop,
+  .onboarding-backdrop,
+  .auth-backdrop,
+  [class*="backdrop" i][class*="modal" i],
+  [class*="backdrop" i][class*="welcome" i],
+  [class*="backdrop" i][class*="onboard" i],
+  [id*="backdrop" i][id*="modal" i],
+  [id*="backdrop" i][id*="welcome" i],
+  [id*="backdrop" i][id*="onboard" i]{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+
+  #view-dashboard .home-status-card{
+    min-height:72px!important;
+    padding-right:9px!important;
+  }
+
+  #view-dashboard .home-recommend-card{
+    padding-right:92px!important;
+  }
+
+  #view-dashboard .home-study-sticker{
+    width:104px!important;
+  }
+}
