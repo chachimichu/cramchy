@@ -2,7 +2,7 @@
   'use strict';
 
   const APP_KEY='strawberryMatchaMidtermsState_v1';
-  const SEEN_KEY='cramchySpecialLetterSeen_v1';
+  const SEEN_KEY='cramchySpecialLetterSeen_v2';
   let previousFocus=null;
 
   function readProfile(){
@@ -16,7 +16,7 @@
     let seen=false;
     try{seen=localStorage.getItem(SEEN_KEY)==='1';}catch(e){}
     const profile=readProfile();
-    return !seen&&Boolean(String(profile.name||'').trim())&&profile.onboarded===true;
+    return !seen&&Boolean(String(profile.name||'').trim());
   }
 
   function installStyles(){
@@ -139,6 +139,11 @@
     document.addEventListener('keydown',event=>{
       if(event.key==='Escape'&&document.getElementById('cramchySpecialLetter'))dismiss();
     });
+    const onboardingObserver=new MutationObserver(records=>{
+      const finished=records.some(record=>Array.from(record.removedNodes||[]).some(node=>node&&node.id==='cramchyOnboard'));
+      if(finished)setTimeout(maybeShow,180);
+    });
+    onboardingObserver.observe(document.body,{childList:true});
     setTimeout(maybeShow,900);
   }
 

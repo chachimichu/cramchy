@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-13-special-letter-54';
+  const VERSION='2026-09-13-special-letter-54-1';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
