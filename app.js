@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-10-exam-subject-stability-50';
+  const VERSION='2026-09-12-ask-cramchy-53';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -205,6 +205,7 @@
     .then(()=>loadScript('ui-copy-normalizer-v1.js?v='+VERSION))
     .then(()=>loadScript('grades-nu-polish-v1.js?v='+VERSION))
     .then(()=>loadScript('grades-quick-gwa-v43.js?v='+VERSION))
+    .then(()=>loadScript('ask-cramchy-v53.js?v='+VERSION))
     .then(()=>finishBootSplash())
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
