@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='V53';
+  const VERSION='V53.1';
   const APP_KEY='strawberryMatchaMidtermsState_v1';
   const PLANNER_KEY='cramchyPlannerEvents_v2';
   const GWA_KEY='cramchyTermGwaPlanner_v2';
@@ -17,6 +17,14 @@
   }
 
   function appState(){return readJson(APP_KEY,{profile:{},courses:[],quickGwaRows:[],gradebook:{}});}
+  function userName(){
+    const saved=String(appState().profile?.name||'').trim().replace(/\s+/g,' ');
+    return saved?saved.split(' ')[0].slice(0,24):'bestie';
+  }
+  function introText(){return 'hiii, '+userName()+' ♡ what are we working on today? ask me anything about Cramchy or your school stuff.';}
+  function loreAnswer(){
+    return "okay, "+userName()+", here's the Cramchy lore ♡ it started as a little side quest by Charlene Mikaela D. Caco, a Psychology student from NU Clark—and it was literally her first time building an app. she used to cram for basically everything: quizzes, exams, deadlines, any chance she got. so she made Cramchy to help herself get organized and slowly beat the cramming-and-procrastinating cycle. the name happened in the most unserious way too: “cram” came from all the cramming, “chy” came from her nickname Chachi and gaming username chachimi, and “Cramchy” sounded like “crunchy” because she was eating chips when she thought of it LOL. it was originally just for her, but she ended up sharing it with friends and other students who might need it too. it’s still growing and it isn’t perfect, but that’s part of the lore—it’s a real first project built around what its developer actually needed.";
+  }
   function plannerEvents(){
     const events=readJson(PLANNER_KEY,[]);
     return Array.isArray(events)?events.filter(e=>e&&e.date).map(e=>({
@@ -122,7 +130,7 @@
     const type=typeFrom(q);if(type)context.type=type;
 
     if(has(q,/\b(what is|what's|explain|about) (the )?(planner|calendar)\b/)){
-      return 'Planner puts classes, tasks, exams, study blocks, and personal events in one calendar. You can switch between Month, Week, and Day, mark events done, add notes and times, and see what is coming next.';
+      return userName()+', Planner is basically your academic life in one calendar—classes, tasks, exams, study blocks, and personal stuff. You can switch between Month, Week, and Day, add notes and times, mark things done, and check what’s coming next.';
     }
     if(has(q,/\b(how (do|can) i|how to|where (do|can) i)\b.*\b(add|create|edit|delete|remove|complete|mark)\b/)){
       if(has(q,/\b(delete|remove)\b/))return 'Open Planner, tap the event, then choose Delete. Cramchy will remove that calendar event.';
@@ -155,9 +163,9 @@
         const rank={exam:0,task:1,class:2,study:3,personal:4};
         return dateTime(a)-dateTime(b)||(rank[a.type]-rank[b.type]);
       }).slice(0,3);
-      if(!candidates.length)return 'You have no unfinished upcoming Planner events to prioritize.';
+      if(!candidates.length)return 'you’re all clear, '+userName()+'—there aren’t any unfinished upcoming Planner events to prioritize right now.';
       context.lastEventId=candidates[0].id;
-      return 'Start with the nearest dated item. My top '+candidates.length+':\n'+candidates.map(eventLine).join('\n');
+      return 'okay, '+userName()+'—let’s start with the closest dated item. here’s the order I’d go with:\n'+candidates.map(eventLine).join('\n');
     }
     if(has(q,/\bhow many|count\b/)){
       const label=result.type?TYPE_LABEL[result.type]+'s':'events';
@@ -166,17 +174,17 @@
     }
     if(has(q,/\bnext\b/)&&!periodFrom(q)){
       const next=events.find(e=>!e.done&&dateTime(e)>=new Date());
-      if(!next)return 'You do not have an upcoming '+(result.type?TYPE_LABEL[result.type]:'Planner event')+' yet.';
+      if(!next)return 'looks clear, '+userName()+'—you don’t have an upcoming '+(result.type?TYPE_LABEL[result.type]:'Planner event')+' yet.';
       context.lastEventId=next.id;
       const notes=next.notes?' Notes: '+next.notes:'';
-      return 'Your next '+TYPE_LABEL[next.type]+' is '+eventLine(next).slice(2)+'.'+notes;
+      return 'okay, '+userName()+'—your next '+TYPE_LABEL[next.type]+' is '+eventLine(next).slice(2)+'.'+notes;
     }
     if(has(q,/\b(details|notes|where|what time)\b/)&&context.lastEventId){
       const event=plannerEvents().find(e=>e.id===context.lastEventId);
       if(event)return eventLine(event).slice(2)+'.'+(event.notes?' Notes: '+event.notes:' No notes were added.');
     }
     const descriptor=(result.type?TYPE_LABEL[result.type]+'s':'events')+(result.period?' '+result.period:'');
-    if(!events.length)return 'I found no '+descriptor+' in your Planner.';
+    if(!events.length)return 'you’re clear, '+userName()+'—I couldn’t find any '+descriptor+' in your Planner.';
     const shown=events.slice(0,6);context.lastEventId=shown[0].id;
     return 'Here '+(shown.length===1?'is':'are')+' your '+descriptor+':\n'+shown.map(eventLine).join('\n')+(events.length>shown.length?'\n…and '+(events.length-shown.length)+' more.':'');
   }
@@ -222,16 +230,16 @@
     if(!isNew&&context.topic!=='grades')return null;
     context.topic='grades';context.period='';context.type='';
 
-    if(has(q,/\b(difference|which|three|3)\b.*\b(grade|gwa)|\bgrade tools?\b/))return 'Grades has three tools: Course Gradebook estimates each course from assessment scores; Term GWA combines final course grades and units for your selected term; Quick GWA is a fast scratch calculator for grade equivalents and units.';
+    if(has(q,/\b(difference|which|three|3)\b.*\b(grade|gwa)|\bgrade tools?\b/))return 'okay, quick bestie breakdown: Course Gradebook estimates one course from your assessment scores, Term GWA combines final course grades and units for the term, and Quick GWA is the fast no-fuss calculator when you already have the grade equivalents.';
     if(has(q,/\b(course gradebook|gradebook)\b.*\b(how|what|use|for)\b/))return 'Course Gradebook tracks assessment scores inside each course and estimates Midterms, Finals, and Overall results. It is a planning estimate, not an official registrar grade.';
     if(has(q,/\bquick gwa\b/)){
       const d=quickGwaData();
-      if(has(q,/\b(what|calculate|current|result|mine|my)\b/)&&d.gwa!==null)return 'Your Quick GWA is '+d.gwa.toFixed(2)+' from '+d.count+' row'+(d.count===1?'':'s')+' and '+d.units+' total units.';
+      if(has(q,/\b(what|calculate|current|result|mine|my)\b/)&&d.gwa!==null)return userName()+', your Quick GWA is '+d.gwa.toFixed(2)+' from '+d.count+' row'+(d.count===1?'':'s')+' and '+d.units+' total units.';
       return 'Quick GWA is the fastest calculator: enter each final grade equivalent and its units. Cramchy computes Σ(grade × units) ÷ Σ(units). It does not change your Course Gradebook.';
     }
     if(has(q,/\bterm gwa\b|\bmy gwa\b|\bcurrent gwa\b/)){
       const d=termGwaData();
-      if(d.gwa!==null)return 'Your '+d.term+' GWA is '+d.gwa.toFixed(2)+' across '+d.included+' included course'+(d.included===1?'':'s')+' and '+d.units+' units.'+(d.pending?' '+d.pending+' course'+(d.pending===1?' is':'s are')+' still pending.':'');
+      if(d.gwa!==null)return userName()+', your '+d.term+' GWA is '+d.gwa.toFixed(2)+' across '+d.included+' included course'+(d.included===1?'':'s')+' and '+d.units+' units.'+(d.pending?' '+d.pending+' course'+(d.pending===1?' is':'s are')+' still pending.':'');
       return 'Term GWA uses final course grades and units for '+d.term+'. Add each course result as a grade equivalent, final raw percentage, or Midterms + Finals raw scores; then Cramchy calculates the weighted average.';
     }
     if(has(q,/\b(formula|calculate|computed|weighted average)\b/))return 'GWA formula: add every included course’s grade equivalent × units, then divide by total included units. Non-numeric marks such as R, INC, P, or F are not included in the numeric GWA calculation.';
@@ -242,22 +250,22 @@
   }
 
   function appAnswer(q){
-    const about=/\b(cramchy|this app|the app|developer|creator|founder|built|made|features?|history|story|name|called|cost|price|free|offline|privacy|data|account|cloud|home screen|install|favicon|icon|pwa|version|update|dashboard|courses page|tasks page|study timer|exam mode|settings)\b/;
+    const about=/\b(cramchy|this app|the app|developer|creator|founder|built|made|features?|history|story|lore|name|called|cost|price|free|offline|privacy|data|account|cloud|home screen|install|favicon|icon|pwa|version|update|dashboard|courses page|tasks page|study timer|exam mode|settings)\b/;
     if(!about.test(q))return null;
 
-    if(has(q,/\b(who (built|made|created|developed)|developer|creator|founder)\b/))return 'Cramchy was built by Charlene Mikaela D. Caco, a 3rd-year Psychology student from NU Clark. It started as her side hobby because she wanted one app that catered to her own academic needs; she first made it for herself, then decided to share it with friends and anyone who wants to use it.';
-    if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return 'Charlene Mikaela D. Caco is Cramchy’s developer: she created the concept, chose the features and design direction, tested it, and made the product decisions. AI tools assisted with parts of the coding process, but Cramchy is her project and vision.';
-    if(has(q,/\b(why|how).*(called|named)|\bname (story|origin|meaning)|\bwhat does cramchy mean\b/))return 'The name is an inside joke with a purpose. Charlene was a major crammer—quizzes, exams, any chance she got—so “cram” points to the habit she wanted to overcome by becoming more organized. “chy” nods to her nickname Chachi and gaming username chachimi. And “Cramchy” sounded like “crunchy” because she was eating chips when she thought of the silly name. The irony is the point: an app named after cramming that helps her stop cramming and procrastinating.';
-    if(has(q,/\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return 'Cramchy began as Charlene’s personal side project: a Psychology student’s attempt to organize classes, tasks, exams, study sessions, and grades in one place and overcome her own cramming habit. It was officially meant for her own use, but she chose to share it with friends and other students. It is still growing—not perfect, but genuinely functional for the life it was designed around.';
+    if(has(q,/\b(who (built|made|created|developed)|developer|creator|founder)\b/))return "Cramchy was built by Charlene Mikaela D. Caco, a Psychology student from NU Clark ♡ it was her first time building an app, and it started as a side quest because she wanted one place that actually fit all her academic needs. she made it for herself first, then decided to share it with friends and other students too.";
+    if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return "short answer: Charlene Mikaela D. Caco built Cramchy. she’s a Psychology student from NU Clark, and this was her first time building an app. she came up with the whole concept, features, design direction, and tested everything around what she actually needed as a student. AI tools helped with parts of the coding, but the project and all the big decisions are hers.";
+    if(has(q,/\blore\b|\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return loreAnswer();
+    if(has(q,/\b(why|how).*(called|named)|\bname (story|origin|meaning)|\bwhat does cramchy mean\b/))return loreAnswer();
     if(has(q,/\b(who are you|what are you|are you (an )?ai|is ask cramchy (an )?ai|ask cramchy)\b/))return 'I’m Ask Cramchy, the app’s built-in academic helper. In this free version I use an offline response library plus the academic data saved in Cramchy; I am not a paid, open-ended AI service. I can still answer questions about your Cramchy data and teach you how the app works.';
-    if(has(q,/\b(features?|what can (cramchy|the app|this app) do|what does (cramchy|the app|this app) do)\b/))return 'Cramchy includes Home, Courses, Tasks, Planner, Study Timer, Grades, Exam Mode, Ask Cramchy, profile/settings, and optional cloud syncing. Grades includes Course Gradebook, Term GWA, and Quick GWA; Planner combines classes, tasks, exams, study blocks, and personal events.';
+    if(has(q,/\b(features?|what can (cramchy|the app|this app) do|what does (cramchy|the app|this app) do)\b/))return 'a lot, actually LOL—Cramchy has Home, Courses, Tasks, Planner, Study Timer, Grades, Exam Mode, Ask Cramchy, profile/settings, and optional cloud sync. Grades has Course Gradebook, Term GWA, and Quick GWA, while Planner keeps classes, tasks, exams, study blocks, and personal events together.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(home|dashboard)\b/))return 'Home is your daily command center. It summarizes what matters now, shows reminders and upcoming Planner items, and gives you quick ways to jump into Cramchy’s tools.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(courses page|course manager)\b/))return 'Courses is where you set up subjects with details such as course code, units, schedule, room, instructor, academic year, and term. Those course records power schedules, Grades, Exam Mode, and Ask Cramchy answers.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(tasks page|task manager)\b/))return 'Tasks is for academic to-dos and deadlines. Add the task, connect it to a course when useful, set its due date, and mark it complete when finished.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(study timer|timer)\b/))return 'Study gives you a focus timer tied to your subjects and study history. Use it to run a focused session, then let Cramchy record the work you completed.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*exam mode\b/))return 'Exam Mode groups an exam period’s dashboard, schedule, subjects, study timer, countdown, and Matcha Corner. Use it when you want a focused workspace for one term or exam period.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(more|settings|profile)\b/))return 'More contains profile and app controls such as your name, academic year, term, theme, cloud access, and repair options. Your academic year and term also affect which courses and grades Cramchy shows.';
-    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'Cramchy is free to use right now. This Ask Cramchy training layer also runs without a paid AI API, so normal questions do not create per-message AI charges.';
+    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'yep, Cramchy is free to use right now ♡ Ask Cramchy also works without a paid AI API, so normal questions don’t create per-message AI charges.';
     if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Ask Cramchy’s trained response library runs in your browser without a paid AI call. The website still needs to load, and sign-in or cloud syncing needs internet; offline availability for the entire app depends on what your browser has cached.';
     if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your working Cramchy data is saved in the browser on your device. If you sign in and use Cramchy Cloud, supported data can also sync through the app’s cloud service. Avoid putting sensitive personal information in event notes, and remember that clearing browser storage can remove local-only data.';
     if(has(q,/\b(account|sign in|login|cloud|sync)\b/))return 'You can use Cramchy locally in the browser. Signing in enables supported cloud syncing so your saved work can follow your account; syncing requires internet.';
@@ -288,7 +296,7 @@
 
   function helpAnswer(q){
     if(!has(q,/^(help|what can i ask|what can you do|show examples|commands|questions)$/))return null;
-    return 'You can ask me things like:\n• “What’s on my Planner tomorrow?” or “Which deadline comes first?”\n• “What is my Term GWA?” or “How is Quick GWA different?”\n• “Who built Cramchy?” or “Why is it called Cramchy?”\n• “Was Cramchy built with AI?” or “Is it free?”\n• “How do I add an event?” or “How do I install it on iPhone?”\n• Questions about your classes, exams, tasks, topics, study history, and what to study next.\nYou can also say “open Planner” or “show Quick GWA.”';
+    return 'ask away, '+userName()+' ♡ try things like:\n• “what’s on my Planner tomorrow?”\n• “what’s my Term GWA?”\n• “what’s the lore behind this app?”\n• “who built Cramchy?”\n• “how do I add an event?”\n• “what should I study next?”\nyou can also say “open Planner” or “show Quick GWA.”';
   }
 
   function answer(raw){
@@ -321,12 +329,12 @@
     const panel=document.getElementById('askCramchyPanel');if(!panel||panel.dataset.v53==='yes')return;
     panel.dataset.v53='yes';
     const first=panel.querySelector('.ask-msg.bot .ask-bubble');
-    if(first)first.textContent='hiii ♡ I now know Cramchy’s story, Planner, all three Grades tools, and your saved academic data. Ask me anything about the app or your school setup.';
+    if(first)first.textContent=introText();
     const wrap=document.getElementById('askCramchyMessages');
     const oldChips=wrap?.querySelector('.ask-chip-row');if(oldChips)oldChips.remove();
     if(wrap){
       const row=document.createElement('div');row.className='ask-chip-row';
-      [['planner today','what is on my planner today?'],['my term gwa','what is my term gwa?'],['all features','what features does cramchy have?'],['cramchy story','why is it called cramchy?']].forEach(item=>{
+      [['planner today','what is on my planner today?'],['my term gwa','what is my term gwa?'],['all features','what features does cramchy have?'],['cramchy lore',"what's the lore behind this app?"]].forEach(item=>{
         const button=document.createElement('button');button.type='button';button.className='ask-chip';button.dataset.v53Query=item[1];button.textContent=item[0];row.appendChild(button);
       });
       wrap.appendChild(row);
@@ -352,6 +360,6 @@
     patchPanel();
   }
 
-  window.__cramchyAskV53={version:VERSION,answer,normalize,plannerEvents,termGwaData,quickGwaData};
+  window.__cramchyAskV53={version:VERSION,answer,normalize,plannerEvents,termGwaData,quickGwaData,userName,introText,loreAnswer};
   if(typeof document!=='undefined'&&document.body)install();
 })();

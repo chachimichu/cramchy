@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-12-ask-cramchy-53';
+  const VERSION='2026-09-12-ask-cramchy-53-1';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
