@@ -2180,7 +2180,7 @@ function termGrade(courseId,period,hypothetical=null){
   Object.keys(GRADE_CATEGORIES).forEach(key=>{const extra=hypothetical&&hypothetical.category===key?hypothetical.pct:null;const st=categoryStats(courseId,period,key,extra);if(st.pct!==null){sum+=st.pct*(scheme[key]||0);used+=scheme[key]||0;}});
   return used>0?sum/used:null;
 }
-function gradePoint(p){if(p===null||!Number.isFinite(p))return null;if(p>=96)return '4.0';if(p>=90)return '3.5';if(p>=84)return '3.0';if(p>=78)return '2.5';if(p>=72)return '2.0';return 'R';}
+function gradePoint(p){if(p===null||!Number.isFinite(p))return null;const rounded=Math.round(p);if(rounded>=96)return '4.0';if(rounded>=90)return '3.5';if(rounded>=84)return '3.0';if(rounded>=78)return '2.5';if(rounded>=72)return '2.0';return 'R';}
 function overallGrade(courseId){const m=termGrade(courseId,'midterms'),f=termGrade(courseId,'finals');if(m!==null&&f!==null)return (m+f)/2;if(m!==null)return m;if(f!==null)return f;return null;}
 function fmtPct(p){return p===null||!Number.isFinite(p)?'—':`${p.toFixed(2)}%`;}
 function assessmentPct(a){return Number(a.total)>0?Number(a.score)/Number(a.total)*100:0;}
