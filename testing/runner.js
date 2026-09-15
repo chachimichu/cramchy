@@ -30,16 +30,16 @@ async function start(data){
   busy=true;
   const status=document.getElementById('status');
   try{
-    const response=await fetch('../index.html',{cache:'no-store'});
+    const response=await fetch('/',{cache:'no-store'});
     if(!response.ok)throw new Error('Could not load app shell');
     const doc=new DOMParser().parseFromString(await response.text(),'text/html');
     const scripts=[];
     doc.querySelectorAll('script').forEach(s=>{
-      if(s.src){const url=new URL(s.getAttribute('src'),new URL('../',location.href));if(url.origin===location.origin)scripts.push(url.href);}
+      if(s.src){const url=new URL(s.getAttribute('src'),location.origin+'/');if(url.origin===location.origin)scripts.push(url.href);}
       else if(s.textContent.trim())throw new Error('App shell now has inline scripts; review the test runner before loading.');
       s.remove();
     });
-    const base=doc.createElement('base');base.href=new URL('../',location.href).href;
+    const base=doc.createElement('base');base.href=location.origin+'/';
     const policy=doc.createElement('meta');policy.httpEquiv='Content-Security-Policy';
     policy.content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; form-action 'none'; object-src 'none'";
     const init=doc.createElement('script');
