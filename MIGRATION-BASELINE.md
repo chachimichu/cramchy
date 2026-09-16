@@ -16,23 +16,24 @@ index.html -> app.js. app.js refreshes styles, fetches app-base.js, then loads t
 8. js/pet-duo.js
 9. js/study-timer.js
 10. js/tasks.js
-11. app-logo-base.js
-12. exam-nav-active-v14.js
-13. exam-subject-dedupe-v21.js
-14. planner-cloud-sync-v12.js
-15. planner-root-compat-v4.js
-16. planner-v3.js
-17. planner-mobile-hotfix-v44.js
-18. home-hierarchy-v5.js
-19. home-command-v6.js
-20. polish-v7.js
-21. home-planner-reminders-v23.js
-22. mobile-modal-center-v30.js
-23. ui-copy-normalizer-v1.js
-24. grades-nu-polish-v1.js
-25. grades-quick-gwa-v43.js
-26. ask-cramchy-v53.js
-27. special-letter-v54.js
+11. js/courses.js
+12. app-logo-base.js
+13. exam-nav-active-v14.js
+14. exam-subject-dedupe-v21.js
+15. planner-cloud-sync-v12.js
+16. planner-root-compat-v4.js
+17. planner-v3.js
+18. planner-mobile-hotfix-v44.js
+19. home-hierarchy-v5.js
+20. home-command-v6.js
+21. polish-v7.js
+22. home-planner-reminders-v23.js
+23. mobile-modal-center-v30.js
+24. ui-copy-normalizer-v1.js
+25. grades-nu-polish-v1.js
+26. grades-quick-gwa-v43.js
+27. ask-cramchy-v53.js
+28. special-letter-v54.js
 
 app-logo-base.js injects app-base.js; app.js also has a base-readiness wait and a planner-cloud-readiness wait. Preserve these nested dependencies. Multiple legacy version strings currently exist; unification is a later change.
 
@@ -129,3 +130,9 @@ The existing `studyHistory`, `petDuoHidden`, `petDuoNap`, and `chaowiMode` state
 `js/tasks.js` now owns the shared `missions` behavior across Dashboard missions, the Cramchy Tasks page, and the Home checklist. Adding, completing, reopening, or deleting a task renders all three surfaces from one state source and persists through the existing save pipeline. The Home surface still shows the first five tasks, while its counter covers every incomplete task.
 
 The `missions` storage contract remains unchanged, including existing identifiers, text and completion flags. The old `task-home-sync-v9.js` runtime patch is no longer loaded because cross-surface updates are direct module behavior instead of synthetic mirrored events. Planner reminders remain separate and still load through `home-planner-reminders-v23.js`.
+
+## Migration checkpoint 6: courses and class schedules
+
+`js/courses.js` now owns three connected responsibilities: filtering courses by academic year and term, normalizing old and current class-schedule formats (including next-class calculation), and rendering both the Courses catalog and Home course strip. It also owns course upsert/removal persistence and the removal cascade for Gradebook and course-linked Exam workspace records.
+
+The existing `courses`, `gradebook`, and `examData` shapes are unchanged. The legacy core still presents the course editor modal for now, but it submits mutations through the Courses module. Grades, Study choices, Exam subjects, Home, and Ask Cramchy continue consuming the same compatibility helpers while their own migration slices remain pending.

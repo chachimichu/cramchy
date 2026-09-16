@@ -77,3 +77,6 @@ jobs:
 
       - name: Test Tasks module
         run: node testing/tasks.test.cjs
+
+      - name: Test Courses module
+        run: node testing/courses.test.cjs

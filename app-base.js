@@ -130,6 +130,20 @@ const tasksFeature = window.CramchyModules?.tasks?.init({
   reactChaowi: kind => chaowiFeature.react(kind)
 });
 if(!tasksFeature) throw new Error('Tasks module failed to initialize.');
+const coursesFeature = window.CramchyModules?.courses?.init({
+  getState: () => state,
+  getAcademicContext: () => ({year:profileAcademicYear(),term:profileTerm()}),
+  saveState,
+  showToast,
+  createId: cryptoId,
+  escapeHtml,
+  confirmAction: message => confirm(message),
+  openModal: (id,focusSchedules) => openCourseModal(id,focusSchedules),
+  onOpenCourses: () => switchTab('subjects'),
+  onChanged: () => { renderDynamicCourses(); renderDailyHome(); renderGradebook(); renderGwaCalculator(); },
+  onRemoved: id => { if(selectedGradeCourseId===id)selectedGradeCourseId=null; }
+});
+if(!coursesFeature) throw new Error('Courses module failed to initialize.');
 
 function renderMatchaProgress(){
   streakFeature.render();
@@ -1370,7 +1384,6 @@ function leaveExamMode(goToChooser=false){
   switchTab(goToChooser?'exam':'dashboard');
 }
 function initExamAndCourses(){
-  document.getElementById('addCourseBtn')?.addEventListener('click',()=>openCourseModal());
   document.querySelectorAll('[data-exam-choice]').forEach(b=>b.addEventListener('click',()=>setExamPeriod(b.dataset.examChoice)));
   document.querySelectorAll('[data-exam-tab]').forEach(b=>b.addEventListener('click',()=>{if(state.examPeriod)switchTab(b.dataset.examTab);}));
   document.getElementById('exitExamModeTopBtn')?.addEventListener('click',()=>leaveExamMode(false));
@@ -1483,91 +1496,26 @@ function courseScheme(course){
   return {ww:Number(s.ww??30),pt:Number(s.pt??20),attendance:Number(s.attendance??10),exam:Number(s.exam??40)};
 }
 function normalizeCourseSchedules(course){
-  if(Array.isArray(course?.schedules)&&course.schedules.length) return course.schedules;
-  const raw=(course?.schedule||'').trim();
-  if(!raw) return [];
-  const m=raw.match(/^(Sun(?:day)?|Mon(?:day)?|Tue(?:sday)?|Wed(?:nesday)?|Thu(?:rsday)?|Fri(?:day)?|Sat(?:urday)?)\s*[·|-]\s*([^·]+?)[–-]([^·]+?)(?:\s*[·|-]\s*(.*))?$/i);
-  if(!m) return [{id:cryptoId(),day:'',start:'',end:'',room:raw,legacy:true}];
-  const dayMap={sun:'Sunday',sunday:'Sunday',mon:'Monday',monday:'Monday',tue:'Tuesday',tuesday:'Tuesday',wed:'Wednesday',wednesday:'Wednesday',thu:'Thursday',thursday:'Thursday',fri:'Friday',friday:'Friday',sat:'Saturday',saturday:'Saturday'};
-  const parseClock=(x)=>{
-    const mm=String(x).trim().match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); if(!mm) return '';
-    let h=+mm[1],min=mm[2],ap=mm[3].toUpperCase(); if(ap==='PM'&&h<12)h+=12;if(ap==='AM'&&h===12)h=0;return String(h).padStart(2,'0')+':'+min;
-  };
-  return [{id:cryptoId(),day:dayMap[m[1].toLowerCase()]||'',start:parseClock(m[2]),end:parseClock(m[3]),room:(m[4]||'').replace(/^Room\s*/i,'').trim()}];
+  return coursesFeature.normalizeSchedules(course);
 }
 function displayTime24(t){
-  if(!t) return '';
-  const [h,m]=t.split(':').map(Number); if(!Number.isFinite(h)) return t;
-  const ap=h>=12?'PM':'AM',hh=(h%12)||12; return `${hh}:${String(m||0).padStart(2,'0')} ${ap}`;
+  return coursesFeature.displayTime(t);
 }
 function scheduleText(s){
-  if(s.legacy) return s.room||'Schedule not set';
-  const times=s.start&&s.end?`${displayTime24(s.start)}–${displayTime24(s.end)}`:(s.start?displayTime24(s.start):'Time not set');
-  return `${s.day||'Day not set'} · ${times}${s.room?` · ${s.room}`:''}`;
+  return coursesFeature.scheduleText(s);
 }
 function nextClassOccurrence(){
-  let best=null;
-  const now=new Date();
-  coursesForCurrentTerm().forEach(course=>{
-    normalizeCourseSchedules(course).forEach(s=>{
-      if(!DAY_NAMES.includes(s.day)||!/^\d{2}:\d{2}$/.test(s.start||'')) return;
-      const targetDay=DAY_NAMES.indexOf(s.day);
-      const [hh,mm]=s.start.split(':').map(Number);
-      let delta=(targetDay-now.getDay()+7)%7;
-      const d=new Date(now); d.setSeconds(0,0); d.setHours(hh,mm,0,0); d.setDate(now.getDate()+delta);
-      if(d<=now){d.setDate(d.getDate()+7);}
-      if(!best||d<best.when) best={course,schedule:s,when:d};
-    });
-  });
-  return best;
+  return coursesFeature.nextClass();
 }
 function nextCourseLabel(){
-  const n=nextClassOccurrence(); if(!n) return '—';
-  return `${n.course.code||n.course.name} · ${displayTime24(n.schedule.start)}`;
+  return coursesFeature.nextLabel();
 }
 
 function renderDynamicCourses(){
-  const grid=document.getElementById('dynamicCourseGrid'); if(!grid) return;
-  const courses=coursesForCurrentTerm();
-  if(!courses.length){
-    grid.innerHTML='<div class="card shell-empty" style="grid-column:1/-1;"><div class="big">no courses yet</div><p>Add your first course. You can edit, schedule, or remove it anytime.</p><button class="btn" id="emptyAddCourseBtn">+ add course</button></div>';
-    document.getElementById('emptyAddCourseBtn')?.addEventListener('click',()=>openCourseModal());
-    return;
-  }
-  grid.innerHTML=courses.map(c=>{
-    const schedules=normalizeCourseSchedules(c);
-    const scheduleHtml=schedules.length?schedules.map(s=>`<div class="schedule-chip"><span>${escapeHtml(scheduleText(s))}</span></div>`).join(''):'<div class="schedule-chip"><span>no class schedule yet</span></div>';
-    const accent=COURSE_COLORS[c.color]||COURSE_COLORS.pink;
-    return `<div class="course-card-dynamic" style="--course-accent:${accent}"><div class="course-accent"></div><div class="course-card-body">
-      <div class="course-top"><div><h3>${escapeHtml(c.name)}</h3><div class="meta">${escapeHtml(c.code||'No code')}${c.units?` · ${c.units} units`:''}<br>${escapeHtml(c.professor||'Professor not set')}${c.section?` · ${escapeHtml(c.section)}`:''}</div></div></div>
-      <div class="schedule-stack">${scheduleHtml}</div>
-      <div class="course-card-help">You can change details anytime. “Schedules” lets you add multiple meeting days.</div>
-      <div class="course-actions"><button data-edit-course="${c.id}">✎ edit course</button><button data-schedule-course="${c.id}">🗓 edit schedules</button><button class="danger" data-delete-course="${c.id}">remove course</button></div>
-    </div></div>`;
-  }).join('');
-  grid.querySelectorAll('[data-edit-course]').forEach(b=>b.addEventListener('click',()=>openCourseModal(b.dataset.editCourse,false)));
-  grid.querySelectorAll('[data-schedule-course]').forEach(b=>b.addEventListener('click',()=>openCourseModal(b.dataset.scheduleCourse,true)));
-  grid.querySelectorAll('[data-delete-course]').forEach(b=>b.addEventListener('click',()=>removeCourse(b.dataset.deleteCourse)));
+  coursesFeature.renderCatalog();
 }
 function removeCourse(courseId){
-  const c=(state.courses||[]).find(x=>x.id===courseId); if(!c) return;
-  if(!confirm(`Remove ${c.name}? Its gradebook and course-linked exam workspace entries will also be removed.`)) return;
-  state.courses=state.courses.filter(x=>x.id!==courseId);
-  if(state.gradebook) delete state.gradebook[courseId];
-  const key=academicKey(c.academicYear||profileAcademicYear(),c.term||profileTerm());
-  const record=state.examData?.[key];
-  const sid=`course-${courseId}`;
-  if(record){
-    ['midterms','finals'].forEach(period=>{
-      const p=record[period];
-      if(!p)return;
-      p.exams=(p.exams||[]).filter(e=>(e.subjectId||e.id)!==sid);
-      if(p.subjects)delete p.subjects[sid];
-      if(p.subjectNames)delete p.subjectNames[sid];
-    });
-  }
-  if(selectedGradeCourseId===courseId) selectedGradeCourseId=null;
-  saveState(); renderDynamicCourses(); renderDailyHome(); renderGradebook(); renderGwaCalculator(); showToast('course removed');
+  return coursesFeature.remove(courseId);
 }
 function scheduleRowMarkup(s={}){
   const days=DAY_NAMES.map(d=>`<option value="${d}" ${s.day===d?'selected':''}>${d}</option>`).join('');
@@ -1620,18 +1568,12 @@ function openCourseModal(courseId=null,focusSchedules=false){
     const totalW=Object.values(gradingScheme).reduce((a,b)=>a+b,0);if(Math.abs(totalW-100)>0.001){showToast('grading weights must total 100%');return;}
     const newSchedules=[...scrim.querySelectorAll('[data-schedule-row]')].map(row=>({id:cryptoId(),day:row.querySelector('[data-sch-day]').value,start:row.querySelector('[data-sch-start]').value,end:row.querySelector('[data-sch-end]').value,room:row.querySelector('[data-sch-room]').value.trim().slice(0,50)})).filter(s=>s.day||s.start||s.end||s.room);
     const course={id:existing?.id||cryptoId(),name:name.slice(0,80),code:scrim.querySelector('#courseCode').value.trim().slice(0,30),professor:scrim.querySelector('#courseProf').value.trim().slice(0,80),section:scrim.querySelector('#courseSection').value.trim().slice(0,40),units:Math.max(0,Math.min(20,Number(scrim.querySelector('#courseUnits').value)||0)),room:scrim.querySelector('#courseRoom').value.trim().slice(0,40),color:scrim.querySelector('#courseColor').value,term:scrim.querySelector('#courseTerm').value.trim().slice(0,30),academicYear:existing?.academicYear||state.profile?.academicYear||'2026–2027',schedule:'',schedules:newSchedules,gradingScheme,gwaFinalGrade:existing?.gwaFinalGrade||'',gwaMode:existing?.gwaMode||'auto'};
-    if(existing)state.courses=state.courses.map(c=>c.id===existing.id?course:c);else state.courses.push(course);
-    if(!state.gradebook)state.gradebook={};if(!state.gradebook[course.id])state.gradebook[course.id]={midterms:[],finals:[]};
-    saveState();renderDynamicCourses();renderDailyHome();renderGradebook();renderGwaCalculator();scrim.remove();showToast(existing?'course updated':'course added');
+    coursesFeature.upsert(course);scrim.remove();
   });
 }
 
 function renderDailyCourses(){
-  const strip=document.getElementById('dailyCourseStrip');if(!strip)return;
-  const courses=coursesForCurrentTerm().slice(0,6);
-  if(!courses.length){strip.innerHTML='<div class="card shell-empty" style="grid-column:1/-1;"><div class="big">add your courses</div><p>Once added, your daily dashboard will use their schedules and grades.</p><button class="btn" id="homeAddCourseBtn">+ add course</button></div>';document.getElementById('homeAddCourseBtn')?.addEventListener('click',()=>openCourseModal());return;}
-  strip.innerHTML=courses.map(c=>{const s=normalizeCourseSchedules(c)[0];return `<button type="button" class="home-course" data-home-course="${c.id}" style="text-align:left;font:inherit;"><h4>${escapeHtml(c.name)}</h4><p>${escapeHtml(c.code||'No code')}${s?`<br>${escapeHtml(scheduleText(s))}`:'<br>no schedule yet'}</p></button>`;}).join('');
-  strip.querySelectorAll('[data-home-course]').forEach(b=>b.addEventListener('click',()=>switchTab('subjects')));
+  coursesFeature.renderHome();
 }
 
 function gradeData(courseId){if(!state.gradebook)state.gradebook={};if(!state.gradebook[courseId])state.gradebook[courseId]={midterms:[],finals:[]};return state.gradebook[courseId];}
@@ -2109,9 +2051,9 @@ function ensureAcademicStructure(){
   });
 }
 function coursesForTerm(year,term){
-  return (state.courses||[]).filter(c=>(c.academicYear||profileAcademicYear())===year && (c.term||profileTerm())===term);
+  return coursesFeature.forTerm(year,term);
 }
-function coursesForCurrentTerm(){return coursesForTerm(profileAcademicYear(),profileTerm());}
+function coursesForCurrentTerm(){return coursesFeature.current();}
 
 function activePeriodData(period=state.examPeriod){
   const p=['midterms','finals'].includes(period)?period:'midterms';
