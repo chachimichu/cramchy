@@ -48,6 +48,9 @@ jobs:
       - name: Test synthetic data paths
         run: node testing/path-check.cjs
 
+      - name: Test synthetic app readiness gate
+        run: node testing/runner-readiness.test.cjs
+
       - name: Test custom countdown module
         run: node testing/countdown.test.cjs
 

@@ -17,6 +17,7 @@ Run the migration checks with:
 ```sh
 node testing/validate-static.cjs
 node testing/path-check.cjs
+node testing/runner-readiness.test.cjs
 node testing/countdown.test.cjs
 node testing/motivation.test.cjs
 node testing/streak.test.cjs

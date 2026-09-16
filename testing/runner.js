@@ -1,6 +1,31 @@
 'use strict';
 const frame=document.getElementById('app');
 let snapshot={},busy=false;
+function waitForAppReady(timeoutMs=15000){
+  const started=Date.now();
+  return new Promise((resolve,reject)=>{
+    const check=()=>{
+      try{
+        const appWindow=frame.contentWindow;
+        const baseReady=appWindow?.__cramchyBaseReady;
+        if(baseReady){
+          Promise.resolve(baseReady).then(()=>{
+            const choice=appWindow.document.querySelector('[data-exam-choice]');
+            if(choice)return resolve();
+            if(Date.now()-started>=timeoutMs)return reject(new Error('Cramchy loaded, but the exam choices were not found.'));
+            setTimeout(check,50);
+          },reject);
+          return;
+        }
+      }catch(e){
+        return reject(e);
+      }
+      if(Date.now()-started>=timeoutMs)return reject(new Error('Cramchy took too long to become interactive. Please try Load sample data again.'));
+      setTimeout(check,50);
+    };
+    check();
+  });
+}
 // Executed before any app code. Never reads browser storage or auth sessions.
 function installMemoryStorage(initial, scripts){
   const memory=new Map(Object.entries(initial));
@@ -30,6 +55,9 @@ async function start(data){
   busy=true;
   const status=document.getElementById('status');
   try{
+    status.textContent='Loading the test session…';
+    frame.classList.add('is-loading');
+    frame.setAttribute('aria-busy','true');
     const response=await fetch('/',{cache:'no-store'});
     if(!response.ok)throw new Error('Could not load app shell');
     const doc=new DOMParser().parseFromString(await response.text(),'text/html');
@@ -47,9 +75,14 @@ async function start(data){
     doc.head.prepend(policy,base,init);
     snapshot=data;
     frame.srcdoc='<!doctype html>'+doc.documentElement.outerHTML;
+    await waitForAppReady();
     document.getElementById('reload').disabled=false;
-    status.textContent='Test session loaded. Use Reload test app to retain in-memory edits; Load sample data resets only this test session.';
-  }catch(e){status.textContent=e.message;}finally{busy=false;}
+    status.textContent='Test session ready. Use Reload test app to retain in-memory edits; Load sample data resets only this test session.';
+  }catch(e){status.textContent=e.message;}finally{
+    frame.classList.remove('is-loading');
+    frame.removeAttribute('aria-busy');
+    busy=false;
+  }
 }
 document.getElementById('seed').onclick=()=>start(seedCramchyTestData());
 document.getElementById('fresh').onclick=()=>start({});
