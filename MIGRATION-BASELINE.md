@@ -110,3 +110,13 @@ Three independent features moved out of the legacy core in one tested batch:
 - `js/brain-break.js` owns the five-minute timer, start/pause/reset handlers, completion toast and timer cleanup.
 
 Streak and collectible presentation rules now live in `styles/matcha-progress.css`. The study-history and topic calculations remain behind explicit injected dependencies. Backup/import/reset was deliberately left in the legacy core because it replaces global state and can trigger cloud persistence; it requires its own migration and recovery tests.
+
+## Migration checkpoint 4: study timer and companions
+
+The Study area now has three explicit module owners:
+
+- `js/study-timer.js` owns timer presets and controls, academic-aware subject choices, session completion, Study History rendering, and updates to Matcha/Home after a completed session.
+- `js/pet-duo.js` owns Hanabi and Kenken reactions plus their persisted nap and hidden controls.
+- `js/chaowi.js` owns Chaowi messages, mode persistence, idle and reaction timers, reduced-motion behavior, and reactions triggered by study sessions or completed topics and tasks.
+
+The existing `studyHistory`, `petDuoHidden`, `petDuoNap`, and `chaowiMode` state contracts remain unchanged. Timer history still records academic keys and exam periods, and Ask Cramchy continues to resolve historical subject names through a compatibility helper. Feature presentation remains in `styles-base.css` for this checkpoint so CSS cascade consolidation can be reviewed separately from runtime ownership.

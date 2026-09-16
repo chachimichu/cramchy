@@ -23,4 +23,7 @@ node testing/motivation.test.cjs
 node testing/streak.test.cjs
 node testing/collectibles.test.cjs
 node testing/brain-break.test.cjs
+node testing/study-timer.test.cjs
+node testing/pet-duo.test.cjs
+node testing/chaowi.test.cjs
 ```
