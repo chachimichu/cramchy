@@ -129,6 +129,12 @@ function freshState(){
 }
 
 let state = loadState();
+const countdownFeature = window.CramchyModules?.countdown?.init({
+  getState: () => state,
+  saveState,
+  showToast
+});
+if(!countdownFeature) throw new Error('Countdown module failed to initialize.');
 
 function loadState(){
   try{
@@ -471,7 +477,7 @@ function switchTab(tab){
   if(tab === 'dashboard') renderDashboard();
   if(tab === 'schedule') renderSchedule();
   if(tab === 'timer') renderTimerTab();
-  if(tab === 'countdown') renderCustomCountdown();
+  if(tab === 'countdown') countdownFeature.render();
   if(tab === 'matcha') renderMatchaCorner();
   if(tab === 'tasks') renderCramchyTasks();
   if(tab === 'more') renderCramchySettings();
@@ -614,75 +620,6 @@ function addMission(){
   renderMissions();
   showToast('mission added ♡');
 }
-
-function formatCustomCountdownPrecise(diff){
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
-  const hh = String(hours).padStart(2,'0');
-  const mm = String(mins).padStart(2,'0');
-  const ss = String(secs).padStart(2,'0');
-  return days > 0 ? `${days}d ${hh}:${mm}:${ss}` : `${hh}:${mm}:${ss}`;
-}
-
-function renderCustomCountdown(){
-  const dateInput = document.getElementById('customCountdownDate');
-  const timeInput = document.getElementById('customCountdownTime');
-  if(!dateInput || !timeInput) return;
-  const todayStr = new Date().toLocaleDateString('en-CA');
-  if(state.customCountdown){
-    dateInput.value = state.customCountdown.date;
-    timeInput.value = state.customCountdown.time;
-  } else if(!dateInput.value){
-    dateInput.value = todayStr;
-  }
-  updateCustomCountdownDisplay();
-}
-
-function updateCustomCountdownDisplay(){
-  const targetEl = document.getElementById('customCountdownTarget');
-  const el = document.getElementById('customCountdownDisplay');
-  if(!el || !targetEl) return;
-  if(!state.customCountdown){
-    targetEl.textContent = '';
-    el.textContent = 'Pick a date and time, then tap Set.';
-    return;
-  }
-  const target = new Date(`${state.customCountdown.date}T${state.customCountdown.time}:00`);
-  if(isNaN(target.getTime())){
-    targetEl.textContent = '';
-    el.textContent = 'Pick a valid date and time.';
-    return;
-  }
-  const timeLabel = target.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
-  const dateLabel = target.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-  targetEl.textContent = `Counting down to ${dateLabel}, ${timeLabel}`;
-  const diff = target.getTime() - Date.now();
-  el.textContent = diff <= 0 ? 'time\'s up ♡' : formatCustomCountdownPrecise(diff);
-}
-
-document.getElementById('setCountdownBtn').addEventListener('click', () => {
-  const dateVal = document.getElementById('customCountdownDate').value;
-  const timeVal = document.getElementById('customCountdownTime').value;
-  if(!dateVal || !timeVal){
-    showToast('pick both a date and a time first ♡');
-    return;
-  }
-  state.customCountdown = { date: dateVal, time: timeVal };
-  saveState();
-  updateCustomCountdownDisplay();
-  showToast('countdown set ♡');
-});
-
-document.getElementById('clearCountdownBtn').addEventListener('click', () => {
-  state.customCountdown = null;
-  saveState();
-  document.getElementById('customCountdownTime').value = '';
-  updateCustomCountdownDisplay();
-});
-
-setInterval(updateCustomCountdownDisplay, 1000);
 
 function renderMotivation(){
   document.getElementById('motivationText').textContent = MOTIVATIONS[state.motivationIndex % MOTIVATIONS.length];
@@ -4007,7 +3944,7 @@ function renderAll(){
   renderSchedule();
   renderSubjectsTab();
   renderTimerTab();
-  renderCustomCountdown();
+  countdownFeature.render();
   renderMatchaCorner();
   renderCramchyTasks();
   renderCramchySettings();

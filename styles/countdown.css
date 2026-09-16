@@ -1,0 +1,11 @@
+.countdown-picker-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.countdown-picker-row input{flex:1;min-width:130px;}
+.countdown-target-label{
+  text-align:center;margin-top:18px;font-weight:700;color:var(--text-soft);font-size:.9rem;
+}
+.countdown-precise{
+  font-family:'Playfair Display',serif;font-variant-numeric:tabular-nums;
+  text-align:center;color:var(--red-berry);font-weight:700;
+  font-size:2.8rem;letter-spacing:1px;margin-top:6px;
+}
+@media (max-width:480px){.countdown-precise{font-size:2.1rem;}}

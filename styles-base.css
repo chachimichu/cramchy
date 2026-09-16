@@ -161,18 +161,6 @@
   }
   textarea{width:100%; resize:vertical; min-height:100px; line-height:1.5;}
 
-  .countdown-picker-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
-  .countdown-picker-row input{flex:1; min-width:130px;}
-  .countdown-target-label{
-    text-align:center; margin-top:18px; font-weight:700; color:var(--text-soft); font-size:0.9rem;
-  }
-  .countdown-precise{
-    font-family:'Playfair Display', serif; font-variant-numeric:tabular-nums;
-    text-align:center; color:var(--red-berry); font-weight:700;
-    font-size:2.8rem; letter-spacing:1px; margin-top:6px;
-  }
-  @media (max-width:480px){ .countdown-precise{font-size:2.1rem;} }
-
   .btn{
     border:none; border-radius:999px; padding:10px 20px; font-weight:800; font-size:0.9rem;
     background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry)); color:#fff;
@@ -1195,4 +1183,3 @@
     @keyframes askSheetIn{from{opacity:.7;transform:translateY(28px)}to{opacity:1;transform:none}}
   }
   @media(prefers-reduced-motion:reduce){.ask-cramchy-panel,.ask-msg{animation:none}.ask-cramchy-launcher,.ask-chip{transition:none}}
-

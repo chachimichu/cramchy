@@ -34,10 +34,19 @@ jobs:
 
       - name: Reject unresolved merge conflicts
         run: |
-          if grep -nE '^(<<<<<<<|=======|>>>>>>>)' index.html styles.css app.js vercel.json; then
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- ':!archive/**'; then
             echo 'Unresolved merge-conflict markers found.'
             exit 1
           fi
 
       - name: Syntax-check JavaScript
-        run: node --check app.js
+        run: find . -type f -name '*.js' -not -path './.git/*' -not -path './archive/*' -print0 | xargs -0 -n1 node --check
+
+      - name: Validate declared runtime assets
+        run: node testing/validate-static.cjs
+
+      - name: Test synthetic data paths
+        run: node testing/path-check.cjs
+
+      - name: Test custom countdown module
+        run: node testing/countdown.test.cjs

@@ -11,3 +11,11 @@ Four synthetic courses cover 95.78%, 95.50%, 95.49% and no-score cases, with all
 Reload test app retains in-memory edits after the save debounce. Resetting samples or refreshing the whole test page discards them. This harness verifies UI/state reload behavior, not real persistent storage, cloud, iOS installation or storage quota failures. Those need separate tests.
 
 This helper does not yet cover all legacy schema variants or every feature.
+
+Run the migration checks with:
+
+```sh
+node testing/validate-static.cjs
+node testing/path-check.cjs
+node testing/countdown.test.cjs
+```
