@@ -173,13 +173,6 @@
   .btn.danger{background:linear-gradient(135deg,#c8465e,#9c2f45);}
   .btn:disabled{opacity:0.5; cursor:not-allowed; transform:none;}
 
-  /* ---------- Motivation ---------- */
-  .motivation-box{
-    text-align:center; padding:22px; background:linear-gradient(135deg,var(--matcha-pale),#f5faf2);
-    border:1px solid #d7e8cd; border-radius:var(--radius);
-  }
-  .motivation-box p{font-weight:700; font-size:1.05rem; color:var(--matcha-dark); font-style:italic; min-height:52px;}
-
   /* ---------- Timeline (Exam Schedule) ---------- */
   .timeline{position:relative; padding-left:26px; margin-top:20px;}
   .timeline::before{

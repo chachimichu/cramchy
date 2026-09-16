@@ -1,0 +1,7 @@
+.motivation-box{
+  text-align:center;padding:22px;background:linear-gradient(135deg,var(--matcha-pale),#f5faf2);
+  border:1px solid #d7e8cd;border-radius:var(--radius);
+}
+.motivation-box p{
+  font-weight:700;font-size:1.05rem;color:var(--matcha-dark);font-style:italic;min-height:52px;
+}

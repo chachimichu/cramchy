@@ -18,4 +18,5 @@ Run the migration checks with:
 node testing/validate-static.cjs
 node testing/path-check.cjs
 node testing/countdown.test.cjs
+node testing/motivation.test.cjs
 ```

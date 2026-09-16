@@ -8,24 +8,25 @@ index.html -> app.js. app.js refreshes styles, fetches app-base.js, then loads t
 
 1. boot-resilience-v11.js
 2. js/countdown.js
-3. app-logo-base.js
-4. exam-nav-active-v14.js
-5. exam-subject-dedupe-v21.js
-6. planner-cloud-sync-v12.js
-7. planner-root-compat-v4.js
-8. planner-v3.js
-9. planner-mobile-hotfix-v44.js
-10. home-hierarchy-v5.js
-11. home-command-v6.js
-12. polish-v7.js
-13. task-home-sync-v9.js
-14. home-planner-reminders-v23.js
-15. mobile-modal-center-v30.js
-16. ui-copy-normalizer-v1.js
-17. grades-nu-polish-v1.js
-18. grades-quick-gwa-v43.js
-19. ask-cramchy-v53.js
-20. special-letter-v54.js
+3. js/motivation.js
+4. app-logo-base.js
+5. exam-nav-active-v14.js
+6. exam-subject-dedupe-v21.js
+7. planner-cloud-sync-v12.js
+8. planner-root-compat-v4.js
+9. planner-v3.js
+10. planner-mobile-hotfix-v44.js
+11. home-hierarchy-v5.js
+12. home-command-v6.js
+13. polish-v7.js
+14. task-home-sync-v9.js
+15. home-planner-reminders-v23.js
+16. mobile-modal-center-v30.js
+17. ui-copy-normalizer-v1.js
+18. grades-nu-polish-v1.js
+19. grades-quick-gwa-v43.js
+20. ask-cramchy-v53.js
+21. special-letter-v54.js
 
 app-logo-base.js injects app-base.js; app.js also has a base-readiness wait and a planner-cloud-readiness wait. Preserve these nested dependencies. Multiple legacy version strings currently exist; unification is a later change.
 
@@ -35,6 +36,7 @@ app.js stylesheet set, in declared order:
 
 - styles.css
 - styles/countdown.css
+- styles/motivation.css
 - design-v3.css
 - home-hero-v4.css
 - home-hierarchy-v5.css
@@ -88,3 +90,9 @@ The test-only synthetic data runner now provides deterministic academic, Planner
 Custom countdown behavior now belongs to `js/countdown.js`, with its feature styles in `styles/countdown.css`. It receives state, persistence and toast dependencies from the legacy core, owns its event handlers and one-second timer, and exposes render/update/dispose behavior. The main state schema and sanitizer remain unchanged. Exam countdown behavior remains in the legacy core.
 
 The three files archived on `chore/cleanup-unused-files` remain as on main here because that branch was not merged. This is one verified extraction slice, not approval to retire `app-base.js` or migrate storage. Full desktop/mobile regression and cloud/persistent-storage tests are still required before merge approval.
+
+## Migration checkpoint 2: dashboard motivation
+
+The Dashboard Motivation widget now belongs to `js/motivation.js`, with its feature styles in `styles/motivation.css`. The module owns the message catalog, rendering, random next-message selection and its button handler. It receives only state and persistence dependencies from the legacy core, preserves the existing `motivationIndex` storage contract, and exposes render/dispose behavior.
+
+CI now exercises motivation rendering, selection, persistence and listener cleanup. Dashboard, Tasks, Matcha and Timer remain in the legacy core until their shared state and cross-render dependencies are mapped and tested.
