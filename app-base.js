@@ -121,6 +121,15 @@ const studyTimerFeature = window.CramchyModules?.studyTimer?.init({
   escapeHtml
 });
 if(!studyTimerFeature) throw new Error('Study timer module failed to initialize.');
+const tasksFeature = window.CramchyModules?.tasks?.init({
+  getState: () => state,
+  saveState,
+  showToast,
+  createId: cryptoId,
+  escapeHtml,
+  reactChaowi: kind => chaowiFeature.react(kind)
+});
+if(!tasksFeature) throw new Error('Tasks module failed to initialize.');
 
 function renderMatchaProgress(){
   streakFeature.render();
@@ -569,47 +578,7 @@ function renderDashboard(){
 }
 
 function renderMissions(){
-  const list = document.getElementById('missionList');
-  if(!state.missions.length){
-    list.innerHTML = `<div class="empty-state">Add a few realistic goals for today.</div>`;
-    return;
-  }
-  list.innerHTML = '';
-  state.missions.forEach(m => {
-    const row = document.createElement('div');
-    row.className = 'mission-row' + (m.done ? ' done' : '');
-    row.innerHTML = `
-      <input type="checkbox" ${m.done ? 'checked' : ''} data-id="${m.id}">
-      <span>${escapeHtml(m.text)}</span>
-      <button class="del" data-id="${m.id}">✕</button>
-    `;
-    list.appendChild(row);
-  });
-  list.querySelectorAll('input[type=checkbox]').forEach(cb => {
-    cb.addEventListener('change', () => {
-      const m = state.missions.find(x => x.id === cb.dataset.id);
-      if(m){ m.done = cb.checked; saveState(); renderMissions(); }
-    });
-  });
-  list.querySelectorAll('button.del').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.missions = state.missions.filter(x => x.id !== btn.dataset.id);
-      saveState(); renderMissions();
-    });
-  });
-}
-
-document.getElementById('addMissionBtn').addEventListener('click', addMission);
-document.getElementById('missionInput').addEventListener('keydown', e => { if(e.key === 'Enter') addMission(); });
-function addMission(){
-  const input = document.getElementById('missionInput');
-  const text = input.value.trim();
-  if(!text) return;
-  state.missions.push({ id: cryptoId(), text, done: false });
-  input.value = '';
-  saveState();
-  renderMissions();
-  showToast('mission added ♡');
+  tasksFeature.renderDashboard();
 }
 
 /* ===================== SCHEDULE ===================== */
@@ -1255,15 +1224,7 @@ function renderCramchySettings(){
   if(picker){picker.innerHTML=themePickerMarkup(state.profile.theme);picker.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>setThemeChoice(b.dataset.themeChoice,picker)));}
 }
 function renderCramchyTasks(){
-  const wrap=document.getElementById('cramchyTaskList');if(!wrap)return;
-  if(!state.missions.length){wrap.innerHTML=`<div class="shell-empty"><div class="big">nothing here yet ♡</div><p>Add a quick task below. Course-linked tasks, deadlines, priorities, and subtasks come in the full Tasks build.</p></div>`;return;}
-  wrap.innerHTML=state.missions.map(m=>`<div class="mission-row"><input type="checkbox" data-cramchy-task-check="${m.id}" ${m.done?'checked':''}><span style="flex:1;${m.done?'text-decoration:line-through;opacity:.6;':''}">${escapeHtml(m.text)}</span><button class="icon-btn" data-cramchy-task-delete="${m.id}" aria-label="Delete">×</button></div>`).join('');
-  wrap.querySelectorAll('[data-cramchy-task-check]').forEach(el=>el.addEventListener('change',()=>{const item=state.missions.find(m=>m.id===el.dataset.cramchyTaskCheck);if(item)item.done=el.checked;saveState();renderCramchyTasks();renderDashboard();if(el.checked)chaowiReact('topic');}));
-  wrap.querySelectorAll('[data-cramchy-task-delete]').forEach(el=>el.addEventListener('click',()=>{state.missions=state.missions.filter(m=>m.id!==el.dataset.cramchyTaskDelete);saveState();renderCramchyTasks();renderDashboard();}));
-}
-function addCramchyQuickTask(){
-  const input=document.getElementById('cramchyTaskInput');if(!input||!input.value.trim())return;
-  state.missions.push({id:cryptoId(),text:input.value.trim().slice(0,200),done:false});input.value='';saveState();renderCramchyTasks();renderDashboard();
+  tasksFeature.renderTaskPage();
 }
 function openCramchyOnboarding(){
   if(document.getElementById('cramchyOnboard'))return;
@@ -1287,8 +1248,6 @@ function openCramchyOnboarding(){
 }
 function initCramchyShell(){
   applyCramchyPersonalization();
-  document.getElementById('cramchyAddTaskBtn')?.addEventListener('click',addCramchyQuickTask);
-  document.getElementById('cramchyTaskInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addCramchyQuickTask();});
   document.getElementById('saveProfileBtn')?.addEventListener('click',()=>{
     state.profile.name=(document.getElementById('profileName')?.value||'').trim().slice(0,40);
     state.profile.academicYear=(document.getElementById('profileYear')?.value||'2026–2027').trim().slice(0,30);
@@ -1449,20 +1408,7 @@ function nextCourseLabel(){
   return first.code||first.name.slice(0,8);
 }
 function renderDailyTasks(){
-  const wrap=document.getElementById('dailyTaskList'); if(!wrap) return;
-  const tasks=(state.missions||[]).slice(0,5);
-  if(!tasks.length){
-    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here ♡</div><p>Add a task and it will show up on your daily dashboard.</p></div>';
-    return;
-  }
-  wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
-    <input type="checkbox" data-daily-task="${m.id}" ${m.done?'checked':''}>
-    <span class="task-text">${escapeHtml(m.text)}</span>
-  </label>`).join('');
-  wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
-    const item=state.missions.find(m=>m.id===el.dataset.dailyTask); if(item)item.done=el.checked;
-    saveState(); renderDailyHome(); renderCramchyTasks(); renderDashboard();
-  }));
+  tasksFeature.renderHome();
 }
 function renderDailyCourses(){
   const strip=document.getElementById('dailyCourseStrip'); if(!strip) return;

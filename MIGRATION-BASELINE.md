@@ -12,24 +12,27 @@ index.html -> app.js. app.js refreshes styles, fetches app-base.js, then loads t
 4. js/streak.js
 5. js/collectibles.js
 6. js/brain-break.js
-7. app-logo-base.js
-8. exam-nav-active-v14.js
-9. exam-subject-dedupe-v21.js
-10. planner-cloud-sync-v12.js
-11. planner-root-compat-v4.js
-12. planner-v3.js
-13. planner-mobile-hotfix-v44.js
-14. home-hierarchy-v5.js
-15. home-command-v6.js
-16. polish-v7.js
-17. task-home-sync-v9.js
-18. home-planner-reminders-v23.js
-19. mobile-modal-center-v30.js
-20. ui-copy-normalizer-v1.js
-21. grades-nu-polish-v1.js
-22. grades-quick-gwa-v43.js
-23. ask-cramchy-v53.js
-24. special-letter-v54.js
+7. js/chaowi.js
+8. js/pet-duo.js
+9. js/study-timer.js
+10. js/tasks.js
+11. app-logo-base.js
+12. exam-nav-active-v14.js
+13. exam-subject-dedupe-v21.js
+14. planner-cloud-sync-v12.js
+15. planner-root-compat-v4.js
+16. planner-v3.js
+17. planner-mobile-hotfix-v44.js
+18. home-hierarchy-v5.js
+19. home-command-v6.js
+20. polish-v7.js
+21. home-planner-reminders-v23.js
+22. mobile-modal-center-v30.js
+23. ui-copy-normalizer-v1.js
+24. grades-nu-polish-v1.js
+25. grades-quick-gwa-v43.js
+26. ask-cramchy-v53.js
+27. special-letter-v54.js
 
 app-logo-base.js injects app-base.js; app.js also has a base-readiness wait and a planner-cloud-readiness wait. Preserve these nested dependencies. Multiple legacy version strings currently exist; unification is a later change.
 
@@ -120,3 +123,9 @@ The Study area now has three explicit module owners:
 - `js/chaowi.js` owns Chaowi messages, mode persistence, idle and reaction timers, reduced-motion behavior, and reactions triggered by study sessions or completed topics and tasks.
 
 The existing `studyHistory`, `petDuoHidden`, `petDuoNap`, and `chaowiMode` state contracts remain unchanged. Timer history still records academic keys and exam periods, and Ask Cramchy continues to resolve historical subject names through a compatibility helper. Feature presentation remains in `styles-base.css` for this checkpoint so CSS cascade consolidation can be reviewed separately from runtime ownership.
+
+## Migration checkpoint 5: shared Tasks ownership
+
+`js/tasks.js` now owns the shared `missions` behavior across Dashboard missions, the Cramchy Tasks page, and the Home checklist. Adding, completing, reopening, or deleting a task renders all three surfaces from one state source and persists through the existing save pipeline. The Home surface still shows the first five tasks, while its counter covers every incomplete task.
+
+The `missions` storage contract remains unchanged, including existing identifiers, text and completion flags. The old `task-home-sync-v9.js` runtime patch is no longer loaded because cross-surface updates are direct module behavior instead of synthetic mirrored events. Planner reminders remain separate and still load through `home-planner-reminders-v23.js`.

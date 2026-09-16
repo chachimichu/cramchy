@@ -74,3 +74,6 @@ jobs:
 
       - name: Test Chaowi module
         run: node testing/chaowi.test.cjs
+
+      - name: Test Tasks module
+        run: node testing/tasks.test.cjs
