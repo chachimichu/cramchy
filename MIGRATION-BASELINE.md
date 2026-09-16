@@ -9,24 +9,27 @@ index.html -> app.js. app.js refreshes styles, fetches app-base.js, then loads t
 1. boot-resilience-v11.js
 2. js/countdown.js
 3. js/motivation.js
-4. app-logo-base.js
-5. exam-nav-active-v14.js
-6. exam-subject-dedupe-v21.js
-7. planner-cloud-sync-v12.js
-8. planner-root-compat-v4.js
-9. planner-v3.js
-10. planner-mobile-hotfix-v44.js
-11. home-hierarchy-v5.js
-12. home-command-v6.js
-13. polish-v7.js
-14. task-home-sync-v9.js
-15. home-planner-reminders-v23.js
-16. mobile-modal-center-v30.js
-17. ui-copy-normalizer-v1.js
-18. grades-nu-polish-v1.js
-19. grades-quick-gwa-v43.js
-20. ask-cramchy-v53.js
-21. special-letter-v54.js
+4. js/streak.js
+5. js/collectibles.js
+6. js/brain-break.js
+7. app-logo-base.js
+8. exam-nav-active-v14.js
+9. exam-subject-dedupe-v21.js
+10. planner-cloud-sync-v12.js
+11. planner-root-compat-v4.js
+12. planner-v3.js
+13. planner-mobile-hotfix-v44.js
+14. home-hierarchy-v5.js
+15. home-command-v6.js
+16. polish-v7.js
+17. task-home-sync-v9.js
+18. home-planner-reminders-v23.js
+19. mobile-modal-center-v30.js
+20. ui-copy-normalizer-v1.js
+21. grades-nu-polish-v1.js
+22. grades-quick-gwa-v43.js
+23. ask-cramchy-v53.js
+24. special-letter-v54.js
 
 app-logo-base.js injects app-base.js; app.js also has a base-readiness wait and a planner-cloud-readiness wait. Preserve these nested dependencies. Multiple legacy version strings currently exist; unification is a later change.
 
@@ -37,6 +40,7 @@ app.js stylesheet set, in declared order:
 - styles.css
 - styles/countdown.css
 - styles/motivation.css
+- styles/matcha-progress.css
 - design-v3.css
 - home-hero-v4.css
 - home-hierarchy-v5.css
@@ -96,3 +100,13 @@ The three files archived on `chore/cleanup-unused-files` remain as on main here 
 The Dashboard Motivation widget now belongs to `js/motivation.js`, with its feature styles in `styles/motivation.css`. The module owns the message catalog, rendering, random next-message selection and its button handler. It receives only state and persistence dependencies from the legacy core, preserves the existing `motivationIndex` storage contract, and exposes render/dispose behavior.
 
 CI now exercises motivation rendering, selection, persistence and listener cleanup. Dashboard, Tasks, Matcha and Timer remain in the legacy core until their shared state and cross-render dependencies are mapped and tested.
+
+## Migration checkpoint 3: three Matcha-area features
+
+Three independent features moved out of the legacy core in one tested batch:
+
+- `js/streak.js` owns consecutive-day calculation, streak display and Matcha commentary.
+- `js/collectibles.js` owns the collectible catalog and unlock rendering at one collectible per three completed topics.
+- `js/brain-break.js` owns the five-minute timer, start/pause/reset handlers, completion toast and timer cleanup.
+
+Streak and collectible presentation rules now live in `styles/matcha-progress.css`. The study-history and topic calculations remain behind explicit injected dependencies. Backup/import/reset was deliberately left in the legacy core because it replaces global state and can trigger cloud persistence; it requires its own migration and recovery tests.

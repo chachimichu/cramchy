@@ -53,3 +53,12 @@ jobs:
 
       - name: Test motivation module
         run: node testing/motivation.test.cjs
+
+      - name: Test streak module
+        run: node testing/streak.test.cjs
+
+      - name: Test collectibles module
+        run: node testing/collectibles.test.cjs
+
+      - name: Test brain-break module
+        run: node testing/brain-break.test.cjs

@@ -1,0 +1,17 @@
+.streak-pill{
+  text-align:center;font-family:'Playfair Display',serif;font-size:1.4rem;
+  color:var(--red-berry);font-weight:700;margin-top:10px;
+}
+.collectibles-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px;
+}
+.collectible{
+  text-align:center;font-size:1.9rem;padding:14px 0;background:var(--pink-blush);
+  border-radius:var(--radius-sm);filter:grayscale(1) opacity(.35);transition:all .3s ease;
+}
+.collectible.unlocked{
+  filter:none;background:var(--matcha-pale);transform:scale(1.02);
+}
+@media (max-width:560px){
+  .collectibles-grid{grid-template-columns:repeat(4,1fr);}
+}

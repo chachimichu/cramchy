@@ -19,4 +19,7 @@ node testing/validate-static.cjs
 node testing/path-check.cjs
 node testing/countdown.test.cjs
 node testing/motivation.test.cjs
+node testing/streak.test.cjs
+node testing/collectibles.test.cjs
+node testing/brain-break.test.cjs
 ```

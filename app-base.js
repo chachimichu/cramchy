@@ -33,8 +33,6 @@ const KENKEN_MESSAGES = [
   "hi. now back to studying ♡"
 ];
 
-const COLLECTIBLE_ICONS = ['🍓','🍵','🎀','🧋','🍰','🍡','🌸','♡','✨','🫧','🍒','🧁'];
-
 const STORAGE_KEY = 'strawberryMatchaMidtermsState_v1';
 const APP_VERSION = '2026.09.08-stability.1';
 const APP_VERSION_KEY = 'cramchyLastAppVersion';
@@ -105,6 +103,19 @@ const motivationFeature = window.CramchyModules?.motivation?.init({
   saveState
 });
 if(!motivationFeature) throw new Error('Motivation module failed to initialize.');
+const streakFeature = window.CramchyModules?.streak?.init({ getState: () => state });
+if(!streakFeature) throw new Error('Streak module failed to initialize.');
+const collectiblesFeature = window.CramchyModules?.collectibles?.init({
+  getCompletedCount: () => overallStats().done
+});
+if(!collectiblesFeature) throw new Error('Collectibles module failed to initialize.');
+const brainBreakFeature = window.CramchyModules?.brainBreak?.init({ showToast });
+if(!brainBreakFeature) throw new Error('Brain break module failed to initialize.');
+
+function renderMatchaProgress(){
+  streakFeature.render();
+  collectiblesFeature.render();
+}
 
 function loadState(){
   try{
@@ -448,7 +459,7 @@ function switchTab(tab){
   if(tab === 'schedule') renderSchedule();
   if(tab === 'timer') renderTimerTab();
   if(tab === 'countdown') countdownFeature.render();
-  if(tab === 'matcha') renderMatchaCorner();
+  if(tab === 'matcha') renderMatchaProgress();
   if(tab === 'tasks') renderCramchyTasks();
   if(tab === 'more') renderCramchySettings();
   if(tab === 'grades'){ applyCramchyPersonalization(); renderGradebook(); }
@@ -941,7 +952,7 @@ function logStudySession(){
   });
   saveState();
   renderHistory();
-  renderMatchaCorner();
+  renderMatchaProgress();
 }
 
 function renderHistory(){
@@ -967,40 +978,6 @@ function renderHistory(){
       <div class="mins">${h.minutes}m</div>
     `;
     list.appendChild(row);
-  });
-}
-
-/* ===================== STREAK ===================== */
-function calcStreak(){
-  const days = new Set(state.studyHistory.map(h => new Date(h.timestamp).toDateString()));
-  let count = 0;
-  let cursor = new Date();
-  if(!days.has(cursor.toDateString())){
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  while(days.has(cursor.toDateString())){
-    count++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return count;
-}
-
-/* ===================== MATCHA CORNER ===================== */
-function renderMatchaCorner(){
-  const streak = calcStreak();
-  document.getElementById('streakDisplay').textContent = `${streak} day streak`;
-  const commentary = streak >= 3 ? "look at you, actually consistent ♡" : (streak >= 1 ? "keep it going, don't break the chain." : "start today. matcha is watching.");
-  document.getElementById('mascotCommentary').textContent = commentary;
-
-  const overall = overallStats();
-  const unlockedCount = Math.min(COLLECTIBLE_ICONS.length, Math.floor(overall.done / 3));
-  const grid = document.getElementById('collectiblesGrid');
-  grid.innerHTML = '';
-  COLLECTIBLE_ICONS.forEach((icon, i) => {
-    const el = document.createElement('div');
-    el.className = 'collectible' + (i < unlockedCount ? ' unlocked' : '');
-    el.textContent = icon;
-    grid.appendChild(el);
   });
 }
 
@@ -1240,39 +1217,6 @@ function initChaowi(){
   applyMode(currentMode(), false);
 }
 initChaowi();
-
-/* ===================== BRAIN BREAK TIMER ===================== */
-let breakState = { remaining: 5*60, running: false, intervalId: null };
-function updateBreakDisplay(){
-  const m = Math.floor(breakState.remaining / 60);
-  const s = breakState.remaining % 60;
-  document.getElementById('breakDisplay').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
-document.getElementById('breakStartBtn').addEventListener('click', () => {
-  if(breakState.running){
-    clearInterval(breakState.intervalId);
-    breakState.running = false;
-    return;
-  }
-  breakState.running = true;
-  breakState.intervalId = setInterval(() => {
-    breakState.remaining--;
-    updateBreakDisplay();
-    if(breakState.remaining <= 0){
-      clearInterval(breakState.intervalId);
-      breakState.running = false;
-      breakState.remaining = 5*60;
-      updateBreakDisplay();
-      showToast('break over. back to the academic trenches ♡');
-    }
-  }, 1000);
-});
-document.getElementById('breakResetBtn').addEventListener('click', () => {
-  clearInterval(breakState.intervalId);
-  breakState.running = false;
-  breakState.remaining = 5*60;
-  updateBreakDisplay();
-});
 
 /* ===================== BACKUP / RESET ===================== */
 document.getElementById('exportBtn').addEventListener('click', () => {
@@ -2815,7 +2759,7 @@ function logStudySession(){
     academicKey:state.examPeriod?activeAcademicKey():dailyAcademicKey(),
     period:state.examPeriod||''
   });
-  saveState();renderHistory();renderMatchaCorner();renderDailyHome();
+  saveState();renderHistory();renderMatchaProgress();renderDailyHome();
 }
 function studyHistorySubjectName(h){
   if(h.subject==='general')return 'General Study';
@@ -3902,7 +3846,7 @@ function renderAll(){
   renderSubjectsTab();
   renderTimerTab();
   countdownFeature.render();
-  renderMatchaCorner();
+  renderMatchaProgress();
   renderCramchyTasks();
   renderCramchySettings();
   renderDynamicCourses();
@@ -3917,7 +3861,7 @@ function renderAll(){
 ensureAcademicStructure();
 switchTab('dashboard');
 renderAll();
-updateBreakDisplay();
+brainBreakFeature.render();
 initCramchyShell();
 initAcademicTerms();
 initExamAndCourses();

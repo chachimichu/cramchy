@@ -149,7 +149,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','styles/countdown.css','styles/motivation.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css'];
+    const sheets=['styles.css','styles/countdown.css','styles/motivation.css','styles/matcha-progress.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -188,6 +188,9 @@
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('js/countdown.js?v='+VERSION))
     .then(()=>loadScript('js/motivation.js?v='+VERSION))
+    .then(()=>loadScript('js/streak.js?v='+VERSION))
+    .then(()=>loadScript('js/collectibles.js?v='+VERSION))
+    .then(()=>loadScript('js/brain-break.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))
