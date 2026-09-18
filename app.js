@@ -196,6 +196,7 @@
     .then(()=>loadScript('js/study-timer.js?v='+VERSION))
     .then(()=>loadScript('js/tasks.js?v='+VERSION))
     .then(()=>loadScript('js/courses.js?v='+VERSION))
+    .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))

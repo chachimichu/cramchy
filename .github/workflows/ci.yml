@@ -83,3 +83,6 @@ jobs:
 
       - name: Test Courses module
         run: node testing/courses.test.cjs
+
+      - name: Test Quick GWA rules
+        run: node testing/quick-gwa-rules.test.cjs

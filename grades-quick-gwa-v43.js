@@ -47,13 +47,14 @@
 
     result.querySelector('.quick-gwa-honor')?.remove();
     const gwa=getGwa();
-    const message=honorMessage(gwa);
+    const eligible=result.dataset.dlEligible==='yes';
+    const message=eligible?honorMessage(gwa):(result.dataset.dlReason||'');
     const sub=result.querySelector('.quick-gwa-sub');
 
-    result.classList.toggle('quick-gwa-dean',Boolean(message));
+    result.classList.toggle('quick-gwa-dean',eligible&&Boolean(message));
     if(sub&&message){
       sub.textContent=message;
-      sub.classList.add('quick-gwa-congrats');
+      sub.classList.toggle('quick-gwa-congrats',eligible);
     }else if(sub){
       sub.classList.remove('quick-gwa-congrats');
     }

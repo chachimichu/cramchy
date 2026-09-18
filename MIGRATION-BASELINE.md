@@ -17,23 +17,24 @@ index.html -> app.js. app.js refreshes styles, fetches app-base.js, then loads t
 9. js/study-timer.js
 10. js/tasks.js
 11. js/courses.js
-12. app-logo-base.js
-13. exam-nav-active-v14.js
-14. exam-subject-dedupe-v21.js
-15. planner-cloud-sync-v12.js
-16. planner-root-compat-v4.js
-17. planner-v3.js
-18. planner-mobile-hotfix-v44.js
-19. home-hierarchy-v5.js
-20. home-command-v6.js
-21. polish-v7.js
-22. home-planner-reminders-v23.js
-23. mobile-modal-center-v30.js
-24. ui-copy-normalizer-v1.js
-25. grades-nu-polish-v1.js
-26. grades-quick-gwa-v43.js
-27. ask-cramchy-v53.js
-28. special-letter-v54.js
+12. js/quick-gwa-rules.js
+13. app-logo-base.js
+14. exam-nav-active-v14.js
+15. exam-subject-dedupe-v21.js
+16. planner-cloud-sync-v12.js
+17. planner-root-compat-v4.js
+18. planner-v3.js
+19. planner-mobile-hotfix-v44.js
+20. home-hierarchy-v5.js
+21. home-command-v6.js
+22. polish-v7.js
+23. home-planner-reminders-v23.js
+24. mobile-modal-center-v30.js
+25. ui-copy-normalizer-v1.js
+26. grades-nu-polish-v1.js
+27. grades-quick-gwa-v43.js
+28. ask-cramchy-v53.js
+29. special-letter-v54.js
 
 app-logo-base.js injects app-base.js; app.js also has a base-readiness wait and a planner-cloud-readiness wait. Preserve these nested dependencies. Multiple legacy version strings currently exist; unification is a later change.
 
@@ -142,3 +143,9 @@ The existing `courses`, `gradebook`, and `examData` shapes are unchanged. The le
 The production app shell now loads Vercel Web Analytics through the first-party `/_vercel/insights/script.js` endpoint. It records aggregate page views and unique visitors without reading Cramchy profile, grade, task, or school data. The isolated `/testing/` runner explicitly excludes this script so seeded and reload tests do not inflate real usage counts.
 
 Analytics collection begins only after Web Analytics is enabled for the Vercel project and this integration is deployed. It cannot reconstruct anonymous traffic from before installation.
+
+## Quick GWA rules checkpoint
+
+`js/quick-gwa-rules.js` now owns the Quick GWA grade choices, weighted calculation and Dean's List eligibility decision. Choices are limited to the numeric values `4.0`, `3.5`, `3.0`, `2.5`, `2.0`, `1.5`, `1.0`, plus `INC` and `R`; the generic `P` and `F` choices are no longer accepted.
+
+The weighted GWA still displays when enough numeric grades have units, but any `INC`, `R`, or numeric grade below `2.5` makes the result ineligible for Dean's List and reports the blocking grade. A grade of exactly `2.5` is allowed, blanks are ignored, and the existing First/Second Honors GWA thresholds remain unchanged. The legacy Quick GWA polish layer now reads this eligibility result instead of independently awarding honors from the GWA alone.

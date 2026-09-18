@@ -29,4 +29,5 @@ node testing/pet-duo.test.cjs
 node testing/chaowi.test.cjs
 node testing/tasks.test.cjs
 node testing/courses.test.cjs
+node testing/quick-gwa-rules.test.cjs
 ```
