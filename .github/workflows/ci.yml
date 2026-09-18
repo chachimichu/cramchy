@@ -51,6 +51,9 @@ jobs:
       - name: Test synthetic app readiness gate
         run: node testing/runner-readiness.test.cjs
 
+      - name: Test analytics integration
+        run: node testing/analytics.test.cjs
+
       - name: Test custom countdown module
         run: node testing/countdown.test.cjs
 

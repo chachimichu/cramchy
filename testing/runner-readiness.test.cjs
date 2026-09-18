@@ -14,5 +14,6 @@ assert.ok(readyMessage > waitCall, 'runner must not announce readiness before th
 assert.ok(runner.includes("frame.classList.add('is-loading')"), 'runner must block iframe interaction while loading');
 assert.ok(runner.includes("frame.classList.remove('is-loading')"), 'runner must restore iframe interaction afterward');
 assert.match(index, /iframe\.is-loading\{[^}]*pointer-events:none/, 'loading iframe must ignore taps');
+assert.ok(runner.includes("url.pathname!=='/_vercel/insights/script.js'"), 'test runner must not send synthetic analytics pageviews');
 
 console.log('PASS: test runner waits for Cramchy before enabling interaction');

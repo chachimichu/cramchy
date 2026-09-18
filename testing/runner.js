@@ -63,7 +63,7 @@ async function start(data){
     const doc=new DOMParser().parseFromString(await response.text(),'text/html');
     const scripts=[];
     doc.querySelectorAll('script').forEach(s=>{
-      if(s.src){const url=new URL(s.getAttribute('src'),location.origin+'/');if(url.origin===location.origin)scripts.push(url.href);}
+      if(s.src){const url=new URL(s.getAttribute('src'),location.origin+'/');if(url.origin===location.origin&&url.pathname!=='/_vercel/insights/script.js')scripts.push(url.href);}
       else if(s.textContent.trim())throw new Error('App shell now has inline scripts; review the test runner before loading.');
       s.remove();
     });

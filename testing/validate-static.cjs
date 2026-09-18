@@ -10,6 +10,7 @@ const checked = new Set();
 
 function requireFile(value, source) {
   if (!value || /^(?:https?:|data:|#)/.test(value)) return;
+  if (value.startsWith('/_vercel/')) return;
   const file = localPath(value);
   assert.ok(exists(file), `${source} references missing ${file}`);
   checked.add(file);

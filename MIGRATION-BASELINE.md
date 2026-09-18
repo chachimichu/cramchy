@@ -136,3 +136,9 @@ The `missions` storage contract remains unchanged, including existing identifier
 `js/courses.js` now owns three connected responsibilities: filtering courses by academic year and term, normalizing old and current class-schedule formats (including next-class calculation), and rendering both the Courses catalog and Home course strip. It also owns course upsert/removal persistence and the removal cascade for Gradebook and course-linked Exam workspace records.
 
 The existing `courses`, `gradebook`, and `examData` shapes are unchanged. The legacy core still presents the course editor modal for now, but it submits mutations through the Courses module. Grades, Study choices, Exam subjects, Home, and Ask Cramchy continue consuming the same compatibility helpers while their own migration slices remain pending.
+
+## Observability checkpoint: privacy-friendly page analytics
+
+The production app shell now loads Vercel Web Analytics through the first-party `/_vercel/insights/script.js` endpoint. It records aggregate page views and unique visitors without reading Cramchy profile, grade, task, or school data. The isolated `/testing/` runner explicitly excludes this script so seeded and reload tests do not inflate real usage counts.
+
+Analytics collection begins only after Web Analytics is enabled for the Vercel project and this integration is deployed. It cannot reconstruct anonymous traffic from before installation.
