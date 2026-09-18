@@ -15,6 +15,9 @@ EXAMS.forEach(e => SUBJECT_NAME[e.id] = e.name);
 const EXAM_BY_ID = {};
 EXAMS.forEach(e => EXAM_BY_ID[e.id] = e);
 
+const quickGwaRules = window.CramchyModules?.quickGwaRules;
+if(!quickGwaRules) throw new Error('Quick GWA rules module failed to initialize.');
+
 const MOTIVATIONS = [
   "Studying doesn't suck as much as failing.",
   "Don't cry when seeing your results; it was your choice and you chose not to study.",
@@ -362,7 +365,7 @@ function sanitizeState(parsed){
     });
   }
   if(Array.isArray(parsed.quickGwaRows)){
-    const allowed=['','4.0','3.5','3.0','2.5','2.0','1.5','1.0','R','INC','P','F'];
+    const allowed=quickGwaRules.allowedGrades;
     const rows=parsed.quickGwaRows.filter(r=>r&&typeof r==='object').slice(0,40).map(r=>({
       id:r.id||cryptoId(),
       grade:allowed.includes(String(r.grade||''))?String(r.grade||''):'',
@@ -2407,13 +2410,7 @@ function initGradesModes(){
 
 
 /* ===================== QUICK GWA ===================== */
-const QUICK_GWA_GRADES=[
-  {v:'',label:'select grade'},
-  {v:'4.0',label:'4.0'},{v:'3.5',label:'3.5'},{v:'3.0',label:'3.0'},
-  {v:'2.5',label:'2.5'},{v:'2.0',label:'2.0'},{v:'1.5',label:'1.5'},{v:'1.0',label:'1.0'},
-  {v:'R',label:'R — Repeat'},{v:'INC',label:'INC — Incomplete'},
-  {v:'P',label:'P — Pass'},{v:'F',label:'F — Fail'}
-];
+const QUICK_GWA_GRADES=quickGwaRules.options;
 let quickGwaLastResult=null;
 
 function quickGwaRows(){
@@ -2423,17 +2420,7 @@ function quickGwaRows(){
   return state.quickGwaRows;
 }
 function quickGwaCompute(){
-  let honor=0,units=0,count=0,excluded=0;
-  quickGwaRows().forEach(r=>{
-    const g=String(r.grade||'').toUpperCase();
-    if(!g) return;
-    if(['R','INC','P','F'].includes(g)){excluded++;return;}
-    const grade=Number(g),u=Number(r.units);
-    if(Number.isFinite(grade)&&Number.isFinite(u)&&u>0){
-      honor+=grade*u; units+=u; count++;
-    }
-  });
-  return {honor,units,count,excluded,gwa:units>0?honor/units:null};
+  return quickGwaRules.compute(quickGwaRows());
 }
 function quickGradeOptions(current){
   return QUICK_GWA_GRADES.map(o=>`<option value="${o.v}" ${String(current||'')===o.v?'selected':''}>${o.label}</option>`).join('');
@@ -2454,15 +2441,11 @@ function resetQuickGwa(){
   quickGwaLastResult=null;
   saveState();renderQuickGwa();
 }
-function quickGwaHonorLabel(gwa){
-  if(gwa>=3.50) return "Dean's List (First Honors)";
-  if(gwa>=3.25) return "Dean's List (Second Honors)";
-  return '';
+function quickGwaHonorLabel(calc){
+  return calc?.honorLabel||'';
 }
-function quickGwaMessage(gwa){
-  const honor=quickGwaHonorLabel(gwa);
-  if(honor) return `Congratulations! ${honor} ♡`;
-  return 'GWA computed ♡';
+function quickGwaMessage(calc){
+  return calc?.message||'';
 }
 function launchQuickConfetti(){
   const layer=document.getElementById('quickConfettiLayer'); if(!layer)return;
@@ -2504,15 +2487,15 @@ function calculateQuickGwa(){
   quickGwaLastResult=calc;
   saveState();
   renderQuickGwa();
-  setTimeout(launchQuickConfetti,60);
+  if(calc.eligible)setTimeout(launchQuickConfetti,60);
 }
 function renderQuickGwa(){
   const root=document.getElementById('quickGwaRoot');if(!root)return;
   const rows=quickGwaRows();
   const calc=quickGwaLastResult;
   const result=calc?.gwa!=null?calc.gwa.toFixed(2):'—';
-  const honor=calc?.gwa!=null?quickGwaHonorLabel(calc.gwa):'';
-  const message=calc?.gwa!=null?quickGwaMessage(calc.gwa):'';
+  const honor=calc?.gwa!=null?quickGwaHonorLabel(calc):'';
+  const message=calc?.gwa!=null?quickGwaMessage(calc):'';
 
   root.innerHTML=`<div class="quick-gwa-wrap">
     <div class="card" style="margin-bottom:12px;">
@@ -2538,7 +2521,7 @@ function renderQuickGwa(){
 
     <button class="quick-gwa-calc-btn" id="quickGwaCalculateBtn" type="button">calculate GWA ✦</button>
 
-    <div class="quick-gwa-result ${calc?.gwa!=null?'show':''}" aria-live="polite">
+    <div class="quick-gwa-result ${calc?.gwa!=null?'show':''}" data-dl-eligible="${calc?.eligible?'yes':'no'}" data-dl-reason="${escapeAttr(message)}" aria-live="polite">
       <div class="quick-confetti-layer" id="quickConfettiLayer"></div>
       <div class="label">Term GWA</div>
       <div class="number">${result}</div>

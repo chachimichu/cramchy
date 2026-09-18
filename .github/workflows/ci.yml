@@ -41,3 +41,6 @@ jobs:
 
       - name: Syntax-check JavaScript
         run: node --check app.js
+
+      - name: Test Quick GWA rules
+        run: node testing/quick-gwa-rules.test.cjs

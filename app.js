@@ -186,6 +186,7 @@
   refreshStyles()
     .then(()=>forceFreshBaseBundle())
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
+    .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))
