@@ -24,7 +24,7 @@ let result=calculate([['4.0',3],['INC',3]]);
 assert.equal(result.gwa,4);
 assert.equal(result.eligible,false);
 assert.deepEqual(Array.from(result.blockers,blocker=>blocker.grade),['INC']);
-assert.match(result.message,/INC/);
+assert.equal(result.message,"Here's your GWA ♡");
 
 result=calculate([['4.0',3],['R',3]]);
 assert.equal(result.eligible,false);
@@ -53,7 +53,7 @@ assert.equal(result.honorLabel,"Dean's List (Second Honors)");
 result=calculate([['3.0',3],['3.0',3]]);
 assert.equal(result.eligible,false);
 assert.equal(result.blockers.length,0);
-assert.match(result.message,/at least 3\.25/);
+assert.equal(result.message,"Here's your GWA ♡");
 
 const polish=fs.readFileSync('grades-quick-gwa-v43.js','utf8');
 assert.match(polish,/dataset\.dlEligible/);

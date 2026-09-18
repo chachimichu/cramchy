@@ -40,11 +40,8 @@
     else if(eligible)honorLabel="Dean's List (Second Honors)";
     let message='';
     if(gwa!==null){
-      if(uniqueBlockers.length){
-        const grades=uniqueBlockers.map(item=>item.grade).join(', ');
-        message=`Not qualified for Dean's List because ${grades} ${uniqueBlockers.length===1?'is':'are'} disqualifying.`;
-      }else if(honorLabel)message=`Congratulations! ${honorLabel} ♡`;
-      else message="GWA computed. Dean's List requires at least 3.25.";
+      if(honorLabel)message=`Congratulations! ${honorLabel} ♡`;
+      else message="Here's your GWA ♡";
     }
     return {honor,units,count,excluded,gwa,blockers:uniqueBlockers,meetsGwa,eligible,honorLabel,message};
   }
