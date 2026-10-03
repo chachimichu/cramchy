@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-letter-mobile-preview-83';
+  const VERSION='2026-10-04-chunky-spacing-preview-84';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -222,6 +222,7 @@
     .then(()=>loadScript('grades-workspace.js?v='+VERSION))
     .then(()=>loadScript('js/course-timetable.js?v='+VERSION))
     .then(()=>loadScript('course-schedule.js?v='+VERSION))
+    .then(()=>loadScript('chunky-type-spacing.js?v='+VERSION))
     .then(()=>document.fonts?.ready)
     .then(()=>finishBootSplash())
     .catch(err=>{

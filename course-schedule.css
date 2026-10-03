@@ -2,7 +2,7 @@
 #view-subjects .cs-workspace{font-family:var(--cramchy-readable);}
 #view-subjects .cs-workspace [hidden]{display:none!important;}
 #view-subjects .cs-workspace>.page-head-row{padding:24px;border-radius:22px;background:linear-gradient(115deg,var(--app-bg-1,#fff0f4),var(--app-bg-2,#fffaf3),var(--app-bg-3,#eef3e5));border:1px solid color-mix(in srgb,var(--red-berry,#db7895) 14%,transparent);gap:16px;}
-#view-subjects .cs-workspace>.page-head-row h2{font-family:var(--cramchy-readable)!important;font-size:clamp(1.5rem,3vw,2rem)!important;letter-spacing:normal!important;line-height:1.4!important;color:var(--text-main,#57313f)!important;}
+#view-subjects .cs-workspace>.page-head-row h2{font-family:var(--cramchy-display)!important;font-size:clamp(1.5rem,3vw,2rem)!important;letter-spacing:.015em!important;line-height:1.4!important;color:var(--text-main,#57313f)!important;}
 #view-subjects .cs-workspace h3{font-family:var(--cramchy-readable)!important;color:var(--text-main,#57313f)!important;letter-spacing:normal!important;font-size:1rem!important;font-weight:800!important;line-height:1.5!important;margin:0 0 6px;}
 #view-subjects .cs-workspace p{font-size:.8rem;line-height:1.7;color:var(--text-soft,#826570);margin:0;}
 .cs-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:20px 0;}
