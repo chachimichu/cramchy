@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-shared-exams-66';
+  const VERSION='2026-10-03-planner-quiz-67';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 

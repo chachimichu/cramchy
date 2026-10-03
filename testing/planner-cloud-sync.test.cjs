@@ -58,6 +58,9 @@ async function harness(options={}){
     ready:window.__cramchyPlannerCloudReady};
 }
 (async()=>{
+  const quiz={...event('quiz'),type:'quiz'};
+  const quizSync=await harness({local:{[KEY]:JSON.stringify([quiz])}});
+  assert.deepEqual(quizSync.inserted[0].events,[quiz],'Quiz type must survive cloud normalization');
   let h=await harness({local:{[KEY]:JSON.stringify([event('guest')])}});
   assert.deepEqual(h.inserted[0].events,[event('guest')]);
   assert.deepEqual(JSON.parse(h.localStorage.getItem(KEY)),[event('guest')]);

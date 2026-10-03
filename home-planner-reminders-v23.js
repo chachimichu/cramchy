@@ -1,8 +1,8 @@
 (function(){
   const STORAGE_KEY='cramchyPlannerEvents_v2';
   const OLD_STORAGE_KEY='cramchyPlannerEvents_v1';
-  const TYPES=['class','task','exam','study','personal'];
-  const TYPE_LABEL={class:'class',task:'task',exam:'exam',study:'study',personal:'personal'};
+  const TYPES=['class','task','exam','quiz','study','personal'];
+  const TYPE_LABEL={class:'class',task:'task',exam:'exam',quiz:'quiz',study:'study',personal:'personal'};
   const MAX_ITEMS=8;
   const DAYS_AHEAD=7;
   let renderTimer=null;

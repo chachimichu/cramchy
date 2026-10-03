@@ -2,8 +2,8 @@
   const STORAGE_KEY='cramchyPlannerEvents_v2';
   const OLD_STORAGE_KEY='cramchyPlannerEvents_v1';
   const FALLBACK_LOGO='assets/cramchy-wordmark.png';
-  const TYPES=['class','task','exam','study','personal'];
-  const TYPE_LABEL={class:'Class',task:'Task',exam:'Exam',study:'Study block',personal:'Personal'};
+  const TYPES=['class','task','exam','quiz','study','personal'];
+  const TYPE_LABEL={class:'Class',task:'Task',exam:'Exam',quiz:'Quiz',study:'Study block',personal:'Personal'};
   const TIME=window.CramchyPlannerTime;
   const HOUR_HEIGHT=74;
 
@@ -118,7 +118,7 @@
 
           <div class="planner-layout">
             <aside class="planner-sidebar">
-              <div class="planner-panel"><button class="planner-add" data-planner-add type="button">+ add event</button><div class="planner-legend"><span><i class="planner-dot class"></i>Classes</span><span><i class="planner-dot task"></i>Tasks</span><span><i class="planner-dot exam"></i>Exams</span><span><i class="planner-dot study"></i>Study blocks</span><span><i class="planner-dot personal"></i>Personal</span></div></div>
+              <div class="planner-panel"><button class="planner-add" data-planner-add type="button">+ add event</button><div class="planner-legend"><span><i class="planner-dot class"></i>Classes</span><span><i class="planner-dot task"></i>Tasks</span><span><i class="planner-dot exam"></i>Exams</span><span><i class="planner-dot quiz"></i>Quizzes</span><span><i class="planner-dot study"></i>Study blocks</span><span><i class="planner-dot personal"></i>Personal</span></div></div>
               <div class="planner-panel" id="plannerNextPanel"></div>
               <div class="planner-panel planner-rec"><h3>Cramchy recommends</h3><p id="plannerRecText">Add an exam or deadline and Cramchy will help you see what needs attention.</p><img class="planner-logo-sync" src="${escapeHtml(getLogoSrc())}" alt=""></div>
             </aside>
@@ -138,7 +138,7 @@
             <div class="planner-modal-head"><h3 id="plannerModalTitle">add to planner</h3><button type="button" data-planner-close aria-label="close">×</button></div>
             <form id="plannerForm" class="planner-form">
               <label class="full">title<input id="plannerTitle" autocomplete="off" placeholder="ex. anaphy quiz review" required></label>
-              <label>type<select id="plannerType"><option value="study">Study block</option><option value="class">Class</option><option value="task">Task</option><option value="exam">Exam reminder (Planner only)</option><option value="personal">Personal</option></select></label>
+              <label>type<select id="plannerType"><option value="study">Study block</option><option value="class">Class</option><option value="task">Task</option><option value="exam">Exam reminder (Planner only)</option><option value="quiz">Quiz</option><option value="personal">Personal</option></select></label>
               <label>course<input id="plannerCourse" autocomplete="off" placeholder="course or subject"></label>
               <label>date<input id="plannerDate" type="date"></label>
               <label>start<input id="plannerStart" type="time"></label>
@@ -262,23 +262,23 @@
 
   function renderDayHighlight(){
     const box=$('#plannerDayHighlight');if(!box)return;
-    const exam=events.filter(e=>e.type==='exam'&&e.date>=selectedDate).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
+    const exam=events.filter(e=>['exam','quiz'].includes(e.type)&&e.date>=selectedDate).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
     if(!exam){box.innerHTML='';return}
     const days=Math.max(0,Math.round((dateObj(exam.date)-dateObj(selectedDate))/86400000));
-    box.innerHTML=`<button class="planner-exam-banner" data-planner-event="${escapeHtml(exam.id)}" type="button"><div class="planner-exam-icon">▣</div><div><strong>Next exam: ${escapeHtml(exam.title)}</strong><span>${shortDate(exam.date)}${exam.start?' · '+timeLabel(exam.start):''}${exam.course?' · '+escapeHtml(exam.course):''}</span></div><div class="planner-days-left"><b>${days}</b>${days===1?'day':'days'} left</div></button>`;
+    box.innerHTML=`<button class="planner-exam-banner" data-planner-event="${escapeHtml(exam.id)}" type="button"><div class="planner-exam-icon">▣</div><div><strong>Next ${exam.type==='quiz'?'quiz':'exam'}: ${escapeHtml(exam.title)}</strong><span>${shortDate(exam.date)}${exam.start?' · '+timeLabel(exam.start):''}${exam.course?' · '+escapeHtml(exam.course):''}</span></div><div class="planner-days-left"><b>${days}</b>${days===1?'day':'days'} left</div></button>`;
   }
 
   function renderSidebar(){
     const panel=$('#plannerNextPanel');
     if(panel){
       const today=isoDate(new Date());
-      const exam=events.filter(e=>e.type==='exam'&&e.date>=today).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
-      panel.innerHTML=exam?`<h3>next exam</h3><button class="planner-next" data-planner-event="${escapeHtml(exam.id)}" type="button"><div class="planner-next-date"><b>${dateObj(exam.date).getDate()}</b><small>${dateObj(exam.date).toLocaleDateString('en-US',{month:'short'}).toUpperCase()}</small></div><div><strong>${escapeHtml(exam.title)}</strong><span>${exam.start?timeLabel(exam.start):'time not set'}${exam.course?' · '+escapeHtml(exam.course):''}</span></div></button>`:'<h3>next exam</h3><div class="planner-empty small">add an exam when you know the date</div>';
+      const exam=events.filter(e=>['exam','quiz'].includes(e.type)&&e.date>=today).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
+      panel.innerHTML=exam?`<h3>next ${exam.type==='quiz'?'quiz':'exam'}</h3><button class="planner-next" data-planner-event="${escapeHtml(exam.id)}" type="button"><div class="planner-next-date"><b>${dateObj(exam.date).getDate()}</b><small>${dateObj(exam.date).toLocaleDateString('en-US',{month:'short'}).toUpperCase()}</small></div><div><strong>${escapeHtml(exam.title)}</strong><span>${exam.start?timeLabel(exam.start):'time not set'}${exam.course?' · '+escapeHtml(exam.course):''}</span></div></button>`:'<h3>next exam</h3><div class="planner-empty small">add an exam when you know the date</div>';
     }
     const rec=$('#plannerRecText');
     if(rec){
-      const exams=events.filter(e=>e.type==='exam').length,tasks=events.filter(e=>e.type==='task'&&!e.done).length;
-      rec.textContent=exams?'Give future you a tiny review block before each exam.':tasks?'Deadlines are listed. Now give them study blocks before they start yelling.':'Add an exam or deadline and Cramchy will help you see what needs attention.';
+      const exams=events.filter(e=>['exam','quiz'].includes(e.type)).length,tasks=events.filter(e=>e.type==='task'&&!e.done).length;
+      rec.textContent=exams?'Give future you a tiny review block before each exam or quiz.':tasks?'Deadlines are listed. Now give them study blocks before they start yelling.':'Add an exam or deadline and Cramchy will help you see what needs attention.';
     }
   }
 

@@ -523,3 +523,5 @@ body[data-theme="dark-study"] .home-planner-reminder{
     border-radius:20px!important;
   }
 }
+
+.home-planner-reminder.quiz{--reminder-accent:#9474c6;}
