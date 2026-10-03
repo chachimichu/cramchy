@@ -49,6 +49,7 @@ body.exam-mode-active #view-matcha > h2{
 
 /* Section/card headings: clean, smooth, not spiky or overly chunky. */
 #view-dashboard .home-command-heading h3,
+#view-dashboard .home-planner-reminders-title h3,
 #view-dashboard .home-courses-section .home-command-heading h3,
 #view-dashboard .section-title,
 #view-dashboard .home-recommend-card .copy h3,
@@ -163,6 +164,7 @@ body.exam-mode-active select{
 
 /* Avoid the whole app feeling over-bold. */
 #view-dashboard .home-command-heading h3,
+#view-dashboard .home-planner-reminders-title h3,
 #view-dashboard .home-courses-section .home-command-heading h3,
 #view-dashboard .home-recommend-card .copy h3,
 #view-dashboard .home-courses-section .home-course h4{

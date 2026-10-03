@@ -141,10 +141,10 @@ body[data-theme="dark-study"] .home-planner-reminders::after{
 .home-planner-reminders-title h3{
   margin:0;
   color:var(--text-main,#5a3a3f)!important;
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
-  font-size:1.16rem;
+  font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+  font-size:1.22rem!important;
   font-weight:700;
-  letter-spacing:-.03em;
+  letter-spacing:-.018em!important;
   line-height:1.1;
 }
 .home-planner-reminders-chip{

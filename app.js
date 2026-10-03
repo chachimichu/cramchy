@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-clean-copy-74';
+  const VERSION='2026-10-04-home-heading-font-75';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
