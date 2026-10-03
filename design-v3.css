@@ -32,6 +32,12 @@ main > .view.active{
   from{opacity:0;transform:translateY(7px)}
   to{opacity:1;transform:translateY(0)}
 }
+/* Home contains nested filtered surfaces. Do not retain an animated transform
+   around the full dashboard after its entrance animation. */
+main > #view-dashboard.view.active{
+  animation:none!important;
+  transform:none!important;
+}
 @media(prefers-reduced-motion:reduce){
   main > .view.active{animation:none!important}
 }

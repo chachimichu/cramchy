@@ -67,10 +67,10 @@ body[data-theme="dark-study"] .home-command-panel{background:var(--app-bg-2);bor
 #view-dashboard #dailyViewTasksBtn{
   box-shadow:none!important;
   transform:none!important;
-  transition:background-color .15s ease!important;
+  transition:none!important;
 }
 #view-dashboard #dailyViewTasksBtn:hover{
-  background:var(--red-deep,#c8465e)!important;
+  background:linear-gradient(135deg,#e97b98,#d85b7d)!important;
 }
 #view-dashboard #dailyViewTasksBtn:focus-visible{
   outline:2px solid var(--red-deep,#c8465e);
