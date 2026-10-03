@@ -1,0 +1,43 @@
+/* A recurring timetable over the same course records, not a second calendar. */
+#view-subjects .cs-workspace{font-family:var(--cramchy-readable);}
+#view-subjects .cs-workspace [hidden]{display:none!important;}
+#view-subjects .cs-workspace>.page-head-row{padding:24px;border-radius:22px;background:linear-gradient(115deg,var(--app-bg-1,#fff0f4),var(--app-bg-2,#fffaf3),var(--app-bg-3,#eef3e5));border:1px solid color-mix(in srgb,var(--red-berry,#db7895) 14%,transparent);gap:16px;}
+#view-subjects .cs-workspace>.page-head-row h2{font-family:var(--cramchy-display)!important;font-size:clamp(1.5rem,3vw,2rem)!important;letter-spacing:.015em!important;line-height:1.4!important;color:var(--text-main,#57313f)!important;}
+#view-subjects .cs-workspace h3{font-family:var(--cramchy-readable)!important;color:var(--text-main,#57313f)!important;letter-spacing:normal!important;font-size:1rem!important;font-weight:800!important;line-height:1.5!important;margin:0 0 6px;}
+#view-subjects .cs-workspace p{font-size:.8rem;line-height:1.7;color:var(--text-soft,#826570);margin:0;}
+.cs-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:20px 0;}
+.cs-term{font-size:.75rem;color:var(--text-soft,#826570);font-weight:600;}
+.cs-switch{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--app-bg-2,#fffaf3);border:1px solid color-mix(in srgb,var(--red-berry,#db7895) 14%,transparent);}
+.cs-switch button,.cs-day-picker button{font-family:var(--cramchy-readable)!important;letter-spacing:normal!important;border:0;background:transparent;color:var(--text-main,#57313f);padding:11px 16px;border-radius:10px;font-size:.78rem;font-weight:700;cursor:pointer;}
+.cs-switch button[aria-pressed=true],.cs-day-picker button[aria-pressed=true]{background:var(--pink-soft,#f2d5df);color:var(--text-main,#57313f);}
+.cs-board{background:var(--app-bg-2,#fffdfc);border:1px solid color-mix(in srgb,var(--red-berry,#db7895) 14%,transparent);border-radius:22px;padding:22px 20px 30px;}
+.cs-board-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;}
+.cs-week-grid{display:grid;grid-template-columns:64px repeat(7,minmax(0,1fr));}
+.cs-day-heading{text-align:center;font-size:.76rem;font-weight:700;color:var(--text-main,#57313f);padding:12px 4px 16px;border-bottom:1px solid var(--border-soft,#ecdde0);}
+.cs-day-heading small{display:block;font-size:.6rem;color:var(--text-soft,#826570);margin-top:4px;}
+.cs-times{position:relative;}
+.cs-times span{position:absolute;left:0;font-size:.65rem;font-weight:600;color:var(--text-soft,#826570);transform:translateY(-50%);font-variant-numeric:tabular-nums;}
+.cs-lane{position:relative;min-width:0;border-left:1px solid var(--border-soft,#ecdde0);background:repeating-linear-gradient(to bottom,transparent 0,transparent 65px,var(--border-soft,#ecdde0) 65px,var(--border-soft,#ecdde0) 66px);}
+.cs-today{background-color:color-mix(in srgb,var(--pink-soft,#f2d5df) 16%,transparent);}
+.cs-class{position:absolute;display:flex;flex-direction:column;gap:5px;padding:10px 8px;text-align:left;overflow:hidden;border:0;border-radius:11px;background:color-mix(in srgb,var(--cs-color) 30%,var(--app-bg-2,#fffdfc));color:var(--text-main,#57313f);cursor:pointer;min-height:0;font-family:var(--cramchy-readable)!important;letter-spacing:normal!important;}
+.cs-class strong{font-family:var(--cramchy-readable)!important;font-size:.72rem;font-weight:800;color:var(--text-main,#57313f)!important;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0;}
+.cs-class span{font-size:.61rem;line-height:1.6;font-variant-numeric:tabular-nums;}
+.cs-class small{font-size:.61rem;line-height:1.5;margin-top:auto;}
+.cs-class[aria-pressed=true]{outline:2px solid var(--red-berry,#b65e7c);outline-offset:1px;}
+.cs-conflict{box-shadow:inset 0 0 0 2px var(--red-berry,#b65e7c);}
+.cs-day-picker{display:flex;gap:4px;margin-bottom:18px;}
+.cs-day-picker button{flex:1;padding:12px 0;}
+.cs-day-grid{display:grid;grid-template-columns:64px minmax(0,1fr);}
+.cs-day-grid .cs-class{padding:12px 18px;}
+.cs-day-grid .cs-class strong{font-size:.88rem;}
+.cs-day-grid .cs-class span,.cs-day-grid .cs-class small{font-size:.73rem;}
+.cs-details{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:16px;padding:18px 20px;background:var(--app-bg-2,#fffaf3);border:1px solid var(--border-soft,#ecdde0);border-radius:18px;}
+.cs-missing{padding:22px 4px;}
+.cs-missing>div{display:grid;gap:8px;margin-top:12px;}
+.cs-missing button{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--app-bg-2,#fffaf3);border:1px dashed var(--border-soft,#ecdde0);border-radius:14px;padding:14px 16px;color:var(--text-main,#57313f);font:inherit;font-size:.78rem;text-align:left;cursor:pointer;}
+.cs-missing b{font-size:.68rem;white-space:nowrap;}
+.cs-overlap-note{color:var(--red-deep,#a43f55)!important;font-size:.74rem!important;margin:8px 0 18px!important;}
+.cs-empty{text-align:center;padding:40px 18px;}
+.cs-empty button{margin-top:18px;}
+.cs-no-class{padding:20px 4px;}
+@media(max-width:700px){.cs-layout{display:none;}.cs-board{padding:18px 14px 28px;}.cs-board-heading{align-items:start;}.cs-day-grid{grid-template-columns:58px minmax(0,1fr);}#view-subjects .cs-workspace>.page-head-row{padding:18px;flex-wrap:wrap;}.cs-missing button{flex-wrap:wrap;}.cs-details{padding:16px;}}
