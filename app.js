@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-grades-workspace-77';
+  const VERSION='2026-10-04-grades-bridge-78';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
