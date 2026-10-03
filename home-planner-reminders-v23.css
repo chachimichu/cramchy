@@ -3,8 +3,8 @@
   align-items:stretch!important;
 }
 .home-command-left{
-  display:grid;
-  grid-template-rows:minmax(auto,.92fr) minmax(245px,1fr);
+  display:flex;
+  flex-direction:column;
   gap:16px;
   min-width:0;
   height:auto;
@@ -16,26 +16,29 @@
   height:auto;
 }
 .home-command-left > .home-today-panel{
-  display:flex;
-  flex-direction:column;
+  display:block;
+  flex:0 0 auto;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible;
+}
+.home-command-left > .home-planner-reminders{
+  flex:1 0 auto;
 }
 .home-command-left .home-today-content{
-  display:flex;
-  flex-direction:column;
-  flex:1 0 auto;
-  min-height:auto;
+  display:block;
+  min-height:0;
 }
 .home-command-left .home-today-content > .card{
-  flex:1 0 auto;
-  display:flex;
-  flex-direction:column;
+  display:block;
+  height:auto;
 }
 .home-command-left #dailyTaskList{
-  flex:1 0 auto;
+  height:auto;
 }
 /* Keep the action inside the growing card, including its bottom clearance. */
 #view-dashboard .home-today-content #dailyViewTasksBtn{
-  flex:0 0 auto;
+  display:block;
   min-height:44px;
   width:100%;
   margin-bottom:4px;
