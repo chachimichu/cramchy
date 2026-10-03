@@ -54,3 +54,6 @@ jobs:
 
       - name: Test Exam Subjects and real app backups
         run: node testing/exam-subjects.test.cjs
+
+      - name: Test Term GWA honors eligibility
+        run: node testing/term-gwa-honors.test.cjs

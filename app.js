@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-exam-subjects-58';
+  const VERSION='2026-10-03-term-gwa-honors-59';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
