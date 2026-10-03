@@ -1,5 +1,5 @@
 (function(){
-  const HOME_ILLUSTRATION='assets/home-girl-cat.png';
+  const HOME_ILLUSTRATION='assets/home-girl-cat-smile.png';
 
   function $(s,r=document){return r.querySelector(s);}
 
@@ -60,4 +60,3 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();
-
