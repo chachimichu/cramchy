@@ -72,3 +72,6 @@ jobs:
 
       - name: Test tracker cloud controls and recovery
         run: node testing/tracker-cloud-sync.test.cjs
+
+      - name: Test Planner time validation and week layout
+        run: node testing/planner-time.test.cjs

@@ -4,7 +4,8 @@
   const FALLBACK_LOGO='assets/cramchy-wordmark.png';
   const TYPES=['class','task','exam','study','personal'];
   const TYPE_LABEL={class:'Class',task:'Task',exam:'Exam',study:'Study block',personal:'Personal'};
-  const HOURS=Array.from({length:15},(_,i)=>i+7);
+  const TIME=window.CramchyPlannerTime;
+  const HOUR_HEIGHT=74;
 
   let events=loadEvents();
   let selectedDate=isoDate(new Date());
@@ -143,6 +144,7 @@
               <label>start<input id="plannerStart" type="time"></label>
               <label>end<input id="plannerEnd" type="time"></label>
               <label class="full">notes<textarea id="plannerNotes" placeholder="tiny notes, room, reminders, links..."></textarea></label>
+              <p class="full" id="plannerTimeError" role="alert" hidden></p>
               <div class="planner-modal-actions full"><button class="planner-danger" id="plannerDeleteBtn" type="button">delete</button><span></span><button class="planner-light" type="button" data-planner-close>cancel</button><button class="planner-primary" type="submit" id="plannerSaveBtn">save event</button></div>
             </form>
           </div>
@@ -215,19 +217,34 @@
     const grid=$('#plannerWeekGrid');if(!grid)return;
     const start=startOfWeek(selectedDate);
     const days=Array.from({length:7},(_,i)=>addDays(start,i));
+    const range=TIME.range(events.filter(event=>days.includes(event.date)));
+    const hours=Array.from({length:range.endHour-range.firstHour},(_,i)=>i+range.firstHour);
+    const height=hours.length*HOUR_HEIGHT;
     let html='<div class="planner-week-head blank"></div>'+days.map(d=>`<button type="button" class="planner-week-head ${d===selectedDate?'selected':''}" data-planner-date="${d}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><span>${dateObj(d).getDate()}</span></button>`).join('');
-    html+='<div class="planner-time-label">all day</div>'+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!e.start).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
-    HOURS.forEach(hour=>{
-      const suffix=hour>=12?'PM':'AM';const label=`${hour>12?hour-12:hour} ${suffix}`;
-      html+=`<div class="planner-time-label">${label}</div>`;
-      days.forEach(d=>{
-        const list=byDate(d).filter(e=>e.start&&Number(e.start.slice(0,2))===hour);
-        html+=`<div class="planner-week-slot" data-planner-date="${d}" data-planner-hour="${hour}">${list.map(e=>weekEventHtml(e)).join('')}</div>`;
-      });
+    html+='<div class="planner-time-label">all day / check time</div>'+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
+    html+='<div class="planner-week-timeline"><div class="planner-week-times">'+hours.map(hour=>`<div class="planner-time-label">${timeLabel(pad(hour)+':00')}</div>`).join('')+'</div>';
+    days.forEach(d=>{
+      html+=`<div class="planner-week-day" style="height:${height}px">`;
+      html+=hours.map(hour=>`<div class="planner-week-slot" data-planner-date="${d}" data-planner-hour="${hour}"></div>`).join('');
+      html+=TIME.layout(byDate(d)).map(item=>{
+        const eventHeight=Math.max(18,item.point?36:(item.end-item.start)*HOUR_HEIGHT/60-4);
+        const top=Math.min(height-eventHeight,(item.start-range.firstHour*60)*HOUR_HEIGHT/60+2);
+        const width=100/item.lanes,left=width*item.lane;
+        const style=`top:${top}px;height:${eventHeight}px;left:calc(${left}% + 3px);width:calc(${width}% - 6px)`;
+        return weekEventHtml(item.event,style);
+      }).join('');
+      html+='</div>';
     });
-    grid.innerHTML=html;
+    html+='</div>';grid.innerHTML=html;
   }
-  function weekEventHtml(e){return `<button class="planner-week-event ${e.type}" data-planner-event="${escapeHtml(e.id)}" type="button"><strong>${escapeHtml(e.title)}</strong><span>${e.start?compactTime(e.start):'all day'}${e.end?'–'+compactTime(e.end):''}${e.course?' · '+escapeHtml(e.course):''}</span></button>`}
+  function weekEventHtml(e,style=''){
+    const issue=TIME.validate(e.start,e.end);
+    const startLabel=e.start?(TIME.minutes(e.start)!==null?timeLabel(e.start):'invalid start time'):e.end?'start missing':'all day';
+    const endLabel=e.end?(TIME.minutes(e.end)!==null?timeLabel(e.end):'invalid end time'):'';
+    const label=startLabel+(e.end?' – '+endLabel:e.start?' · start only':'');
+    const accessible=e.title+', '+prettyDate(e.date)+', '+label+(issue?', needs time correction':'');
+    return `<button class="planner-week-event ${e.type}" data-planner-event="${escapeHtml(e.id)}" type="button" aria-label="${escapeHtml(accessible)}" title="${escapeHtml(accessible)}" ${style?`style="${style}"`:''}><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(label)}${e.course?' · '+escapeHtml(e.course):''}</span>${issue?'<small class="planner-week-time-warning">needs time correction</small>':''}</button>`;
+  }
 
   function renderDay(){
     const todays=byDate(selectedDate);
@@ -287,6 +304,7 @@
   }
 
   function resetForm(type='study'){
+    clearTimeError();
     editingId=null;
     $('#plannerModalTitle').textContent=type==='task'?'add task':'add to planner';
     $('#plannerSaveBtn').textContent='save event';
@@ -294,6 +312,7 @@
     $('#plannerTitle').value='';$('#plannerType').value=type;$('#plannerCourse').value='';$('#plannerDate').value=selectedDate;$('#plannerStart').value='';$('#plannerEnd').value='';$('#plannerNotes').value='';
   }
   function fillForm(e){
+    clearTimeError();
     editingId=e.id;
     $('#plannerModalTitle').textContent='event details';$('#plannerSaveBtn').textContent='save changes';$('#plannerDeleteBtn').style.display='inline-flex';
     $('#plannerTitle').value=e.title;$('#plannerType').value=e.type;$('#plannerCourse').value=e.course;$('#plannerDate').value=e.date;$('#plannerStart').value=e.start;$('#plannerEnd').value=e.end;$('#plannerNotes').value=e.notes;
@@ -301,6 +320,15 @@
   function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>$('#plannerTitle')?.focus(),20)}
   function openEvent(id){const e=events.find(x=>x.id===id);if(!e)return;fillForm(e);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false')}
   function closeModal(){const modal=$('#plannerModal');modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true')}
+
+  function clearTimeError(){
+    $('#plannerStart')?.setCustomValidity('');$('#plannerEnd')?.setCustomValidity('');
+    const error=$('#plannerTimeError');if(error){error.textContent='';error.hidden=true;}
+  }
+  function showTimeError(message,field){
+    const error=$('#plannerTimeError');if(error){error.textContent=message;error.hidden=false;}
+    if(field){const input=$(field==='start'?'#plannerStart':'#plannerEnd');input.setCustomValidity(message);input.reportValidity();}
+  }
 
   function bindPlanner(){
     const section=$('#view-planner');if(!section||section.dataset.plannerV3==='1')return;
@@ -317,13 +345,19 @@
       if(e.target===$('#plannerModal'))closeModal();
     });
     const form=$('#plannerForm');
+    ['#plannerStart','#plannerEnd'].forEach(selector=>$(selector)?.addEventListener('input',clearTimeError));
     form?.addEventListener('submit',e=>{
       e.preventDefault();
       const item={
         id:editingId||uid(),title:$('#plannerTitle').value.trim()||'Untitled event',type:TYPES.includes($('#plannerType').value)?$('#plannerType').value:'personal',course:$('#plannerCourse').value.trim(),date:$('#plannerDate').value||selectedDate,start:$('#plannerStart').value,end:$('#plannerEnd').value,notes:$('#plannerNotes').value.trim(),done:editingId?Boolean(events.find(x=>x.id===editingId)?.done):false
       };
-      if(editingId)events=events.map(x=>x.id===editingId?item:x);else events.push(item);
-      selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);saveEvents();closeModal();setPlannerView('day');
+      clearTimeError();
+      const issue=TIME.validate(item.start,item.end);
+      if(issue){showTimeError(issue.message,issue.field);return;}
+      const previous=events;
+      if(editingId)events=events.map(x=>x.id===editingId?item:x);else events=[...events,item];
+      try{saveEvents();}catch(error){events=previous;showTimeError('Could not save this event. Your previous events and this form were kept.');return;}
+      selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);closeModal();setPlannerView('day');
     });
     $('#plannerDeleteBtn')?.addEventListener('click',()=>{
       if(!editingId)return;

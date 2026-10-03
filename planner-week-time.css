@@ -1,0 +1,22 @@
+.planner-week-timeline{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:64px repeat(7,minmax(110px,1fr));
+}
+.planner-week-day{position:relative;min-width:0;border-right:1px solid var(--planner-line);}
+.planner-week-day .planner-week-slot{height:74px;min-height:74px;padding:0;border-right:0;}
+.planner-week-times .planner-time-label{height:74px;min-height:74px;}
+.planner-week-day .planner-week-event{
+  position:absolute;
+  margin:0;
+  overflow:hidden;
+  box-sizing:border-box;
+  border:1px solid rgba(90,58,63,.12);
+  z-index:1;
+  transform:none!important;
+  transition:background-color .15s ease;
+}
+.planner-week-day .planner-week-event:hover,
+.planner-week-day .planner-week-event:focus-visible{z-index:2;outline:2px solid var(--planner-rose);outline-offset:-2px;}
+.planner-week-time-warning{display:block;font-size:.64rem;margin-top:3px;color:var(--red-deep,#c8465e);}
+#plannerTimeError{margin:0;color:var(--red-deep,#c8465e);font-size:.82rem;font-weight:800;}
