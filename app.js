@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-data-protection-56';
+  const VERSION='2026-10-03-planner-signin-57';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 

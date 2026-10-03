@@ -1389,6 +1389,12 @@ document.getElementById('breakResetBtn').addEventListener('click', () => {
 });
 
 /* ===================== BACKUP / RESET ===================== */
+window.addEventListener('cramchy:planner-cloud-loaded',event=>{
+  if(event.detail?.recoverySaved) showToast('Planner synced. Your previous calendar is available in Export Previous Backup.',{longer:true});
+});
+window.addEventListener('cramchy:planner-cloud-error',()=>{
+  showToast('Planner sync could not finish. Your local events were kept.',{longer:true});
+});
 function downloadCramchyBackup(backup,filename){
   const blob = new Blob([JSON.stringify(backup,null,2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);

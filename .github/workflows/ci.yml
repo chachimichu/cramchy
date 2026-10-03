@@ -48,3 +48,6 @@ jobs:
 
       - name: Test backups and course identity protection
         run: node testing/backup-data.test.cjs
+
+      - name: Test Planner cloud sign-in
+        run: node testing/planner-cloud-sync.test.cjs

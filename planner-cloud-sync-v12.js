@@ -29,12 +29,15 @@
       }));
   }
 
-  function readLocalEvents(){
+  function readLocalEvents(strict=false){
     try{
-      const raw=localStorage.getItem(STORAGE_KEY);
-      return normalizeEvents(raw?JSON.parse(raw):[]);
+      const raw=localStorage.getItem(STORAGE_KEY)??localStorage.getItem(OLD_STORAGE_KEY);
+      const parsed=raw?JSON.parse(raw):[];
+      if(!Array.isArray(parsed)) throw new Error('Saved Planner events are not an array.');
+      return normalizeEvents(parsed);
     }catch(error){
       console.warn('Planner local read failed.',error);
+      if(strict) throw error;
       return [];
     }
   }
@@ -58,11 +61,18 @@
   function applyRemoteEvents(events){
     const normalized=normalizeEvents(events);
     if(JSON.stringify(readLocalEvents())===JSON.stringify(normalized)) return false;
+    let recoverySaved=false;
 
+    // Keep the local version recoverable before another device/account replaces it.
+    // If the backup cannot be saved, abort the replacement.
+    if(localStorage.getItem(STORAGE_KEY)!==null||localStorage.getItem(OLD_STORAGE_KEY)!==null){
+      window.CramchyBackup.preserve(localStorage,'before Planner cloud replacement');
+      recoverySaved=true;
+    }
     writeLocalEvents(normalized);
     pendingRealtimeRefresh=true;
     window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-loaded',{
-      detail:{count:normalized.length,realtime:true}
+      detail:{count:normalized.length,realtime:true,recoverySaved}
     }));
 
     if(plannerLoaded&&plannerIsVisible()){
@@ -134,24 +144,35 @@
         .eq('user_id',user.id)
         .maybeSingle();
       if(error) throw error;
+      // A response from a previous account must not change this account's device data.
+      if(currentUser?.id!==user.id) return readLocalEvents();
 
       let cloudEvents;
       if(data){
         cloudEvents=normalizeEvents(data.events);
       }else{
-        cloudEvents=[];
+        // A missing row is the first cloud save, not an empty remote calendar.
+        // Read after the query so edits made while it was loading are included.
+        cloudEvents=readLocalEvents(true);
         const {error:insertError}=await client.from('planner_state').insert({
           user_id:user.id,
           events:cloudEvents,
           updated_at:new Date().toISOString()
         });
         if(insertError) throw insertError;
+        if(currentUser?.id!==user.id) return readLocalEvents();
+        // Never replay the inserted snapshot over edits made while insert awaited.
+        const latest=readLocalEvents(true);
+        if(JSON.stringify(latest)!==JSON.stringify(cloudEvents)) queuePushFromLocal();
+        window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-synced',{detail:{count:cloudEvents.length}}));
+        return latest;
       }
 
       applyRemoteEvents(cloudEvents);
       return cloudEvents;
     }catch(error){
       console.error('Planner cloud load failed.',error);
+      window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-error'));
       return readLocalEvents();
     }
   }
@@ -174,12 +195,18 @@
         table:'planner_state',
         filter:'user_id=eq.'+user.id
       },payload=>{
-        if(payload.eventType==='DELETE'){
-          applyRemoteEvents([]);
-          return;
-        }
-        if(payload.new&&Array.isArray(payload.new.events)){
-          applyRemoteEvents(payload.new.events);
+        if(currentUser?.id!==user.id) return;
+        try{
+          if(payload.eventType==='DELETE'){
+            applyRemoteEvents([]);
+            return;
+          }
+          if(payload.new&&Array.isArray(payload.new.events)){
+            applyRemoteEvents(payload.new.events);
+          }
+        }catch(error){
+          console.error('Planner remote update kept local data.',error);
+          window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-error'));
         }
       })
       .subscribe(status=>{
@@ -234,6 +261,7 @@
       currentUser=nextUser;
 
       if(!nextUser){
+        clearTimeout(saveTimer);
         unsubscribeRealtime();
         return;
       }
@@ -241,7 +269,7 @@
       if(changedUser){
         setTimeout(async()=>{
           await pullCloud();
-          subscribeRealtime(nextUser);
+          if(currentUser?.id===nextUser.id) subscribeRealtime(nextUser);
         },0);
       }else if(!realtimeChannel){
         subscribeRealtime(nextUser);
