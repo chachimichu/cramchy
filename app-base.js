@@ -548,8 +548,8 @@ function overallStats(){
 }
 function readinessLabel(id){
   const { percent } = subjectStats(id);
-  const exam = EXAM_BY_ID[id];
-  const hrs = hoursUntil(exam.start);
+  const exam = examForSubject(id);
+  const hrs = exam?.start ? hoursUntil(exam.start) : null;
   if(hrs > 0 && hrs < 48 && percent < 60){
     return { text: 'LOCK IN IMMEDIATELY', cls: 'readiness-lock' };
   }

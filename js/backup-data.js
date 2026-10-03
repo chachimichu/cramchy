@@ -6,7 +6,7 @@
   const EXTRA_KEYS=['cramchyPlannerEvents_v2','cramchyPlannerEvents_v1','cramchyTermGwaPlanner_v2','cramchyGradesSelectedTerm'];
   const FORMAT='cramchy-backup';
   function object(value){return value!==null&&typeof value==='object'&&!Array.isArray(value);}
-  function validState(value){return object(value)&&object(value.subjects)&&Array.isArray(value.missions)&&Array.isArray(value.history);}
+  function validState(value){return object(value)&&object(value.subjects)&&Array.isArray(value.missions)&&Array.isArray(value.studyHistory);}
   function collect(storage){
     const out={};
     EXTRA_KEYS.forEach(key=>{out[key]=storage.getItem(key);});

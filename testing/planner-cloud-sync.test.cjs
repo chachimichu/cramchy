@@ -79,7 +79,7 @@ async function harness(options={}){
     h=await harness({local:{[KEY]:malformed}});
     assert.equal(h.inserted.length,0);assert.equal(h.localStorage.getItem(KEY),malformed);
   }
-  const main={subjects:{},missions:[],history:[]};
+  const main={subjects:{},missions:[],studyHistory:[]};
   h=await harness({local:{[backup.MAIN_KEY]:JSON.stringify(main),[KEY]:JSON.stringify([event('local')])},remote:[event('cloud')]});
   assert.equal(h.inserted.length,0);
   assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'cloud');

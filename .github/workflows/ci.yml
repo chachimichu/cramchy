@@ -51,3 +51,6 @@ jobs:
 
       - name: Test Planner cloud sign-in
         run: node testing/planner-cloud-sync.test.cjs
+
+      - name: Test Exam Subjects and real app backups
+        run: node testing/exam-subjects.test.cjs

@@ -6,7 +6,7 @@ function storage(initial={}){
   const map=new Map(Object.entries(initial));
   return {getItem:key=>map.get(key)??null,setItem:(key,value)=>map.set(key,String(value)),removeItem:key=>map.delete(key)};
 }
-const state={subjects:{},missions:[{id:'task',text:'Review'}],history:[{minutes:25}],
+const state={subjects:{},missions:[{id:'task',text:'Review'}],studyHistory:[{minutes:25}],
   courses:[
     {id:'t1',code:'PSY101',name:'Psychology',academicYear:'2026–2027',term:'Term 1'},
     {id:'t2',code:'PSY101',name:'Psychology',academicYear:'2026–2027',term:'Term 2'},
