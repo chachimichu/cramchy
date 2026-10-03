@@ -4136,6 +4136,11 @@ showBootUpdateNotice();
 
 
 /* Explicit access to gradebook state kept inside the app closure. */
+window.CramchyCourseBridge={
+  coursesForCurrentTerm,normalizeCourseSchedules,openCourseModal,
+  profileAcademicYear,profileTerm,COURSE_COLORS,
+  get state(){return state;}
+};
 window.CramchyGradebookBridge={
   get state(){return state;},
   escapeHtml,

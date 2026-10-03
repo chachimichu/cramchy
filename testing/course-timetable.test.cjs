@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),math=require('../js/course-timetable.js');
+const schedule=(day,start,end)=>({day,start,end});
+const c=(id,schedules)=>({id,schedules});
+const normalize=c=>c.schedules||[];
+assert.equal(math.minutes('09:15'),555);assert.equal(math.minutes('24:00'),null);assert.equal(math.minutes('09:60'),null);
+const courses=[c('a',[schedule('Tuesday','09:00','11:00'),schedule('Thursday','09:00','11:00')]),c('b',[schedule('Tuesday','10:00','12:00')]),c('c',[schedule('Tuesday','11:00','13:00')]),c('d',[]),c('bad',[schedule('Friday','15:00','14:00')])];
+const before=JSON.stringify(courses),m=math.build(courses,normalize);assert.equal(m.events.length,4);assert.equal(m.conflicts,3);assert.equal(m.missing.length,2);assert.equal(m.start,540);assert.equal(m.end,780);assert.equal(JSON.stringify(courses),before);
+const tue=m.events.filter(e=>e.day===1);assert(tue.every(e=>e.lanes===2));assert.equal(tue.find(e=>e.course.id==='a').lane,tue.find(e=>e.course.id==='c').lane,'Back-to-back classes reuse a lane');
+const back=math.build([c('x',[schedule('Monday','09:00','10:00')]),c('y',[schedule('Monday','10:00','11:00')])],normalize);assert.equal(back.conflicts,0);
+const short=math.build([c('x',[schedule('Sunday','09:15','09:30')])],normalize);assert.equal(short.start,540);assert.equal(short.end,600);assert.equal(short.events[0].day,6);
+assert.equal(math.build([],normalize).events.length,0);
+console.log('Course timetable: weekdays, exact duration, boundaries, overlap lanes, incomplete schedules and original data preservation passed.');
