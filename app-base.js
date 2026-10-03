@@ -293,6 +293,8 @@ function sanitizeState(parsed){
   if(Array.isArray(parsed.studyHistory)){
     out.studyHistory = parsed.studyHistory.filter(h => h && typeof h.minutes === 'number').map(h => ({
       subject: typeof h.subject === 'string' ? h.subject.slice(0,160) : SUBJECT_ORDER[0],
+      subjectName:typeof h.subjectName==='string'?h.subjectName.slice(0,100):'',
+      sessionId:typeof h.sessionId==='string'?h.sessionId.slice(0,160):'',
       minutes: Math.max(1, Math.round(h.minutes)),
       timestamp: typeof h.timestamp === 'number' ? h.timestamp : Date.now(),
       academicKey: typeof h.academicKey === 'string' ? h.academicKey.slice(0,100) : '',
@@ -979,74 +981,78 @@ function addTopic(){
 }
 
 /* ===================== STUDY TIMER ===================== */
-let timerState = { remaining: 25*60, running: false, intervalId: null, presetMinutes: 25, subject: SUBJECT_ORDER[0] };
-
-function renderTimerTab(){
-  const sel = document.getElementById('timerSubjectSelect');
-  sel.innerHTML = SUBJECT_ORDER.map(id => `<option value="${id}" ${timerState.subject===id?'selected':''}>${SUBJECT_NAME[id]}</option>`).join('');
-  updateTimerDisplay();
-  renderHistory();
+let timerState=readStudyTimer();
+let timerIntervalId=null;
+function readStudyTimer(){
+  try{return CramchyStudyTimer.clean(JSON.parse(localStorage.getItem(CramchyStudyTimer.KEY)||'null'));}
+  catch(error){console.warn('Study timer could not be loaded.',error);return CramchyStudyTimer.fresh();}
 }
-document.getElementById('timerSubjectSelect').addEventListener('change', e => { timerState.subject = e.target.value; });
-
-document.querySelectorAll('[data-mins]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if(timerState.running) return;
-    const mins = +btn.dataset.mins;
-    timerState.presetMinutes = mins;
-    timerState.remaining = mins * 60;
-    updateTimerDisplay();
-  });
-});
-
+function persistStudyTimer(next){
+  try{
+    localStorage.setItem(CramchyStudyTimer.KEY,JSON.stringify(next));
+    timerState=next;
+    return true;
+  }catch(error){showToast('timer could not be saved. Please export a backup and free some device storage.',{longer:true});return false;}
+}
 function updateTimerDisplay(){
-  const m = Math.floor(timerState.remaining / 60);
-  const s = timerState.remaining % 60;
-  document.getElementById('timerDisplay').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const remaining=CramchyStudyTimer.remaining(timerState,Date.now());
+  const m=Math.floor(remaining/60),s=remaining%60;
+  document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const start=document.getElementById('timerStartBtn'),pause=document.getElementById('timerPauseBtn');
+  start.disabled=timerState.running;start.textContent=timerState.session?'RESUME':'START';
+  pause.disabled=!timerState.running;
+  document.getElementById('timerSubjectSelect').disabled=Boolean(timerState.session);
+  document.querySelectorAll('[data-mins]').forEach(btn=>{btn.disabled=Boolean(timerState.session);});
 }
-
-document.getElementById('timerStartBtn').addEventListener('click', () => {
-  if(timerState.running) return;
-  timerState.running = true;
-  chaowiReact('start');
-  document.getElementById('timerStartBtn').textContent = 'RESUME';
-  document.getElementById('timerStartBtn').disabled = true;
-  document.getElementById('timerPauseBtn').disabled = false;
-  timerState.intervalId = setInterval(() => {
-    timerState.remaining--;
-    updateTimerDisplay();
-    if(timerState.remaining <= 0){
-      clearInterval(timerState.intervalId);
-      timerState.running = false;
-      logStudySession();
-      document.getElementById('timerStartBtn').disabled = false;
-      document.getElementById('timerStartBtn').textContent = 'START';
-      document.getElementById('timerPauseBtn').disabled = true;
-      timerState.remaining = timerState.presetMinutes * 60;
-      updateTimerDisplay();
-      showToast('study session complete ✧');
-      chaowiReact('complete');
-    }
-  }, 1000);
-});
-document.getElementById('timerPauseBtn').addEventListener('click', () => {
-  if(!timerState.running) return;
-  clearInterval(timerState.intervalId);
-  timerState.running = false;
-  chaowiReact('pause');
-  document.getElementById('timerStartBtn').disabled = false;
-  document.getElementById('timerStartBtn').textContent = 'RESUME';
-  document.getElementById('timerPauseBtn').disabled = true;
-});
-document.getElementById('timerResetBtn').addEventListener('click', () => {
-  clearInterval(timerState.intervalId);
-  timerState.running = false;
-  timerState.remaining = timerState.presetMinutes * 60;
+function tickStudyTimer(){
+  if(timerState.running&&CramchyStudyTimer.remaining(timerState,Date.now())===0){
+    // Finish after an incoming cloud snapshot so it cannot erase this new log.
+    if(typeof cloudLoading!=='undefined'&&cloudLoading){updateTimerDisplay();return;}
+    if(!logStudySession(timerState.session))return;
+    clearInterval(timerIntervalId);timerIntervalId=null;
+    showToast('study session complete ✧');chaowiReact('complete');
+    renderTimerTab();
+  }
   updateTimerDisplay();
-  document.getElementById('timerStartBtn').disabled = false;
-  document.getElementById('timerStartBtn').textContent = 'START';
-  document.getElementById('timerPauseBtn').disabled = true;
+}
+function runStudyTimer(){
+  clearInterval(timerIntervalId);
+  timerIntervalId=timerState.running?setInterval(tickStudyTimer,1000):null;
+}
+document.getElementById('timerSubjectSelect').addEventListener('change',e=>{
+  if(timerState.session)return;
+  if(!persistStudyTimer({...timerState,subject:e.target.value}))renderTimerTab();
 });
+document.querySelectorAll('[data-mins]').forEach(btn=>btn.addEventListener('click',()=>{
+  if(timerState.session)return;
+  if(persistStudyTimer(CramchyStudyTimer.fresh(timerState.subject,+btn.dataset.mins)))updateTimerDisplay();
+}));
+document.getElementById('timerStartBtn').addEventListener('click',()=>{
+  if(timerState.running)return;
+  const course=(state.courses||[]).find(c=>`course-${c.id}`===timerState.subject);
+  const next=CramchyStudyTimer.start(timerState,Date.now(),{
+    id:cryptoId(),subjectName:course?.name||(timerState.subject==='general'?'General Study':examSubjectNameById(timerState.subject)),
+    academicKey:state.examPeriod?activeAcademicKey():dailyAcademicKey(),period:state.examPeriod||''
+  });
+  if(!persistStudyTimer(next))return;
+  chaowiReact('start');runStudyTimer();tickStudyTimer();
+});
+document.getElementById('timerPauseBtn').addEventListener('click',()=>{
+  if(!timerState.running)return;
+  if(CramchyStudyTimer.remaining(timerState,Date.now())===0){tickStudyTimer();return;}
+  if(!persistStudyTimer(CramchyStudyTimer.pause(timerState,Date.now())))return;
+  clearInterval(timerIntervalId);timerIntervalId=null;chaowiReact('pause');updateTimerDisplay();
+});
+document.getElementById('timerResetBtn').addEventListener('click',()=>{
+  if(!persistStudyTimer(CramchyStudyTimer.reset(timerState)))return;
+  clearInterval(timerIntervalId);timerIntervalId=null;renderTimerTab();
+});
+window.addEventListener('cramchy:backup-restored',()=>{
+  timerState=readStudyTimer();runStudyTimer();renderTimerTab();
+});
+document.addEventListener('visibilitychange',tickStudyTimer);
+window.addEventListener('focus',tickStudyTimer);
+runStudyTimer();
 
 function logStudySession(){
   state.studyHistory.unshift({
@@ -2932,21 +2938,32 @@ function renderTimerTab(){
   const sel=document.getElementById('timerSubjectSelect');if(!sel)return;
   const catalog=state.examPeriod?examSubjectCatalog():coursesForCurrentTerm().map(c=>({id:`course-${c.id}`,name:c.name}));
   const choices=catalog.length?catalog:[{id:'general',name:'General Study'}];
-  if(!choices.some(x=>x.id===timerState.subject))timerState.subject=choices[0].id;
+  if(!choices.some(x=>x.id===timerState.subject)){
+    if(timerState.session)choices.push({id:timerState.subject,name:timerState.session.subjectName||'Current session'});
+    else timerState.subject=choices[0].id;
+  }
   sel.innerHTML=choices.map(x=>`<option value="${escapeAttr(x.id)}" ${timerState.subject===x.id?'selected':''}>${escapeHtml(x.name)}</option>`).join('');
   updateTimerDisplay();renderHistory();
 }
-function logStudySession(){
-  state.studyHistory.unshift({
-    subject:timerState.subject,
-    minutes:timerState.presetMinutes,
-    timestamp:Date.now(),
-    academicKey:state.examPeriod?activeAcademicKey():dailyAcademicKey(),
-    period:state.examPeriod||''
+function logStudySession(session=timerState.session){
+  if(!session)return false;
+  const nextTimer=CramchyStudyTimer.reset(timerState);
+  const history=[...state.studyHistory];
+  if(!history.some(item=>item.sessionId===session.id))history.unshift({
+    subject:session.subject,subjectName:session.subjectName,sessionId:session.id,
+    minutes:session.minutes,timestamp:timerState.deadline||Date.now(),academicKey:session.academicKey,period:session.period
   });
+  const nextState={...state,studyHistory:history};
+  try{
+    CramchyBackup.restore(localStorage,nextState,{[CramchyStudyTimer.KEY]:JSON.stringify(nextTimer)});
+  }catch(error){showToast('session could not be saved. Your timer is kept so you can try again.',{longer:true});return false;}
+  state=nextState;timerState=nextTimer;
   saveState();renderHistory();renderMatchaCorner();renderDailyHome();
+  return true;
 }
+
 function studyHistorySubjectName(h){
+  if(h.subjectName)return h.subjectName;
   if(h.subject==='general')return 'General Study';
   const courseId=String(h.subject||'').startsWith('course-')?String(h.subject).slice(7):'';
   if(courseId){

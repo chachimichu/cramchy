@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-home-tasks-60';
+  const VERSION='2026-10-03-study-timer-61';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -188,6 +188,7 @@
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
     .then(()=>loadScript('js/backup-data.js?v='+VERSION))
+    .then(()=>loadScript('js/study-timer.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))

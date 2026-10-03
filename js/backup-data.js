@@ -3,7 +3,7 @@
   const MAIN_KEY='strawberryMatchaMidtermsState_v1';
   const RECOVERY_KEY='cramchyRecoveryBackup_v1';
   // Explicit allowlist: never export Supabase sessions or authentication tokens.
-  const EXTRA_KEYS=['cramchyPlannerEvents_v2','cramchyPlannerEvents_v1','cramchyTermGwaPlanner_v2','cramchyGradesSelectedTerm'];
+  const EXTRA_KEYS=['cramchyPlannerEvents_v2','cramchyPlannerEvents_v1','cramchyTermGwaPlanner_v2','cramchyGradesSelectedTerm','cramchyStudyTimer_v1'];
   const FORMAT='cramchy-backup';
   function object(value){return value!==null&&typeof value==='object'&&!Array.isArray(value);}
   function validState(value){return object(value)&&object(value.subjects)&&Array.isArray(value.missions)&&Array.isArray(value.studyHistory);}
@@ -21,6 +21,8 @@
       if(value.version!==1||!validState(value.state)||!object(value.localData)) throw new Error('Unsupported backup format.');
       const extras={};
       EXTRA_KEYS.forEach(key=>{
+        // Earlier complete backups predate the device timer. Keep it on import.
+        if(key==='cramchyStudyTimer_v1'&&!Object.prototype.hasOwnProperty.call(value.localData,key))return;
         if(!Object.prototype.hasOwnProperty.call(value.localData,key)) throw new Error('Incomplete backup.');
         const raw=value.localData[key];
         if(raw!==null&&typeof raw!=='string') throw new Error('Invalid backup data.');

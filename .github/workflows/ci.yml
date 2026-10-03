@@ -60,3 +60,6 @@ jobs:
 
       - name: Test immediate Home task updates
         run: node testing/home-tasks.test.cjs
+
+      - name: Test study timer persistence
+        run: node testing/study-timer.test.cjs
