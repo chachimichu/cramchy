@@ -118,14 +118,9 @@
 
   function install(){
     walk();
-    let timer=null;
-    const schedule=()=>{
-      clearTimeout(timer);
-      timer=setTimeout(()=>walk(),60);
-    };
-    new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true,characterData:true});
-    document.addEventListener('click',()=>setTimeout(walk,120),true);
-    document.addEventListener('change',()=>setTimeout(walk,120),true);
+    /* Mutation observers run before paint. Delayed timers exposed the original
+       title case for a frame whenever a view was rebuilt. */
+    new MutationObserver(()=>walk()).observe(document.body,{childList:true,subtree:true,characterData:true});
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});

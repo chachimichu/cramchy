@@ -21,7 +21,7 @@ const ctx={window:{CramchyGradeInsights:math,addEventListener(){}},document:{get
 ctx.window.CramchyGradebookBridge=ctx;
 vm.createContext(ctx);vm.runInContext(fs.readFileSync(require.resolve('../grades-workspace.js'),'utf8'),ctx);
 const click=(selector,index=0)=>{const n=root.querySelectorAll(selector)[index];assert(n,selector);n.handlers.click();};
-assert(root.innerHTML.includes('Course Gradebook'));assert.equal(root.querySelectorAll('[data-gw-tool]').length,3);
+assert(root.innerHTML.includes('course gradebook'));assert.equal(root.querySelectorAll('[data-gw-tool]').length,3);
 click('[data-gw-tool]');assert.equal(root.querySelectorAll('[data-gw-course]').length,2);assert(!root.innerHTML.includes('Archived'));click('[data-gw-course]');assert(header.innerHTML.includes('&lt;Course A&gt;'));assert(root.innerHTML.includes('90.00%'));assert(root.innerHTML.includes('Still missing:'));assert.equal(root.querySelectorAll('[data-gw-add]').length,4);assert.equal(state.gradebook.a.midterms.length,1);
 click('[data-gw-add]',1);let form=body.last;assert.equal(form.querySelector('#assCategory').value,'pt');form.querySelector('#assName').value='Activity 1';form.querySelector('#assScore').value='';form.querySelector('#assTotal').value='20';form.querySelector('#gwScoreForm').handlers.submit({preventDefault(){}});assert.equal(saves,0);assert(form.querySelector('#gwScoreError').textContent);
 form.querySelector('#assScore').value='18';form.querySelector('#gwSaveAnother').handlers.click();assert.equal(saves,1);assert.equal(state.gradebook.a.midterms.length,2);assert.equal(state.gradebook.a.midterms[1].category,'pt');assert.equal(state.gradebook.a.finals.length,0);assert.equal(form.isConnected,true);assert.equal(form.querySelector('#assName').value,'');
