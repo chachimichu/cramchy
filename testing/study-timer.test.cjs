@@ -9,13 +9,14 @@ const plain=value=>JSON.parse(JSON.stringify(value));
 const clock={value:100000};
 const values=new Map();
 class Element{
-  constructor(){this.handlers={};this.textWrites=0;this.textContent='';this.disabled=false;this.innerHTML='';}
+  constructor(){this.handlers={};this.textWrites=0;this.textContent='';this.disabled=false;this.innerHTML='';this.attributes={};}
   get textContent(){return this._textContent;}
   set textContent(value){this._textContent=value;this.textWrites++;}
+  setAttribute(name,value){this.attributes[name]=value;}
   addEventListener(name,callback){this.handlers[name]=callback;}
 }
 function boot(){
-  const elements=new Map(['timerDisplay','timerStartBtn','timerPauseBtn','timerResetBtn','timerSubjectSelect'].map(id=>[id,new Element()]));
+  const elements=new Map(['timerDisplay','timerStartBtn','timerPauseBtn','timerResetBtn','timerSubjectSelect','timerRingProgress','timerDial'].map(id=>[id,new Element()]));
   const presets=[25,45,60].map(mins=>Object.assign(new Element(),{dataset:{mins:String(mins)}}));
   const listeners={},intervals=new Map(),messages=[];let id=0,failNext=false;
   const defaultState={courses:[{id:'psych',name:'Psychology'}],studyHistory:[],examPeriod:'midterms'};
@@ -42,6 +43,7 @@ function boot(){
 }
 let app=boot();assert.equal(app.elements.get('timerDisplay').textContent,'25:00');
 assert.equal(app.elements.get('timerStartBtn').textContent,'start');
+assert.equal(+app.elements.get('timerRingProgress').attributes['stroke-dashoffset'],0);
 const idleWrites=app.elements.get('timerStartBtn').textWrites;
 app.tick();app.tick();assert.equal(app.elements.get('timerStartBtn').textWrites,idleWrites,'Repeated idle updates must not rewrite the button');
 app.click('timerStartBtn');assert.equal(app.snapshot().running,true);assert(values.has(timer.KEY));
@@ -52,9 +54,12 @@ const original=app.snapshot().session;
 assert.equal(original.subject,'course-psych');assert.equal(original.period,'midterms');
 assert.equal(app.elements.get('timerSubjectSelect').disabled,true);assert(app.presets.every(el=>el.disabled));
 clock.value+=62000;app.tick();assert.equal(app.elements.get('timerDisplay').textContent,'23:58');
+assert(Math.abs(+app.elements.get('timerRingProgress').attributes['stroke-dashoffset']-(62/1500*100))<1e-9);
+assert.equal(+app.elements.get('timerDial').attributes['aria-valuenow'],1438);
 app=boot();assert.equal(app.elements.get('timerDisplay').textContent,'23:58');assert.equal(app.snapshot().session.id,original.id);
 app.click('timerPauseBtn');assert.equal(app.snapshot().remaining,1438);assert.equal(app.snapshot().running,false);
 clock.value+=300000;app=boot();assert.equal(app.elements.get('timerDisplay').textContent,'23:58');
+assert(Math.abs(+app.elements.get('timerRingProgress').attributes['stroke-dashoffset']-(62/1500*100))<1e-9);
 app.click('timerStartBtn');assert.equal(app.snapshot().session.id,original.id);
 const deadline=app.snapshot().deadline;
 // Repeated or late callbacks use elapsed wall time, not the callback count.
@@ -65,7 +70,9 @@ app.elements.get('timerSubjectSelect').handlers.change({target:{value:'course-ne
 app.presets[2].handlers.click();assert.equal(app.snapshot().session.subject,original.subject);assert.equal(app.snapshot().presetMinutes,25);
 // Reload after the deadline records one completed session with its original context.
 clock.value=deadline+5000;app=boot();app.ctx.cloudLoading=true;app.tick();
-assert.equal(app.ctx.state.studyHistory.length,0);app.ctx.cloudLoading=false;app.tick();
+assert.equal(app.ctx.state.studyHistory.length,0);
+assert.equal(+app.elements.get('timerRingProgress').attributes['stroke-dashoffset'],100);
+app.ctx.cloudLoading=false;app.tick();
 assert.equal(app.ctx.state.studyHistory.length,1);
 let record=app.ctx.state.studyHistory[0];assert.equal(record.subject,'course-psych');assert.equal(record.subjectName,'Psychology');
 assert.equal(record.academicKey,'2026–2027::Term 1');assert.equal(record.period,'midterms');assert.equal(record.minutes,25);assert.equal(record.timestamp,deadline);
@@ -79,9 +86,12 @@ assert.equal(sanitized.studyHistory[0].sessionId,record.sessionId);
 assert.equal(sanitized.studyHistory[0].subjectName,'Psychology');
 // Reset discards a partial session and unlocks course/duration controls.
 app.click('timerStartBtn');clock.value+=30000;app.click('timerResetBtn');
+assert.equal(+app.elements.get('timerRingProgress').attributes['stroke-dashoffset'],0);
 assert.equal(app.snapshot().remaining,1500);assert.equal(app.snapshot().session,null);assert.equal(app.ctx.state.studyHistory.length,1);
 assert.equal(app.elements.get('timerSubjectSelect').disabled,false);
 app.presets[1].handlers.click();assert.equal(app.snapshot().presetMinutes,45);assert.equal(app.elements.get('timerDisplay').textContent,'45:00');
+assert.equal(+app.elements.get('timerDial').attributes['aria-valuemax'],2700);
+assert.equal(+app.elements.get('timerRingProgress').attributes['stroke-dashoffset'],0);
 // A failed start leaves the timer idle. A failed completion stays recoverable.
 app.fail();app.click('timerStartBtn');assert.equal(app.snapshot().running,false);
 app.click('timerStartBtn');clock.value=app.snapshot().deadline;app.fail();app.tick();

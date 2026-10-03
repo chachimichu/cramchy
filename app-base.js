@@ -991,6 +991,16 @@ function updateTimerDisplay(){
   const remaining=CramchyStudyTimer.remaining(timerState,Date.now());
   const m=Math.floor(remaining/60),s=remaining%60;
   document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  // Ring and digits share this exact remaining-time snapshot; no second clock.
+  const duration=timerState.presetMinutes*60;
+  const fraction=Math.max(0,Math.min(1,remaining/duration));
+  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String((1-fraction)*100));
+  const dial=document.getElementById('timerDial');
+  if(dial){
+    dial.setAttribute('aria-valuemax',String(duration));
+    dial.setAttribute('aria-valuenow',String(remaining));
+    dial.setAttribute('aria-valuetext',`${m} minutes ${s} seconds remaining`);
+  }
   const start=document.getElementById('timerStartBtn'),pause=document.getElementById('timerPauseBtn');
   start.disabled=timerState.running;
   const startLabel=timerState.session?'resume':'start';

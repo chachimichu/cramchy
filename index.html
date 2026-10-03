@@ -205,7 +205,13 @@
         <button class="btn ghost" data-mins="45">45 min</button>
         <button class="btn ghost" data-mins="60">60 min</button>
       </div>
-      <div class="timer-display" id="timerDisplay">25:00</div>
+      <div class="study-timer-dial" id="timerDial" role="progressbar" aria-label="Study time remaining" aria-valuemin="0" aria-valuemax="1500" aria-valuenow="1500" aria-valuetext="25 minutes remaining">
+        <svg class="study-timer-ring" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <circle class="study-timer-track" cx="60" cy="60" r="54"></circle>
+          <circle class="study-timer-progress" id="timerRingProgress" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+      </div>
       <div class="timer-controls">
         <button class="btn" id="timerStartBtn">start</button>
         <button class="btn secondary" id="timerPauseBtn" disabled>pause</button>
