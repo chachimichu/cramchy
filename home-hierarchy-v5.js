@@ -23,7 +23,7 @@
     header.className='planner-hero-card cramchy-home-header';
     header.innerHTML=`
       <div class="planner-logo-wrap cramchy-home-logo-zone">
-        <img class="cramchy-home-illustration" src="${HOME_ILLUSTRATION}" alt="" width="1280" height="1280">
+        <img class="cramchy-home-illustration" src="${HOME_ILLUSTRATION}" alt="" width="1278" height="1230">
         <span class="cramchy-home-sparkle one">✦</span>
         <span class="cramchy-home-sparkle two">✧</span>
       </div>
@@ -60,3 +60,4 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();
+
