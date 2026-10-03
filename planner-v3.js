@@ -110,8 +110,8 @@
           <div class="planner-hero-card">
             <div class="planner-logo-wrap"><img class="planner-logo-sync planner-main-logo" src="${escapeHtml(getLogoSrc())}" alt="Cramchy logo"></div>
             <div class="planner-hero-copy">
-              <h2>plot the cram,<br>survive the week</h2>
-              <p>Your classes, deadlines, exams, and study blocks finally sitting together like they have their life together.</p>
+              <h2>plan at your own pace</h2>
+              <p>Keep your classes, quizzes, deadlines, and study plans in one place.</p>
               <div class="planner-actions"><button class="planner-primary" data-planner-add type="button">add event</button><button class="planner-light" data-planner-add-course-exam type="button">add course exam</button><button class="planner-light" data-planner-show="week" type="button">view week</button></div>
             </div>
           </div>

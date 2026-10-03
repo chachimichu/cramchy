@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-task-card-flow-72';
+  const VERSION='2026-10-04-compact-planner-73';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
