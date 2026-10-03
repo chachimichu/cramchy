@@ -74,7 +74,7 @@
     if(!text) return text;
     let out=text;
     MAP.forEach((to,from)=>{
-      out=out.replace(new RegExp('(^|\\s|[✦✧♡])'+escapeRegExp(from)+'(?=\\s|$|[→:])','g'),(match,prefix)=>prefix+to);
+      out=out.replace(new RegExp('(^|\\s|[✦✧])'+escapeRegExp(from)+'(?=\\s|$|[→:])','g'),(match,prefix)=>prefix+to);
     });
     return out;
   }

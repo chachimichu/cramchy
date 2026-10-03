@@ -82,7 +82,7 @@
         return;
       }
       const raw=String(title.textContent||'').replace(/\s+/g,' ').trim();
-      const cleaned=raw.replace(/^[✧✦♡★☆•\s]+/,'').trim();
+      const cleaned=raw.replace(/^[✧✦★☆•\s]+/,'').trim();
       if(cleaned&&cleaned!==raw) title.textContent=cleaned;
       title.classList.add('cramchy-dot-heading');
     });

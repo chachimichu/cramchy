@@ -40,8 +40,8 @@
     else if(eligible)honorLabel="Dean's List (Second Honors)";
     let message='';
     if(gwa!==null){
-      if(honorLabel)message=`Congratulations! ${honorLabel} ♡`;
-      else message="Here's your GWA ♡";
+      if(honorLabel)message=`Congratulations! ${honorLabel}`;
+      else message="Here's your GWA";
     }
     return {honor,units,count,excluded,gwa,blockers:uniqueBlockers,meetsGwa,eligible,honorLabel,message};
   }

@@ -62,13 +62,6 @@
   }
   function targetFor(grade){return RAW_TARGETS.find(x=>x.grade===String(grade))||RAW_TARGETS[2];}
   function isNumericGrade(grade){return NUMERIC_GRADES.includes(String(grade));}
-  function deanLabel(gwa){
-    const g=toNumber(gwa);
-    if(g===null) return '';
-    if(g>=3.50) return "Dean's List — First Honors";
-    if(g>=3.25) return "Dean's List — Second Honors";
-    return '';
-  }
   function profileYear(state){return state.profile?.academicYear||'2026–2027';}
   function profileTerm(state){return state.profile?.term||'Term 1';}
   function termsFor(state){
@@ -134,16 +127,23 @@
     return {info,mode,grade,raw,detail,units:unitFor(course,info),included:isNumericGrade(grade)};
   }
   function computeGwa(courses){
-    let units=0,weighted=0,included=0;
-    courses.forEach(course=>{
-      const result=computeCourse(course);
-      if(result.included&&result.units>0){
-        units+=result.units;
-        weighted+=Number(result.grade)*result.units;
-        included++;
-      }
-    });
-    return {gwa:units>0?weighted/units:null,units,included,pending:Math.max(0,courses.length-included)};
+    const results=courses.map(computeCourse);
+    const calc=window.CramchyModules.quickGwaRules.compute(results);
+    // Term GWA also supports P/F. P is nonnumeric; F blocks honors.
+    const blockers=[...calc.blockers];
+    if(results.some(result=>result.grade==='F')) blockers.push({grade:'F',reason:'failing grade'});
+    const pending=results.filter(result=>!result.grade).length;
+    const unweighted=results.filter(result=>result.included&&result.units<=0).length;
+    const excluded=results.filter(result=>result.grade&&(!result.included||result.units<=0)).length;
+    const eligible=calc.eligible&&blockers.length===0&&pending===0&&unweighted===0;
+    return {...calc,included:calc.count,pending,excluded,unweighted,blockers,eligible,honorLabel:eligible?calc.honorLabel:''};
+  }
+  function honorsStatus(calc){
+    if(calc.blockers.length) return 'Honors estimate blocked: '+calc.blockers.map(item=>`${item.grade} (${item.reason})`).join(', ');
+    if(calc.pending) return `Honors estimate pending: ${calc.pending} course${calc.pending===1?'':'s'} need${calc.pending===1?'s':''} a final grade`;
+    if(calc.unweighted) return 'Honors estimate pending: add units for every numeric grade';
+    if(calc.honorLabel) return calc.honorLabel+' · grade-based estimate';
+    return calc.gwa===null?'add a numeric final grade to start':'weighted by course units';
   }
 
   function view(){return document.getElementById('view-grades');}
@@ -322,7 +322,7 @@
         <div class="grades-field unit-field"><label>units</label><input data-term-field="units" data-course="${attr(course.id)}" type="number" min="0" max="20" step="0.5" inputmode="decimal" value="${attr(result.units)}"></div>
       </div>
       ${details}
-      <div class="grades-card-foot"><span>${result.included?'included in GWA':'not included yet'}</span><span>${escapeHtml(result.detail)}</span></div>
+      <div class="grades-card-foot"><span>${result.included&&result.units>0?'included in GWA':result.grade?'excluded from numeric GWA':'final grade pending'}</span><span>${escapeHtml(result.detail)}</span></div>
     </article>`;
   }
 
@@ -335,7 +335,7 @@
     const courses=coursesFor(state,term);
     const calc=computeGwa(courses);
     const gwa=calc.gwa===null?'—':calc.gwa.toFixed(2);
-    const dean=deanLabel(calc.gwa);
+    const status=honorsStatus(calc);
 
     suppressGwaObserver=true;
     root.innerHTML=`<div class="grades-gwa-board" data-term-gwa-render="stable">
@@ -348,7 +348,7 @@
         <div class="grades-gwa-result">
           <span>estimated GWA</span>
           <strong>${gwa}</strong>
-          <em>${dean?escapeHtml(dean):(calc.gwa===null?'add a final grade to start':'weighted by course units')}</em>
+          <em>${escapeHtml(status)}</em>
         </div>
       </div>
 
@@ -360,14 +360,14 @@
       <div class="grades-gwa-summary-row">
         <div><span>courses included</span><strong>${calc.included}</strong><em>with numeric final grades</em></div>
         <div><span>units included</span><strong>${calc.units.toFixed(1)}</strong><em>used to weight your GWA</em></div>
-        <div><span>still pending</span><strong>${calc.pending}</strong><em>not counted yet</em></div>
+        <div><span>not counted</span><strong>${calc.pending+calc.excluded}</strong><em>${calc.pending} pending · ${calc.excluded} excluded</em></div>
       </div>
 
       <div class="grades-gwa-course-list">
         ${courses.length?courses.map(courseCard).join(''):`<div class="grades-gwa-empty"><strong>no courses here yet</strong><span>Add courses for ${escapeHtml(term)} first.</span></div>`}
       </div>
 
-      <div class="grades-dean-note"><strong>Dean's List:</strong> 3.25–3.49 = Second Honors · 3.50 and above = First Honors</div>
+      <div class="grades-dean-note"><strong>Honors grade check:</strong> GWA of at least 3.25 for Second Honors or 3.50 for First Honors, with no INC, R, F, or grade below 2.5. Add all final grades and numeric course units first. P is excluded from numeric GWA. This estimates the grade requirements; the Registrar confirms official awards.</div>
     </div>`;
 
     bindTermGwa(root);
@@ -527,6 +527,7 @@
     else patchGradebook();
   }
 
+  window.addEventListener('cramchy:backup-restored',()=>{if(currentMode()==='gwa') renderTermGwa();else patchGradebook();});
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
 })();

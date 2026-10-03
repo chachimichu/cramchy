@@ -1,0 +1,25 @@
+/* Keep calendar overflow within its scroll area and form fields within cards. */
+.planner-layout>* ,.planner-card,.planner-hero-copy{min-width:0;}
+.planner-week-scroll{max-width:100%;}
+.planner-actions{flex-wrap:wrap;}
+.course-modal,.course-modal *{box-sizing:border-box;}
+.course-modal{max-width:100%;max-height:calc(100dvh - 36px);overflow-x:hidden;}
+.course-form-grid>*{min-width:0;}
+.course-modal input,.course-modal select,.course-modal textarea{min-width:0;max-width:100%;}
+.course-modal label,.planner-form label{font-size:.875rem;}
+body :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:3px solid var(--red-deep,#9e3656);outline-offset:3px;}
+.planner-nav button,.planner-modal-head button{min-width:44px;min-height:44px;}
+body.cramchy-dialog-open #chaowiNook{visibility:hidden;pointer-events:none;}
+@media(max-width:1024px){
+  body{padding-bottom:calc(184px + env(safe-area-inset-bottom,0px));}
+}
+@media(max-width:640px){
+  body{padding-bottom:calc(156px + env(safe-area-inset-bottom,0px));}
+  .modal-scrim{padding:max(12px,env(safe-area-inset-top,0px)) 14px max(12px,env(safe-area-inset-bottom,0px));}
+  .course-modal{width:100%;max-height:calc(100dvh - 28px);padding:18px;}
+  .course-modal input,.course-modal select,.course-modal textarea{font-size:16px;}
+  .modal-actions{display:flex;flex-wrap:wrap;gap:8px;}
+  .modal-actions button{flex:1;min-height:44px;}
+  .planner-actions>button{min-height:44px;}
+  .planner-day-cell:focus-visible{outline-offset:-3px;}
+}

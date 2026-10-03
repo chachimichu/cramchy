@@ -62,6 +62,20 @@ body[data-theme="dark-study"] .home-command-panel{background:var(--app-bg-2);bor
 .home-today-content>.card{padding:8px!important;border:0!important;box-shadow:none!important;background:transparent!important;}
 .home-today-content .mission-row{border:1px solid color-mix(in srgb,var(--home-task) 20%,transparent)!important;background:color-mix(in srgb,var(--home-task-soft) 68%,var(--app-bg-2,#fff))!important;border-radius:16px!important;padding:11px 12px!important;}
 .home-today-content #dailyViewTasksBtn{margin-top:11px!important}
+/* Keep this full-width control flat so hover does not move a shadow layer
+   beside the Planner card's backdrop filter. */
+#view-dashboard #dailyViewTasksBtn{
+  box-shadow:none!important;
+  transform:none!important;
+  transition:none!important;
+}
+#view-dashboard #dailyViewTasksBtn:hover{
+  background:linear-gradient(135deg,#e97b98,#d85b7d)!important;
+}
+#view-dashboard #dailyViewTasksBtn:focus-visible{
+  outline:2px solid var(--red-deep,#c8465e);
+  outline-offset:3px;
+}
 
 .home-coming-panel .home-next-exam{margin:0 0 11px!important;padding:15px!important;border-radius:19px!important;box-shadow:none!important;border-left:4px solid var(--home-exam)!important;}
 .home-coming-panel .home-next-exam .tag{background:var(--home-exam)!important}

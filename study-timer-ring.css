@@ -1,0 +1,35 @@
+/* Ring geometry is updated by the same timer snapshot as the digits. */
+#view-timer .study-timer-dial{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:min(280px,100%);
+  aspect-ratio:1;
+  margin:20px auto;
+}
+#view-timer .study-timer-ring{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  transform:rotate(-90deg);
+}
+#view-timer .study-timer-ring circle{fill:none;stroke-width:5;}
+#view-timer .study-timer-track{stroke:var(--pink-soft,#ffd9e3);opacity:.55;}
+#view-timer .study-timer-progress{
+  stroke:var(--red-berry,#e85d75);
+  stroke-linecap:butt;
+}
+#view-timer #timerDisplay{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  margin:0;
+  font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+  font-weight:700!important;
+  font-size:clamp(2.4rem,10vw,3.5rem);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.018em;
+  line-height:1;
+}

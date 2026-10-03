@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-09-14-grade-rounding-55';
+  const VERSION='2026-10-04-timer-ring-76';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -149,7 +149,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -187,22 +187,30 @@
     .then(()=>forceFreshBaseBundle())
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
+    .then(()=>loadScript('js/backup-data.js?v='+VERSION))
+    .then(()=>loadScript('js/study-timer.js?v='+VERSION))
+    .then(()=>loadScript('js/academic-schedule.js?v='+VERSION))
+    .then(()=>loadScript('js/account-storage.js?v='+VERSION))
+    .then(()=>window.CramchyAccounts.boot())
+    .then(()=>loadScript('js/cloud-sync.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
+    .then(()=>window.__cramchyTrackerCloudReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))
     .then(()=>loadScript('exam-subject-dedupe-v21.js?v='+VERSION))
     .then(()=>loadScript('planner-cloud-sync-v12.js?v='+VERSION))
     .then(()=>window.__cramchyPlannerCloudReady||Promise.resolve())
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
+    .then(()=>loadScript('js/planner-time.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
     .then(()=>loadScript('planner-mobile-hotfix-v44.js?v='+VERSION))
     .then(()=>{ window.__cramchyPlannerCloudMarkLoaded?.(); })
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
-    .then(()=>loadScript('task-home-sync-v9.js?v='+VERSION))
     .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>loadScript('mobile-modal-center-v30.js?v='+VERSION))
+    .then(()=>loadScript('js/dialog-accessibility.js?v='+VERSION))
     .then(()=>loadScript('ui-copy-normalizer-v1.js?v='+VERSION))
     .then(()=>loadScript('grades-nu-polish-v1.js?v='+VERSION))
     .then(()=>loadScript('grades-quick-gwa-v43.js?v='+VERSION))
@@ -212,5 +220,9 @@
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
       finishBootSplash();
+      const notice=document.createElement('p');
+      notice.className='card';
+      notice.textContent='Cramchy could not open your saved workspace. Refresh to try again. Your stored progress was kept.';
+      document.body.appendChild(notice);
     });
 })();

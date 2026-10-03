@@ -1,8 +1,7 @@
 (function(){
-  const FALLBACK_LOGO='assets/cramchy-wordmark.png';
+  const HOME_ILLUSTRATION='assets/home-girl-cat-smile.png';
 
   function $(s,r=document){return r.querySelector(s);}
-  function logoSrc(){return $('.topnav .brand img.brand-full-logo')?.src||$('.topnav .brand img')?.src||$('.hero-wordmark')?.src||FALLBACK_LOGO;}
 
   function buildHomeHero(){
     const home=$('#view-dashboard .daily-home');
@@ -24,7 +23,7 @@
     header.className='planner-hero-card cramchy-home-header';
     header.innerHTML=`
       <div class="planner-logo-wrap cramchy-home-logo-zone">
-        <img class="planner-logo-sync planner-main-logo cramchy-home-logo" src="${logoSrc()}" alt="Cramchy logo">
+        <img class="cramchy-home-illustration" src="${HOME_ILLUSTRATION}" alt="" width="1278" height="1230">
         <span class="cramchy-home-sparkle one">✦</span>
         <span class="cramchy-home-sparkle two">✧</span>
       </div>

@@ -3,35 +3,45 @@
   align-items:stretch!important;
 }
 .home-command-left{
-  display:grid;
-  grid-template-rows:minmax(245px,.92fr) minmax(245px,1fr);
+  display:flex;
+  flex-direction:column;
   gap:16px;
   min-width:0;
-  height:100%;
+  height:auto;
   align-self:stretch;
 }
 .home-command-left > .home-today-panel,
 .home-command-left > .home-planner-reminders{
   min-height:245px;
-  height:100%;
+  height:auto;
 }
 .home-command-left > .home-today-panel{
-  display:flex;
-  flex-direction:column;
+  display:block;
+  flex:0 0 auto;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible;
+}
+.home-command-left > .home-planner-reminders{
+  flex:1 0 auto;
 }
 .home-command-left .home-today-content{
-  display:flex;
-  flex-direction:column;
-  flex:1 1 auto;
+  display:block;
   min-height:0;
 }
 .home-command-left .home-today-content > .card{
-  flex:1 1 auto;
-  display:flex;
-  flex-direction:column;
+  display:block;
+  height:auto;
 }
 .home-command-left #dailyTaskList{
-  flex:1 1 auto;
+  height:auto;
+}
+/* Keep the action inside the growing card, including its bottom clearance. */
+#view-dashboard .home-today-content #dailyViewTasksBtn{
+  display:block;
+  min-height:44px;
+  width:100%;
+  margin-bottom:4px;
 }
 .home-planner-reminders{
   position:relative;
@@ -51,12 +61,14 @@
     inset 0 1px 0 rgba(255,255,255,.58)!important;
   overflow:hidden;
   isolation:isolate;
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  /* The surface gradient is opaque; sampling moving layers behind it adds
+     no visible detail and can produce rectangular paint artifacts. */
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .home-planner-reminders::before,
 .home-planner-reminders::after{
-  content:"";
+  content:none;
   position:absolute;
   pointer-events:none;
   z-index:0;
@@ -129,10 +141,10 @@ body[data-theme="dark-study"] .home-planner-reminders::after{
 .home-planner-reminders-title h3{
   margin:0;
   color:var(--text-main,#5a3a3f)!important;
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
-  font-size:1.16rem;
+  font-family:var(--cramchy-readable,'Plus Jakarta Sans',system-ui,sans-serif)!important;
+  font-size:1.22rem!important;
   font-weight:700;
-  letter-spacing:-.03em;
+  letter-spacing:-.018em!important;
   line-height:1.1;
 }
 .home-planner-reminders-chip{
@@ -146,8 +158,8 @@ body[data-theme="dark-study"] .home-planner-reminders::after{
   padding:5px 9px;
   letter-spacing:.02em;
   white-space:nowrap;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .home-planner-reminders-list{
   position:relative;
@@ -170,8 +182,8 @@ body[data-theme="dark-study"] .home-planner-reminders::after{
   background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.42));
   box-shadow:0 8px 18px rgba(164,78,100,.05),inset 0 1px 0 rgba(255,255,255,.5);
   text-align:left;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .home-planner-reminder.class{--reminder-accent:var(--home-blue,#8baee8);}
 .home-planner-reminder.task{--reminder-accent:var(--home-task,#ef89a4);}
@@ -242,8 +254,8 @@ body[data-theme="dark-study"] .home-planner-reminder{
   border-radius:17px;
   background:rgba(255,255,255,.46);
   color:var(--text-soft,#8a6268);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .home-planner-reminders-empty .spark{
   flex:0 0 auto;
@@ -284,8 +296,8 @@ body[data-theme="dark-study"] .home-planner-reminder{
   font-size:.78rem;
   font-weight:850;
   cursor:pointer;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .home-planner-open:hover{background:rgba(255,255,255,.76);}
 @media(max-width:980px){
@@ -521,3 +533,5 @@ body[data-theme="dark-study"] .home-planner-reminder{
     border-radius:20px!important;
   }
 }
+
+.home-planner-reminder.quiz{--reminder-accent:#9474c6;}

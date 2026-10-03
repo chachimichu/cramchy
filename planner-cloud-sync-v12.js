@@ -11,6 +11,7 @@
   let plannerLoaded=false;
   let realtimeChannel=null;
   let pendingRealtimeRefresh=false;
+  let syncEngine=null;
 
   function normalizeEvents(value){
     if(!Array.isArray(value)) return [];
@@ -19,7 +20,7 @@
       .map(event=>({
         id:String(event.id||('planner-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8))).slice(0,120),
         title:String(event.title||'Untitled event').slice(0,240),
-        type:['class','task','exam','study','personal'].includes(event.type)?event.type:'personal',
+        type:['class','task','exam','quiz','study','personal'].includes(event.type)?event.type:'personal',
         course:String(event.course||'').slice(0,160),
         date:/^\d{4}-\d{2}-\d{2}$/.test(String(event.date||''))?String(event.date):'',
         start:String(event.start||'').slice(0,8),
@@ -29,12 +30,15 @@
       }));
   }
 
-  function readLocalEvents(){
+  function readLocalEvents(strict=false){
     try{
-      const raw=localStorage.getItem(STORAGE_KEY);
-      return normalizeEvents(raw?JSON.parse(raw):[]);
+      const raw=localStorage.getItem(STORAGE_KEY)??localStorage.getItem(OLD_STORAGE_KEY);
+      const parsed=raw?JSON.parse(raw):[];
+      if(!Array.isArray(parsed)) throw new Error('Saved Planner events are not an array.');
+      return normalizeEvents(parsed);
     }catch(error){
       console.warn('Planner local read failed.',error);
+      if(strict) throw error;
       return [];
     }
   }
@@ -58,11 +62,18 @@
   function applyRemoteEvents(events){
     const normalized=normalizeEvents(events);
     if(JSON.stringify(readLocalEvents())===JSON.stringify(normalized)) return false;
+    let recoverySaved=false;
 
+    // Keep the local version recoverable before another device/account replaces it.
+    // If the backup cannot be saved, abort the replacement.
+    if(localStorage.getItem(STORAGE_KEY)!==null||localStorage.getItem(OLD_STORAGE_KEY)!==null){
+      window.CramchyBackup.preserve(localStorage,'before Planner cloud replacement');
+      recoverySaved=true;
+    }
     writeLocalEvents(normalized);
     pendingRealtimeRefresh=true;
     window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-loaded',{
-      detail:{count:normalized.length,realtime:true}
+      detail:{count:normalized.length,realtime:true,recoverySaved}
     }));
 
     if(plannerLoaded&&plannerIsVisible()){
@@ -72,33 +83,11 @@
   }
 
   async function getSignedInUser(){
-    if(!client) return null;
-    const {data,error}=await client.auth.getSession();
-    if(error){
-      console.warn('Planner cloud session check failed.',error);
-      return null;
-    }
-    currentUser=data?.session?.user||null;
     return currentUser;
   }
 
-  async function pushEvents(events){
-    if(!client) return;
-    const user=currentUser||await getSignedInUser();
-    if(!user) return;
-    const normalized=normalizeEvents(events);
-    try{
-      const {error}=await client.from('planner_state').upsert({
-        user_id:user.id,
-        events:normalized,
-        updated_at:new Date().toISOString()
-      },{onConflict:'user_id'});
-      if(error) throw error;
-      window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-synced',{detail:{count:normalized.length}}));
-    }catch(error){
-      console.error('Planner cloud save failed.',error);
-      window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-error'));
-    }
+  async function pushEvents(){
+    return syncEngine?syncEngine.push():false;
   }
 
   function queuePushFromLocal(){
@@ -106,6 +95,8 @@
     clearTimeout(saveTimer);
     saveTimer=setTimeout(()=>pushEvents(readLocalEvents()),300);
   }
+
+  window.addEventListener('cramchy:backup-restored',queuePushFromLocal);
 
   function installStorageBridge(){
     if(window.__cramchyPlannerStorageBridgeInstalled) return;
@@ -121,37 +112,7 @@
   }
 
   async function pullCloud(){
-    if(!client) return [];
-    const user=currentUser||await getSignedInUser();
-    if(!user) return readLocalEvents();
-
-    try{
-      const {data,error}=await client
-        .from('planner_state')
-        .select('events, updated_at')
-        .eq('user_id',user.id)
-        .maybeSingle();
-      if(error) throw error;
-
-      let cloudEvents;
-      if(data){
-        cloudEvents=normalizeEvents(data.events);
-      }else{
-        cloudEvents=[];
-        const {error:insertError}=await client.from('planner_state').insert({
-          user_id:user.id,
-          events:cloudEvents,
-          updated_at:new Date().toISOString()
-        });
-        if(insertError) throw insertError;
-      }
-
-      applyRemoteEvents(cloudEvents);
-      return cloudEvents;
-    }catch(error){
-      console.error('Planner cloud load failed.',error);
-      return readLocalEvents();
-    }
+    return syncEngine?syncEngine.pull():readLocalEvents();
   }
 
   function unsubscribeRealtime(){
@@ -171,14 +132,11 @@
         schema:'public',
         table:'planner_state',
         filter:'user_id=eq.'+user.id
-      },payload=>{
-        if(payload.eventType==='DELETE'){
-          applyRemoteEvents([]);
-          return;
-        }
-        if(payload.new&&Array.isArray(payload.new.events)){
-          applyRemoteEvents(payload.new.events);
-        }
+      },()=>{
+        if(currentUser?.id!==user.id) return;
+        // Re-read the row through the version guard instead of applying a
+        // potentially out-of-order realtime payload over unsaved edits.
+        pullCloud();
       })
       .subscribe(status=>{
         window.dispatchEvent(new CustomEvent('cramchy:planner-realtime-status',{detail:{status}}));
@@ -216,33 +174,43 @@
       return;
     }
 
-    client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
-      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+    client=window.CramchyAccounts.client;
+    currentUser=window.CramchyAccounts.user;
+    window.addEventListener('cramchy:account-leaving',()=>{
+      clearTimeout(saveTimer);syncEngine?.stop();currentUser=null;unsubscribeRealtime();
     });
-
-    await getSignedInUser();
     if(currentUser){
+      const user=currentUser;
+      const initial=window.CramchyCloudSync.canonical(readLocalEvents());
+      syncEngine=window.CramchyCloudSync.create({
+        client,table:'planner_state',column:'events',key:'cramchyPlannerSync_v1',userId:user.id,
+        storage:localStorage,active:()=>window.CramchyAccounts.active(user.id)&&currentUser?.id===user.id,
+        read:()=>readLocalEvents(true),empty:()=>[],normalize:raw=>{
+          if(!Array.isArray(raw))throw Error('Cloud Planner events are invalid.');return normalizeEvents(raw);
+        },
+        hasLocal:()=>localStorage.getItem(STORAGE_KEY)!==null||localStorage.getItem(OLD_STORAGE_KEY)!==null||window.CramchyCloudSync.canonical(readLocalEvents(true))!==initial,
+        // Do not reload the Planner or accept a new baseline while an event
+        // form still contains uncommitted edits.
+        canApply:()=>!document.querySelector('#plannerModal.open'),
+        apply:applyRemoteEvents,
+        onStatus:status=>{
+          if(status==='pending')queuePushFromLocal();
+          if(status==='synced')window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-synced'));
+        },
+        onConflict:()=>window.dispatchEvent(new CustomEvent('cramchy:sync-conflict',{detail:{label:'Planner'}})),
+        onError:error=>{
+          console.error('Planner cloud sync kept local events.',error);
+          window.dispatchEvent(new CustomEvent('cramchy:planner-cloud-error'));
+        }
+      });
+      window.CramchySyncEngines=window.CramchySyncEngines||{};
+      window.CramchySyncEngines.Planner=syncEngine;
       await pullCloud();
-      subscribeRealtime(currentUser);
+      if(window.CramchyAccounts.active(user.id))subscribeRealtime(user);
     }
-
-    client.auth.onAuthStateChange((event,session)=>{
-      const nextUser=session?.user||null;
-      const changedUser=(nextUser?.id||null)!==(currentUser?.id||null);
-      currentUser=nextUser;
-
-      if(!nextUser){
-        unsubscribeRealtime();
-        return;
-      }
-
-      if(changedUser){
-        setTimeout(async()=>{
-          await pullCloud();
-          subscribeRealtime(nextUser);
-        },0);
-      }else if(!realtimeChannel){
-        subscribeRealtime(nextUser);
+    window.addEventListener('cramchy:account-storage',event=>{
+      if([STORAGE_KEY,OLD_STORAGE_KEY].includes(event.detail?.key)){
+        syncEngine?.stop();clearTimeout(saveTimer);location.reload();
       }
     });
 
