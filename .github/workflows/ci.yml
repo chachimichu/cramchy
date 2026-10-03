@@ -84,3 +84,8 @@ jobs:
 
       - name: Test dialog keyboard accessibility
         run: node testing/dialog-accessibility.test.cjs
+
+      - name: Test grade insights and workspace navigation
+        run: |
+          node testing/grade-insights.test.cjs
+          node testing/grades-workspace.test.cjs

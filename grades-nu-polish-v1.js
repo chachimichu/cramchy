@@ -160,7 +160,7 @@
   function ensureHeader(){
     const shell=view();
     const tabs=shell?.querySelector('.grades-main-tabs');
-    if(!shell||!tabs) return;
+    if(!shell||!tabs||shell.classList.contains('grades-workspace')) return;
 
     const title=shell.querySelector('.page-head-row h2');
     if(title) title.textContent='grades';
@@ -401,7 +401,7 @@
 
   function patchGradebook(){
     const root=document.getElementById('gradebookRoot');
-    if(!root||getComputedStyle(root).display==='none') return;
+    if(!root||root.dataset.gradesWorkspace==='1'||getComputedStyle(root).display==='none') return;
     const app=readJson(APP_STORAGE_KEY);
     const courses=new Map((app.courses||[]).map(c=>[String(c.id),c]));
 
@@ -527,6 +527,7 @@
     else patchGradebook();
   }
 
+  window.CramchyTermGwa={render:renderTermGwa};
   window.addEventListener('cramchy:backup-restored',()=>{if(currentMode()==='gwa') renderTermGwa();else patchGradebook();});
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
