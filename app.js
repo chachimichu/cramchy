@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-planner-quiz-67';
+  const VERSION='2026-10-04-term-status-68';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 

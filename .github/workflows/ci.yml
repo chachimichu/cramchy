@@ -78,3 +78,6 @@ jobs:
 
       - name: Test shared course exam schedules
         run: node testing/academic-schedule.test.cjs
+
+      - name: Test More term status refresh
+        run: node testing/term-status.test.cjs

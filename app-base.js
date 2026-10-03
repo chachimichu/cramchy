@@ -440,6 +440,7 @@ function saveState(){
     queueCloudSave();
   }, 260);
   renderHomeTaskSummary();
+  if(typeof renderTermManager==='function')renderTermManager();
   if(typeof window!=='undefined')window.dispatchEvent(new Event('cramchy:schedules-changed'));
 }
 
@@ -1793,6 +1794,7 @@ function setThemeChoice(theme,root=document){
 }
 function renderCramchySettings(){
   if(!state.profile)return;
+  renderTermManager();
   const name=document.getElementById('profileName'),yr=document.getElementById('profileYear'),term=document.getElementById('profileTerm'),mot=document.getElementById('profileMotivation');
   if(name)name.value=state.profile.name||'';if(yr)yr.value=state.profile.academicYear||'';
   if(term){if(!Array.from(term.options).some(o=>o.value===state.profile.term)){const o=document.createElement('option');o.value=o.textContent=state.profile.term;term.appendChild(o);}term.value=state.profile.term;}
@@ -1840,7 +1842,7 @@ function initCramchyShell(){
     state.profile.academicYear=(document.getElementById('profileYear')?.value||'2026–2027').trim().slice(0,30);
     state.profile.term=document.getElementById('profileTerm')?.value||'Term 1';
     state.profile.motivation=document.getElementById('profileMotivation')?.value||'mixed';state.profile.onboarded=true;
-    saveState();applyCramchyPersonalization();showToast('profile saved ♡');
+    saveState();ensureAcademicStructure();renderAll();showToast('profile saved ♡');
   });
   document.querySelectorAll('[data-open-tab]').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.openTab)));
   if(typeof CHAOWI_MESSAGES!=='undefined'){
@@ -3119,8 +3121,9 @@ function renderTermManager(){
   const courses=coursesForCurrentTerm().length;
   const record=dailyTermRecord();
   root.className='term-manager-status';
+  const examContext=state.examPeriod?`<div class="term-status-box"><div class="k">Active exam workspace</div><div class="v">${escapeHtml(activeExamYear())} · ${escapeHtml(activeExamTerm())} · ${escapeHtml(state.examPeriod)}</div></div>`:'';
   const archivedList=(state.archivedTerms||[]).length?`<div class="term-status-box" style="grid-column:1/-1;"><div class="k">Archived terms</div><div class="v" style="font-size:.82rem;">${(state.archivedTerms||[]).map(x=>escapeHtml(x.replace('::',' · '))).join(' · ')}</div></div>`:'';
-  root.innerHTML=`<div class="term-status-box"><div class="k">Academic year</div><div class="v">${escapeHtml(profileAcademicYear())}</div></div><div class="term-status-box"><div class="k">Current term</div><div class="v">${escapeHtml(profileTerm())}${archived?' · archived':''}</div></div><div class="term-status-box"><div class="k">Term data</div><div class="v">${courses} course${courses===1?'':'s'} · ${(record.midterms.exams||[]).length} midterm exam${(record.midterms.exams||[]).length===1?'':'s'} · ${(record.finals.exams||[]).length} final exam${(record.finals.exams||[]).length===1?'':'s'}</div></div>${archivedList}`;
+  root.innerHTML=`<div class="term-status-box"><div class="k">Academic year</div><div class="v">${escapeHtml(profileAcademicYear())}</div></div><div class="term-status-box"><div class="k">Current term</div><div class="v">${escapeHtml(profileTerm())}${archived?' · archived':''}</div></div><div class="term-status-box"><div class="k">Term data</div><div class="v">${courses} course${courses===1?'':'s'} · ${(record.midterms.exams||[]).length} midterm exam${(record.midterms.exams||[]).length===1?'':'s'} · ${(record.finals.exams||[]).length} final exam${(record.finals.exams||[]).length===1?'':'s'}</div></div>${examContext}${archivedList}`;
 }
 function archiveCurrentTerm(){
   const key=dailyAcademicKey();
