@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-study-timer-61';
+  const VERSION='2026-10-03-home-task-hover-62';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
