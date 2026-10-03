@@ -2,6 +2,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const backup=require('../js/backup-data.js');
+const sync=require('../js/cloud-sync.js');
 const KEY='cramchyPlannerEvents_v2';
 const OLD='cramchyPlannerEvents_v1';
 const event=id=>({id,title:'Review '+id,type:'study',course:'PSY101',date:'2026-10-04',start:'09:00',end:'10:00',notes:'Keep me',done:false});
@@ -15,9 +16,11 @@ async function harness(options={}){
   }
   const localStorage=new Storage();
   const inserted=[],pushed=[],dispatched=[],timers=new Map(),listeners={};
-  let timerId=0,authChange,realtime;
+  let timerId=0,realtime,active=!options.guest;
+  const authChange=()=>{active=false;listeners['cramchy:account-leaving']?.();};
+  if(options.cleanBaseline&&options.local?.[KEY])localStorage.setItem('cramchyPlannerSync_v1',JSON.stringify({base:{version:'old',payload:JSON.parse(options.local[KEY])}}));
   const api={
-    auth:{getSession:async()=>({data:{session:options.guest?null:{user:{id:'user-1'}}},error:null}),onAuthStateChange:cb=>{authChange=cb;}},
+    auth:{},
     from:table=>{
       assert.equal(table,'planner_state');
       return {
@@ -27,21 +30,21 @@ async function harness(options={}){
             assert.equal(column,'user_id');assert.equal(id,'user-1');
             return {maybeSingle:async()=>{
               if(options.onSelect)await options.onSelect(localStorage,authChange);
-              return {data:options.remote===undefined?null:{events:options.remote},error:options.selectError?Error('offline'):null};
+              return {data:options.remote===undefined?null:{events:options.remote,updated_at:'v1'},error:options.selectError?Error('offline'):null};
             }};
           }};
         },
-        insert:async row=>{inserted.push(plain(row));if(options.onInsert)await options.onInsert(localStorage);return {error:options.insertError?Error('insert failed'):null};},
-        upsert:async row=>{pushed.push(plain(row));return {error:null};}
+        insert:row=>({select:()=>({maybeSingle:async()=>{inserted.push(plain(row));if(options.onInsert)await options.onInsert(localStorage);return {data:{...row,updated_at:'v1'},error:options.insertError?Error('insert failed'):null};}})}),
+        update:row=>{const query={eq:()=>query,select:()=>({maybeSingle:async()=>{pushed.push(plain(row));return {data:{...row,updated_at:'v2'},error:null};}})};return query;}
       };
     },
     channel:()=>({on:(type,filter,cb)=>{realtime=cb;return {subscribe(){}};}}),
     removeChannel(){}
   };
-  const window={localStorage,CramchyBackup:backup,supabase:{createClient:()=>api},
+  const window={localStorage,CramchyBackup:backup,CramchyCloudSync:sync,CramchyAccounts:{client:api,user:options.guest?null:{id:'user-1'},active:()=>active},supabase:{},
     addEventListener:(name,cb)=>{listeners[name]=cb;},dispatchEvent:ev=>{dispatched.push(ev.type);}};
   const context={window,localStorage,Storage,console:{warn(){},error(){}},
-    document:{visibilityState:'visible',body:{classList:{contains:()=>false}},querySelector:()=>null,addEventListener(){}},
+    document:{visibilityState:'visible',body:{classList:{contains:()=>false}},querySelector:selector=>selector==='#plannerModal.open'&&options.modalOpen?{}:null,addEventListener(){}},
     CustomEvent:class{constructor(type,init){this.type=type;this.detail=init?.detail;}},
     setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout:id=>timers.delete(id),location:{reload(){throw Error('Unexpected reload');}}};
   vm.runInNewContext(fs.readFileSync(require.resolve('../planner-cloud-sync-v12.js'),'utf8'),context);
@@ -50,6 +53,7 @@ async function harness(options={}){
     signOut:()=>authChange('SIGNED_OUT',null),
     signIn:()=>authChange('SIGNED_IN',{user:{id:'user-1'}}),
     remote:payload=>realtime(payload),
+    focus:()=>listeners.focus?.(),
     flush:async delay=>{for(const [id,timer] of [...timers])if(timer.delay===delay){timers.delete(id);await timer.fn();}},
     ready:window.__cramchyPlannerCloudReady};
 }
@@ -80,24 +84,31 @@ async function harness(options={}){
     assert.equal(h.inserted.length,0);assert.equal(h.localStorage.getItem(KEY),malformed);
   }
   const main={subjects:{},missions:[],studyHistory:[]};
-  h=await harness({local:{[backup.MAIN_KEY]:JSON.stringify(main),[KEY]:JSON.stringify([event('local')])},remote:[event('cloud')]});
+  h=await harness({cleanBaseline:true,local:{[backup.MAIN_KEY]:JSON.stringify(main),[KEY]:JSON.stringify([event('local')])},remote:[event('cloud')]});
   assert.equal(h.inserted.length,0);
   assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'cloud');
   const snapshot=backup.decode(JSON.parse(h.localStorage.getItem(backup.RECOVERY_KEY)));
   assert.equal(JSON.parse(snapshot.extras[KEY])[0].id,'local');
   // Empty remote calendars are recoverable too; do not resurrect cloud deletions.
-  h=await harness({local:{[backup.MAIN_KEY]:JSON.stringify(main),[KEY]:JSON.stringify([event('local')])},remote:[]});
+  h=await harness({cleanBaseline:true,local:{[backup.MAIN_KEY]:JSON.stringify(main),[KEY]:JSON.stringify([event('local')])},remote:[]});
   assert.deepEqual(JSON.parse(h.localStorage.getItem(KEY)),[]);
   assert.equal(JSON.parse(JSON.parse(h.localStorage.getItem(backup.RECOVERY_KEY)).localData[KEY])[0].id,'local');
-  h=await harness({local:{[KEY]:JSON.stringify([event('local')])},remote:[event('cloud')],backupFailure:true});
+  h=await harness({cleanBaseline:true,local:{[KEY]:JSON.stringify([event('local')])},remote:[event('cloud')],backupFailure:true});
   assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'local');
   assert(h.dispatched.includes('cramchy:planner-cloud-error'));
-  // Sign-out during a query ignores the previous account's response.
-  h=await harness({guest:true,local:{[KEY]:JSON.stringify([event('local')])},onSelect:async(_,auth)=>auth('SIGNED_OUT',null)});
-  h.signIn();await h.flush(0);
+  // An auth change during a query invalidates the response before any write.
+  h=await harness({local:{[KEY]:JSON.stringify([event('local')])},onSelect:async(_,auth)=>auth('SIGNED_OUT',null)});
   assert.equal(h.inserted.length,0);assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'local');
+  h=await harness({guest:true,local:{[KEY]:JSON.stringify([event('guest-only')])}});
+  await h.flush(300);assert.equal(h.inserted.length,0);assert.equal(h.pushed.length,0);
   h=await harness({remote:[event('cloud')]});
   h.signOut();h.remote({new:{events:[event('stale-account')]}});
+  assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'cloud');
+  // Receiving a new calendar while an event form is open does not accept a
+  // baseline or reload its uncommitted draft. Refresh after the form closes.
+  h=await harness({cleanBaseline:true,modalOpen:true,local:{[KEY]:JSON.stringify([event('local')])},remote:[event('cloud')]});
+  assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'local');
+  h.options.modalOpen=false;await h.focus();
   assert.equal(JSON.parse(h.localStorage.getItem(KEY))[0].id,'cloud');
   console.log('Planner first sign-in, legacy events, in-flight edits, errors, recovery and stale-account responses passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

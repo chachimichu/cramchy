@@ -80,21 +80,12 @@ const STATE_SCHEMA_VERSION = 2;
 let pendingBootToast = '';
 const SUPABASE_URL = 'https://pjgkadfnvqddfyjmktis.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1hoILah2SpoWwtZ0u2O6UQ_zgRsuNq_';
-const sb = window.supabase ? window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  }
-) : null;
+const sb = window.CramchyAccounts?.client || null;
 let cloudUser = null;
 let cloudReady = false;
 let cloudSaveTimer = null;
 let cloudLoading = false;
+let trackerSync = null;
 
 /* ===================== STATE ===================== */
 function freshSubject(){ return { topics: [], notes: '', forget: '' }; }
@@ -1509,63 +1500,87 @@ function setCloudButton(label, cls=''){
   if(cls) btn.classList.add(cls);
 }
 function queueCloudSave(){
-  if(!sb || !cloudUser || !cloudReady || cloudLoading) return;
+  if(!trackerSync || !cloudUser || !window.CramchyAccounts.active(cloudUser.id)) return;
   clearTimeout(cloudSaveTimer);
-  setCloudButton('☁ syncing…','syncing');
   cloudSaveTimer = setTimeout(saveStateToCloud, 700);
 }
 async function saveStateToCloud(){
-  if(!sb || !cloudUser || !cloudReady || cloudLoading) return;
-  try{
-    const { error } = await sb.from('midterms_tracker_state').upsert({
-      user_id: cloudUser.id,
-      state: state
-    }, { onConflict: 'user_id' });
-    if(error) throw error;
-    setCloudButton('☁ synced','synced');
-  }catch(err){
-    console.error('Cloud save failed', err);
-    setCloudButton('☁ sync error');
-  }
+  if(!trackerSync) return false;
+  return trackerSync.push();
 }
 async function loadCloudStateForUser(user){
-  if(!sb || !user) return;
-  cloudLoading = true;
-  setCloudButton('☁ loading…','syncing');
-  try{
-    const { data, error } = await sb
-      .from('midterms_tracker_state')
-      .select('state, updated_at')
-      .eq('user_id', user.id)
-      .maybeSingle();
-    if(error) throw error;
-
-    if(data && data.state){
-      state = sanitizeState(data.state);
-      applyStateMigrations(state, data.state);
-      ensureAcademicStructure();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      renderAll();
-      setCloudButton('☁ synced','synced');
-      showToast('cramchy cloud progress loaded ♡');
-    }else{
-      const { error: insertError } = await sb.from('midterms_tracker_state').insert({
-        user_id: user.id,
-        state: state
-      });
-      if(insertError) throw insertError;
-      setCloudButton('☁ synced','synced');
-      showToast('your current progress is now backed up ♡');
-    }
-  }catch(err){
-    console.error('Cloud load failed', err);
-    setCloudButton('☁ sync error');
-    showToast('cloud sync had a tiny problem. local saving still works.');
-  }finally{
-    cloudLoading = false;
-    cloudReady = true;
+  if(!sb || !user || !window.CramchyAccounts.active(user.id)) return false;
+  if(!trackerSync){
+    const initial=CramchyCloudSync.canonical(state);
+    trackerSync=CramchyCloudSync.create({
+      client:sb,table:'midterms_tracker_state',column:'state',key:'cramchyTrackerSync_v1',
+      userId:user.id,storage:localStorage,active:()=>window.CramchyAccounts.active(user.id),
+      read:()=>state,empty:freshState,
+      hasLocal:()=>localStorage.getItem(STORAGE_KEY)!==null||CramchyCloudSync.canonical(state)!==initial,
+      normalize:raw=>{if(!CramchyBackup.decode(raw).state)throw Error('Invalid cloud data');const next=sanitizeState(raw);applyStateMigrations(next,raw);return next;},
+      apply:remote=>{
+        CramchyBackup.preserve(localStorage,'before tracker cloud replacement',state);
+        clearTimeout(saveTimeout);saveTimeout=null;
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(remote));state=remote;
+        ensureAcademicStructure();renderAll();
+      },
+      onStatus:status=>{
+        cloudLoading=status==='loading';cloudReady=!['error','loading','conflict'].includes(status);
+        const labels={loading:'☁ loading…',saving:'☁ syncing…',pending:'☁ pending',synced:'☁ synced',error:'☁ sync error',conflict:'☁ choose copy'};
+        setCloudButton(labels[status]||'☁ pending',status==='synced'?'synced':status==='saving'?'syncing':'');
+        if(status==='pending')queueCloudSave();
+      },
+      onConflict:()=>notifyCloudConflict('study progress'),
+      onError:error=>{console.error('Cloud sync kept local progress.',error);showToast('Cloud sync could not finish. Your local progress was kept.');}
+    });
+    window.CramchySyncEngines=window.CramchySyncEngines||{};
+    window.CramchySyncEngines['study progress']=trackerSync;
   }
+  window.__cramchyTrackerCloudReady=trackerSync.pull();
+  return window.__cramchyTrackerCloudReady;
 }
+function notifyCloudConflict(label){
+  showToast('Your '+label+' differs from the cloud. Open cloud sync to choose which copy to use.',{longer:true});
+  renderCloudConflictChoices();
+}
+window.addEventListener('cramchy:sync-conflict',event=>notifyCloudConflict(event.detail?.label||'Planner'));
+function renderCloudConflictChoices(){
+  const root=document.getElementById('cloudConflictChoices');if(!root)return;
+  root.innerHTML='';
+  Object.entries(window.CramchySyncEngines||{}).forEach(([label,engine])=>{
+    if(!engine.conflict)return;
+    const section=document.createElement('div');
+    const title=document.createElement('p');title.textContent=label+': both copies were kept. Choose which one to use.';section.appendChild(title);
+    const actions=document.createElement('div');actions.className='cloud-auth-actions';
+    for(const [choice,text] of [['local','keep this device'],['cloud','use cloud copy']]){
+      const btn=document.createElement('button');btn.className='cloud-secondary';btn.textContent=text;
+      btn.addEventListener('click',async()=>{
+        actions.querySelectorAll('button').forEach(button=>button.disabled=true);
+        const ok=await engine.resolve(choice);
+        const msg=document.getElementById('cloudAuthMsg');
+        if(msg)msg.textContent=ok?'Your chosen copy is saved.':'Could not finish. Both copies were kept; check the current choices.';
+        renderCloudConflictChoices();
+      });actions.appendChild(btn);
+    }
+    section.appendChild(actions);root.appendChild(section);
+  });
+}
+window.addEventListener('cramchy:account-leaving',()=>{
+  clearTimeout(saveTimeout);clearTimeout(cloudSaveTimer);trackerSync?.stop();
+  clearInterval(timerIntervalId);
+  cloudUser=null;cloudReady=false;cloudLoading=false;
+});
+window.CramchyAccounts.flushLocal=()=>localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+window.addEventListener('cramchy:account-save-error',()=>{
+  // Stop the old account's UI being used under a new session if disk is full.
+  document.querySelector('main').style.display='none';
+  closeCloudModal();
+  const notice=document.createElement('div');notice.className='card';
+  const text=document.createElement('p');text.textContent='Your account changed, but the last edits could not be saved on this device. Export them before refreshing.';notice.appendChild(text);
+  const exportBtn=document.createElement('button');exportBtn.className='btn';exportBtn.textContent='export unsaved backup';
+  exportBtn.addEventListener('click',()=>downloadCramchyBackup(CramchyBackup.create(state,localStorage),'cramchy-unsaved-backup.json'));
+  notice.appendChild(exportBtn);document.body.appendChild(notice);
+});
 function closeCloudModal(){
   document.getElementById('cloudAuthOverlay')?.remove();
 }
@@ -1586,6 +1601,7 @@ function openCloudModal(){
           <button class="cloud-primary" id="cloudSyncNowBtn">sync now</button>
           <button class="cloud-secondary" id="cloudSignOutBtn">sign out</button>
         </div>
+        <div id="cloudConflictChoices"></div>
         <p class="cloud-msg" id="cloudAuthMsg"></p>
       </div>`;
   }else{
@@ -1593,7 +1609,7 @@ function openCloudModal(){
       <div class="cloud-auth-card">
         <button class="cloud-close" id="cloudCloseBtn" aria-label="Close">×</button>
         <h3>save it in the cloud ♡</h3>
-        <p>Sign in once on this device so your tasks, study progress, notes, and mascot settings can stay synced.</p>
+        <p>Signed-in accounts have their own progress. Your guest work stays on this device and returns when you sign out. To move guest work into an account, export it first, then import it after signing in.</p>
         <label for="cloudEmail">email</label>
         <input id="cloudEmail" type="email" autocomplete="email" placeholder="you@example.com">
         <div class="cloud-auth-actions">
@@ -1624,14 +1640,17 @@ function openCloudModal(){
   overlay.querySelector('#cloudCloseBtn')?.addEventListener('click', closeCloudModal);
 
   if(cloudUser){
+    renderCloudConflictChoices();
     overlay.querySelector('#cloudSyncNowBtn')?.addEventListener('click', async () => {
       const msg = overlay.querySelector('#cloudAuthMsg');
       if(msg) msg.textContent = 'syncing…';
-      await saveStateToCloud();
-      if(msg) msg.textContent = 'synced ♡';
+      const results=await Promise.all(Object.values(window.CramchySyncEngines||{}).map(engine=>engine.push()));
+      if(msg) msg.textContent = results.every(Boolean)?'synced ♡':'Sync needs attention. Your local copies were kept.';
+      renderCloudConflictChoices();
     });
     overlay.querySelector('#cloudSignOutBtn')?.addEventListener('click', async () => {
-      await sb.auth.signOut();
+      const {error}=await sb.auth.signOut();
+      if(error){overlay.querySelector('#cloudAuthMsg').textContent='Sign-out could not finish. Try again.';return;}
       closeCloudModal();
     });
     return;
@@ -1696,30 +1715,30 @@ function openCloudModal(){
 }
 async function initCloudSync(){
   const btn = document.getElementById('cloudBtn');
-  if(!sb){
-    setCloudButton('☁ local only');
-    return;
-  }
+  if(!sb){setCloudButton('☁ local only');return;}
   btn?.addEventListener('click', openCloudModal);
-  const { data } = await sb.auth.getSession();
-  cloudUser = data?.session?.user || null;
-  if(cloudUser){
-    cloudReady = false;
-    await loadCloudStateForUser(cloudUser);
-  }else{
-    setCloudButton('☁ sign in');
-  }
-
-  sb.auth.onAuthStateChange(async (event, session) => {
-    const nextUser = session?.user || null;
-    if(nextUser && (!cloudUser || cloudUser.id !== nextUser.id)){
-      cloudUser = nextUser;
-      cloudReady = false;
-      await loadCloudStateForUser(cloudUser);
-    }else if(!nextUser){
-      cloudUser = null;
-      cloudReady = false;
-      setCloudButton('☁ sign in');
+  cloudUser=window.CramchyAccounts.user;
+  if(cloudUser)await loadCloudStateForUser(cloudUser);
+  else setCloudButton('☁ sign in');
+  const refresh=()=>{
+    if(document.visibilityState==='hidden'||!cloudUser)return;
+    loadCloudStateForUser(cloudUser);
+  };
+  document.addEventListener('visibilitychange',refresh);
+  window.addEventListener('focus',refresh);
+  window.addEventListener('online',refresh);
+  window.addEventListener('cramchy:account-storage',event=>{
+    if(event.detail?.key===STORAGE_KEY){
+      // A second tab changed this account. Reload rather than leave stale
+      // in-memory state that could overwrite its work on the next edit.
+      trackerSync?.stop();clearTimeout(saveTimeout);clearTimeout(cloudSaveTimer);
+      try{
+        CramchyBackup.preserve(localStorage,'before another tab refreshed this account',state);
+        location.reload();
+      }catch(error){
+        console.error('Another tab changed the saved copy; this tab kept its in-memory copy.',error);
+        showToast('Another tab changed your progress. Export a backup of this tab before refreshing.',{longer:true});
+      }
     }
   });
 }
@@ -1826,7 +1845,10 @@ function initCramchyShell(){
   if(typeof CHAOWI_MESSAGES!=='undefined'){
     ["{name}, opening cramchy does not count as studying.","{name}, academic weapon era starts with one task.","{name}, chaowi has reviewed the situation. lock in.","{name}, that reviewer is not going to read itself."].forEach(x=>{if(!CHAOWI_MESSAGES.includes(x))CHAOWI_MESSAGES.push(x);});
   }
-  if(!state.profile?.onboarded)setTimeout(openCramchyOnboarding,180);
+  if(!state.profile?.onboarded)setTimeout(async()=>{
+    await window.__cramchyTrackerCloudReady;
+    if(!state.profile?.onboarded)openCramchyOnboarding();
+  },180);
 }
 
 

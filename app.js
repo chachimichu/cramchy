@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-home-paint-layers-63';
+  const VERSION='2026-10-03-account-cloud-safety-64';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -189,8 +189,12 @@
     .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
     .then(()=>loadScript('js/backup-data.js?v='+VERSION))
     .then(()=>loadScript('js/study-timer.js?v='+VERSION))
+    .then(()=>loadScript('js/account-storage.js?v='+VERSION))
+    .then(()=>window.CramchyAccounts.boot())
+    .then(()=>loadScript('js/cloud-sync.js?v='+VERSION))
     .then(()=>loadScript('app-logo-base.js?v='+VERSION))
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
+    .then(()=>window.__cramchyTrackerCloudReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))
     .then(()=>loadScript('exam-subject-dedupe-v21.js?v='+VERSION))
     .then(()=>loadScript('planner-cloud-sync-v12.js?v='+VERSION))
@@ -213,5 +217,9 @@
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
       finishBootSplash();
+      const notice=document.createElement('p');
+      notice.className='card';
+      notice.textContent='Cramchy could not open your saved workspace. Refresh to try again. Your stored progress was kept.';
+      document.body.appendChild(notice);
     });
 })();

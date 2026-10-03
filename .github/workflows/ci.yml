@@ -63,3 +63,12 @@ jobs:
 
       - name: Test study timer persistence
         run: node testing/study-timer.test.cjs
+
+      - name: Test account storage isolation
+        run: node testing/account-storage.test.cjs
+
+      - name: Test cloud conflicts and version guards
+        run: node testing/cloud-sync.test.cjs
+
+      - name: Test tracker cloud controls and recovery
+        run: node testing/tracker-cloud-sync.test.cjs
