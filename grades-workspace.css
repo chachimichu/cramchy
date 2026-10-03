@@ -55,3 +55,33 @@
 #view-grades.grades-workspace #gradesContentStage > #gradebookRoot,
 #view-grades.grades-workspace #gradesContentStage > #gwaRoot,
 #view-grades.grades-workspace #gradesContentStage > #quickGwaRoot{opacity:1!important;transform:none!important;visibility:visible!important;}
+
+/* Term GWA shares the gradebook's readable content hierarchy. */
+#view-grades #gwaRoot{font-family:var(--cramchy-readable);}
+#view-grades #gwaRoot .grades-gwa-board{gap:20px;}
+#view-grades #gwaRoot .grades-gwa-hero-card{padding:24px;border-radius:22px;gap:24px;box-shadow:none;background:linear-gradient(135deg,color-mix(in srgb,#8ba477 10%,var(--app-bg-2,#fff)),var(--app-bg-2,#fff));border:1px solid var(--gw-line);align-items:center;}
+#view-grades #gwaRoot .grades-gwa-kicker{font-family:var(--cramchy-readable)!important;font-size:.68rem;font-weight:700;letter-spacing:.06em;}
+#view-grades #gwaRoot .grades-gwa-hero-card h3,#view-grades #gwaRoot .grades-gwa-section-heading h3{font-family:var(--cramchy-readable)!important;font-size:1.1rem!important;font-weight:800!important;letter-spacing:normal!important;line-height:1.5;margin:4px 0 8px;}
+#view-grades #gwaRoot .grades-gwa-hero-card p,#view-grades #gwaRoot .grades-gwa-section-heading p{font-size:.83rem;font-weight:400;line-height:1.7;color:var(--text-soft);margin:0;max-width:520px;}
+#view-grades #gwaRoot .grades-gwa-result{min-height:0;padding:20px;border-radius:18px;background:color-mix(in srgb,#8ba477 9%,var(--app-bg-2,#fff));border:1px solid var(--gw-line);text-align:left;}
+#view-grades #gwaRoot .grades-gwa-result strong{font-family:var(--cramchy-readable)!important;font-size:2.6rem!important;letter-spacing:normal!important;line-height:1.25;font-variant-numeric:tabular-nums;margin:8px 0;color:var(--text-main);}
+#view-grades #gwaRoot .grades-gwa-result span,#view-grades #gwaRoot .grades-gwa-summary-row span,#view-grades #gwaRoot .grades-target-grid span{font-size:.75rem;font-weight:700;line-height:1.5;}
+#view-grades #gwaRoot .grades-gwa-result em,#view-grades #gwaRoot .grades-gwa-summary-row em,#view-grades #gwaRoot .grades-target-grid em{font-size:.72rem;font-weight:400;line-height:1.6;}
+#view-grades #gwaRoot .grades-gwa-summary-row{gap:16px;}
+#view-grades #gwaRoot .grades-gwa-summary-row>div{padding:20px;border:1px solid var(--gw-line);border-radius:20px;box-shadow:none;}
+#view-grades #gwaRoot .grades-gwa-summary-row strong{font-family:var(--cramchy-readable)!important;font-size:1.6rem!important;letter-spacing:normal!important;font-variant-numeric:tabular-nums;line-height:1.4;margin:8px 0 3px;}
+#view-grades #gwaRoot .grades-gwa-toolbar{gap:16px;align-items:center;}
+#view-grades #gwaRoot .grades-gwa-toolbar>.grades-field,#view-grades #gwaRoot .grades-nu-formula{border-radius:16px;padding:16px;box-shadow:none;border:1px solid var(--gw-line);background:var(--app-bg-2,#fffaf3);}
+#view-grades #gwaRoot .grades-nu-formula{font-size:.75rem;font-weight:400;line-height:1.7;display:block;}
+#view-grades #gwaRoot .grades-gwa-section-heading{margin:4px 0 -4px;}
+#view-grades #gwaRoot .grades-gwa-course-list{gap:16px;}
+#view-grades #gwaRoot .grades-gwa-course-card{padding:22px;border-radius:20px;gap:18px;border:1px solid var(--gw-line);border-top:4px solid var(--card-accent);background:var(--app-bg-2,#fffdfc);box-shadow:none;min-width:0;}
+#view-grades #gwaRoot .grades-card-top h4{font-family:var(--cramchy-readable)!important;font-size:1.05rem!important;font-weight:800!important;letter-spacing:normal!important;line-height:1.5;overflow-wrap:anywhere;}
+#view-grades #gwaRoot .grades-card-top p{font-size:.73rem;font-weight:400;line-height:1.6;margin-top:6px;}
+#view-grades #gwaRoot .grades-grade-pill{font-family:var(--cramchy-readable)!important;font-size:.85rem!important;font-weight:700;letter-spacing:normal!important;line-height:1.5;min-width:64px;}
+#view-grades #gwaRoot .grades-field label{font-family:var(--cramchy-readable)!important;font-size:.75rem;font-weight:700;line-height:1.5;margin-bottom:8px;}
+#view-grades #gwaRoot .grades-field input,#view-grades #gwaRoot .grades-field select{font-family:var(--cramchy-readable)!important;font-size:.83rem;font-weight:500;min-height:44px;padding:11px 12px;border-radius:12px;background:var(--app-bg-2,#fffaf3);}
+#view-grades #gwaRoot .grades-target-grid strong{font-family:var(--cramchy-readable)!important;font-size:1.15rem!important;letter-spacing:normal!important;line-height:1.4;font-variant-numeric:tabular-nums;margin:6px 0;}
+#view-grades #gwaRoot .grades-empty-choice,#view-grades #gwaRoot .grades-inline-result,#view-grades #gwaRoot .grades-card-foot,#view-grades #gwaRoot .grades-dean-note{font-size:.73rem;font-weight:400;line-height:1.7;}
+#view-grades #gwaRoot .grades-card-foot{border-top:1px solid var(--gw-line);padding-top:14px;flex-wrap:wrap;}
+@media(max-width:640px){#view-grades #gwaRoot .grades-gwa-hero-card{padding:18px;gap:16px;}#view-grades #gwaRoot .grades-gwa-result{padding:16px;}#view-grades #gwaRoot .grades-gwa-summary-row{grid-template-columns:1fr;gap:10px;}#view-grades #gwaRoot .grades-gwa-summary-row>div:last-child{grid-column:auto;}#view-grades #gwaRoot .grades-gwa-summary-row>div{padding:16px;}#view-grades #gwaRoot .grades-gwa-course-card{padding:18px;}#view-grades #gwaRoot .grades-two-fields,#view-grades #gwaRoot .grades-target-grid{grid-template-columns:1fr;}}

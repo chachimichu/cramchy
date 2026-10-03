@@ -341,9 +341,9 @@
     root.innerHTML=`<div class="grades-gwa-board" data-term-gwa-render="stable">
       <div class="grades-gwa-hero-card">
         <div class="grades-gwa-copy">
-          <div class="grades-gwa-kicker">term GWA planner</div>
-          <h3>add whatever grade you have.</h3>
-          <p>Final equivalent, raw percentage, or your midterm + finals raw grades — choose what you actually have for each course.</p>
+          <div class="grades-gwa-kicker">term overview</div>
+          <h3>your term at a glance</h3>
+          <p>Choose the grade information you have for each course. Your estimate is weighted by course units.</p>
         </div>
         <div class="grades-gwa-result">
           <span>estimated GWA</span>
@@ -363,6 +363,7 @@
         <div><span>not counted</span><strong>${calc.pending+calc.excluded}</strong><em>${calc.pending} pending · ${calc.excluded} excluded</em></div>
       </div>
 
+      <div class="grades-gwa-section-heading"><h3>course grades</h3><p>Select a grade type for each subject, then enter its result.</p></div>
       <div class="grades-gwa-course-list">
         ${courses.length?courses.map(courseCard).join(''):`<div class="grades-gwa-empty"><strong>no courses here yet</strong><span>Add courses for ${escapeHtml(term)} first.</span></div>`}
       </div>

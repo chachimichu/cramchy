@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-grades-type-79';
+  const VERSION='2026-10-04-term-gwa-hierarchy-80';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
