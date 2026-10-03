@@ -57,3 +57,6 @@ jobs:
 
       - name: Test Term GWA honors eligibility
         run: node testing/term-gwa-honors.test.cjs
+
+      - name: Test immediate Home task updates
+        run: node testing/home-tasks.test.cjs

@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-term-gwa-honors-59';
+  const VERSION='2026-10-03-home-tasks-60';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -201,7 +201,6 @@
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
-    .then(()=>loadScript('task-home-sync-v9.js?v='+VERSION))
     .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>loadScript('mobile-modal-center-v30.js?v='+VERSION))
     .then(()=>loadScript('ui-copy-normalizer-v1.js?v='+VERSION))

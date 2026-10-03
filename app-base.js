@@ -446,6 +446,7 @@ function saveState(){
     if(el){ el.textContent = 'saved ✓'; }
     queueCloudSave();
   }, 260);
+  renderHomeTaskSummary();
 }
 
 /* ===================== TOASTS ===================== */
@@ -1978,13 +1979,18 @@ function renderDailyTasks(){
     return;
   }
   wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
-    <input type="checkbox" data-daily-task="${m.id}" ${m.done?'checked':''}>
+    <input type="checkbox" data-daily-task="${escapeAttr(m.id)}" ${m.done?'checked':''}>
     <span class="task-text">${escapeHtml(m.text)}</span>
   </label>`).join('');
   wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
     const item=state.missions.find(m=>m.id===el.dataset.dailyTask); if(item)item.done=el.checked;
     saveState(); renderDailyHome(); renderCramchyTasks(); renderDashboard();
   }));
+}
+function renderHomeTaskSummary(){
+  const count=document.getElementById('dailyTasksLeft');
+  if(count)count.textContent=String((state.missions||[]).filter(task=>task&&!task.done).length);
+  renderDailyTasks();
 }
 function renderDailyCourses(){
   const strip=document.getElementById('dailyCourseStrip'); if(!strip) return;
@@ -2024,13 +2030,11 @@ function renderDailyHome(){
   const greeting=h<5?'why are we still awake':h<12?'good morning':h<18?'good afternoon':'good evening';
   const dg=document.getElementById('dailyGreeting'); if(dg) dg.textContent=`${greeting}, ${name}.`;
   const dm=document.getElementById('dailyMeta'); if(dm) dm.textContent=`${state.profile?.term||'Term 1'} · ${state.profile?.academicYear||''}`;
-  const left=(state.missions||[]).filter(m=>!m.done).length;
-  const t=document.getElementById('dailyTasksLeft'); if(t)t.textContent=left;
   const nc=document.getElementById('dailyNextClass'); if(nc)nc.textContent=nextCourseLabel();
   const st=document.getElementById('dailyStudyTime'); if(st)st.textContent=formatStudyMinutes(minutesToday());
   const ed=document.getElementById('dailyExamDays'); if(ed)ed.textContent=nextExamDays();
   renderDailyCountdown();
-  renderDailyTasks();
+  renderHomeTaskSummary();
   renderDailyCourses();
   renderDailyUpcoming();
 }
