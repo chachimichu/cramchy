@@ -992,7 +992,9 @@ function updateTimerDisplay(){
   const m=Math.floor(remaining/60),s=remaining%60;
   document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   const start=document.getElementById('timerStartBtn'),pause=document.getElementById('timerPauseBtn');
-  start.disabled=timerState.running;start.textContent=timerState.session?'RESUME':'START';
+  start.disabled=timerState.running;
+  const startLabel=timerState.session?'resume':'start';
+  if(start.textContent!==startLabel)start.textContent=startLabel;
   pause.disabled=!timerState.running;
   document.getElementById('timerSubjectSelect').disabled=Boolean(timerState.session);
   document.querySelectorAll('[data-mins]').forEach(btn=>{btn.disabled=Boolean(timerState.session);});

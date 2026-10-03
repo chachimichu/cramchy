@@ -9,7 +9,9 @@ const plain=value=>JSON.parse(JSON.stringify(value));
 const clock={value:100000};
 const values=new Map();
 class Element{
-  constructor(){this.handlers={};this.textContent='';this.disabled=false;this.innerHTML='';}
+  constructor(){this.handlers={};this.textWrites=0;this.textContent='';this.disabled=false;this.innerHTML='';}
+  get textContent(){return this._textContent;}
+  set textContent(value){this._textContent=value;this.textWrites++;}
   addEventListener(name,callback){this.handlers[name]=callback;}
 }
 function boot(){
@@ -39,7 +41,13 @@ function boot(){
     snapshot:()=>plain(vm.runInContext('timerState',ctx)),fail:()=>{failNext=true;},restore:()=>listeners['cramchy:backup-restored']()};
 }
 let app=boot();assert.equal(app.elements.get('timerDisplay').textContent,'25:00');
+assert.equal(app.elements.get('timerStartBtn').textContent,'start');
+const idleWrites=app.elements.get('timerStartBtn').textWrites;
+app.tick();app.tick();assert.equal(app.elements.get('timerStartBtn').textWrites,idleWrites,'Repeated idle updates must not rewrite the button');
 app.click('timerStartBtn');assert.equal(app.snapshot().running,true);assert(values.has(timer.KEY));
+assert.equal(app.elements.get('timerStartBtn').textContent,'resume');
+const runningWrites=app.elements.get('timerStartBtn').textWrites;
+app.tick();app.tick();assert.equal(app.elements.get('timerStartBtn').textWrites,runningWrites,'Countdown ticks must not rewrite the button');
 const original=app.snapshot().session;
 assert.equal(original.subject,'course-psych');assert.equal(original.period,'midterms');
 assert.equal(app.elements.get('timerSubjectSelect').disabled,true);assert(app.presets.every(el=>el.disabled));

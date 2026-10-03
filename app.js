@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-mobile-accessibility-69';
+  const VERSION='2026-10-04-timer-label-70';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
