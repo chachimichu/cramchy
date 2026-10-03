@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-03-planner-time-65';
+  const VERSION='2026-10-03-shared-exams-66';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
   let splashSafetyTimer=null;
 
@@ -189,6 +189,7 @@
     .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
     .then(()=>loadScript('js/backup-data.js?v='+VERSION))
     .then(()=>loadScript('js/study-timer.js?v='+VERSION))
+    .then(()=>loadScript('js/academic-schedule.js?v='+VERSION))
     .then(()=>loadScript('js/account-storage.js?v='+VERSION))
     .then(()=>window.CramchyAccounts.boot())
     .then(()=>loadScript('js/cloud-sync.js?v='+VERSION))

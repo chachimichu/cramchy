@@ -440,6 +440,7 @@ function saveState(){
     queueCloudSave();
   }, 260);
   renderHomeTaskSummary();
+  if(typeof window!=='undefined')window.dispatchEvent(new Event('cramchy:schedules-changed'));
 }
 
 /* ===================== TOASTS ===================== */
@@ -2765,6 +2766,27 @@ function examForSubject(id){
   return (activePeriodData().exams||[]).find(e=>(e.subjectId||e.id)===id)||null;
 }
 
+// Course exams are projected into calendars; never copied into Planner storage.
+window.CramchySchedules={
+  events(){
+    const year=state.examPeriod?activeExamYear():profileAcademicYear();
+    const term=state.examPeriod?activeExamTerm():profileTerm();
+    return window.CramchyAcademicSchedule.project(state,year,term,state.examPeriod||null);
+  },
+  edit(event){
+    if(!event?.academicExam)return;
+    const ref=event.academicExam;
+    state.examContext={academicYear:ref.year,term:ref.term};state.examPeriod=ref.period;
+    saveState();renderExamMode();switchTab('schedule');openExamModal(ref.id);
+  },
+  add(){
+    if(state.examPeriod){switchTab('schedule');openExamModal();return;}
+    // Pick a period explicitly in Exam Mode before creating a course exam.
+    switchTab('exam');renderExamMode();
+    showToast('Choose the term and midterms or finals, then add the exam in Exam Schedule.');
+  }
+};
+
 function allDailyTermExams(){
   const r=dailyTermRecord();
   return [...(r.midterms.exams||[]),...(r.finals.exams||[])].sort((a,b)=>new Date(a.start)-new Date(b.start));
@@ -2857,6 +2879,7 @@ function openExamModal(examId=null,preferredSubjectId=''){
     const start=scrim.querySelector('#examStart').value;
     const end=scrim.querySelector('#examEnd').value;
     if(!date||!start||!end){showToast('add the date, start, and end time');return;}
+    if(end<=start){showToast('end time must be later than start time on the same date');return;}
     const obj={
       id:existing?.id||cryptoId(),
       subjectId,
@@ -4081,6 +4104,7 @@ function renderAll(){
   renderTermManager();
   renderExamChooserContext();
   applyCramchyPersonalization();
+  window.dispatchEvent(new Event('cramchy:schedules-changed'));
 }
 ensureAcademicStructure();
 switchTab('dashboard');

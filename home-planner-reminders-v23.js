@@ -82,7 +82,7 @@
   function upcomingPlannerEvents(){
     const today=todayIso();
     const end=addDays(today,DAYS_AHEAD);
-    return readPlannerEvents()
+    return [...readPlannerEvents(),...(window.CramchySchedules?.events()||[])]
       .filter(event=>event.date>=today&&event.date<=end)
       .filter(event=>!(event.type==='task'&&event.done))
       .sort((a,b)=>(a.date+' '+(a.start||'99:99')+' '+a.title).localeCompare(b.date+' '+(b.start||'99:99')+' '+b.title))
@@ -156,7 +156,7 @@
       list.innerHTML=`
         <div class="home-planner-reminders-empty">
           <span class="spark" aria-hidden="true">♡</span>
-          <div><strong>nothing plotted this week</strong><p>Dates you add in Planner will bloom here.</p></div>
+          <div><strong>nothing plotted this week</strong><p>Planner events and course exams appear here.</p></div>
         </div>`;
       return;
     }
@@ -194,6 +194,7 @@
     installStorageBridge();
     scheduleRender();
     window.addEventListener('cramchy:planner-cloud-loaded',scheduleRender);
+    window.addEventListener('cramchy:schedules-changed',scheduleRender);
     window.addEventListener('cramchy:backup-restored',scheduleRender);
     window.addEventListener('cramchy:planner-cloud-synced',scheduleRender);
     window.addEventListener('storage',event=>{

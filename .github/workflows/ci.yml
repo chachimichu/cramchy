@@ -75,3 +75,6 @@ jobs:
 
       - name: Test Planner time validation and week layout
         run: node testing/planner-time.test.cjs
+
+      - name: Test shared course exam schedules
+        run: node testing/academic-schedule.test.cjs

@@ -48,7 +48,7 @@
         }));
     }catch(err){return[]}
   }
-  function saveEvents(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events))}
+  function saveEvents(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events.filter(e=>!e.academicExam)))}
 
   function syncLogo(){
     const src=getLogoSrc();
@@ -112,7 +112,7 @@
             <div class="planner-hero-copy">
               <h2>plot the cram,<br>survive the week</h2>
               <p>Your classes, deadlines, exams, and study blocks finally sitting together like they have their life together.</p>
-              <div class="planner-actions"><button class="planner-primary" data-planner-add type="button">add event</button><button class="planner-light" data-planner-show="week" type="button">view week</button></div>
+              <div class="planner-actions"><button class="planner-primary" data-planner-add type="button">add event</button><button class="planner-light" data-planner-add-course-exam type="button">add course exam</button><button class="planner-light" data-planner-show="week" type="button">view week</button></div>
             </div>
           </div>
 
@@ -138,7 +138,7 @@
             <div class="planner-modal-head"><h3 id="plannerModalTitle">add to planner</h3><button type="button" data-planner-close aria-label="close">×</button></div>
             <form id="plannerForm" class="planner-form">
               <label class="full">title<input id="plannerTitle" autocomplete="off" placeholder="ex. anaphy quiz review" required></label>
-              <label>type<select id="plannerType"><option value="study">Study block</option><option value="class">Class</option><option value="task">Task</option><option value="exam">Exam</option><option value="personal">Personal</option></select></label>
+              <label>type<select id="plannerType"><option value="study">Study block</option><option value="class">Class</option><option value="task">Task</option><option value="exam">Exam reminder (Planner only)</option><option value="personal">Personal</option></select></label>
               <label>course<input id="plannerCourse" autocomplete="off" placeholder="course or subject"></label>
               <label>date<input id="plannerDate" type="date"></label>
               <label>start<input id="plannerStart" type="time"></label>
@@ -291,7 +291,9 @@
       label.textContent=`${shortDate(start)} – ${shortDate(end)}, ${dateObj(end).getFullYear()}`;
     }
   }
-  function renderAllPlanner(){renderLabel();renderMonth();renderWeek();renderDay();renderSidebar();syncLogo()}
+  function renderAllPlanner(){
+    events=[...events.filter(e=>!e.academicExam),...(window.CramchySchedules?.events()||[])];
+    renderLabel();renderMonth();renderWeek();renderDay();renderSidebar();syncLogo()}
 
   function moveCalendar(dir){
     if(activeView==='month'){
@@ -318,7 +320,7 @@
     $('#plannerTitle').value=e.title;$('#plannerType').value=e.type;$('#plannerCourse').value=e.course;$('#plannerDate').value=e.date;$('#plannerStart').value=e.start;$('#plannerEnd').value=e.end;$('#plannerNotes').value=e.notes;
   }
   function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>$('#plannerTitle')?.focus(),20)}
-  function openEvent(id){const e=events.find(x=>x.id===id);if(!e)return;fillForm(e);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false')}
+  function openEvent(id){const e=events.find(x=>x.id===id);if(!e)return;if(e.academicExam){window.CramchySchedules?.edit(e);return;}fillForm(e);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false')}
   function closeModal(){const modal=$('#plannerModal');modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true')}
 
   function clearTimeError(){
@@ -336,6 +338,7 @@
     section.addEventListener('click',e=>{
       const show=e.target.closest('[data-planner-show]');if(show){e.preventDefault();setPlannerView(show.dataset.plannerShow);return}
       const nav=e.target.closest('[data-planner-nav]');if(nav){e.preventDefault();moveCalendar(nav.dataset.plannerNav==='next'?1:-1);return}
+      if(e.target.closest('[data-planner-add-course-exam]')){e.preventDefault();window.CramchySchedules?.add();return;}
       const add=e.target.closest('[data-planner-add]');if(add){e.preventDefault();openModal('study');return}
       const addTask=e.target.closest('[data-planner-add-task]');if(addTask){e.preventDefault();openModal('task');return}
       const ev=e.target.closest('[data-planner-event]');if(ev){e.preventDefault();e.stopPropagation();openEvent(ev.dataset.plannerEvent);return}
@@ -382,6 +385,7 @@
     renderAllPlanner();
   }
 
+  window.addEventListener('cramchy:schedules-changed',renderAllPlanner);
   window.addEventListener('cramchy:backup-restored',()=>{
     events=loadEvents();
     closeModal();
