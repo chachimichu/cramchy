@@ -194,6 +194,7 @@
     installStorageBridge();
     scheduleRender();
     window.addEventListener('cramchy:planner-cloud-loaded',scheduleRender);
+    window.addEventListener('cramchy:backup-restored',scheduleRender);
     window.addEventListener('cramchy:planner-cloud-synced',scheduleRender);
     window.addEventListener('storage',event=>{
       if(event.key===STORAGE_KEY||event.key===OLD_STORAGE_KEY) scheduleRender();

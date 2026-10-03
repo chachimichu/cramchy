@@ -348,6 +348,12 @@
     renderAllPlanner();
   }
 
+  window.addEventListener('cramchy:backup-restored',()=>{
+    events=loadEvents();
+    closeModal();
+    renderAllPlanner();
+  });
+
   function boot(){
     let tries=0;
     const attempt=()=>{

@@ -40,7 +40,11 @@ jobs:
           fi
 
       - name: Syntax-check JavaScript
-        run: node --check app.js
+        run: |
+          for file in *.js js/*.js; do node --check "$file"; done
 
       - name: Test Quick GWA rules
         run: node testing/quick-gwa-rules.test.cjs
+
+      - name: Test backups and course identity protection
+        run: node testing/backup-data.test.cjs

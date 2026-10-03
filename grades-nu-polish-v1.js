@@ -527,6 +527,7 @@
     else patchGradebook();
   }
 
+  window.addEventListener('cramchy:backup-restored',()=>{if(currentMode()==='gwa') renderTermGwa();else patchGradebook();});
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
 })();

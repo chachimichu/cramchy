@@ -107,6 +107,8 @@
     saveTimer=setTimeout(()=>pushEvents(readLocalEvents()),300);
   }
 
+  window.addEventListener('cramchy:backup-restored',queuePushFromLocal);
+
   function installStorageBridge(){
     if(window.__cramchyPlannerStorageBridgeInstalled) return;
     window.__cramchyPlannerStorageBridgeInstalled=true;

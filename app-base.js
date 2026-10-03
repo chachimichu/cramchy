@@ -142,12 +142,16 @@ function loadState(){
     const cleaned = sanitizeState(parsed);
     const changed = applyStateMigrations(cleaned, parsed);
     if(changed){
+      if(!localStorage.getItem(CramchyBackup.RECOVERY_KEY)) CramchyBackup.preserve(localStorage, 'before loading migration');
       localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
     }
     return cleaned;
   }catch(e){
     console.warn('Failed to load state, repairing with a fresh safe shape.', e);
-    pendingBootToast = 'Cramchy repaired a loading problem. Your app is safe to use again ✦';
+    try{
+      if(!localStorage.getItem(CramchyBackup.RECOVERY_KEY)) CramchyBackup.preserve(localStorage, 'loading problem');
+    }catch(backupError){console.error('Recovery backup could not be saved.',backupError);}
+    pendingBootToast = 'Saved data could not be loaded. Export Previous Backup before adding new progress.';
     return freshState();
   }
 }
@@ -221,6 +225,7 @@ async function clearRuntimeCaches(){
 
 function repairLocalAppData(){
   try{
+    CramchyBackup.preserve(localStorage, 'before repair', state);
     const before = JSON.stringify(state);
     state = sanitizeState(state);
     applyStateMigrations(state, {});
@@ -1384,20 +1389,44 @@ document.getElementById('breakResetBtn').addEventListener('click', () => {
 });
 
 /* ===================== BACKUP / RESET ===================== */
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const dataStr = JSON.stringify(state, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
+function downloadCramchyBackup(backup,filename){
+  const blob = new Blob([JSON.stringify(backup,null,2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'strawberry-matcha-midterms-backup.json';
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('backup exported ♡');
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.getElementById('exportBtn').addEventListener('click', () => {
+  try{
+    downloadCramchyBackup(CramchyBackup.create(state,localStorage),'cramchy-backup.json');
+    showToast('complete backup exported ♡');
+  }catch(error){showToast('backup could not be exported. Please try again.');}
 });
-
+document.getElementById('recoveryExportBtn')?.addEventListener('click', () => {
+  try{
+    const raw=localStorage.getItem(CramchyBackup.RECOVERY_KEY);
+    if(!raw){showToast('no previous backup saved yet');return;}
+    downloadCramchyBackup(JSON.parse(raw),'cramchy-previous-backup.json');
+    showToast('previous backup exported ♡');
+  }catch(error){showToast('previous backup could not be exported.');}
+});
+function replaceLocalProgress(next,extras){
+  const previous=state;
+  try{
+    state=next;
+    ensureAcademicStructure();
+    CramchyBackup.restore(localStorage,state,extras);
+  }catch(error){state=previous;throw error;}
+  clearTimeout(saveTimeout);
+  // Persistence succeeded even if an unrelated view has a rendering error.
+  try{renderAll();}catch(error){console.error('Backup view refresh failed. Reload to refresh the view.',error);}
+  window.dispatchEvent(new CustomEvent('cramchy:backup-restored'));
+  queueCloudSave();
+}
 document.getElementById('importBtn').addEventListener('click', () => {
   document.getElementById('importFile').click();
 });
@@ -1407,31 +1436,32 @@ document.getElementById('importFile').addEventListener('change', e => {
   const reader = new FileReader();
   reader.onload = evt => {
     try{
-      const parsed = JSON.parse(evt.target.result);
-      state = sanitizeState(parsed);
-      applyStateMigrations(state, parsed);
-      ensureAcademicStructure();
-      saveState();
-      renderAll();
-      showToast('backup imported ♡');
+      const backup=CramchyBackup.decode(JSON.parse(evt.target.result));
+      const next=sanitizeState(backup.state);
+      applyStateMigrations(next,backup.state);
+      CramchyBackup.preserve(localStorage,'before import',state);
+      replaceLocalProgress(next,backup.extras);
+      showToast(backup.legacy?'older backup imported; current Planner and Term GWA entries kept':'complete backup imported ♡',{longer:true});
     }catch(err){
-      showToast('that file could not be imported.');
+      console.error('Backup import failed.',err);
+      showToast('backup could not be imported. Your current progress was kept.');
     }
   };
+  reader.onerror=()=>showToast('that file could not be read.');
   reader.readAsText(file);
   e.target.value = '';
 });
-
 document.getElementById('resetBtn').addEventListener('click', () => {
   showModal(
     'Reset everything?',
-    'This deletes all topics, notes, missions, study history, streak progress, and collectibles. Export a backup first if you want to keep anything. This cannot be undone.',
+    'This deletes courses, grades, tasks, Planner events, Term GWA entries, topics, notes, and study progress. Export a complete backup first. A previous backup will also be saved on this device.',
     () => {
-      state = freshState();
-      ensureAcademicStructure();
-      saveState();
-      renderAll();
-      showToast('everything has been reset');
+      try{
+        CramchyBackup.preserve(localStorage,'before reset',state);
+        const extras=Object.fromEntries(CramchyBackup.EXTRA_KEYS.map(key=>[key,null]));
+        replaceLocalProgress(freshState(),extras);
+        showToast('everything has been reset');
+      }catch(error){showToast('reset could not be completed. Your progress was kept.');}
     }
   );
 });
