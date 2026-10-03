@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const math=require('../js/grade-insights.js');
+const w={ww:30,pt:20,attendance:10,exam:40};
+const rows=[{id:'q1',category:'ww',score:18,total:20},{id:'q2',category:'ww',score:30,total:40}];
+let p=math.period(rows,w);assert.equal(p.categories[0].earned,48);assert.equal(p.categories[0].total,60);assert.equal(p.categories[0].percentage,80);assert.equal(p.value,80);assert.equal(p.covered,30);assert.equal(p.categories[0].contribution,24);assert.equal(p.complete,false);assert.equal(p.equivalent,'2.5');assert.deepEqual(p.missing,['pt','attendance','exam']);
+const all=[...rows,{category:'pt',score:90,total:100},{category:'attendance',score:10,total:10},{category:'exam',score:80,total:100}];
+p=math.period(all,w);assert.equal(p.value,84);assert.equal(p.complete,true);assert.equal(p.equivalent,'3.0');
+let c=math.course({midterms:all,finals:all.map(a=>({...a,score:a.total}))},w);assert.equal(c.value,92);assert.equal(c.equivalent,'3.5');assert.equal(c.complete,true);
+assert.equal(math.course({midterms:all},w).value,null);assert.equal(math.course({},w).value,null);
+assert.equal(math.period([{category:'ww',score:0,total:20}],w).value,0);
+assert.equal(math.period(all,{...w,exam:50}).value,null);assert.equal(math.period(all,{...w,ww:-30,exam:100}).validWeights,false);
+assert.equal(math.period([{category:'exam',score:80,total:100}],{ww:0,pt:0,attendance:0,exam:100}).complete,true);
+assert.equal(math.period([{category:'ww',score:5,total:0}],w).invalid,1);
+assert.equal(math.equivalent(95.49),'3.5');assert.equal(math.equivalent(95.5),'4.0');assert.equal(math.equivalent(71.5),'2.0');assert.equal(math.equivalent(71.49),'R');
+assert(math.validate('Quiz','','20'));assert(math.validate('Quiz','21','20'));assert.equal(math.validate('Quiz','21','20',true),'');assert.equal(math.validate('Quiz','0','20'),'');assert(math.validate('','18','20'));assert(math.validate('Quiz','5','0'));
+const copy=JSON.stringify(all);math.period(all,w);assert.equal(JSON.stringify(all),copy,'Insights must not rewrite saved assessments');
+console.log('Grade insights: points aggregation, weighting, completeness, equivalents, period combination, validation and preservation passed.');
