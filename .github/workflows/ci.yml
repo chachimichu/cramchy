@@ -81,3 +81,6 @@ jobs:
 
       - name: Test More term status refresh
         run: node testing/term-status.test.cjs
+
+      - name: Test dialog keyboard accessibility
+        run: node testing/dialog-accessibility.test.cjs

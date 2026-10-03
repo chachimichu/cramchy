@@ -36,6 +36,11 @@ const context={TIME:time,HOUR_HEIGHT:74,events:[],selectedDate:'2026-10-04',edit
   byDate:date=>context.events.filter(e=>e.date===date)};
 vm.createContext(context);vm.runInContext(['clearTimeError','showTimeError','bindPlanner','weekEventHtml','renderWeek'].map(plannerFunction).join('\n'),context);
 context.bindPlanner();
+let activated=0,prevented=0;
+const cell={matches:selector=>selector==='.planner-day-cell',click:()=>activated++};
+for(const key of ['Enter',' '])nodes.get('#view-planner').handlers.keydown({key,target:cell,preventDefault:()=>prevented++});
+assert.equal(activated,2);assert.equal(prevented,2);
+nodes.get('#view-planner').handlers.keydown({key:'Enter',target:{matches:()=>false},preventDefault:()=>{throw Error('Native button keyboard event must remain native');}});
 function form(start,end){nodes.get('#plannerTitle').value='Class';nodes.get('#plannerType').value='class';nodes.get('#plannerDate').value='2026-10-04';nodes.get('#plannerStart').value=start;nodes.get('#plannerEnd').value=end;nodes.get('#plannerForm').handlers.submit({preventDefault(){}});}
 form('06:00','05:00');assert.equal(writes,0);assert.equal(context.events.length,0);assert.equal(closes,0);assert.equal(nodes.get('#plannerTimeError').hidden,false);
 assert(nodes.get('#plannerEnd').customValidity.includes('later'));

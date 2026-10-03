@@ -124,10 +124,10 @@
             </aside>
 
             <div class="planner-card">
-              <div class="planner-head"><div><h2>Planner</h2><p>Switch between month, week, and day so nothing jumpscares you later.</p></div><div class="planner-tabs"><button class="active" data-planner-show="month" type="button">Month</button><button data-planner-show="week" type="button">Week</button><button data-planner-show="day" type="button">Day</button></div></div>
+              <div class="planner-head"><div><h2>Planner</h2><p>Switch between month, week, and day so nothing jumpscares you later.</p></div><div class="planner-tabs"><button class="active" aria-pressed="true" data-planner-show="month" type="button">Month</button><button aria-pressed="false" data-planner-show="week" type="button">Week</button><button aria-pressed="false" data-planner-show="day" type="button">Day</button></div></div>
               <div class="planner-nav"><button type="button" data-planner-nav="prev" aria-label="previous">‹</button><strong id="plannerLabel"></strong><button type="button" data-planner-nav="next" aria-label="next">›</button></div>
               <div class="planner-view active" id="plannerMonthView"><div class="planner-month-grid" id="plannerMonthGrid"></div></div>
-              <div class="planner-view" id="plannerWeekView"><div class="planner-week-scroll"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
+              <div class="planner-view" id="plannerWeekView"><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; scroll horizontally for other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
               <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><div class="planner-agenda" id="plannerAgenda"></div></div><aside class="planner-tasks"><h3>tasks due today</h3><div id="plannerTasks"></div><button class="planner-add" data-planner-add-task type="button">add task</button></aside></div></div>
             </div>
           </div>
@@ -191,7 +191,7 @@
   function setPlannerView(view){
     if(!['month','week','day'].includes(view))return;
     activeView=view;
-    $all('[data-planner-show]','#view-planner').forEach(b=>b.classList.toggle('active',b.dataset.plannerShow===view));
+    $all('[data-planner-show]','#view-planner').forEach(b=>{b.classList.toggle('active',b.dataset.plannerShow===view);b.setAttribute('aria-pressed',String(b.dataset.plannerShow===view));});
     $all('.planner-view','#view-planner').forEach(v=>v.classList.remove('active'));
     $('#planner'+view[0].toUpperCase()+view.slice(1)+'View')?.classList.add('active');
     renderAllPlanner();
@@ -206,9 +206,9 @@
     for(let i=0;i<42;i++){
       const d=new Date(start);d.setDate(start.getDate()+i);
       const iso=isoDate(d);const muted=d.getMonth()!==m;const list=byDate(iso);
-      const pills=list.slice(0,3).map(ev=>`<button class="planner-event-pill ${ev.type}" data-planner-event="${escapeHtml(ev.id)}" type="button"><i class="planner-dot ${ev.type}"></i><span>${escapeHtml(ev.title)}</span></button>`).join('');
+      const pills=list.slice(0,3).map(ev=>`<button class="planner-event-pill ${ev.type}" data-planner-event="${escapeHtml(ev.id)}" type="button" aria-label="${escapeHtml(ev.title)} · ${escapeHtml(TYPE_LABEL[ev.type])} · ${escapeHtml(timeLabel(ev.start))}"><i class="planner-dot ${ev.type}"></i><span>${escapeHtml(ev.title)}</span></button>`).join('');
       const more=list.length>3?`<button class="planner-more" data-planner-date="${iso}" type="button">+${list.length-3} more</button>`:'';
-      cells.push(`<div class="planner-day-cell ${muted?'muted':''} ${iso===selectedDate?'selected':''}" data-planner-date="${iso}" tabindex="0"><span class="planner-date-num ${iso===isoDate(new Date())?'today':''}">${d.getDate()}</span>${pills}${more}</div>`);
+      cells.push(`<div class="planner-day-cell ${muted?'muted':''} ${iso===selectedDate?'selected':''}" data-planner-date="${iso}" tabindex="0" role="group" aria-label="${escapeHtml(prettyDate(iso))}; press Enter to open day"><span class="planner-date-num ${iso===isoDate(new Date())?'today':''}">${d.getDate()}</span>${pills}${more}</div>`);
     }
     grid.innerHTML=cells.join('');
   }
@@ -319,7 +319,7 @@
     $('#plannerModalTitle').textContent='event details';$('#plannerSaveBtn').textContent='save changes';$('#plannerDeleteBtn').style.display='inline-flex';
     $('#plannerTitle').value=e.title;$('#plannerType').value=e.type;$('#plannerCourse').value=e.course;$('#plannerDate').value=e.date;$('#plannerStart').value=e.start;$('#plannerEnd').value=e.end;$('#plannerNotes').value=e.notes;
   }
-  function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>$('#plannerTitle')?.focus(),20)}
+  function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>{const phone=window.matchMedia?.('(max-width:640px)').matches;$(phone?'#plannerModal [data-planner-close]':'#plannerTitle')?.focus()},20)}
   function openEvent(id){const e=events.find(x=>x.id===id);if(!e)return;if(e.academicExam){window.CramchySchedules?.edit(e);return;}fillForm(e);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false')}
   function closeModal(){const modal=$('#plannerModal');modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true')}
 
@@ -335,6 +335,11 @@
   function bindPlanner(){
     const section=$('#view-planner');if(!section||section.dataset.plannerV3==='1')return;
     section.dataset.plannerV3='1';
+    section.addEventListener('keydown',event=>{
+      if((event.key==='Enter'||event.key===' ')&&event.target.matches('.planner-day-cell')){
+        event.preventDefault();event.target.click();
+      }
+    });
     section.addEventListener('click',e=>{
       const show=e.target.closest('[data-planner-show]');if(show){e.preventDefault();setPlannerView(show.dataset.plannerShow);return}
       const nav=e.target.closest('[data-planner-nav]');if(nav){e.preventDefault();moveCalendar(nav.dataset.plannerNav==='next'?1:-1);return}
