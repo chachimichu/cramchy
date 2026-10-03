@@ -21,9 +21,9 @@
     const saved=String(appState().profile?.name||'').trim().replace(/\s+/g,' ');
     return saved?saved.split(' ')[0].slice(0,24):'bestie';
   }
-  function introText(){return 'hiii, '+userName()+' ♡ what are we working on today? ask me anything about Cramchy or your school stuff.';}
+  function introText(){return 'hiii, '+userName()+' what are we working on today? ask me anything about Cramchy or your school stuff.';}
   function loreAnswer(){
-    return "okay, "+userName()+", here's the Cramchy lore ♡ it started as a little side quest by Charlene Mikaela D. Caco, a Psychology student from NU Clark—and it was literally her first time building an app. she used to cram for basically everything: quizzes, exams, deadlines, any chance she got. so she made Cramchy to help herself get organized and slowly beat the cramming-and-procrastinating cycle. the name happened in the most unserious way too: “cram” came from all the cramming, “chy” came from her nickname Chachi and gaming username chachimi, and “Cramchy” sounded like “crunchy” because she was eating chips when she thought of it LOL. it was originally just for her, but she ended up sharing it with friends and other students who might need it too. it’s still growing and it isn’t perfect, but that’s part of the lore—it’s a real first project built around what its developer actually needed.";
+    return "okay, "+userName()+", here's the Cramchy lore it started as a little side quest by Charlene Mikaela D. Caco, a Psychology student from NU Clark—and it was literally her first time building an app. she used to cram for basically everything: quizzes, exams, deadlines, any chance she got. so she made Cramchy to help herself get organized and slowly beat the cramming-and-procrastinating cycle. the name happened in the most unserious way too: “cram” came from all the cramming, “chy” came from her nickname Chachi and gaming username chachimi, and “Cramchy” sounded like “crunchy” because she was eating chips when she thought of it LOL. it was originally just for her, but she ended up sharing it with friends and other students who might need it too. it’s still growing and it isn’t perfect, but that’s part of the lore—it’s a real first project built around what its developer actually needed.";
   }
   function plannerEvents(){
     const events=readJson(PLANNER_KEY,[]);
@@ -253,7 +253,7 @@
     const about=/\b(cramchy|this app|the app|developer|creator|founder|built|made|features?|history|story|lore|name|called|cost|price|free|offline|privacy|data|account|cloud|home screen|install|favicon|icon|pwa|version|update|dashboard|courses page|tasks page|study timer|exam mode|settings)\b/;
     if(!about.test(q))return null;
 
-    if(has(q,/\b(who (built|made|created|developed)|developer|creator|founder)\b/))return "Cramchy was built by Charlene Mikaela D. Caco, a Psychology student from NU Clark ♡ it was her first time building an app, and it started as a side quest because she wanted one place that actually fit all her academic needs. she made it for herself first, then decided to share it with friends and other students too.";
+    if(has(q,/\b(who (built|made|created|developed)|developer|creator|founder)\b/))return "Cramchy was built by Charlene Mikaela D. Caco, a Psychology student from NU Clark it was her first time building an app, and it started as a side quest because she wanted one place that actually fit all her academic needs. she made it for herself first, then decided to share it with friends and other students too.";
     if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return "short answer: Charlene Mikaela D. Caco built Cramchy. she’s a Psychology student from NU Clark, and this was her first time building an app. she came up with the whole concept, features, design direction, and tested everything around what she actually needed as a student. AI tools helped with parts of the coding, but the project and all the big decisions are hers.";
     if(has(q,/\blore\b|\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return loreAnswer();
     if(has(q,/\b(why|how).*(called|named)|\bname (story|origin|meaning)|\bwhat does cramchy mean\b/))return loreAnswer();
@@ -265,7 +265,7 @@
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(study timer|timer)\b/))return 'Study gives you a focus timer tied to your subjects and study history. Use it to run a focused session, then let Cramchy record the work you completed.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*exam mode\b/))return 'Exam Mode groups an exam period’s dashboard, schedule, subjects, study timer, countdown, and Matcha Corner. Use it when you want a focused workspace for one term or exam period.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(more|settings|profile)\b/))return 'More contains profile and app controls such as your name, academic year, term, theme, cloud access, and repair options. Your academic year and term also affect which courses and grades Cramchy shows.';
-    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'yep, Cramchy is free to use right now ♡ Ask Cramchy also works without a paid AI API, so normal questions don’t create per-message AI charges.';
+    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'yep, Cramchy is free to use right now Ask Cramchy also works without a paid AI API, so normal questions don’t create per-message AI charges.';
     if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Ask Cramchy’s trained response library runs in your browser without a paid AI call. The website still needs to load, and sign-in or cloud syncing needs internet; offline availability for the entire app depends on what your browser has cached.';
     if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your working Cramchy data is saved in the browser on your device. If you sign in and use Cramchy Cloud, supported data can also sync through the app’s cloud service. Avoid putting sensitive personal information in event notes, and remember that clearing browser storage can remove local-only data.';
     if(has(q,/\b(account|sign in|login|cloud|sync)\b/))return 'You can use Cramchy locally in the browser. Signing in enables supported cloud syncing so your saved work can follow your account; syncing requires internet.';
@@ -296,7 +296,7 @@
 
   function helpAnswer(q){
     if(!has(q,/^(help|what can i ask|what can you do|show examples|commands|questions)$/))return null;
-    return 'ask away, '+userName()+' ♡ try things like:\n• “what’s on my Planner tomorrow?”\n• “what’s my Term GWA?”\n• “what’s the lore behind this app?”\n• “who built Cramchy?”\n• “how do I add an event?”\n• “what should I study next?”\nyou can also say “open Planner” or “show Quick GWA.”';
+    return 'ask away, '+userName()+' try things like:\n• “what’s on my Planner tomorrow?”\n• “what’s my Term GWA?”\n• “what’s the lore behind this app?”\n• “who built Cramchy?”\n• “how do I add an event?”\n• “what should I study next?”\nyou can also say “open Planner” or “show Quick GWA.”';
   }
 
   function answer(raw){

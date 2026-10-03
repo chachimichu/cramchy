@@ -9,12 +9,12 @@
   function cleanMicrocopy(){
     if(!document.body) return;
     const replacements = [
-      ['nothing due here ♡','nothing due here.'],
-      ['nothing due here♡','nothing due here.'],
+      ['nothing due here','nothing due here.'],
+      ['nothing due here','nothing due here.'],
       ['nothing due here ❤','nothing due here.'],
       ['nothing due here ♥','nothing due here.'],
-      ['♡ today\'s tasks','today\'s tasks'],
-      ['♡ todays tasks','today\'s tasks']
+      [' today\'s tasks','today\'s tasks'],
+      [' todays tasks','today\'s tasks']
     ];
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const nodes = [];

@@ -12,7 +12,7 @@ assert.equal(rules.allowedGrades.includes('F'),false);
 
 const calculate=rows=>rules.compute(rows.map(([grade,units])=>({grade,units})));
 let result=calculate([['4.0',3],['INC',3]]);
-assert.equal(result.gwa,4);assert.equal(result.eligible,false);assert.equal(result.message,"Here's your GWA ♡");
+assert.equal(result.gwa,4);assert.equal(result.eligible,false);assert.equal(result.message,"Here's your GWA");
 result=calculate([['4.0',3],['R',3]]);assert.equal(result.eligible,false);
 result=calculate([['4.0',9],['2.0',1]]);assert.equal(result.gwa,3.8);assert.equal(result.eligible,false);
 result=calculate([['4.0',3],['2.5',1]]);assert.equal(result.gwa,3.625);assert.equal(result.eligible,true);

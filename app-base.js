@@ -54,7 +54,7 @@ const MOTIVATIONS = [
 ];
 
 const HANABI_MESSAGES = [
-  "hanabi brought the book. your turn ♡",
+  "hanabi brought the book. your turn",
   "hanabi says one more page.",
   "tail wag = she approves. keep studying.",
   "hanabi is waiting for you to finish that topic.",
@@ -63,15 +63,15 @@ const HANABI_MESSAGES = [
 ];
 
 const KENKEN_MESSAGES = [
-  "kenken popped up to check on you ♡",
+  "kenken popped up to check on you",
   "kenken says keep going.",
   "tiny peek of encouragement.",
   "one more topic and kenken approves.",
   "kenken is watching your progress.",
-  "hi. now back to studying ♡"
+  "hi. now back to studying"
 ];
 
-const COLLECTIBLE_ICONS = ['🍓','🍵','🎀','🧋','🍰','🍡','🌸','♡','✨','🫧','🍒','🧁'];
+const COLLECTIBLE_ICONS = ['🍓','🍵','🎀','🧋','🍰','🍡','🌸','⭐','✨','🫧','🍒','🧁'];
 
 const STORAGE_KEY = 'strawberryMatchaMidtermsState_v1';
 const APP_VERSION = '2026.09.08-stability.1';
@@ -616,7 +616,7 @@ function addMission(){
   input.value = '';
   saveState();
   renderMissions();
-  showToast('mission added ♡');
+  showToast('mission added');
 }
 
 function formatCustomCountdownPrecise(diff){
@@ -663,20 +663,20 @@ function updateCustomCountdownDisplay(){
   const dateLabel = target.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   targetEl.textContent = `Counting down to ${dateLabel}, ${timeLabel}`;
   const diff = target.getTime() - Date.now();
-  el.textContent = diff <= 0 ? 'time\'s up ♡' : formatCustomCountdownPrecise(diff);
+  el.textContent = diff <= 0 ? 'time\'s up' : formatCustomCountdownPrecise(diff);
 }
 
 document.getElementById('setCountdownBtn').addEventListener('click', () => {
   const dateVal = document.getElementById('customCountdownDate').value;
   const timeVal = document.getElementById('customCountdownTime').value;
   if(!dateVal || !timeVal){
-    showToast('pick both a date and a time first ♡');
+    showToast('pick both a date and a time first');
     return;
   }
   state.customCountdown = { date: dateVal, time: timeVal };
   saveState();
   updateCustomCountdownDisplay();
-  showToast('countdown set ♡');
+  showToast('countdown set');
 });
 
 document.getElementById('clearCountdownBtn').addEventListener('click', () => {
@@ -818,7 +818,7 @@ function renderTopicList(){
   const topics = activeExamSubjects()[id].topics;
   const list = document.getElementById('topicList');
   if(!topics.length){
-    list.innerHTML = `<div class="empty-state">No topics yet. Add your first one below ♡</div>`;
+    list.innerHTML = `<div class="empty-state">No topics yet. Add your first one below</div>`;
     return;
   }
   list.innerHTML = '';
@@ -875,7 +875,7 @@ function renderTopicList(){
       renderTopicList();
       renderSubjectDetail();
       if(!wasDone && sel.value === 'Done'){
-        showToast('topic completed! matcha is pleased ♡');
+        showToast('topic completed! matcha is pleased');
         chaowiReact('topic');
       }
     });
@@ -947,7 +947,7 @@ function renderAttachmentsPanel(idx){
     topic.attachments.push({ id: cryptoId(), type: 'link', label, url });
     saveState();
     renderTopicList();
-    showToast('link added ♡');
+    showToast('link added');
   });
 
   panel.querySelectorAll('.del-att').forEach(btn => {
@@ -970,7 +970,7 @@ function addTopic(){
   input.value = '';
   saveState();
   renderSubjectDetail();
-  showToast('topic added ♡');
+  showToast('topic added');
 }
 
 /* ===================== STUDY TIMER ===================== */
@@ -1105,7 +1105,7 @@ function calcStreak(){
 function renderMatchaCorner(){
   const streak = calcStreak();
   document.getElementById('streakDisplay').textContent = `${streak} day streak`;
-  const commentary = streak >= 3 ? "look at you, actually consistent ♡" : (streak >= 1 ? "keep it going, don't break the chain." : "start today. matcha is watching.");
+  const commentary = streak >= 3 ? "look at you, actually consistent" : (streak >= 1 ? "keep it going, don't break the chain." : "start today. matcha is watching.");
   document.getElementById('mascotCommentary').textContent = commentary;
 
   const overall = overallStats();
@@ -1164,7 +1164,7 @@ function renderMatchaCorner(){
   function react(which){
     const anchorEl = which==='hanabi' ? hanabiEl : kenkenEl;
     if(state.petDuoNap){
-      state.petDuoNap=false; saveState(); applyPetState(); showBubble('awake! ♡', anchorEl);
+      state.petDuoNap=false; saveState(); applyPetState(); showBubble('awake!', anchorEl);
     }
     const list=which==='hanabi'?HANABI_MESSAGES:KENKEN_MESSAGES;
     const msg=list[Math.floor(Math.random()*list.length)];
@@ -1203,10 +1203,10 @@ const CHAOWI_MESSAGES = [
 ];
 
 const CHAOWI_EVENT_MESSAGES = {
-  start: ["chaowi says lock in ♡", "study time. she is supervising.", "mrrp. focus mode."],
-  pause: ["chaowi will allow this break.", "tiny pause. then back to it ♡"],
-  complete: ["chaowi is proud of you ♡", "session complete. acceptable. very acceptable.", "you did it!! chaowi approves."],
-  topic: ["chaowi witnessed that. +1 topic ♡", "one less thing to panic about.", "good. feed her another completed topic."]
+  start: ["chaowi says lock in", "study time. she is supervising.", "mrrp. focus mode."],
+  pause: ["chaowi will allow this break.", "tiny pause. then back to it"],
+  complete: ["chaowi is proud of you", "session complete. acceptable. very acceptable.", "you did it!! chaowi approves."],
+  topic: ["chaowi witnessed that. +1 topic", "one less thing to panic about.", "good. feed her another completed topic."]
 };
 
 let chaowiApi = null;
@@ -1238,7 +1238,7 @@ function initChaowi(){
     if(modeBtn){
       if(state.chaowiMode === 'awake'){ modeBtn.textContent = '☾'; modeBtn.title = 'Let Chaowi nap'; }
       else if(state.chaowiMode === 'nap'){ modeBtn.textContent = '×'; modeBtn.title = 'Hide Chaowi'; }
-      else { modeBtn.textContent = '♡'; modeBtn.title = 'Wake Chaowi'; }
+      else { modeBtn.textContent = '☀'; modeBtn.title = 'Wake Chaowi'; }
     }
     clearTimeout(autoTimer);
     if(state.chaowiMode === 'awake') scheduleIdle();
@@ -1286,7 +1286,7 @@ function initChaowi(){
     if(currentMode() === 'hidden') return;
     if(currentMode() === 'nap'){
       applyMode('awake');
-      showChaowiMessage('mrrp... you woke chaowi. better make it worth it ♡');
+      showChaowiMessage('mrrp... you woke chaowi. better make it worth it');
       animate('stretch');
       return;
     }
@@ -1333,10 +1333,10 @@ function initChaowi(){
       const mode = currentMode();
       if(mode === 'awake'){
         applyMode('nap');
-        showChaowiMessage('chaowi is napping. shhh ♡');
+        showChaowiMessage('chaowi is napping. shhh');
       }else if(mode === 'nap'){
         applyMode('hidden');
-        showToast('chaowi hid in her little corner. tap the paw to bring her back ♡');
+        showToast('chaowi hid in her little corner. tap the paw to bring her back');
       }else{
         applyMode('awake');
       }
@@ -1379,7 +1379,7 @@ document.getElementById('breakStartBtn').addEventListener('click', () => {
       breakState.running = false;
       breakState.remaining = 5*60;
       updateBreakDisplay();
-      showToast('break over. back to the academic trenches ♡');
+      showToast('break over. back to the academic trenches');
     }
   }, 1000);
 });
@@ -1411,7 +1411,7 @@ function downloadCramchyBackup(backup,filename){
 document.getElementById('exportBtn').addEventListener('click', () => {
   try{
     downloadCramchyBackup(CramchyBackup.create(state,localStorage),'cramchy-backup.json');
-    showToast('complete backup exported ♡');
+    showToast('complete backup exported');
   }catch(error){showToast('backup could not be exported. Please try again.');}
 });
 document.getElementById('recoveryExportBtn')?.addEventListener('click', () => {
@@ -1419,7 +1419,7 @@ document.getElementById('recoveryExportBtn')?.addEventListener('click', () => {
     const raw=localStorage.getItem(CramchyBackup.RECOVERY_KEY);
     if(!raw){showToast('no previous backup saved yet');return;}
     downloadCramchyBackup(JSON.parse(raw),'cramchy-previous-backup.json');
-    showToast('previous backup exported ♡');
+    showToast('previous backup exported');
   }catch(error){showToast('previous backup could not be exported.');}
 });
 function replaceLocalProgress(next,extras){
@@ -1449,7 +1449,7 @@ document.getElementById('importFile').addEventListener('change', e => {
       applyStateMigrations(next,backup.state);
       CramchyBackup.preserve(localStorage,'before import',state);
       replaceLocalProgress(next,backup.extras);
-      showToast(backup.legacy?'older backup imported; current Planner and Term GWA entries kept':'complete backup imported ♡',{longer:true});
+      showToast(backup.legacy?'older backup imported; current Planner and Term GWA entries kept':'complete backup imported',{longer:true});
     }catch(err){
       console.error('Backup import failed.',err);
       showToast('backup could not be imported. Your current progress was kept.');
@@ -1598,7 +1598,7 @@ function openCloudModal(){
     overlay.innerHTML = `
       <div class="cloud-auth-card">
         <button class="cloud-close" id="cloudCloseBtn" aria-label="Close">×</button>
-        <h3>cloud sync ♡</h3>
+        <h3>cloud sync</h3>
         <p>Cramchy is signed in and can sync across devices.</p>
         <div class="cloud-user">${escapeHtml(cloudUser.email || 'signed in')}</div>
         <div class="cloud-auth-actions">
@@ -1612,7 +1612,7 @@ function openCloudModal(){
     overlay.innerHTML = `
       <div class="cloud-auth-card">
         <button class="cloud-close" id="cloudCloseBtn" aria-label="Close">×</button>
-        <h3>save it in the cloud ♡</h3>
+        <h3>save it in the cloud</h3>
         <p>Signed-in accounts have their own progress. Your guest work stays on this device and returns when you sign out. To move guest work into an account, export it first, then import it after signing in.</p>
         <label for="cloudEmail">email</label>
         <input id="cloudEmail" type="email" autocomplete="email" placeholder="you@example.com">
@@ -1649,7 +1649,7 @@ function openCloudModal(){
       const msg = overlay.querySelector('#cloudAuthMsg');
       if(msg) msg.textContent = 'syncing…';
       const results=await Promise.all(Object.values(window.CramchySyncEngines||{}).map(engine=>engine.push()));
-      if(msg) msg.textContent = results.every(Boolean)?'synced ♡':'Sync needs attention. Your local copies were kept.';
+      if(msg) msg.textContent = results.every(Boolean)?'synced':'Sync needs attention. Your local copies were kept.';
       renderCloudConflictChoices();
     });
     overlay.querySelector('#cloudSignOutBtn')?.addEventListener('click', async () => {
@@ -1668,7 +1668,7 @@ function openCloudModal(){
 
   overlay.querySelector('#cloudSendCodeBtn')?.addEventListener('click', async () => {
     const email = (emailEl?.value || '').trim();
-    if(!email){ msgEl.textContent='enter your email first ♡'; return; }
+    if(!email){ msgEl.textContent='enter your email first'; return; }
 
     msgEl.textContent='sending your 8-digit code…';
     const { error } = await sb.auth.signInWithOtp({
@@ -1681,7 +1681,7 @@ function openCloudModal(){
     pendingOtpEmail = email;
     if(emailEl) emailEl.disabled = true;
     if(codeArea) codeArea.style.display = 'block';
-    msgEl.textContent='code sent ♡ check your email, then enter the 8-digit code here.';
+    msgEl.textContent='code sent check your email, then enter the 8-digit code here.';
     setTimeout(() => codeEl?.focus(), 0);
   });
 
@@ -1689,8 +1689,8 @@ function openCloudModal(){
     const email = pendingOtpEmail || (emailEl?.value || '').trim();
     const token = (codeEl?.value || '').replace(/\D/g, '').slice(0, 8);
 
-    if(!email){ msgEl.textContent='enter your email first ♡'; return; }
-    if(token.length !== 8){ msgEl.textContent='enter the 8-digit code from your email ♡'; return; }
+    if(!email){ msgEl.textContent='enter your email first'; return; }
+    if(token.length !== 8){ msgEl.textContent='enter the 8-digit code from your email'; return; }
 
     msgEl.textContent='signing you in…';
     const { data, error } = await sb.auth.verifyOtp({
@@ -1702,10 +1702,10 @@ function openCloudModal(){
     if(error){ msgEl.textContent=error.message; return; }
 
     if(data?.session){
-      msgEl.textContent='signed in ♡ your session will stay on this device.';
+      msgEl.textContent='signed in your session will stay on this device.';
       setTimeout(closeCloudModal, 450);
     }else{
-      msgEl.textContent='signed in ♡';
+      msgEl.textContent='signed in';
     }
   });
 
@@ -1776,8 +1776,8 @@ function cramchyName(){const n=state?.profile?.name?.trim();return n||'girl';}
 function getCramchyGreeting(){
   const h=new Date().getHours(),name=cramchyName(),term=state?.profile?.term||'Term 1',style=state?.profile?.motivation||'mixed';
   const greeting=h<5?'why are we still awake':h<12?'good morning':h<18?'good afternoon':'good evening';
-  const endings={sweet:'one little step at a time ♡',chaotic:'academic weapon era starts now.',strict:'let’s get through today’s list.',mixed:'we are absolutely locking in today.'};
-  return `${greeting}, ${name} ♡ · ${term} · ${endings[style]||endings.mixed}`;
+  const endings={sweet:'one little step at a time',chaotic:'academic weapon era starts now.',strict:'let’s get through today’s list.',mixed:'we are absolutely locking in today.'};
+  return `${greeting}, ${name} · ${term} · ${endings[style]||endings.mixed}`;
 }
 function applyCramchyPersonalization(){
   document.body.dataset.theme=state?.profile?.theme||'strawberry-matcha';
@@ -1806,7 +1806,7 @@ function renderCramchySettings(){
 }
 function renderCramchyTasks(){
   const wrap=document.getElementById('cramchyTaskList');if(!wrap)return;
-  if(!state.missions.length){wrap.innerHTML=`<div class="shell-empty"><div class="big">nothing here yet ♡</div><p>Add a quick task below. Course-linked tasks, deadlines, priorities, and subtasks come in the full Tasks build.</p></div>`;return;}
+  if(!state.missions.length){wrap.innerHTML=`<div class="shell-empty"><div class="big">nothing here yet</div><p>Add a quick task below. Course-linked tasks, deadlines, priorities, and subtasks come in the full Tasks build.</p></div>`;return;}
   wrap.innerHTML=state.missions.map(m=>`<div class="mission-row"><input type="checkbox" data-cramchy-task-check="${m.id}" ${m.done?'checked':''}><span style="flex:1;${m.done?'text-decoration:line-through;opacity:.6;':''}">${escapeHtml(m.text)}</span><button class="icon-btn" data-cramchy-task-delete="${m.id}" aria-label="Delete">×</button></div>`).join('');
   wrap.querySelectorAll('[data-cramchy-task-check]').forEach(el=>el.addEventListener('change',()=>{const item=state.missions.find(m=>m.id===el.dataset.cramchyTaskCheck);if(item)item.done=el.checked;saveState();renderCramchyTasks();renderDashboard();if(el.checked&&chaowiApi)chaowiApi.react('topic');}));
   wrap.querySelectorAll('[data-cramchy-task-delete]').forEach(el=>el.addEventListener('click',()=>{state.missions=state.missions.filter(m=>m.id!==el.dataset.cramchyTaskDelete);saveState();renderCramchyTasks();renderDashboard();}));
@@ -1824,7 +1824,7 @@ function openCramchyOnboarding(){
     <label for="onboardName">what should we call you?</label><input id="onboardName" maxlength="40" placeholder="your nickname">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label for="onboardYear">academic year</label><input id="onboardYear" maxlength="30" value="${escapeAttr(state.profile?.academicYear||'2026–2027')}"></div><div><label for="onboardTerm">current term</label><select id="onboardTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div></div>
     <label for="onboardMotivation">how should cramchy motivate you?</label><select id="onboardMotivation"><option value="sweet">Sweet — gentle encouragement</option><option value="chaotic">Chaotic — girl, the deadline.</option><option value="strict">Strict — tell me what needs doing</option><option value="mixed">Mixed — surprise me</option></select>
-    <label>choose your study space ♡</label><div class="theme-picker" id="onboardThemePicker">${themePickerMarkup(selected)}</div>
+    <label>choose your study space</label><div class="theme-picker" id="onboardThemePicker">${themePickerMarkup(selected)}</div>
     <button class="onboard-start" id="startCramchyBtn">enter my academic weapon era →</button></div>`;
   document.body.appendChild(overlay);
   overlay.querySelector('#onboardTerm').value=state.profile?.term||'Term 1';overlay.querySelector('#onboardMotivation').value=state.profile?.motivation||'mixed';
@@ -1832,7 +1832,7 @@ function openCramchyOnboarding(){
   overlay.querySelector('#startCramchyBtn').addEventListener('click',()=>{
     const name=overlay.querySelector('#onboardName').value.trim();if(!name){overlay.querySelector('#onboardName').focus();return;}
     state.profile={name:name.slice(0,40),academicYear:overlay.querySelector('#onboardYear').value.trim().slice(0,30)||'2026–2027',term:overlay.querySelector('#onboardTerm').value,motivation:overlay.querySelector('#onboardMotivation').value,theme:selected,onboarded:true};
-    saveState();applyCramchyPersonalization();overlay.remove();renderAll();showToast(`welcome to cramchy, ${name.toLowerCase()} ♡`,{longer:true});
+    saveState();applyCramchyPersonalization();overlay.remove();renderAll();showToast(`welcome to cramchy, ${name.toLowerCase()}`,{longer:true});
   });
 }
 function initCramchyShell(){
@@ -1844,7 +1844,7 @@ function initCramchyShell(){
     state.profile.academicYear=(document.getElementById('profileYear')?.value||'2026–2027').trim().slice(0,30);
     state.profile.term=document.getElementById('profileTerm')?.value||'Term 1';
     state.profile.motivation=document.getElementById('profileMotivation')?.value||'mixed';state.profile.onboarded=true;
-    saveState();ensureAcademicStructure();renderAll();showToast('profile saved ♡');
+    saveState();ensureAcademicStructure();renderAll();showToast('profile saved');
   });
   document.querySelectorAll('[data-open-tab]').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.openTab)));
   if(typeof CHAOWI_MESSAGES!=='undefined'){
@@ -1861,14 +1861,14 @@ function initCramchyShell(){
 function renderDailyCountdown(){
   const box=document.getElementById('dailyCountdownBox'); if(!box) return;
   const ex=getClosestExam();
-  if(!ex){ box.innerHTML='<p class="small-note">nothing urgent yet ♡</p>'; return; }
+  if(!ex){ box.innerHTML='<p class="small-note">nothing urgent yet</p>'; return; }
   box.innerHTML=`<span class="tag">COMING UP</span><h3>${escapeHtml(ex.subject||'Upcoming exam')}</h3><div class="meta">${escapeHtml(formatExamDate(ex.start))}</div><div class="countdown-big">${formatCountdown(ex.start,ex.end)}</div>`;
 }
 function renderDynamicCourses(){
   const grid=document.getElementById('dynamicCourseGrid'); if(!grid) return;
   const courses=state.courses||[];
   if(!courses.length){
-    grid.innerHTML='<div class="card shell-empty" style="grid-column:1/-1;"><div class="big">no courses yet ♡</div><p>Add your first course so Cramchy can connect tasks, grades, study sessions, and exams to it.</p></div>';
+    grid.innerHTML='<div class="card shell-empty" style="grid-column:1/-1;"><div class="big">no courses yet</div><p>Add your first course so Cramchy can connect tasks, grades, study sessions, and exams to it.</p></div>';
     return;
   }
   grid.innerHTML=courses.map(c=>`
@@ -1891,7 +1891,7 @@ function openCourseModal(courseId=null){
   const existing=(state.courses||[]).find(c=>c.id===courseId);
   const scrim=document.createElement('div'); scrim.className='modal-scrim';
   scrim.innerHTML=`<div class="course-modal">
-    <h3 style="color:var(--red-deep);">${existing?'edit course':'add course ♡'}</h3>
+    <h3 style="color:var(--red-deep);">${existing?'edit course':'add course'}</h3>
     <div class="course-form-grid">
       <div class="full"><label>course name</label><input id="courseName" value="${escapeAttr(existing?.name||'')}" placeholder="Cognitive Psychology"></div>
       <div><label>course code</label><input id="courseCode" value="${escapeAttr(existing?.code||'')}" placeholder="type code here..."></div>
@@ -1929,7 +1929,7 @@ function openCourseModal(courseId=null){
     if(!state.gradebook || typeof state.gradebook !== 'object') state.gradebook = {};
     if(!state.gradebook[course.id]) state.gradebook[course.id] = { midterms: [], finals: [] };
     ensureAcademicStructure();
-    saveState(); renderDynamicCourses(); renderDailyHome(); renderGradebook(); scrim.remove(); showToast(existing?'course updated ♡':'course added ♡');
+    saveState(); renderDynamicCourses(); renderDailyHome(); renderGradebook(); scrim.remove(); showToast(existing?'course updated':'course added');
   });
 }
 function renderExamMode(){
@@ -2008,7 +2008,7 @@ function renderDailyTasks(){
   const wrap=document.getElementById('dailyTaskList'); if(!wrap) return;
   const tasks=(state.missions||[]).slice(0,5);
   if(!tasks.length){
-    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here ♡</div><p>Add a task and it will show up on your daily dashboard.</p></div>';
+    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here</div><p>Add a task and it will show up on your daily dashboard.</p></div>';
     return;
   }
   wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
@@ -2029,7 +2029,7 @@ function renderDailyCourses(){
   const strip=document.getElementById('dailyCourseStrip'); if(!strip) return;
   const courses=(state.courses||[]).slice(0,6);
   if(!courses.length){
-    strip.innerHTML='<div class="card shell-empty" style="grid-column:1/-1;"><div class="big">add your courses ♡</div><p>Once added, your daily dashboard will pull course info from them.</p><button class="btn" id="homeAddCourseBtn">+ add course</button></div>';
+    strip.innerHTML='<div class="card shell-empty" style="grid-column:1/-1;"><div class="big">add your courses</div><p>Once added, your daily dashboard will pull course info from them.</p><button class="btn" id="homeAddCourseBtn">+ add course</button></div>';
     document.getElementById('homeAddCourseBtn')?.addEventListener('click',()=>openCourseModal());
     return;
   }
@@ -2042,14 +2042,14 @@ function renderDailyCourses(){
 function renderDailyUpcoming(){
   const wrap=document.getElementById('dailyUpcomingList'); if(!wrap) return;
   const ex=getSortedExams().filter(e=>new Date(e.end).getTime()>Date.now()).slice(0,3);
-  if(!ex.length){wrap.innerHTML='<div class="small-note">nothing urgent right now ♡</div>';return;}
+  if(!ex.length){wrap.innerHTML='<div class="small-note">nothing urgent right now</div>';return;}
   wrap.innerHTML=ex.map(e=>`<div class="upcoming-item"><strong>${escapeHtml(e.subject)}</strong><span>${escapeHtml(formatExamDate(e.start))} · ${formatCountdown(e.start,e.end)}</span></div>`).join('');
 }
 function renderSmartStudySuggestion(){
   const title=document.getElementById('smartStudyTitle'),copy=document.getElementById('smartStudyCopy');
   const courses=coursesForCurrentTerm();
   if(!courses.length){
-    if(title)title.textContent='add a course first ♡';
+    if(title)title.textContent='add a course first';
     if(copy)copy.textContent='Once your courses are in Cramchy, I can suggest what to study.';
     return;
   }
@@ -3042,7 +3042,7 @@ function renderDailyCountdown(){
   state.examPeriod=null;
   const ex=getClosestExam();
   state.examPeriod=savedPeriod;
-  if(!ex){box.innerHTML='<p class="small-note">no upcoming exam for this term ♡</p>';return;}
+  if(!ex){box.innerHTML='<p class="small-note">no upcoming exam for this term</p>';return;}
   let period='exam';
   const r=dailyTermRecord();
   if((r.midterms.exams||[]).some(e=>e.id===ex.id))period='midterms';
@@ -3056,7 +3056,7 @@ function nextExamDays(){
 function renderDailyUpcoming(){
   const wrap=document.getElementById('dailyUpcomingList');if(!wrap)return;
   const ex=allDailyTermExams().filter(e=>new Date(e.end).getTime()>Date.now()).slice(0,3);
-  if(!ex.length){wrap.innerHTML='<div class="small-note">no upcoming exams right now ♡</div>';return;}
+  if(!ex.length){wrap.innerHTML='<div class="small-note">no upcoming exams right now</div>';return;}
   wrap.innerHTML=ex.map(e=>{
     const r=dailyTermRecord();const period=(r.midterms.exams||[]).some(x=>x.id===e.id)?'midterms':'finals';
     return `<div class="upcoming-item"><strong>${escapeHtml(e.name)}</strong><span>${period} · ${escapeHtml(formatExamDate(e.start))} · ${formatCountdown(e.start,e.end)}</span></div>`;
@@ -3132,7 +3132,7 @@ function archiveCurrentTerm(){
   if(!state.archivedTerms)state.archivedTerms=[];
   if(state.archivedTerms.includes(key)){showToast('this term is already archived');return;}
   if(!confirm(`Archive ${profileAcademicYear()} ${profileTerm()}? Nothing will be deleted.`))return;
-  state.archivedTerms.push(key);saveState();renderTermManager();showToast('term archived ♡');
+  state.archivedTerms.push(key);saveState();renderTermManager();showToast('term archived');
 }
 function openStartTermModal(){
   const oldYear=profileAcademicYear(),oldTerm=profileTerm();
@@ -3175,7 +3175,7 @@ function openStartTermModal(){
     state.profile.term=term;
     state.examContext={academicYear:year,term};
     state.examPeriod=null;
-    saveState();scrim.remove();renderAll();renderTermManager();showToast(`${term} is now your current term ♡`,{longer:true});
+    saveState();scrim.remove();renderAll();renderTermManager();showToast(`${term} is now your current term`,{longer:true});
   });
 }
 
@@ -3331,7 +3331,7 @@ function askExamsOnDate(date,period=null){return askAllExamItems().filter(x=>(!p
 function askMissingExamDates(period=null){
   const exams=askAllExamItems().filter(x=>!period||x.period===period),courses=askCurrentCourses();
   const missing=courses.filter(c=>!exams.some(x=>{const ec=askCourseForExam(x);return ec?.id===c.id||normalizeAcademicName(x.exam.name)===normalizeAcademicName(c.name);}));
-  if(!missing.length)return `Every course has an exam date saved${period?` for ${period}`:''} ♡`;
+  if(!missing.length)return `Every course has an exam date saved${period?` for ${period}`:''}`;
   return `These courses don't have an exam date saved${period?` for ${period}`:''}:\n`+missing.map(c=>`• ${c.name}`).join('\n');
 }
 function askExamQuery(raw,course=null){
@@ -3419,7 +3419,7 @@ function askTopicsQuery(raw,course=null){
   const mode=/\b(done|finished|completed)\b/.test(q)?'done':(/\b(left|unfinished|not started|remaining|need to review)\b/.test(q)?'unfinished':'all');
   if(mode==='done')rows=rows.filter(t=>t.status==='Done');if(mode==='unfinished')rows=rows.filter(t=>t.status!=='Done');
   if(/\b(how many|count)\b/.test(q))return `${course.name} has ${rows.length} ${mode==='all'?'saved':mode} topic${rows.length===1?'':'s'}${target.period?` for ${target.period}`:''}.`;
-  if(!rows.length)return `No ${mode} topics found for ${course.name}${target.period?` (${target.period})`:''} ♡`;
+  if(!rows.length)return `No ${mode} topics found for ${course.name}${target.period?` (${target.period})`:''}`;
   rows.slice(0,12).forEach(t=>{askCramchyContext.lastTopicName=t.name;});
   let msg=`${mode==='unfinished'?'Topics still to review':mode==='done'?'Finished topics':'Saved topics'} for ${course.name}${target.period?` (${target.period})`:''}:\n`+rows.slice(0,12).map(t=>`• ${t.name} · ${t.status}${t.priority?` · ${t.priority} priority`:''}`).join('\n');if(rows.length>12)msg+=`\n…and ${rows.length-12} more.`;return msg;
 }
@@ -3430,7 +3430,7 @@ function askStudyAdvice(course=null,raw=''){
   if(!candidates.length&&!course){const next=askNextUpcomingExam();if(next){const info=askExamSubject(next.period,next.exam);targetLabel=`${info.name} (${next.period})`;forget=info.subject.forget||'';(info.subject.topics||[]).filter(t=>t.status!=='Done').forEach(t=>candidates.push({...t,period:next.period,subjectName:info.name}));askRememberExam(next);}}
   if(!candidates.length){['midterms','finals'].forEach(period=>Object.entries(record[period]?.subjects||{}).forEach(([id,s])=>{(s.topics||[]).filter(t=>t.status!=='Done').forEach(t=>candidates.push({...t,period,subjectName:record[period]?.subjectNames?.[id]||examSubjectNameById(id,profileAcademicYear(),profileTerm())}));}));}
   candidates.sort((a,b)=>(priorityRank[a.priority]??1)-(priorityRank[b.priority]??1)||(statusRank[a.status]??1)-(statusRank[b.status]??1));
-  if(!candidates.length)return targetLabel?`You don't have unfinished review topics for ${targetLabel} right now ♡`:`I couldn't find unfinished exam topics yet. Add some in Exam Mode and I'll prioritize them.`;
+  if(!candidates.length)return targetLabel?`You don't have unfinished review topics for ${targetLabel} right now`:`I couldn't find unfinished exam topics yet. Add some in Exam Mode and I'll prioritize them.`;
   const q=askNormalize(raw);let limit=3;const min=q.match(/\b(\d{1,3})\s*(minute|minutes|min)\b/);const hr=q.match(/\b(\d+(?:\.\d+)?)\s*(hour|hours|hr|hrs)\b/);if(min){const n=Number(min[1]);limit=n<=30?1:n<=60?2:3;}else if(hr){const n=Number(hr[1]);limit=n<=0.5?1:n<=1?2:3;}
   const top=candidates.slice(0,limit);let msg=targetLabel?`For ${targetLabel}, I'd study these first:`:`I'd start with these:`;msg+='\n'+top.map((t,i)=>`${i+1}. ${t.name}${t.priority==='High'?' · high priority':''}${t.status==='In Progress'?' · already in progress':''}`).join('\n');
   if(forget)msg+=`\n\nBefore you stop, peek at your “Things I Keep Forgetting” note too.`;if(min||hr)msg+=`\n\nI kept the list short for the study time you gave me.`;askCramchyContext.lastIntent='study';return msg;
@@ -3473,7 +3473,7 @@ function askTasks(raw=''){
   if(/\b(due|deadline|overdue|this week|tomorrow|today)\b/.test(q)){let msg=`Quick tasks in Cramchy don't have due dates yet, so I can't truthfully filter them by deadline.`;if(undone.length)msg+=`\n\nYou do have ${undone.length} unfinished task${undone.length===1?'':'s'}:\n`+undone.slice(0,5).map((m,i)=>`${i+1}. ${m.text}`).join('\n');return msg;}
   if(/\b(done|finished|completed)\b/.test(q))return done.length?`You've completed ${done.length} quick task${done.length===1?'':'s'}:\n`+done.slice(0,8).map(m=>`• ${m.text}`).join('\n'):`No completed quick tasks are saved right now.`;
   if(/\b(how many|count)\b/.test(q))return `You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}.`;
-  if(!undone.length)return `You don't have any unfinished quick tasks right now ♡`;
+  if(!undone.length)return `You don't have any unfinished quick tasks right now`;
   const shown=undone.slice(0,7);let msg=`You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}:\n`+shown.map((m,i)=>`${i+1}. ${m.text}`).join('\n');if(undone.length>shown.length)msg+=`\n…and ${undone.length-shown.length} more in Tasks.`;return msg;
 }
 
@@ -3503,12 +3503,12 @@ function askNavigation(raw){
   const q=askNormalize(raw);if(/\bgrades?\b/.test(q))return `Open Grades in the top navigation. That's where Course Gradebook, Term GWA, and Quick GWA live.`;if(/\bexam|topics?\b/.test(q))return `Open Exam Mode, choose your term and midterms/finals, then use Subjects/Topics.`;if(/\btasks?\b/.test(q))return `Open Tasks from the regular Cramchy navigation.`;if(/\bcourses?\b/.test(q))return `Open Courses to add or edit course details and class schedules.`;return `Try asking “where are my grades?”, “where do I add exam topics?”, or “where are my tasks?”`;
 }
 function askFriendly(raw){
-  const q=askNormalize(raw),name=cramchyName();if(/^(hi|hello|hey|beh|hii|hiii)\b/.test(q))return `hiii ${name} ♡ what are we checking today?`;
-  if(/\b(thank you|thanks|ty|salamat)\b/.test(q))return `always, beh ♡ now go collect those academic receipts.`;
+  const q=askNormalize(raw),name=cramchyName();if(/^(hi|hello|hey|beh|hii|hiii)\b/.test(q))return `hiii ${name} what are we checking today?`;
+  if(/\b(thank you|thanks|ty|salamat)\b/.test(q))return `always, beh now go collect those academic receipts.`;
   if(/\b(i m cooked|im cooked|am i cooked|cooked)\b/.test(q)){const n=askNextUpcomingExam(),tasks=(state.missions||[]).filter(m=>!m.done).length;if(n){const days=Math.max(0,Math.ceil((n.when-askTodayStart())/86400000));return `not cooked. maybe lightly toasted 😭 you have ${tasks} unfinished task${tasks===1?'':'s'} and your next exam is in about ${days} day${days===1?'':'s'}.`;}return `not cooked 😭 I just need more saved deadlines/exams before I can diagnose the academic situation.`;}
-  if(/\b(tired|dont want to study|don t want to study|lazy|motivate|motivation|hype me|can i rest)\b/.test(q))return `tiny plan: pick one unfinished topic, do one focused block, then reassess. you do not need to conquer the whole semester in one sitting ♡`;
+  if(/\b(tired|dont want to study|don t want to study|lazy|motivate|motivation|hype me|can i rest)\b/.test(q))return `tiny plan: pick one unfinished topic, do one focused block, then reassess. you do not need to conquer the whole semester in one sitting`;
   if(/\b(i finished|i m done|im done|i passed|passed)\b/.test(q))return `OH?? academic weapon behavior detected ✦ proud of that progress, beh.`;
-  if(/\b(bye|good night|goodnight)\b/.test(q))return `bye beh ♡ Cramchy will keep the receipts.`;return null;
+  if(/\b(bye|good night|goodnight)\b/.test(q))return `bye beh Cramchy will keep the receipts.`;return null;
 }
 function askHelp(){return `I can help with your class schedule, exams, exam topics, what to study, tasks, grades/GWA, course details, and study history. I also remember follow-ups like “that day,” “that subject,” and “for it.”`;}
 
@@ -3547,7 +3547,7 @@ function askShouldStudyNow(raw=''){
     return `nothing looks urgent from the data I can see. Your next exam is ${askTimeUntilText(next.exam.start)} away and your quick-task list is clear. If you have energy, do a light recall pass; if you're sleepy, planning tomorrow and resting is also reasonable.`;
   }
   if(undone>0)return `you have ${undone} unfinished quick task${undone===1?'':'s'}, so I'd do one short focused block now and knock out the easiest or most important one. I don't see an upcoming exam date saved, so there's no need to panic-cram.`;
-  return `Cramchy doesn't see an upcoming exam or unfinished quick task right now. If you want to study anyway, make it a light review; otherwise you're allowed to be done for the moment ♡`;
+  return `Cramchy doesn't see an upcoming exam or unfinished quick task right now. If you want to study anyway, make it a light review; otherwise you're allowed to be done for the moment`;
 }
 function askIntent(raw){
   const q=askNormalize(raw);
@@ -3595,7 +3595,7 @@ function askSplitClauses(raw){
   return new Set(meaningful).size>=2?pieces:[s];
 }
 function askCramchyReply(raw){
-  const q=askNormalize(raw);if(!q)return `Ask me something about your Cramchy data ♡`;
+  const q=askNormalize(raw);if(!q)return `Ask me something about your Cramchy data`;
   const metaHelp=/^(help|help me|what can i ask|what can i ask you|what can you do|what do you do|what do you know|what are your commands|commands|options|show me what you can do|how can you help|how can you help me|what are your features)\??$/.test(q);
   if(metaHelp)return askHelp();
   const friendly=askFriendly(raw);if(friendly&&askIntent(raw)==='friendly')return friendly;
@@ -3621,7 +3621,7 @@ function openAskCramchy(){
   const panel=document.createElement('section');panel.id='askCramchyPanel';panel.className='ask-cramchy-panel';panel.setAttribute('aria-label','Ask Cramchy');
   panel.innerHTML=`<div class="ask-cramchy-head"><div class="ask-cramchy-avatar"><img src="${ASK_CRAMCHY_ICON}" alt="Ask Cramchy icon"></div><div class="ask-cramchy-title"><strong>ask cramchy</strong><span>your academic bestie with receipts ✦</span></div><button class="ask-cramchy-close" id="askCramchyClose" aria-label="Close">×</button></div><div class="ask-cramchy-messages" id="askCramchyMessages"></div><div class="ask-cramchy-compose"><textarea class="ask-cramchy-input" id="askCramchyInput" rows="1" maxlength="280" placeholder="ask me something..."></textarea><button class="ask-cramchy-send" id="askCramchySend" aria-label="Send">↑</button></div>`;
   document.body.appendChild(panel);document.getElementById('askCramchyLauncher')?.setAttribute('aria-expanded','true');document.getElementById('askCramchyClose')?.addEventListener('click',closeAskCramchy);
-  askAddMessage('bot',`hiii ${cramchyName()} ♡ ask me about your classes, exams, grades, tasks, or what to study.`);askAddChips([{label:'what should I study?',query:'what should I study?'},{label:"what's my next class?",query:"what's my next class?"},{label:'how are my grades?',query:'how are my grades?'},{label:"when's my next exam?",query:"when's my next exam?"}]);
+  askAddMessage('bot',`hiii ${cramchyName()} ask me about your classes, exams, grades, tasks, or what to study.`);askAddChips([{label:'what should I study?',query:'what should I study?'},{label:"what's my next class?",query:"what's my next class?"},{label:'how are my grades?',query:'how are my grades?'},{label:"when's my next exam?",query:"when's my next exam?"}]);
   const input=document.getElementById('askCramchyInput'),send=document.getElementById('askCramchySend');send?.addEventListener('click',()=>askSubmit());input?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();askSubmit();}});input?.addEventListener('input',()=>{input.style.height='42px';input.style.height=Math.min(input.scrollHeight,96)+'px';});window.setTimeout(()=>input?.focus(),80);
 }
 function initAskCramchy(){
@@ -3782,9 +3782,9 @@ function askListExams(items,title='Your exams'){
 function askMissingExamDates(period=null){
   const courses=askCurrentCourses();
   const missingFor=p=>courses.filter(c=>!askExamItemsForCourse(c,p).some(x=>Number.isFinite(askExamStartMs(x.exam))));
-  if(period){const m=missingFor(period);return m.length?`These courses don't have a ${period} exam date saved:\n`+m.map(c=>`• ${c.name}`).join('\n'):`Every course has a ${period} exam date saved ♡`;}
+  if(period){const m=missingFor(period);return m.length?`These courses don't have a ${period} exam date saved:\n`+m.map(c=>`• ${c.name}`).join('\n'):`Every course has a ${period} exam date saved`;}
   const mid=missingFor('midterms'),fin=missingFor('finals');
-  if(!mid.length&&!fin.length)return `Every course has both midterms and finals exam dates saved ♡`;
+  if(!mid.length&&!fin.length)return `Every course has both midterms and finals exam dates saved`;
   const parts=[];if(mid.length)parts.push(`Midterms missing:\n${mid.map(c=>`• ${c.name}`).join('\n')}`);if(fin.length)parts.push(`Finals missing:\n${fin.map(c=>`• ${c.name}`).join('\n')}`);return parts.join('\n\n');
 }
 function askExamQuery(raw,course=null){
@@ -3913,7 +3913,7 @@ function askUnfinishedTopics(course,period){
 function askTopicsQuery(raw,course=null){
   const q=askNormalize(raw);
   if(!course&&/\b(which course|what course).*(most|many).*(unfinished|left|topics)|most unfinished topics\b/.test(q)){
-    const rows=askCurrentCourses().map(c=>({c,n:['midterms','finals'].reduce((sum,p)=>sum+askUnfinishedTopics(c,p).length,0)})).sort((a,b)=>b.n-a.n);if(!rows.length||rows[0].n===0)return `You don't have unfinished review topics saved right now ♡`;askRememberCourse(rows[0].c);return `${rows[0].c.name} has the most unfinished review topics right now: ${rows[0].n}.`;
+    const rows=askCurrentCourses().map(c=>({c,n:['midterms','finals'].reduce((sum,p)=>sum+askUnfinishedTopics(c,p).length,0)})).sort((a,b)=>b.n-a.n);if(!rows.length||rows[0].n===0)return `You don't have unfinished review topics saved right now`;askRememberCourse(rows[0].c);return `${rows[0].c.name} has the most unfinished review topics right now: ${rows[0].n}.`;
   }
   const target=askResolveTopicTarget(course,raw);course=target.course;const periods=target.period?[target.period]:['midterms','finals'];if(!course)return `Tell me which course you mean, or add an upcoming exam so I know what you're preparing for.`;
   const entries=periods.map(p=>askSubjectEntryForCourse(course,p)).filter(x=>x?.subject);if(!entries.length)return `I couldn't find exam topics saved for ${course.name} yet.`;
@@ -3923,7 +3923,7 @@ function askTopicsQuery(raw,course=null){
   const mode=/\b(done|finished|completed)\b/.test(q)?'done':(/\b(left|unfinished|not started|remaining|need to review)\b/.test(q)?'unfinished':'all');
   if(mode==='done')rows=rows.filter(t=>t.status==='Done');if(mode==='unfinished')rows=rows.filter(t=>t.status!=='Done');
   if(/\b(how many|count)\b/.test(q))return `${course.name} has ${rows.length} ${mode==='all'?'saved':mode} topic${rows.length===1?'':'s'}${target.period?` for ${target.period}`:''}.`;
-  if(!rows.length)return `No ${mode} topics found for ${course.name}${target.period?` (${target.period})`:''} ♡`;
+  if(!rows.length)return `No ${mode} topics found for ${course.name}${target.period?` (${target.period})`:''}`;
   askCramchyContext.lastTopicName=rows[0].name;
   let msg=`${mode==='unfinished'?'Topics still to review':mode==='done'?'Finished topics':'Saved topics'} for ${course.name}${target.period?` (${target.period})`:''}:\n`+rows.slice(0,12).map(t=>`• ${t.name} · ${t.status}${t.priority?` · ${t.priority} priority`:''}`).join('\n');if(rows.length>12)msg+=`\n…and ${rows.length-12} more.`;return msg;
 }
@@ -3937,7 +3937,7 @@ function askStudyAdvice(course=null,raw=''){
     }
   }
   if(!course){return `I couldn't find an upcoming exam with saved review topics yet. Add topics in Exam Mode and I'll prioritize them.`;}
-  if(!candidates.length){const e=period?askSubjectEntryForCourse(course,period):null;const allDone=e&&(e.subject?.topics||[]).length>0&&(e.subject.topics||[]).every(t=>t.status==='Done');return allDone?`You're caught up on the saved ${period} topics for ${course.name} ♡ I'd do a quick recall pass or check “Things I Keep Forgetting” instead.`:`I couldn't find unfinished review topics for ${course.name}${period?` (${period})`:''} yet.`;}
+  if(!candidates.length){const e=period?askSubjectEntryForCourse(course,period):null;const allDone=e&&(e.subject?.topics||[]).length>0&&(e.subject.topics||[]).every(t=>t.status==='Done');return allDone?`You're caught up on the saved ${period} topics for ${course.name} I'd do a quick recall pass or check “Things I Keep Forgetting” instead.`:`I couldn't find unfinished review topics for ${course.name}${period?` (${period})`:''} yet.`;}
   const priorityRank={High:0,Medium:1,Low:2},statusRank={'In Progress':0,'Not Started':1,'Done':2};candidates.sort((a,b)=>(priorityRank[a.priority]??1)-(priorityRank[b.priority]??1)||(statusRank[a.status]??1)-(statusRank[b.status]??1));
   let limit=3;const min=q.match(/\b(\d{1,3})\s*(minute|minutes|min)\b/),hr=q.match(/\b(\d+(?:\.\d+)?)\s*(hour|hours|hr|hrs)\b/);if(min){const n=Number(min[1]);limit=n<=30?1:n<=60?2:3;}else if(hr){const n=Number(hr[1]);limit=n<=.5?1:n<=1?2:n<=2?3:4;}
   const top=candidates.slice(0,limit);askCramchyContext.lastStudyPlan=top.map(t=>t.name);let msg=`For ${targetLabel||course.name}, I'd study these first:`;msg+='\n'+top.map((t,i)=>`${i+1}. ${t.name}${t.priority==='High'?' · high priority':''}${t.status==='In Progress'?' · already in progress':''}`).join('\n');
@@ -3974,8 +3974,8 @@ function askTasks(raw=''){
   if(/\b(due|deadline|overdue|this week|tomorrow|today)\b/.test(q)){let msg=`Quick tasks in Cramchy don't have due dates yet, so I can't truthfully filter them by deadline.`;if(undone.length)msg+=`\n\nYou do have ${undone.length} unfinished task${undone.length===1?'':'s'}:\n`+undone.slice(0,5).map((m,i)=>`${i+1}. ${m.text}`).join('\n');return msg;}
   if(/\b(done|finished|completed)\b/.test(q))return done.length?`You've completed ${done.length} quick task${done.length===1?'':'s'}:\n`+done.slice(0,8).map(m=>`• ${m.text}`).join('\n'):`No completed quick tasks are saved right now.`;
   if(/\b(how many|count)\b/.test(q))return `You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}.`;
-  if(/\b(what should i do first|which task first|prioritize.*task)\b/.test(q)){if(!undone.length)return `You don't have any unfinished quick tasks right now ♡`;return `Quick Tasks don't have deadlines yet, so I can't rank urgency. If we're using list order, start with “${undone[0].text}.”`;}
-  if(!undone.length)return `You don't have any unfinished quick tasks right now ♡`;
+  if(/\b(what should i do first|which task first|prioritize.*task)\b/.test(q)){if(!undone.length)return `You don't have any unfinished quick tasks right now`;return `Quick Tasks don't have deadlines yet, so I can't rank urgency. If we're using list order, start with “${undone[0].text}.”`;}
+  if(!undone.length)return `You don't have any unfinished quick tasks right now`;
   const shown=undone.slice(0,7);let msg=`You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}:\n`+shown.map((m,i)=>`${i+1}. ${m.text}`).join('\n');if(undone.length>shown.length)msg+=`\n…and ${undone.length-shown.length} more in Tasks.`;return msg;
 }
 function askAcademicQuery(raw=''){
@@ -4014,13 +4014,13 @@ function askStudyHistory(raw='',course=null){
   const total=rows.reduce((s,h)=>s+h.minutes,0);return `You've logged ${total} focused minute${total===1?'':'s'} this term${course?` for ${course.name}`:''}.`;
 }
 function askFriendly(raw){
-  const q=askNormalize(raw),name=cramchyName();if(/^(hi|hello|hey|beh|hii|hiii)\b/.test(q)&&q.split(' ').length<=4)return `hiii ${name} ♡ what are we checking today?`;
-  if(/\b(thank you|thanks|ty|salamat)\b/.test(q))return `always, beh ♡ now go collect those academic receipts.`;
+  const q=askNormalize(raw),name=cramchyName();if(/^(hi|hello|hey|beh|hii|hiii)\b/.test(q)&&q.split(' ').length<=4)return `hiii ${name} what are we checking today?`;
+  if(/\b(thank you|thanks|ty|salamat)\b/.test(q))return `always, beh now go collect those academic receipts.`;
   if(/\b(i m cooked|im cooked|am i cooked|cooked)\b/.test(q)){const n=askNextUpcomingExam(),tasks=(state.missions||[]).filter(m=>!m.done).length;if(n){const when=askExamState(n.exam)==='in-progress'?'right now':`in ${askTimeUntilText(n.exam.start)}`;return `not cooked. maybe lightly toasted 😭 you have ${tasks} unfinished task${tasks===1?'':'s'} and your next exam is ${when}.`; }return `not cooked 😭 I just need more saved deadlines/exams before I can diagnose the academic situation.`;}
   if(/\b(do i have a lot to do|how bad is it)\b/.test(q)){const tasks=(state.missions||[]).filter(m=>!m.done).length,n=askNextUpcomingExam();return n?`You have ${tasks} unfinished quick task${tasks===1?'':'s'}, and ${n.exam.name} starts in ${askTimeUntilText(n.exam.start)}.`:`You have ${tasks} unfinished quick task${tasks===1?'':'s'} and no upcoming exam date saved for this term.`;}
-  if(/\b(tired|dont want to study|don t want to study|lazy|motivate|motivation|hype me|can i rest)\b/.test(q))return `tiny plan: pick one unfinished topic, do one focused block, then reassess. you do not need to conquer the whole semester in one sitting ♡`;
+  if(/\b(tired|dont want to study|don t want to study|lazy|motivate|motivation|hype me|can i rest)\b/.test(q))return `tiny plan: pick one unfinished topic, do one focused block, then reassess. you do not need to conquer the whole semester in one sitting`;
   if(/\b(i finished|i m done|im done|i passed|passed)\b/.test(q))return `OH?? academic weapon behavior detected ✦ proud of that progress, beh.`;
-  if(/\b(bye|good night|goodnight)\b/.test(q))return `bye beh ♡ Cramchy will keep the receipts.`;return null;
+  if(/\b(bye|good night|goodnight)\b/.test(q))return `bye beh Cramchy will keep the receipts.`;return null;
 }
 function askIntent(raw){
   const q=askNormalize(raw);
@@ -4076,14 +4076,14 @@ function askHandleIntent(raw){
   askCramchyContext.lastIntent=intent==='friendly'?(previousIntent||'friendly'):intent;
   return reply;
 }
-function askHelp(){return `ask me almost anything about what's saved in Cramchy ✦\n\n• classes — “what's my next class?”, “am I free tomorrow?”, “what comes after that?”\n• exams — “what are my next exams?”, “what else is on that day?”, “what room?”\n• studying — “what should I study?”, “should I start studying now?”, “give me study tips”\n• topics — “what's left for anaphy?”, “what do I keep forgetting?”\n• grades — “how am I doing in cogpsy?”, “what's dragging it down?”, “what's my GWA?”\n• tasks — “what tasks are left?”, “how many have I finished?”\n• courses — professors, rooms, units, codes, schedules, grading schemes\n• study history — focused minutes, streak, last studied, most/least studied\n\nYou can use cogpsy, edtech, fm, anaphy, and printea too ♡ and I understand follow-ups like “that day,” “for it,” and “after that.”`;}
+function askHelp(){return `ask me almost anything about what's saved in Cramchy ✦\n\n• classes — “what's my next class?”, “am I free tomorrow?”, “what comes after that?”\n• exams — “what are my next exams?”, “what else is on that day?”, “what room?”\n• studying — “what should I study?”, “should I start studying now?”, “give me study tips”\n• topics — “what's left for anaphy?”, “what do I keep forgetting?”\n• grades — “how am I doing in cogpsy?”, “what's dragging it down?”, “what's my GWA?”\n• tasks — “what tasks are left?”, “how many have I finished?”\n• courses — professors, rooms, units, codes, schedules, grading schemes\n• study history — focused minutes, streak, last studied, most/least studied\n\nYou can use cogpsy, edtech, fm, anaphy, and printea too and I understand follow-ups like “that day,” “for it,” and “after that.”`;}
 function openAskCramchy(){
   if(document.getElementById('askCramchyPanel')){closeAskCramchy();return;}
   askResetContext();
   const panel=document.createElement('section');panel.id='askCramchyPanel';panel.className='ask-cramchy-panel';panel.setAttribute('aria-label','Ask Cramchy');
   panel.innerHTML=`<div class="ask-cramchy-head"><div class="ask-cramchy-avatar"><img src="${ASK_CRAMCHY_ICON}" alt="Ask Cramchy icon"></div><div class="ask-cramchy-title"><strong>ask cramchy</strong><span>your academic bestie with receipts ✦</span></div><button class="ask-cramchy-close" id="askCramchyClose" aria-label="Close">×</button></div><div class="ask-cramchy-messages" id="askCramchyMessages"></div><div class="ask-cramchy-compose"><textarea class="ask-cramchy-input" id="askCramchyInput" rows="1" maxlength="280" placeholder="ask me something..."></textarea><button class="ask-cramchy-send" id="askCramchySend" aria-label="Send">↑</button></div>`;
   document.body.appendChild(panel);document.getElementById('askCramchyLauncher')?.setAttribute('aria-expanded','true');document.getElementById('askCramchyClose')?.addEventListener('click',closeAskCramchy);
-  askAddMessage('bot',`hiii ${cramchyName()} ♡ ask me about your classes, exams, grades, tasks, or what to study.`);askAddChips([{label:'what should I study?',query:'what should I study?'},{label:"what's my next class?",query:"what's my next class?"},{label:'how are my grades?',query:'how are my grades?'},{label:"when's my next exam?",query:"when's my next exam?"}]);
+  askAddMessage('bot',`hiii ${cramchyName()} ask me about your classes, exams, grades, tasks, or what to study.`);askAddChips([{label:'what should I study?',query:'what should I study?'},{label:"what's my next class?",query:"what's my next class?"},{label:'how are my grades?',query:'how are my grades?'},{label:"when's my next exam?",query:"when's my next exam?"}]);
   const input=document.getElementById('askCramchyInput'),send=document.getElementById('askCramchySend');send?.addEventListener('click',()=>askSubmit());input?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();askSubmit();}});input?.addEventListener('input',()=>{input.style.height='42px';input.style.height=Math.min(input.scrollHeight,96)+'px';});window.setTimeout(()=>input?.focus(),80);
 }
 /* ===================== END ASK CRAMCHY LOGIC V1.2 ===================== */

@@ -43,7 +43,7 @@
         scrollbar-width:thin;scrollbar-color:#e9a9bc transparent;
       }
       .cramchy-letter-card::before{
-        content:'♡';position:absolute;top:17px;left:50%;transform:translateX(-50%);
+        content:'';position:absolute;top:17px;left:50%;transform:translateX(-50%);
         color:#df7f9c;font:700 19px/1 Georgia,serif;
       }
       .cramchy-letter-close{
@@ -100,15 +100,15 @@
     overlay.innerHTML=`
       <article class="cramchy-letter-card">
         <button class="cramchy-letter-close" type="button" aria-label="Close special letter">×</button>
-        <h2 class="cramchy-letter-kicker" id="cramchyLetterTitle">A special letter for you ♡</h2>
+        <h2 class="cramchy-letter-kicker" id="cramchyLetterTitle">A special letter for you</h2>
         <div class="cramchy-letter-body">
           <p class="cramchy-letter-hello">Hello, my dear user!</p>
-          <p>I’m Charlene Mikaela Caco, a Psychology student from NU Clark and the person behind Cramchy. ♡</p>
+          <p>I’m Charlene Mikaela Caco, a Psychology student from NU Clark and the person behind Cramchy.</p>
           <p>Thank you so much for using this little app. I created Cramchy because I know how overwhelming school can get, especially when everything seems to pile up all at once.</p>
           <p>I hope Cramchy helps make your days a little lighter, your tasks a little less scary, and studying a little more manageable. Even the smallest progress still counts, okay?</p>
-          <p>I’m really happy that something I created gets to be part of your academic journey. I’m rooting for you, always. ♡</p>
+          <p>I’m really happy that something I created gets to be part of your academic journey. I’m rooting for you, always.</p>
           <hr class="cramchy-letter-rule">
-          <p class="cramchy-letter-signoff">With love,<br><strong>Chachi ♡</strong></p>
+          <p class="cramchy-letter-signoff">With love,<br><strong>Chachi</strong></p>
         </div>
       </article>`;
     document.body.appendChild(overlay);

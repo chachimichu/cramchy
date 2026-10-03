@@ -155,7 +155,7 @@
     if(!events.length){
       list.innerHTML=`
         <div class="home-planner-reminders-empty">
-          <span class="spark" aria-hidden="true">♡</span>
+
           <div><strong>nothing plotted this week</strong><p>Planner events and course exams appear here.</p></div>
         </div>`;
       return;

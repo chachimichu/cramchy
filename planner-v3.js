@@ -374,7 +374,7 @@
   }
 
   function cleanMicrocopyOnce(){
-    const replacements=[['nothing due here ♡','nothing due here'],['nothing here yet ♡','nothing here yet'],['no courses yet ♡','no courses yet'],['add your courses ♡','add your courses']];
+    const replacements=[['nothing due here','nothing due here'],['nothing here yet','nothing here yet'],['no courses yet','no courses yet'],['add your courses','add your courses']];
     const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
     nodes.forEach(node=>{let t=node.nodeValue;replacements.forEach(([a,b])=>{t=t.split(a).join(b)});if(t!==node.nodeValue)node.nodeValue=t});
   }

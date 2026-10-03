@@ -161,7 +161,7 @@
 
   function cleanOldMicrocopy(){
     if(!document.body)return;
-    const replacements=new Map([['nothing due here ♡','nothing due here'],['♡ today\'s tasks','today\'s tasks'],['♡ todays tasks','today\'s tasks'],['pick something for me ✦','pick something for me'],['good afternoon, girl.','good afternoon, girl'],['good morning, girl.','good morning, girl'],['good evening, girl.','good evening, girl']]);
+    const replacements=new Map([['nothing due here','nothing due here'],[' today\'s tasks','today\'s tasks'],[' todays tasks','today\'s tasks'],['pick something for me ✦','pick something for me'],['good afternoon, girl.','good afternoon, girl'],['good morning, girl.','good morning, girl'],['good evening, girl.','good evening, girl']]);
     const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
     const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
     nodes.forEach(node=>{const original=node.nodeValue;let next=original;replacements.forEach((value,key)=>{next=next.replaceAll(key,value);});if(next!==original)node.nodeValue=next;});
