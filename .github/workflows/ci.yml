@@ -89,4 +89,5 @@ jobs:
         run: |
           node testing/grade-insights.test.cjs
           node testing/course-timetable.test.cjs
+          node testing/special-letter-overlay.test.cjs
           node testing/grades-workspace.test.cjs

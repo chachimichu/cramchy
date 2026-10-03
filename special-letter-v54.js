@@ -4,6 +4,7 @@
   const APP_KEY='strawberryMatchaMidtermsState_v1';
   const SEEN_KEY='cramchySpecialLetterSeen_v2';
   let previousFocus=null;
+  const previewLetter=new URLSearchParams(window.location.search).get('preview-letter')==='1';
 
   function readProfile(){
     try{
@@ -26,13 +27,15 @@
     style.textContent=`
       .cramchy-letter-overlay{
         position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;
+        width:100%;height:100%;height:100dvh;box-sizing:border-box;overflow:hidden;
         padding:24px;background:rgba(73,38,53,.48);backdrop-filter:blur(7px);
         animation:cramchyLetterFade .24s ease both;
       }
       body.cramchy-letter-open{overflow:hidden!important}
       .cramchy-letter-card{
         position:relative;width:min(620px,100%);max-height:min(780px,calc(100vh - 48px));
-        overflow:auto;padding:clamp(32px,6vw,54px) clamp(24px,7vw,62px) clamp(34px,6vw,52px);
+        max-height:min(780px,calc(100dvh - 48px));
+        overflow:auto;overscroll-behavior:contain;padding:clamp(32px,6vw,54px) clamp(24px,7vw,62px) clamp(34px,6vw,52px);
         border:1px solid rgba(255,255,255,.94);border-radius:30px;
         background:
           radial-gradient(circle at 10% 8%,rgba(255,255,255,.98),transparent 25%),
@@ -67,8 +70,8 @@
       @keyframes cramchyLetterFade{from{opacity:0}to{opacity:1}}
       @keyframes cramchyLetterArrive{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
       @media(max-width:540px){
-        .cramchy-letter-overlay{padding:12px;align-items:center}
-        .cramchy-letter-card{max-height:calc(100vh - 24px);border-radius:24px;padding:42px 23px 30px}
+        .cramchy-letter-overlay{padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));align-items:center}
+        .cramchy-letter-card{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-radius:24px;padding:42px 23px 30px}
         .cramchy-letter-kicker{margin-bottom:21px;font-size:31px}
         .cramchy-letter-body{font-size:15.5px;line-height:1.63}
         .cramchy-letter-body p{margin-bottom:14px}
@@ -87,18 +90,18 @@
     if(previousFocus&&typeof previousFocus.focus==='function')previousFocus.focus();
   }
 
-  function show(){
-    if(!shouldShow()||document.getElementById('cramchySpecialLetter'))return false;
+  function show(force=false){
+    if((!force&&!shouldShow())||document.getElementById('cramchySpecialLetter'))return false;
     installStyles();
     previousFocus=document.activeElement;
     const overlay=document.createElement('div');
     overlay.id='cramchySpecialLetter';
     overlay.className='cramchy-letter-overlay';
-    overlay.setAttribute('role','dialog');
-    overlay.setAttribute('aria-modal','true');
-    overlay.setAttribute('aria-labelledby','cramchyLetterTitle');
+    // The inner card is the dialog. The fixed backdrop must never match the
+    // mobile [role="dialog"] rule that positions dialog cards relatively.
+    overlay.setAttribute('role','presentation');
     overlay.innerHTML=`
-      <article class="cramchy-letter-card">
+      <article class="cramchy-letter-card" role="dialog" aria-modal="true" aria-labelledby="cramchyLetterTitle">
         <button class="cramchy-letter-close" type="button" aria-label="Close special letter">×</button>
         <h2 class="cramchy-letter-kicker" id="cramchyLetterTitle">A special letter for you</h2>
         <div class="cramchy-letter-body">
@@ -119,10 +122,10 @@
   }
 
   function maybeShow(){
-    if(!shouldShow()||document.getElementById('cramchyOnboard'))return false;
+    if((!previewLetter&&!shouldShow())||document.getElementById('cramchyOnboard'))return false;
     const splash=document.getElementById('cramchyBootSplash');
     if(splash&&!splash.classList.contains('is-leaving')){setTimeout(maybeShow,450);return false;}
-    return show();
+    return show(previewLetter);
   }
 
   function install(){

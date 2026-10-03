@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-course-schedule-preview-82';
+  const VERSION='2026-10-04-letter-mobile-preview-83';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
