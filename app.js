@@ -1,7 +1,6 @@
 (function(){
-  const VERSION='2026-10-04-term-gwa-hierarchy-80';
+  const VERSION='2026-10-04-first-paint-loader-81';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
-  let splashSafetyTimer=null;
 
   function installFavicon(){
     const href='/favicon.ico?v=51';
@@ -20,11 +19,14 @@
   }
 
   function installBootSplash(){
+    document.documentElement.setAttribute('data-cramchy-booting','');
     if(document.getElementById('cramchyBootSplash')) return;
 
     const style=document.createElement('style');
     style.id='cramchyBootSplashStyle';
     style.textContent=`
+      html[data-cramchy-booting] body > :not(#cramchyBootSplash){visibility:hidden!important;}
+
       #cramchyBootSplash{
         position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;
         background:
@@ -111,13 +113,13 @@
       </div>`;
     document.body.appendChild(splash);
 
-    splashSafetyTimer=setTimeout(()=>finishBootSplash(),9000);
+
   }
 
   function finishBootSplash(){
-    if(splashSafetyTimer){clearTimeout(splashSafetyTimer);splashSafetyTimer=null;}
     const splash=document.getElementById('cramchyBootSplash');
     if(!splash) return;
+    document.documentElement.removeAttribute('data-cramchy-booting');
     splash.classList.add('is-leaving');
     setTimeout(()=>{
       splash.remove();
@@ -218,13 +220,17 @@
     .then(()=>loadScript('special-letter-v54.js?v='+VERSION))
     .then(()=>loadScript('js/grade-insights.js?v='+VERSION))
     .then(()=>loadScript('grades-workspace.js?v='+VERSION))
+    .then(()=>document.fonts?.ready)
     .then(()=>finishBootSplash())
     .catch(err=>{
       console.error('Cramchy startup failed.',err);
-      finishBootSplash();
-      const notice=document.createElement('p');
-      notice.className='card';
-      notice.textContent='Cramchy could not open your saved workspace. Refresh to try again. Your stored progress was kept.';
-      document.body.appendChild(notice);
+      const splash=document.getElementById('cramchyBootSplash');
+      const copy=splash?.querySelector('.cramchy-boot-copy');
+      if(copy)copy.textContent='Could not finish opening. Your saved progress is safe.';
+      const retry=document.createElement('button');
+      retry.type='button';retry.className='btn';retry.textContent='try again';
+      retry.style.marginTop='20px';
+      retry.addEventListener('click',()=>location.reload());
+      splash?.querySelector('.cramchy-boot-shell')?.appendChild(retry);
     });
 })();
