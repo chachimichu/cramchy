@@ -1,0 +1,4 @@
+/* One warm brown for page headings across the regular and exam workspaces. */
+body{--cramchy-page-heading:#5a3a3f;}
+body[data-theme="dark-study"]{--cramchy-page-heading:var(--text-main,#f2e8ed);}
+main > .view :is(h1,h2){color:var(--cramchy-page-heading)!important;}
