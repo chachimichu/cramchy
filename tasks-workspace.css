@@ -5,12 +5,8 @@
 .tw-status button{background:transparent;border-color:transparent;}
 .tw-status button[aria-pressed=true]{background:#b63f68;border-color:#b63f68;color:#fff;box-shadow:0 3px 9px #b63f6824;}
 .tw-status button span{color:inherit;}
-.tw-filters button{--filter-accent:#a78b77;background:color-mix(in srgb,var(--filter-accent) 10%,var(--ivory));border-color:color-mix(in srgb,var(--filter-accent) 35%,var(--ivory));}
-.tw-filters [data-tw-filter=quiz]{--filter-accent:var(--check-quiz)}
-.tw-filters [data-tw-filter=study]{--filter-accent:var(--check-study)}
-.tw-filters [data-tw-filter=assignment]{--filter-accent:var(--check-assignment)}
-.tw-filters [data-tw-filter=other]{--filter-accent:var(--check-personal)}
-.tw-filters button[aria-pressed=true]{background:color-mix(in srgb,var(--filter-accent) 30%,var(--ivory));border-color:var(--filter-accent);box-shadow:inset 0 0 0 1px var(--filter-accent);}
+.tw-filters button{background:var(--ivory);border-color:var(--pink-soft);}
+.tw-filters button[aria-pressed=true]{background:var(--pink-soft);border-color:var(--red-berry);}
 .tw-status span,.tw-group h3 span{font-size:.7rem;margin-left:8px;color:var(--text-soft);}
 .tw-group{margin-top:22px;}.tw-group h3{font:700 .9rem var(--cramchy-readable)!important;letter-spacing:0!important;color:var(--text-main);margin-bottom:10px;}
 .tw-entry{--check-accent:var(--check-task);display:flex;align-items:center;gap:12px;padding:15px 12px;margin-bottom:10px;background:var(--ivory);border:1px solid var(--pink-soft);border-left:4px solid var(--check-accent);border-radius:16px;}
