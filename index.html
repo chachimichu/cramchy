@@ -123,13 +123,37 @@
     <button class="navbtn exam-legacy-btn" data-exam-tab="timer">Study Timer</button>
     <button class="navbtn exam-legacy-btn" data-exam-tab="countdown">Countdown</button>
     <button class="navbtn exam-legacy-btn" data-exam-tab="matcha">Matcha Corner</button>
-    <button class="navbtn exam-switch-btn" id="changeExamPeriodBtn" type="button">switch term / period</button>
-    <button class="navbtn exam-switch-btn" id="resetExamPeriodBtn" type="button">reset this period</button>
-    <button class="navbtn exam-exit-btn" id="exitExamModeTopBtn" type="button">← regular cramchy</button>
+
   </div>
   <button class="cloud-btn" id="cloudBtn" type="button">☁ cloud</button>
   <span class="save-indicator" id="saveIndicator">saved ✓</span>
 </nav>
+
+<div class="exam-toolbar" aria-label="Exam workspace controls">
+  <button id="exitExamModeTopBtn" type="button" class="exam-home">← home</button>
+  <div class="exam-toolbar-right">
+    <details id="examPeriodMenu" class="exam-toolbar-menu">
+      <summary><span id="examPeriodMenuLabel">midterms · term 1</span><span aria-hidden="true"> ▾</span></summary>
+      <div class="exam-toolbar-panel">
+        <label for="examToolbarYear">academic year</label>
+        <select id="examToolbarYear"></select>
+        <label for="examToolbarTerm">term</label>
+        <select id="examToolbarTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select>
+        <label for="examToolbarPeriod">period</label>
+        <select id="examToolbarPeriod"><option value="midterms">midterms</option><option value="finals">finals</option></select>
+        <button id="applyExamToolbarPeriod" class="btn" type="button">open workspace</button>
+        <button id="changeExamPeriodBtn" class="exam-toolbar-secondary" type="button">view exam mode options</button>
+      </div>
+    </details>
+    <details id="examActionsMenu" class="exam-toolbar-menu">
+      <summary aria-label="More exam actions">⋯</summary>
+      <div class="exam-toolbar-panel exam-actions-panel">
+        <button id="resetExamPeriodBtn" type="button">reset this period</button>
+        <p>Reset only the current exam workspace.</p>
+      </div>
+    </details>
+  </div>
+</div>
 
 <main>
 

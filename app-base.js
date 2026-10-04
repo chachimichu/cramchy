@@ -3090,6 +3090,14 @@ function renderExamMode(){
     if(context)context.textContent=`${activeExamYear()} · ${activeExamTerm()} · ${active}`;
     if(tagline)tagline.textContent=`you gotta lock in, ${cramchyName().toLowerCase()}!`;
     document.title=`${label} · Cramchy`;
+    const toolbarLabel=document.getElementById('examPeriodMenuLabel');
+    if(toolbarLabel)toolbarLabel.textContent=`${active} · ${activeExamTerm().toLowerCase()}`;
+    const toolbarYear=document.getElementById('examToolbarYear');
+    if(toolbarYear)toolbarYear.innerHTML=availableAcademicYears().map(y=>`<option value="${escapeAttr(y)}" ${y===activeExamYear()?'selected':''}>${escapeHtml(y)}</option>`).join('');
+    const toolbarTerm=document.getElementById('examToolbarTerm'),toolbarPeriod=document.getElementById('examToolbarPeriod');
+    if(toolbarTerm)toolbarTerm.value=activeExamTerm();
+    if(toolbarPeriod)toolbarPeriod.value=active;
+
   }else{
     if(brand)brand.dataset.examLabel='';
     document.title='Cramchy. — study companion';
@@ -3191,6 +3199,26 @@ function initAcademicTerms(){
 
   document.getElementById('addExamBtn')?.addEventListener('click',()=>openExamModal());
   document.getElementById('resetExamPeriodBtn')?.addEventListener('click',resetActiveExamPeriod);
+  document.getElementById('applyExamToolbarPeriod')?.addEventListener('click',()=>{
+    const year=document.getElementById('examToolbarYear').value;
+    const term=document.getElementById('examToolbarTerm').value;
+    const period=document.getElementById('examToolbarPeriod').value;
+    if(!availableAcademicYears().includes(year)||!TERM_OPTIONS.includes(term)||!['midterms','finals'].includes(period))return;
+    state.examContext={academicYear:year,term};
+    renderExamChooserContext();
+    document.getElementById('examPeriodMenu').open=false;
+    setExamPeriod(period);
+  });
+  document.querySelectorAll('.exam-toolbar-menu').forEach(menu=>menu.addEventListener('toggle',()=>{
+    if(menu.open)document.querySelectorAll('.exam-toolbar-menu').forEach(other=>{if(other!==menu)other.open=false;});
+  }));
+  document.addEventListener('click',event=>{
+    if(!event.target.closest('.exam-toolbar-menu'))document.querySelectorAll('.exam-toolbar-menu').forEach(menu=>menu.open=false);
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape')document.querySelectorAll('.exam-toolbar-menu').forEach(menu=>{if(menu.open){menu.open=false;menu.querySelector('summary').focus();}});
+  });
+
   document.getElementById('startNewTermBtn')?.addEventListener('click',openStartTermModal);
   document.getElementById('archiveCurrentTermBtn')?.addEventListener('click',archiveCurrentTerm);
 
