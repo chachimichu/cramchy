@@ -195,6 +195,7 @@
     $all('.planner-view','#view-planner').forEach(v=>v.classList.remove('active'));
     $('#planner'+view[0].toUpperCase()+view.slice(1)+'View')?.classList.add('active');
     renderAllPlanner();
+    window.CramchyMotion?.enter($('#planner'+view[0].toUpperCase()+view.slice(1)+'View'));
   }
 
   function renderMonth(){
