@@ -2,7 +2,7 @@
 body.exam-mode-active .exam-toolbar {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   max-width: 1100px; margin: 12px auto 0; padding: 0 16px; box-sizing: border-box;
-  font-family: var(--cramchy-readable); color: var(--text-main); position: relative; z-index: 50;
+  font-family: var(--cramchy-readable); color: var(--text-main); position: relative; z-index: 40;
 }
 .exam-toolbar-right { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .exam-toolbar-menu { position: relative; min-width: 0; }
@@ -14,8 +14,10 @@ body.exam-mode-active .exam-toolbar {
   transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 .exam-toolbar summary::-webkit-details-marker { display: none; }
-.exam-home {
-  border-color: #e8b5c3; background: #ffe1e9; color: #5a3a3f;
+.exam-toolbar #exitExamModeTopBtn.exam-home {
+  border: 1px solid var(--red-berry) !important;
+  background: var(--red-berry) !important; color: #fff !important;
+  box-shadow: 0 3px 9px color-mix(in srgb, var(--red-berry) 25%, transparent) !important;
   font-weight: 800; white-space: nowrap; box-shadow: 0 3px 9px rgba(90, 58, 63, .1);
 }
 #examActionsMenu summary { width: 44px; padding: 0; font-size: 1.3rem; }
@@ -51,7 +53,10 @@ body.exam-mode-active .exam-toolbar { animation: exam-toolbar-enter .25s ease-ou
     transform: translateY(-2px);
     box-shadow: 0 5px 12px rgba(90, 58, 63, .13);
   }
-  .exam-home:hover { background: #ffd3df; border-color: #d99aad; }
+  .exam-toolbar #exitExamModeTopBtn.exam-home:hover {
+    background: color-mix(in srgb, var(--red-berry) 88%, #5a3a3f) !important;
+    border-color: var(--red-berry) !important;
+  }
 }
 @keyframes exam-menu-enter {
   from { opacity: 0; transform: translateY(-6px) scale(.98); }
