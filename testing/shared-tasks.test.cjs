@@ -20,3 +20,5 @@ api.import([legacy]);assert.equal(api.tasks.length,1,'migration markers are scop
 console.log('Shared tasks: one-time migration, field preservation, edits, completion, unscheduling, deletion, reload, account replacement and failed-save rollback passed.');
 
 const cleanStart=source.indexOf('function sanitizeState(');const clean=source.slice(cleanStart,source.indexOf('\n}',cleanStart)+2);ctx.SUBJECT_ORDER=[];ctx.freshState=()=>({missions:[],subjects:{},studyHistory:[]});vm.runInNewContext(clean,ctx);const restored=ctx.sanitizeState({missions:[{id:'dated',text:'Essay',done:true,date:'2026-10-09',course:'CogPsy',notes:'Keep me',start:'09:00',end:'10:00'}],importedPlannerTasks:['old-a']});assert.equal(restored.missions[0].date,'2026-10-09');assert.equal(restored.missions[0].notes,'Keep me');assert.equal(restored.importedPlannerTasks[0],'old-a');
+
+assert.equal(shared.dateLabel('2026-10-05'),'Monday · Oct 5, 2026');assert.equal(shared.dateLabel('2026-10-04'),'Sunday · Oct 4, 2026');assert.equal(shared.dateLabel(''),'');assert.equal(shared.dateLabel('2026-02-30'),'2026-02-30');

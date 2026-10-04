@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-shared-tasks-preview-87';
+  const VERSION='2026-10-04-task-weekdays-preview-88';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
