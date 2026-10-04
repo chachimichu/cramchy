@@ -1,0 +1,59 @@
+/* Exam hierarchy: playful page titles, readable sections and study details. */
+body.exam-mode-active :is(#view-dashboard, #view-schedule, #view-subjects, #view-timer, #view-countdown, #view-matcha) * {
+  font-family: var(--cramchy-readable) !important;
+}
+
+body.exam-mode-active #view-dashboard .legacy-dashboard .section-title,
+body.exam-mode-active #view-schedule .section-title,
+body.exam-mode-active #view-subjects .legacy-subjects-panel .section-title,
+body.exam-mode-active #view-timer .section-title,
+body.exam-mode-active #view-countdown .section-title,
+body.exam-mode-active #view-matcha .section-title {
+  font-family: var(--cramchy-readable) !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45;
+}
+
+body.exam-mode-active :is(#view-dashboard, #view-schedule, #view-subjects, #view-timer, #view-countdown, #view-matcha) :is(h3, h4) {
+  font-family: var(--cramchy-readable) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45;
+}
+
+body.exam-mode-active #view-dashboard #examHeroTitle,
+body.exam-mode-active #view-schedule #examScheduleHeading,
+body.exam-mode-active #view-subjects .legacy-subjects-panel > h2,
+body.exam-mode-active #view-timer > h2,
+body.exam-mode-active #view-countdown > h2,
+body.exam-mode-active #view-matcha > h2 {
+  font-family: var(--cramchy-display) !important;
+  font-weight: 700 !important;
+  letter-spacing: .015em !important;
+  line-height: 1.35;
+}
+
+body.exam-mode-active .brand::after,
+body.exam-mode-active .exam-nav-set,
+body.exam-mode-active .exam-nav-set * {
+  font-family: var(--cramchy-readable) !important;
+  letter-spacing: 0 !important;
+}
+
+body.exam-mode-active :is(.stat-card .num, .countdown-big, .countdown-precise, .exam-card .countdown, #timerDisplay) {
+  font-family: var(--cramchy-readable) !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0 !important;
+}
+
+body.exam-mode-active #view-dashboard .motivation-box p {
+  font-family: var(--cramchy-readable) !important;
+  font-size: .95rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--text-main);
+  margin-block: 12px 16px;
+}

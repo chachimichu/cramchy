@@ -19,41 +19,24 @@ const quickGwaRules = window.CramchyModules?.quickGwaRules;
 if(!quickGwaRules) throw new Error('Quick GWA rules module failed to initialize.');
 
 const MOTIVATIONS = [
-  "Studying doesn't suck as much as failing.",
-  "Don't cry when seeing your results; it was your choice and you chose not to study.",
-  "Your maximum is someone else's minimum. Go study.",
-  "I thought you wanted to prove that you're the best?",
-  "You said you wanted to be the best. Act like it.",
-  "Someone is studying while you're scrolling. Guess who gets the score?",
-  "Your competition doesn't care that you're tired.",
-  "You don't get to want Rank 1 and study like you're okay with Rank 3.",
-  "You wanted to prove them wrong. Here's your chance.",
-  "You can't complain about being overlooked when you're not giving them anything to notice.",
-  "The score you're praying for is hiding inside the hours you're wasting.",
-  "You know you're capable of more. That's exactly why you're not allowed to settle.",
-  "Someone with less talent but better discipline is already ahead of you.",
-  "Your potential means nothing if you keep choosing comfort.",
-  "You're not competing with their intelligence. You're competing with their consistency.",
-  "Future you will either thank you for tonight or wonder why you gave up so easily.",
-  "Imagine meeting future you in 2029 and having to explain why you didn't try.",
-  "She got where you wanted to be because she did what you kept postponing.",
-  "Your future degree won't care how unmotivated you felt tonight.",
-  "The woman you want to become is built during the hours nobody sees.",
-  "You keep saying \"future psychologist.\" Start studying like one.",
-  "You don't become exceptional by occasionally feeling motivated.",
-  "Your future self deserves better than your excuses.",
-  "Don't cry over a score you were unwilling to prepare for.",
-  "You can't manifest a perfect score. You have to earn it.",
-  "The exam doesn't care how badly you wanted 100.",
-  "You had the time. You chose your distractions. Remember that when the results come out.",
-  "Every question you can't answer tomorrow has a reason you ignored tonight.",
-  "Don't ask why they scored higher. Ask how badly they wanted it.",
-  "A perfect score starts long before the test paper reaches your desk.",
-  "You don't need luck. You need preparation.",
-  "Stop hoping the exam is easy. Become prepared enough that it doesn't matter."
+    "You don’t have to finish everything today. Choose one thing you can work on.",
+    "You can be nervous and still make progress.",
+    "Start with what you understand, then work through what you don’t.",
+    "A difficult topic might need more time. That doesn’t mean you’re bad at it.",
+    "You don’t need to feel motivated before you begin. A few minutes is enough to start.",
+    "Getting something wrong gives you a place to focus your next review.",
+    "Take a break when you need one. Come back with a clearer head.",
+    "Focus on understanding one idea before moving to the next.",
+    "You’ve learned things that felt confusing before. Give this one some time too.",
+    "Some days you’ll get more done than others. You can adjust your plan.",
+    "You can care about your grades without being hard on yourself.",
+    "An exam matters, but it doesn’t measure everything you’re capable of.",
+    "If you’re overwhelmed, make the next step smaller.",
+    "Ask for help with the part you’re stuck on. You don’t have to figure it all out alone.",
+    "Notice what you can explain now that you couldn’t explain before.",
+    "Prepare as well as you can, and leave room for rest."
 ];
-
-const HANABI_MESSAGES = [
+  const HANABI_MESSAGES = [
   "hanabi brought the book. your turn",
   "hanabi says one more page.",
   "tail wag = she approves. keep studying.",
@@ -3107,6 +3090,14 @@ function renderExamMode(){
     if(context)context.textContent=`${activeExamYear()} · ${activeExamTerm()} · ${active}`;
     if(tagline)tagline.textContent=`you gotta lock in, ${cramchyName().toLowerCase()}!`;
     document.title=`${label} · Cramchy`;
+    const toolbarLabel=document.getElementById('examPeriodMenuLabel');
+    if(toolbarLabel)toolbarLabel.textContent=`${active} · ${activeExamTerm().toLowerCase()}`;
+    const toolbarYear=document.getElementById('examToolbarYear');
+    if(toolbarYear)toolbarYear.innerHTML=availableAcademicYears().map(y=>`<option value="${escapeAttr(y)}" ${y===activeExamYear()?'selected':''}>${escapeHtml(y)}</option>`).join('');
+    const toolbarTerm=document.getElementById('examToolbarTerm'),toolbarPeriod=document.getElementById('examToolbarPeriod');
+    if(toolbarTerm)toolbarTerm.value=activeExamTerm();
+    if(toolbarPeriod)toolbarPeriod.value=active;
+
   }else{
     if(brand)brand.dataset.examLabel='';
     document.title='Cramchy. — study companion';
@@ -3208,6 +3199,15 @@ function initAcademicTerms(){
 
   document.getElementById('addExamBtn')?.addEventListener('click',()=>openExamModal());
   document.getElementById('resetExamPeriodBtn')?.addEventListener('click',resetActiveExamPeriod);
+  document.getElementById('applyExamToolbarPeriod')?.addEventListener('click',()=>{
+    const year=document.getElementById('examToolbarYear').value;
+    const term=document.getElementById('examToolbarTerm').value;
+    const period=document.getElementById('examToolbarPeriod').value;
+    if(!availableAcademicYears().includes(year)||!TERM_OPTIONS.includes(term)||!['midterms','finals'].includes(period))return;
+    state.examContext={academicYear:year,term};
+    renderExamChooserContext();
+    setExamPeriod(period);
+  });
   document.getElementById('startNewTermBtn')?.addEventListener('click',openStartTermModal);
   document.getElementById('archiveCurrentTermBtn')?.addEventListener('click',archiveCurrentTerm);
 

@@ -123,13 +123,37 @@
     <button class="navbtn exam-legacy-btn" data-exam-tab="timer">Study Timer</button>
     <button class="navbtn exam-legacy-btn" data-exam-tab="countdown">Countdown</button>
     <button class="navbtn exam-legacy-btn" data-exam-tab="matcha">Matcha Corner</button>
-    <button class="navbtn exam-switch-btn" id="changeExamPeriodBtn" type="button">switch term / period</button>
-    <button class="navbtn exam-switch-btn" id="resetExamPeriodBtn" type="button">reset this period</button>
-    <button class="navbtn exam-exit-btn" id="exitExamModeTopBtn" type="button">← regular cramchy</button>
+
   </div>
   <button class="cloud-btn" id="cloudBtn" type="button">☁ cloud</button>
   <span class="save-indicator" id="saveIndicator">saved ✓</span>
 </nav>
+
+<div class="exam-toolbar" aria-label="Exam workspace controls">
+  <button id="exitExamModeTopBtn" type="button" class="exam-home">← back to home</button>
+  <div class="exam-toolbar-right">
+    <div id="examPeriodMenu" class="exam-toolbar-menu">
+      <button class="exam-menu-trigger" type="button" aria-expanded="false" aria-controls="examPeriodPanel"><span id="examPeriodMenuLabel">midterms · term 1</span><span aria-hidden="true"> ▾</span></button>
+      <div id="examPeriodPanel" class="exam-toolbar-panel" hidden>
+        <label for="examToolbarYear">academic year</label>
+        <select id="examToolbarYear"></select>
+        <label for="examToolbarTerm">term</label>
+        <select id="examToolbarTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select>
+        <label for="examToolbarPeriod">period</label>
+        <select id="examToolbarPeriod"><option value="midterms">midterms</option><option value="finals">finals</option></select>
+        <button id="applyExamToolbarPeriod" class="btn" type="button">open workspace</button>
+        <button id="changeExamPeriodBtn" class="exam-toolbar-secondary" type="button">view exam mode options</button>
+      </div>
+    </div>
+    <div id="examActionsMenu" class="exam-toolbar-menu">
+      <button class="exam-menu-trigger" type="button" aria-label="More exam actions" aria-expanded="false" aria-controls="examActionsPanel">⋯</button>
+      <div id="examActionsPanel" class="exam-toolbar-panel exam-actions-panel" hidden>
+        <button id="resetExamPeriodBtn" type="button">reset this period</button>
+        <p>Reset only the current exam workspace.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <main>
 
@@ -655,6 +679,6 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=2026-10-04-first-paint-loader-81"></script>
+<script src="app.js?v=2026-10-04-exam-toolbar-buttons-97"></script>
 </body>
 </html>
