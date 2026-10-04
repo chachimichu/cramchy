@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cramchy. — study companion</title>
+  <style>/* Keep paused mascots hidden from the first paint in every layout. */
+    #petNook[hidden]{display:none!important;}
+  </style>
 <meta name="description" content="Cramchy — your academic bestie with receipts.">
 <meta name="theme-color" content="#f684b0">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -486,7 +489,8 @@
 
 </main>
 
-<div class="pet-nook" id="petNook">
+<!-- Hanabi and Kenken are paused until their layout is redesigned. -->
+<div class="pet-nook" id="petNook" hidden inert>
   <div class="pet-controls">
     <button class="pet-control-btn" id="petNapBtn" aria-label="Let Hanabi and Kenken nap" title="Nap / wake">☾</button>
     <button class="pet-control-btn" id="petHideBtn" aria-label="Hide Hanabi and Kenken" title="Hide">×</button>
