@@ -119,7 +119,7 @@
 
           <div class="planner-layout">
             <aside class="planner-sidebar">
-              <div class="planner-panel"><button class="planner-add" data-planner-add type="button">+ add event</button><div class="planner-legend"><span><i class="planner-dot class"></i>Classes</span><span><i class="planner-dot task"></i>Tasks</span><span><i class="planner-dot exam"></i>Exams</span><span><i class="planner-dot quiz"></i>Quizzes</span><span><i class="planner-dot study"></i>Study blocks</span><span><i class="planner-dot personal"></i>Personal</span></div></div>
+              <div class="planner-panel"><button class="planner-add" data-planner-add type="button">+ add event</button><div class="planner-legend"><span><i class="planner-dot class"></i>Classes</span><span><i class="planner-dot task"></i>Tasks</span><span><i class="planner-dot exam"></i>Exams</span><span><i class="planner-dot quiz"></i>Quizzes</span><span><i class="planner-dot study"></i>Study blocks</span><span><i class="planner-dot assignment"></i>Assignments</span><span><i class="planner-dot personal"></i>Personal</span></div></div>
               <div class="planner-panel" id="plannerNextPanel"></div>
               <div class="planner-panel planner-rec"><h3>Cramchy recommends</h3><p id="plannerRecText">Add an exam or deadline and Cramchy will help you see what needs attention.</p><img class="planner-logo-sync" src="${escapeHtml(getLogoSrc())}" alt=""></div>
             </aside>
@@ -129,7 +129,7 @@
               <div class="planner-nav"><button type="button" data-planner-nav="prev" aria-label="previous">‹</button><strong id="plannerLabel"></strong><button type="button" data-planner-nav="next" aria-label="next">›</button></div>
               <div class="planner-view active" id="plannerMonthView"><div class="planner-month-grid" id="plannerMonthGrid"></div></div>
               <div class="planner-view" id="plannerWeekView"><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; scroll horizontally for other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
-              <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><div class="planner-agenda" id="plannerAgenda"></div></div><aside class="planner-tasks"><h3>today’s checklist</h3><div id="plannerTasks"></div><button class="planner-add" data-planner-add-task type="button">add task</button></aside></div></div>
+              <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><div class="planner-agenda" id="plannerAgenda"></div></div></div></div>
             </div>
           </div>
         </div>
@@ -145,8 +145,7 @@
               <label>start<input id="plannerStart" type="time"></label>
               <label>end<input id="plannerEnd" type="time"></label>
               <label class="full">notes<textarea id="plannerNotes" placeholder="tiny notes, room, reminders, links..."></textarea></label>
-              <label class="full planner-personal-check" id="plannerPersonalField" hidden><span><input id="plannerShowInTasks" type="checkbox"> show in Tasks</span></label>
-              <p class="full shared-task-note" id="plannerTaskHint" hidden>One entry in Tasks, Home, and Planner, with its type and color. Leave the due date blank to keep it unscheduled.</p><p class="full" id="plannerTimeError" role="alert" hidden></p>
+              <p class="full shared-task-note" id="plannerTaskHint" hidden>Appears in Tasks automatically, with its type and color. Check it off in Tasks; add a date to show it in Planner.</p><p class="full" id="plannerTimeError" role="alert" hidden></p>
               <div class="planner-modal-actions full"><button class="planner-danger" id="plannerDeleteBtn" type="button">delete</button><span></span><button class="planner-light" type="button" data-planner-close>cancel</button><button class="planner-primary" type="submit" id="plannerSaveBtn">save event</button></div>
             </form>
           </div>
@@ -257,11 +256,7 @@
     renderDayHighlight();
     const agenda=$('#plannerAgenda');
     if(agenda)agenda.innerHTML=todays.length?todays.map(e=>`<button class="planner-agenda-item ${e.type} ${e.done?'shared-task-done':''}" data-planner-event="${escapeHtml(e.id)}" type="button"><div class="planner-agenda-time">${timeLabel(e.start)}</div><div><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||TYPE_LABEL[e.type])}${e.notes?' · '+escapeHtml(e.notes):''}</span></div><i>›</i></button>`).join(''):'<div class="planner-empty">nothing planned here yet</div>';
-    const tasks=$('#plannerTasks');
-    if(tasks){
-      const due=todays.filter(e=>e.sharedTask);
-      tasks.innerHTML=due.length?due.map(e=>`<div class="planner-task-row"><button class="planner-check ${e.done?'done':''}" data-planner-toggle-task="${escapeHtml(e.id)}" type="button" aria-label="${e.done?'mark incomplete':'complete task'}: ${escapeHtml(e.title)}" aria-pressed="${e.done}"></button><button class="planner-task-copy" data-planner-event="${escapeHtml(e.id)}" type="button"><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(TYPE_LABEL[e.type]+(e.course?' · '+e.course:''))}</span></button></div>`).join(''):'<div class="planner-empty small">no tasks due today</div>';
-    }
+
   }
 
   function renderDayHighlight(){
@@ -320,17 +315,16 @@
     $('#plannerDeleteBtn').style.display='none';
     $('#plannerType').disabled=false;
     $('#plannerTitle').value='';$('#plannerType').value=type;$('#plannerCourse').value='';$('#plannerDate').value=selectedDate;$('#plannerStart').value='';$('#plannerEnd').value='';$('#plannerNotes').value='';
-    $('#plannerShowInTasks').checked=false;syncTaskFields();
+    syncTaskFields();
   }
   function fillForm(e){
     clearTimeError();
     editingId=e.id;
     $('#plannerModalTitle').textContent='event details';$('#plannerSaveBtn').textContent='save changes';$('#plannerDeleteBtn').style.display='inline-flex';
     $('#plannerTitle').value=e.title;$('#plannerType').value=e.type;$('#plannerCourse').value=e.course;$('#plannerDate').value=e.date;$('#plannerStart').value=e.start;$('#plannerEnd').value=e.end;$('#plannerNotes').value=e.notes;
-    $('#plannerShowInTasks').checked=!!e.showInTasks||!!e.sharedTask;
     $('#plannerType').disabled=false;syncTaskFields();
   }
-  function syncTaskFields(){const type=$('#plannerType').value;$('#plannerPersonalField').hidden=type!=='personal';const shared=window.CramchySharedTasks.actionable({type,showInTasks:$('#plannerShowInTasks').checked});$('#plannerTaskHint').hidden=!shared;$('#plannerDateLabel').textContent=shared?'date (optional)':'date';}
+  function syncTaskFields(){const shared=window.CramchySharedTasks.actionable({type:$('#plannerType').value});$('#plannerTaskHint').hidden=!shared;$('#plannerDateLabel').textContent=shared?'date (optional)':'date';}
   function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>{const phone=window.matchMedia?.('(max-width:640px)').matches;$(phone?'#plannerModal [data-planner-close]':'#plannerTitle')?.focus()},20)}
   function openEvent(id){const e=events.find(x=>x.id===id);if(!e)return;if(e.academicExam){window.CramchySchedules?.edit(e);return;}fillForm(e);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false')}
   function closeModal(){const modal=$('#plannerModal');modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true')}
@@ -357,21 +351,19 @@
       const nav=e.target.closest('[data-planner-nav]');if(nav){e.preventDefault();moveCalendar(nav.dataset.plannerNav==='next'?1:-1);return}
       if(e.target.closest('[data-planner-add-course-exam]')){e.preventDefault();window.CramchySchedules?.add();return;}
       const add=e.target.closest('[data-planner-add]');if(add){e.preventDefault();openModal('study');return}
-      const addTask=e.target.closest('[data-planner-add-task]');if(addTask){e.preventDefault();openModal('task');return}
       const ev=e.target.closest('[data-planner-event]');if(ev){e.preventDefault();e.stopPropagation();openEvent(ev.dataset.plannerEvent);return}
-      const toggle=e.target.closest('[data-planner-toggle-task]');if(toggle){e.preventDefault();const item=events.find(x=>x.id===toggle.dataset.plannerToggleTask);if(item){if(item.sharedTask){try{window.CramchyTaskBridge.toggle(item.id);}catch(error){window.alert('Could not save this task. Please try again.');}}else{item.done=!item.done;saveEvents();}renderAllPlanner()}return}
       const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);setPlannerView('day');return}
       if(e.target.closest('[data-planner-close]')){e.preventDefault();closeModal();return}
       if(e.target===$('#plannerModal'))closeModal();
     };
     section.addEventListener('click',onPlannerClick);$('#plannerModal').addEventListener('click',onPlannerClick);
-    $('#plannerType').addEventListener('change',syncTaskFields);$('#plannerShowInTasks').addEventListener('change',syncTaskFields);
+    $('#plannerType').addEventListener('change',syncTaskFields);
     const form=$('#plannerForm');
     ['#plannerStart','#plannerEnd'].forEach(selector=>$(selector)?.addEventListener('input',clearTimeError));
     form?.addEventListener('submit',e=>{
       e.preventDefault();
       const item={
-        id:editingId||uid(),title:$('#plannerTitle').value.trim()||'Untitled event',type:TYPES.includes($('#plannerType').value)?$('#plannerType').value:'personal',course:$('#plannerCourse').value.trim(),showInTasks:$('#plannerType').value==='personal'?$('#plannerShowInTasks').checked:true,date:window.CramchySharedTasks.actionable({type:$('#plannerType').value,showInTasks:$('#plannerShowInTasks').checked})?$('#plannerDate').value:$('#plannerDate').value||selectedDate,start:$('#plannerStart').value,end:$('#plannerEnd').value,notes:$('#plannerNotes').value.trim(),done:editingId?Boolean(window.CramchyTaskBridge?.tasks.find(x=>x.id===editingId)?.done||events.find(x=>x.id===editingId)?.done):false
+        id:editingId||uid(),title:$('#plannerTitle').value.trim()||'Untitled event',type:TYPES.includes($('#plannerType').value)?$('#plannerType').value:'personal',course:$('#plannerCourse').value.trim(),showInTasks:true,date:window.CramchySharedTasks.actionable({type:$('#plannerType').value})?$('#plannerDate').value:$('#plannerDate').value||selectedDate,start:$('#plannerStart').value,end:$('#plannerEnd').value,notes:$('#plannerNotes').value.trim(),done:editingId?Boolean(window.CramchyTaskBridge?.tasks.find(x=>x.id===editingId)?.done||events.find(x=>x.id===editingId)?.done):false
       };
       clearTimeError();
       const issue=TIME.validate(item.start,item.end);

@@ -25,14 +25,14 @@ assert.equal(shared.dateLabel('2026-10-05'),'Monday · Oct 5, 2026');assert.equa
 
 const types=['quiz','study','assignment','exam','task'];const old=types.map((type,i)=>({...legacy,id:'typed-'+i,type,done:i===0}));
 const migrated=shared.migrate([],[],[...old,{...legacy,id:'personal',type:'personal',showInTasks:true},{...legacy,id:'private',type:'personal'},{...legacy,id:'class',type:'class'}]);
-assert.equal(migrated.tasks.length,6);assert.deepEqual(migrated.tasks.slice(0,5).map(t=>t.type),types);assert.equal(migrated.tasks[0].done,true);
+assert.equal(migrated.tasks.length,7);assert.deepEqual(migrated.tasks.slice(0,5).map(t=>t.type),types);assert.equal(migrated.tasks[0].done,true);
 assert.equal(shared.migrate(migrated.tasks,migrated.imported,old).changed,false);
 assert.deepEqual(shared.project(migrated.tasks).slice(0,5).map(e=>e.type),types);
 for(const type of [...types,'personal']){const cleanState=ctx.sanitizeState({missions:[{...migrated.tasks[0],type}]});assert.equal(cleanState.missions[0].type,type);}
-console.log('All checklist types survive migration, projection and state reload; classes and private reminders stay separate.');
+console.log('All checklist types survive migration, projection and state reload; classes stay separate and personal entries appear automatically.');
 
 const home=fs.readFileSync(require.resolve('../home-planner-reminders-v23.js'),'utf8');const begin=home.indexOf('  function upcomingPlannerEvents(');
 const homeCtx={window:{CramchySharedTasks:shared,CramchyTaskBridge:{events:()=>shared.project(migrated.tasks)}},todayIso:()=>legacy.date,addDays:()=> '2026-10-16',DAYS_AHEAD:7,MAX_ITEMS:8,readPlannerEvents:()=>old,whenLabel:()=> 'today',dateLabel:e=>e.date};
 vm.createContext(homeCtx);vm.runInContext(home.slice(begin,home.indexOf('\n  }',begin)+4),homeCtx);
-assert.equal(homeCtx.upcomingPlannerEvents().length,5,'Home lists each imported entry once and hides completed checklist entries');
-assert.equal(new Set(homeCtx.upcomingPlannerEvents().map(e=>e.id)).size,5);
+assert.equal(homeCtx.upcomingPlannerEvents().length,6,'Home lists each imported entry once and hides completed checklist entries');
+assert.equal(new Set(homeCtx.upcomingPlannerEvents().map(e=>e.id)).size,6);

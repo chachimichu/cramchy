@@ -12,7 +12,6 @@
 .tw-badge{font:700 .65rem var(--cramchy-readable);background:color-mix(in srgb,var(--check-accent) 18%,var(--ivory));border:1px solid color-mix(in srgb,var(--check-accent) 45%,var(--ivory));color:var(--text-main);padding:4px 9px;border-radius:999px;}
 .tw-edit,.tw-delete{min-height:44px;min-width:44px;border:0;border-radius:12px;background:var(--pink-soft);color:var(--text-main);font:700 .7rem var(--cramchy-readable);cursor:pointer;}.tw-delete{background:transparent;font-size:1.1rem;}
 .tw-done .tw-copy strong{text-decoration:line-through;color:var(--text-soft);}.tw-empty{text-align:center;padding:30px 12px;background:var(--ivory);border:1px dashed var(--pink-soft);border-radius:18px;}.tw-empty h3{font:700 1rem var(--cramchy-readable)!important;}.tw-empty p{font-size:.8rem;line-height:1.6;color:var(--text-soft);}.tw-error{font-size:.8rem;color:var(--red-deep);}
-.planner-personal-check[hidden]{display:none!important;}.planner-personal-check input{width:18px!important;height:18px;vertical-align:middle;}
 .planner-dot.quiz{background:var(--check-quiz)}.planner-dot.assignment{background:var(--check-assignment)}
 :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).assignment{background:#eaf1fc;border-color:var(--check-assignment);color:#3f5f8e;}
 :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).quiz{border-left-color:var(--check-quiz)}
@@ -21,3 +20,5 @@
 @media(prefers-reduced-motion:reduce){.tw-status button,.tw-filters button{transition:none;}}
 
 .home-planner-reminder.assignment{--reminder-accent:var(--check-assignment)}
+
+#view-planner .planner-day-grid{grid-template-columns:minmax(0,1fr)}
