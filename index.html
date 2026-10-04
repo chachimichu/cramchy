@@ -132,9 +132,9 @@
 <div class="exam-toolbar" aria-label="Exam workspace controls">
   <button id="exitExamModeTopBtn" type="button" class="exam-home">← back to home</button>
   <div class="exam-toolbar-right">
-    <details id="examPeriodMenu" class="exam-toolbar-menu">
-      <summary><span id="examPeriodMenuLabel">midterms · term 1</span><span aria-hidden="true"> ▾</span></summary>
-      <div class="exam-toolbar-panel">
+    <div id="examPeriodMenu" class="exam-toolbar-menu">
+      <button class="exam-menu-trigger" type="button" aria-expanded="false" aria-controls="examPeriodPanel"><span id="examPeriodMenuLabel">midterms · term 1</span><span aria-hidden="true"> ▾</span></button>
+      <div id="examPeriodPanel" class="exam-toolbar-panel" hidden>
         <label for="examToolbarYear">academic year</label>
         <select id="examToolbarYear"></select>
         <label for="examToolbarTerm">term</label>
@@ -144,14 +144,14 @@
         <button id="applyExamToolbarPeriod" class="btn" type="button">open workspace</button>
         <button id="changeExamPeriodBtn" class="exam-toolbar-secondary" type="button">view exam mode options</button>
       </div>
-    </details>
-    <details id="examActionsMenu" class="exam-toolbar-menu">
-      <summary aria-label="More exam actions">⋯</summary>
-      <div class="exam-toolbar-panel exam-actions-panel">
+    </div>
+    <div id="examActionsMenu" class="exam-toolbar-menu">
+      <button class="exam-menu-trigger" type="button" aria-label="More exam actions" aria-expanded="false" aria-controls="examActionsPanel">⋯</button>
+      <div id="examActionsPanel" class="exam-toolbar-panel exam-actions-panel" hidden>
         <button id="resetExamPeriodBtn" type="button">reset this period</button>
         <p>Reset only the current exam workspace.</p>
       </div>
-    </details>
+    </div>
   </div>
 </div>
 
@@ -679,6 +679,6 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=2026-10-04-first-paint-loader-81"></script>
+<script src="app.js?v=2026-10-04-exam-toolbar-buttons-97"></script>
 </body>
 </html>

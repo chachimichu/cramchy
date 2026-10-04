@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-exam-toolbar-click-preview-96';
+  const VERSION='2026-10-04-exam-toolbar-buttons-97';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){

@@ -1,43 +1,36 @@
 (function () {
   const menus = [...document.querySelectorAll('.exam-toolbar-menu')];
-  function sync(menu) {
-    const trigger = menu.querySelector('summary');
-    const panel = menu.querySelector('.exam-toolbar-panel');
-    trigger?.setAttribute('aria-expanded', String(menu.open));
-    if (panel) panel.hidden = !menu.open;
-  }
   function setOpen(menu, open) {
-    menu.open = open;
-    sync(menu);
+    menu.classList.toggle('is-open', open);
+    menu.querySelector('.exam-menu-trigger').setAttribute('aria-expanded', String(open));
+    menu.querySelector('.exam-toolbar-panel').hidden = !open;
   }
+  function closeAll() { menus.forEach(menu => setOpen(menu, false)); }
   menus.forEach(menu => {
-    sync(menu);
-    menu.addEventListener('toggle', () => sync(menu));
-    new MutationObserver(() => sync(menu)).observe(menu, { attributes: true, attributeFilter: ['open'] });
+    const trigger = menu.querySelector('.exam-menu-trigger');
+    setOpen(menu, false);
+    trigger.addEventListener('click', () => {
+      const open = trigger.getAttribute('aria-expanded') !== 'true';
+      closeAll();
+      setOpen(menu, open);
+    });
   });
-  // Use one click path for touch, mouse and native keyboard activation.
-  // Cancel the native details action so it cannot toggle a second time.
-  document.addEventListener('click', event => {
-    const trigger = event.target.closest('.exam-toolbar-menu > summary');
-    if (trigger) {
-      event.preventDefault();
-      event.stopPropagation();
-      const menu = trigger.closest('.exam-toolbar-menu');
-      const nextOpen = !menu.open;
-      menus.forEach(other => setOpen(other, other === menu && nextOpen));
-      return;
-    }
-    if (!event.target.closest('.exam-toolbar-menu') ||
-        event.target.closest('#applyExamToolbarPeriod, #changeExamPeriodBtn, #resetExamPeriodBtn')) {
-      menus.forEach(menu => setOpen(menu, false));
-    }
+  // Safari may omit click events when a touch lands on noninteractive page space.
+  document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.exam-toolbar-menu')) closeAll();
   }, true);
+  document.addEventListener('click', event => {
+    if (!event.target.closest('.exam-toolbar-menu') ||
+        event.target.closest('#applyExamToolbarPeriod, #changeExamPeriodBtn, #resetExamPeriodBtn')) closeAll();
+  });
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
-    const menu = menus.find(item => item.open);
+    const menu = menus.find(item => item.classList.contains('is-open'));
     if (menu) {
-      menus.forEach(item => setOpen(item, false));
-      menu.querySelector('summary')?.focus();
+      closeAll();
+      menu.querySelector('.exam-menu-trigger').focus();
     }
   });
+  // Restoring a page from Safari's back/forward cache starts with closed panels.
+  window.addEventListener('pageshow', closeAll);
 })();

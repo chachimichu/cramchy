@@ -6,22 +6,21 @@ body.exam-mode-active .exam-toolbar {
 }
 .exam-toolbar-right { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .exam-toolbar-menu { position: relative; min-width: 0; }
-.exam-toolbar summary, .exam-home {
+.exam-toolbar .exam-menu-trigger, .exam-home {
   display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer;
   min-height: 44px; padding: 0 12px; box-sizing: border-box;
   border: 1px solid var(--pink-soft); border-radius: 999px; background: var(--ivory, #fff5f8);
   color: var(--text-main, #5a3a3f); font-size: .8rem; font-weight: 700; list-style: none;
   transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-.exam-toolbar summary::-webkit-details-marker { display: none; }
 .exam-toolbar #exitExamModeTopBtn.exam-home {
   border: 1px solid var(--red-berry) !important;
   background: var(--red-berry) !important; color: #fff !important;
   box-shadow: 0 3px 9px color-mix(in srgb, var(--red-berry) 25%, transparent) !important;
   font-weight: 800; white-space: nowrap; box-shadow: 0 3px 9px rgba(90, 58, 63, .1);
 }
-#examActionsMenu summary { width: 44px; padding: 0; font-size: 1.3rem; }
-.exam-toolbar-menu[open] > summary { background: var(--pink-soft); }
+#examActionsMenu .exam-menu-trigger { width: 44px; padding: 0; font-size: 1.3rem; }
+.exam-toolbar-menu.is-open > .exam-menu-trigger { background: var(--pink-soft); }
 .exam-toolbar-panel {
   position: absolute; top: calc(100% + 8px); right: 0; width: min(260px, calc(100vw - 32px));
   box-sizing: border-box; padding: 16px; border-radius: 18px; border: 1px solid var(--pink-soft);
@@ -30,8 +29,8 @@ body.exam-mode-active .exam-toolbar {
 }
 .exam-toolbar-panel[hidden] { display: none !important; }
 
-/* Safari must also hide our grid panel when its native details menu is closed. */
-.exam-toolbar-menu:not([open]) > .exam-toolbar-panel { display: none; }
+/* The button controller owns visibility on every browser. */
+.exam-toolbar-menu:not(.is-open) > .exam-toolbar-panel { display: none; }
 
 .exam-toolbar-panel label { font-size: .75rem; font-weight: 700; }
 .exam-toolbar-panel select { width: 100%; min-width: 0; box-sizing: border-box; min-height: 44px; font-size: 16px; }
@@ -41,20 +40,20 @@ body.exam-mode-active .exam-toolbar {
 .exam-actions-panel p { font-size: .75rem; line-height: 1.5; margin: 0; }
 @media(max-width: 380px) {
   body.exam-mode-active .exam-toolbar { padding-inline: 10px; gap: 4px; }
-  .exam-toolbar summary, .exam-home { padding-inline: 8px; font-size: .75rem; }
+  .exam-toolbar .exam-menu-trigger, .exam-home { padding-inline: 8px; font-size: .75rem; }
 }
 
 /* Small movements make each interaction feel responsive. */
-.exam-toolbar-menu[open] .exam-toolbar-panel {
+.exam-toolbar-menu.is-open .exam-toolbar-panel {
   transform-origin: top right;
   animation: exam-menu-enter .2s ease-out both;
 }
-.exam-toolbar summary > span:last-child { transition: transform .18s ease; }
-.exam-toolbar-menu[open] summary > span:last-child { transform: rotate(180deg); }
-.exam-toolbar :is(summary, button):active { transform: scale(.96); }
+.exam-toolbar .exam-menu-trigger > span:last-child { transition: transform .18s ease; }
+.exam-toolbar-menu.is-open .exam-menu-trigger > span:last-child { transform: rotate(180deg); }
+.exam-toolbar :is(button):active { transform: scale(.96); }
 body.exam-mode-active .exam-toolbar { animation: exam-toolbar-enter .25s ease-out both; }
 @media (hover: hover) {
-  .exam-toolbar summary:hover, .exam-home:hover {
+  .exam-toolbar .exam-menu-trigger:hover, .exam-home:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 12px rgba(90, 58, 63, .13);
   }
@@ -74,10 +73,12 @@ body.exam-mode-active .exam-toolbar { animation: exam-toolbar-enter .25s ease-ou
 @media (max-width: 420px) {
   body.exam-mode-active .exam-toolbar { flex-wrap: wrap; gap: 8px; }
   .exam-toolbar-right { margin-left: auto; }
-  .exam-toolbar summary, .exam-home { padding-inline: 8px; font-size: .75rem; }
+  .exam-toolbar .exam-menu-trigger, .exam-home { padding-inline: 8px; font-size: .75rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  body.exam-mode-active .exam-toolbar, .exam-toolbar-menu[open] .exam-toolbar-panel { animation: none; }
-  .exam-toolbar :is(summary, button), .exam-toolbar summary > span:last-child { transition: none; }
-  .exam-toolbar :is(summary, button):is(:hover, :active) { transform: none; }
+  body.exam-mode-active .exam-toolbar, .exam-toolbar-menu.is-open .exam-toolbar-panel { animation: none; }
+  .exam-toolbar :is(button), .exam-toolbar .exam-menu-trigger > span:last-child { transition: none; }
+  .exam-toolbar :is(button):is(:hover, :active) { transform: none; }
 }
+
+.exam-menu-trigger { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }

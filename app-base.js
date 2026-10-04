@@ -3206,19 +3206,8 @@ function initAcademicTerms(){
     if(!availableAcademicYears().includes(year)||!TERM_OPTIONS.includes(term)||!['midterms','finals'].includes(period))return;
     state.examContext={academicYear:year,term};
     renderExamChooserContext();
-    document.getElementById('examPeriodMenu').open=false;
     setExamPeriod(period);
   });
-  document.querySelectorAll('.exam-toolbar-menu').forEach(menu=>menu.addEventListener('toggle',()=>{
-    if(menu.open)document.querySelectorAll('.exam-toolbar-menu').forEach(other=>{if(other!==menu)other.open=false;});
-  }));
-  document.addEventListener('click',event=>{
-    if(!event.target.closest('.exam-toolbar-menu'))document.querySelectorAll('.exam-toolbar-menu').forEach(menu=>menu.open=false);
-  });
-  document.addEventListener('keydown',event=>{
-    if(event.key==='Escape')document.querySelectorAll('.exam-toolbar-menu').forEach(menu=>{if(menu.open){menu.open=false;menu.querySelector('summary').focus();}});
-  });
-
   document.getElementById('startNewTermBtn')?.addEventListener('click',openStartTermModal);
   document.getElementById('archiveCurrentTermBtn')?.addEventListener('click',archiveCurrentTerm);
 
