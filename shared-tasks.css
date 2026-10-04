@@ -1,0 +1,8 @@
+.shared-task-add{margin-bottom:18px;}
+.shared-task-meta{font-family:var(--cramchy-readable);font-size:.73rem;color:var(--text-soft);}
+.shared-task-edit{font:inherit;font-size:.75rem;color:var(--text-main);background:var(--pink-soft);border:1px solid var(--border);padding:8px 12px;border-radius:10px;cursor:pointer;min-height:40px;}
+.shared-task-note{font-size:.8rem;color:var(--text-soft);padding:12px;border-radius:12px;background:var(--pink-soft);line-height:1.6;}
+.shared-task-note[hidden]{display:none;}
+.shared-task-done{opacity:.55;}
+.shared-task-done strong,.shared-task-done span{text-decoration:line-through;}
+@media(max-width:640px){#cramchyTaskList .mission-row{flex-wrap:wrap;gap:10px;}#cramchyTaskList .shared-task-meta{flex-basis:100%;padding-left:30px;}}

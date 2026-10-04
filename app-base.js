@@ -278,9 +278,14 @@ function sanitizeState(parsed){
     out.missions = parsed.missions.filter(m => m && typeof m.text === 'string').map(m => ({
       id: m.id || cryptoId(),
       text: String(m.text).slice(0,200),
-      done: !!m.done
+      done: !!m.done,
+      date: /^\d{4}-\d{2}-\d{2}$/.test(String(m.date||''))?String(m.date):'',
+      course: String(m.course||'').slice(0,160),
+      start: String(m.start||'').slice(0,8),end: String(m.end||'').slice(0,8),
+      notes: String(m.notes||'').slice(0,2000)
     }));
   }
+  if(Array.isArray(parsed.importedPlannerTasks))out.importedPlannerTasks=[...new Set(parsed.importedPlannerTasks.filter(id=>typeof id==='string'))];
   if(Array.isArray(parsed.studyHistory)){
     out.studyHistory = parsed.studyHistory.filter(h => h && typeof h.minutes === 'number').map(h => ({
       subject: typeof h.subject === 'string' ? h.subject.slice(0,160) : SUBJECT_ORDER[0],
@@ -1816,8 +1821,9 @@ function renderCramchySettings(){
 }
 function renderCramchyTasks(){
   const wrap=document.getElementById('cramchyTaskList');if(!wrap)return;
-  if(!state.missions.length){wrap.innerHTML=`<div class="shell-empty"><div class="big">nothing here yet</div><p>Add a quick task below. Course-linked tasks, deadlines, priorities, and subtasks come in the full Tasks build.</p></div>`;return;}
-  wrap.innerHTML=state.missions.map(m=>`<div class="mission-row"><input type="checkbox" data-cramchy-task-check="${m.id}" ${m.done?'checked':''}><span style="flex:1;${m.done?'text-decoration:line-through;opacity:.6;':''}">${escapeHtml(m.text)}</span><button class="icon-btn" data-cramchy-task-delete="${m.id}" aria-label="Delete">×</button></div>`).join('');
+  if(!state.missions.length){wrap.innerHTML=`<div class="shell-empty"><div class="big">nothing here yet</div><p>Add a task below, then use edit to set its due date. Dated tasks appear in Planner automatically.</p></div>`;return;}
+  wrap.innerHTML=state.missions.map(m=>`<div class="mission-row"><input type="checkbox" data-cramchy-task-check="${escapeAttr(m.id)}" ${m.done?'checked':''}><span style="flex:1;${m.done?'text-decoration:line-through;opacity:.6;':''}">${escapeHtml(m.text)}</span><span class="shared-task-meta">${m.date?escapeHtml(m.date):'no due date'}${m.course?' · '+escapeHtml(m.course):''}</span><button type="button" class="shared-task-edit" data-task-edit="${escapeAttr(m.id)}">edit</button><button class="icon-btn" data-cramchy-task-delete="${escapeAttr(m.id)}" aria-label="Delete">×</button></div>`).join('');
+  wrap.querySelectorAll('[data-task-edit]').forEach(el=>el.addEventListener('click',()=>window.CramchyPlannerTasks?.edit(el.dataset.taskEdit)));
   wrap.querySelectorAll('[data-cramchy-task-check]').forEach(el=>el.addEventListener('change',()=>{const item=state.missions.find(m=>m.id===el.dataset.cramchyTaskCheck);if(item)item.done=el.checked;saveState();renderCramchyTasks();renderDashboard();if(el.checked&&chaowiApi)chaowiApi.react('topic');}));
   wrap.querySelectorAll('[data-cramchy-task-delete]').forEach(el=>el.addEventListener('click',()=>{state.missions=state.missions.filter(m=>m.id!==el.dataset.cramchyTaskDelete);saveState();renderCramchyTasks();renderDashboard();}));
 }
@@ -3480,7 +3486,11 @@ function askGradeQuery(raw,course=null){
 
 function askTasks(raw=''){
   const q=askNormalize(raw),all=state.missions||[],undone=all.filter(m=>!m.done),done=all.filter(m=>m.done);askCramchyContext.lastIntent='tasks';
-  if(/\b(due|deadline|overdue|this week|tomorrow|today)\b/.test(q)){let msg=`Quick tasks in Cramchy don't have due dates yet, so I can't truthfully filter them by deadline.`;if(undone.length)msg+=`\n\nYou do have ${undone.length} unfinished task${undone.length===1?'':'s'}:\n`+undone.slice(0,5).map((m,i)=>`${i+1}. ${m.text}`).join('\n');return msg;}
+  if(/\b(due|deadline|overdue|this week|tomorrow|today)\b/.test(q)){
+    const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,now=new Date(),today=iso(now),tomorrow=new Date(now),end=new Date(now);tomorrow.setDate(now.getDate()+1);end.setDate(now.getDate()+7);
+    const dated=undone.filter(m=>m.date).filter(m=>/overdue/.test(q)?m.date<today:/tomorrow/.test(q)?m.date===iso(tomorrow):/today/.test(q)?m.date===today:/this week/.test(q)?m.date>=today&&m.date<=iso(end):true).sort((a,b)=>a.date.localeCompare(b.date));
+    return dated.length?`Your matching unfinished tasks${/this week/.test(q)?' for the next 7 days':''}:\n`+dated.slice(0,8).map(m=>`• ${m.text} — ${m.date}`).join('\n'):`No unfinished tasks with a matching due date. Undated tasks remain in Tasks.`;
+  }
   if(/\b(done|finished|completed)\b/.test(q))return done.length?`You've completed ${done.length} quick task${done.length===1?'':'s'}:\n`+done.slice(0,8).map(m=>`• ${m.text}`).join('\n'):`No completed quick tasks are saved right now.`;
   if(/\b(how many|count)\b/.test(q))return `You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}.`;
   if(!undone.length)return `You don't have any unfinished quick tasks right now`;
@@ -3981,10 +3991,14 @@ function askGradeQuery(raw,course=null){
 
 function askTasks(raw=''){
   const q=askNormalize(raw),all=state.missions||[],undone=all.filter(m=>!m.done),done=all.filter(m=>m.done);askCramchyContext.lastIntent='tasks';
-  if(/\b(due|deadline|overdue|this week|tomorrow|today)\b/.test(q)){let msg=`Quick tasks in Cramchy don't have due dates yet, so I can't truthfully filter them by deadline.`;if(undone.length)msg+=`\n\nYou do have ${undone.length} unfinished task${undone.length===1?'':'s'}:\n`+undone.slice(0,5).map((m,i)=>`${i+1}. ${m.text}`).join('\n');return msg;}
+  if(/\b(due|deadline|overdue|this week|tomorrow|today)\b/.test(q)){
+    const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,now=new Date(),today=iso(now),tomorrow=new Date(now),end=new Date(now);tomorrow.setDate(now.getDate()+1);end.setDate(now.getDate()+7);
+    const dated=undone.filter(m=>m.date).filter(m=>/overdue/.test(q)?m.date<today:/tomorrow/.test(q)?m.date===iso(tomorrow):/today/.test(q)?m.date===today:/this week/.test(q)?m.date>=today&&m.date<=iso(end):true).sort((a,b)=>a.date.localeCompare(b.date));
+    return dated.length?`Your matching unfinished tasks${/this week/.test(q)?' for the next 7 days':''}:\n`+dated.slice(0,8).map(m=>`• ${m.text} — ${m.date}`).join('\n'):`No unfinished tasks with a matching due date. Undated tasks remain in Tasks.`;
+  }
   if(/\b(done|finished|completed)\b/.test(q))return done.length?`You've completed ${done.length} quick task${done.length===1?'':'s'}:\n`+done.slice(0,8).map(m=>`• ${m.text}`).join('\n'):`No completed quick tasks are saved right now.`;
   if(/\b(how many|count)\b/.test(q))return `You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}.`;
-  if(/\b(what should i do first|which task first|prioritize.*task)\b/.test(q)){if(!undone.length)return `You don't have any unfinished quick tasks right now`;return `Quick Tasks don't have deadlines yet, so I can't rank urgency. If we're using list order, start with “${undone[0].text}.”`;}
+  if(/\b(what should i do first|which task first|prioritize.*task)\b/.test(q)){if(!undone.length)return `You don't have any unfinished quick tasks right now`;const first=[...undone].sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'))[0];return `Start with “${first.text}”${first.date?' — due '+first.date:'. This task has no due date yet'}.`;}
   if(!undone.length)return `You don't have any unfinished quick tasks right now`;
   const shown=undone.slice(0,7);let msg=`You have ${undone.length} unfinished quick task${undone.length===1?'':'s'}:\n`+shown.map((m,i)=>`${i+1}. ${m.text}`).join('\n');if(undone.length>shown.length)msg+=`\n…and ${undone.length-shown.length} more in Tasks.`;return msg;
 }
@@ -4134,6 +4148,29 @@ initCloudSync();
   initAskCramchy();
 showBootUpdateNotice();
 
+
+/* Tasks are canonical in the existing account-scoped tracker state. */
+window.CramchyTaskBridge={
+  get tasks(){return state.missions;},
+  events(){return window.CramchySharedTasks.project(state.missions);},
+  commit(tasks,imported=state.importedPlannerTasks||[]){
+    const before=state.missions,oldImports=state.importedPlannerTasks;
+    state.missions=tasks;state.importedPlannerTasks=imported;
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+    catch(error){state.missions=before;state.importedPlannerTasks=oldImports;throw error;}
+    saveState();renderCramchyTasks();renderDashboard();
+  },
+  import(events){
+    const result=window.CramchySharedTasks.migrate(state.missions,state.importedPlannerTasks,events);
+    if(result.changed)this.commit(result.tasks,result.imported);
+  },
+  put(event){
+    const old=state.missions.find(t=>t.id===event.id),task={...old,id:event.id,...window.CramchySharedTasks.fields(event)};
+    this.commit(old?state.missions.map(t=>t.id===event.id?task:t):[...state.missions,task]);
+  },
+  remove(id){this.commit(state.missions.filter(t=>t.id!==id));},
+  toggle(id){this.commit(state.missions.map(t=>t.id===id?{...t,done:!t.done}:t));}
+};
 
 /* Explicit access to gradebook state kept inside the app closure. */
 window.CramchyCourseBridge={

@@ -8,6 +8,7 @@
   const HOUR_HEIGHT=74;
 
   let events=loadEvents();
+  let legacyTasks=events.filter(e=>e.type==='task');
   let selectedDate=isoDate(new Date());
   let activeView='month';
   let editingId=null;
@@ -48,7 +49,7 @@
         }));
     }catch(err){return[]}
   }
-  function saveEvents(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events.filter(e=>!e.academicExam)))}
+  function saveEvents(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...legacyTasks,...events.filter(e=>!e.academicExam&&!e.sharedTask&&e.type!=='task')]))}
 
   function syncLogo(){
     const src=getLogoSrc();
@@ -140,16 +141,17 @@
               <label class="full">title<input id="plannerTitle" autocomplete="off" placeholder="ex. anaphy quiz review" required></label>
               <label>type<select id="plannerType"><option value="study">Study block</option><option value="class">Class</option><option value="task">Task</option><option value="exam">Exam reminder (Planner only)</option><option value="quiz">Quiz</option><option value="personal">Personal</option></select></label>
               <label>course<input id="plannerCourse" autocomplete="off" placeholder="course or subject"></label>
-              <label>date<input id="plannerDate" type="date"></label>
+              <label><span id="plannerDateLabel">date</span><input id="plannerDate" type="date"></label>
               <label>start<input id="plannerStart" type="time"></label>
               <label>end<input id="plannerEnd" type="time"></label>
               <label class="full">notes<textarea id="plannerNotes" placeholder="tiny notes, room, reminders, links..."></textarea></label>
-              <p class="full" id="plannerTimeError" role="alert" hidden></p>
+              <p class="full shared-task-note" id="plannerTaskHint" hidden>One shared task in Tasks, Home, and Planner. Leave the due date blank to keep it unscheduled.</p><p class="full" id="plannerTimeError" role="alert" hidden></p>
               <div class="planner-modal-actions full"><button class="planner-danger" id="plannerDeleteBtn" type="button">delete</button><span></span><button class="planner-light" type="button" data-planner-close>cancel</button><button class="planner-primary" type="submit" id="plannerSaveBtn">save event</button></div>
             </form>
           </div>
         </div>
       </section>`);
+    document.body.appendChild($('#plannerModal'));
     return true;
   }
 
@@ -207,7 +209,7 @@
     for(let i=0;i<42;i++){
       const d=new Date(start);d.setDate(start.getDate()+i);
       const iso=isoDate(d);const muted=d.getMonth()!==m;const list=byDate(iso);
-      const pills=list.slice(0,3).map(ev=>`<button class="planner-event-pill ${ev.type}" data-planner-event="${escapeHtml(ev.id)}" type="button" aria-label="${escapeHtml(ev.title)} · ${escapeHtml(TYPE_LABEL[ev.type])} · ${escapeHtml(timeLabel(ev.start))}"><i class="planner-dot ${ev.type}"></i><span>${escapeHtml(ev.title)}</span></button>`).join('');
+      const pills=list.slice(0,3).map(ev=>`<button class="planner-event-pill ${ev.type} ${ev.done?'shared-task-done':''}" data-planner-event="${escapeHtml(ev.id)}" type="button" aria-label="${escapeHtml(ev.title)} · ${escapeHtml(TYPE_LABEL[ev.type])} · ${escapeHtml(timeLabel(ev.start))}"><i class="planner-dot ${ev.type}"></i><span>${escapeHtml(ev.title)}</span></button>`).join('');
       const more=list.length>3?`<button class="planner-more" data-planner-date="${iso}" type="button">+${list.length-3} more</button>`:'';
       cells.push(`<div class="planner-day-cell ${muted?'muted':''} ${iso===selectedDate?'selected':''}" data-planner-date="${iso}" tabindex="0" role="group" aria-label="${escapeHtml(prettyDate(iso))}; press Enter to open day"><span class="planner-date-num ${iso===isoDate(new Date())?'today':''}">${d.getDate()}</span>${pills}${more}</div>`);
     }
@@ -244,7 +246,7 @@
     const endLabel=e.end?(TIME.minutes(e.end)!==null?timeLabel(e.end):'invalid end time'):'';
     const label=startLabel+(e.end?' – '+endLabel:e.start?' · start only':'');
     const accessible=e.title+', '+prettyDate(e.date)+', '+label+(issue?', needs time correction':'');
-    return `<button class="planner-week-event ${e.type}" data-planner-event="${escapeHtml(e.id)}" type="button" aria-label="${escapeHtml(accessible)}" title="${escapeHtml(accessible)}" ${style?`style="${style}"`:''}><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(label)}${e.course?' · '+escapeHtml(e.course):''}</span>${issue?'<small class="planner-week-time-warning">needs time correction</small>':''}</button>`;
+    return `<button class="planner-week-event ${e.type} ${e.done?'shared-task-done':''}" data-planner-event="${escapeHtml(e.id)}" type="button" aria-label="${escapeHtml(accessible)}" title="${escapeHtml(accessible)}" ${style?`style="${style}"`:''}><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(label)}${e.course?' · '+escapeHtml(e.course):''}</span>${issue?'<small class="planner-week-time-warning">needs time correction</small>':''}</button>`;
   }
 
   function renderDay(){
@@ -253,11 +255,11 @@
     const summary=$('#plannerDaySummary');if(summary)summary.textContent=todays.length?`${todays.length} thing${todays.length===1?'':'s'} planned. Very organized of you.`:'No academic jump scares scheduled yet.';
     renderDayHighlight();
     const agenda=$('#plannerAgenda');
-    if(agenda)agenda.innerHTML=todays.length?todays.map(e=>`<button class="planner-agenda-item ${e.type}" data-planner-event="${escapeHtml(e.id)}" type="button"><div class="planner-agenda-time">${timeLabel(e.start)}</div><div><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||TYPE_LABEL[e.type])}${e.notes?' · '+escapeHtml(e.notes):''}</span></div><i>›</i></button>`).join(''):'<div class="planner-empty">nothing planned here yet</div>';
+    if(agenda)agenda.innerHTML=todays.length?todays.map(e=>`<button class="planner-agenda-item ${e.type} ${e.done?'shared-task-done':''}" data-planner-event="${escapeHtml(e.id)}" type="button"><div class="planner-agenda-time">${timeLabel(e.start)}</div><div><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||TYPE_LABEL[e.type])}${e.notes?' · '+escapeHtml(e.notes):''}</span></div><i>›</i></button>`).join(''):'<div class="planner-empty">nothing planned here yet</div>';
     const tasks=$('#plannerTasks');
     if(tasks){
       const due=todays.filter(e=>e.type==='task');
-      tasks.innerHTML=due.length?due.map(e=>`<div class="planner-task-row"><button class="planner-check ${e.done?'done':''}" data-planner-toggle-task="${escapeHtml(e.id)}" type="button" aria-label="toggle task"></button><button class="planner-task-copy" data-planner-event="${escapeHtml(e.id)}" type="button"><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||'Task')}</span></button></div>`).join(''):'<div class="planner-empty small">no tasks due today</div>';
+      tasks.innerHTML=due.length?due.map(e=>`<div class="planner-task-row"><button class="planner-check ${e.done?'done':''}" data-planner-toggle-task="${escapeHtml(e.id)}" type="button" aria-label="${e.done?'mark incomplete':'complete task'}: ${escapeHtml(e.title)}" aria-pressed="${e.done}"></button><button class="planner-task-copy" data-planner-event="${escapeHtml(e.id)}" type="button"><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||'Task')}</span></button></div>`).join(''):'<div class="planner-empty small">no tasks due today</div>';
     }
   }
 
@@ -293,7 +295,10 @@
     }
   }
   function renderAllPlanner(){
-    events=[...events.filter(e=>!e.academicExam),...(window.CramchySchedules?.events()||[])];
+    const taskApi=window.CramchyTaskBridge;
+    let imported=false;
+    if(taskApi){try{taskApi.import(legacyTasks);imported=true;}catch(error){console.warn('Planner task import kept for retry.',error);}}
+    events=[...events.filter(e=>!e.academicExam&&!e.sharedTask&&(!imported||e.type!=='task')), ...(taskApi?.events()||[]),...(window.CramchySchedules?.events()||[])];
     renderLabel();renderMonth();renderWeek();renderDay();renderSidebar();syncLogo()}
 
   function moveCalendar(dir){
@@ -312,14 +317,18 @@
     $('#plannerModalTitle').textContent=type==='task'?'add task':'add to planner';
     $('#plannerSaveBtn').textContent='save event';
     $('#plannerDeleteBtn').style.display='none';
+    $('#plannerType').disabled=false;
     $('#plannerTitle').value='';$('#plannerType').value=type;$('#plannerCourse').value='';$('#plannerDate').value=selectedDate;$('#plannerStart').value='';$('#plannerEnd').value='';$('#plannerNotes').value='';
+    syncTaskFields();
   }
   function fillForm(e){
     clearTimeError();
     editingId=e.id;
     $('#plannerModalTitle').textContent='event details';$('#plannerSaveBtn').textContent='save changes';$('#plannerDeleteBtn').style.display='inline-flex';
     $('#plannerTitle').value=e.title;$('#plannerType').value=e.type;$('#plannerCourse').value=e.course;$('#plannerDate').value=e.date;$('#plannerStart').value=e.start;$('#plannerEnd').value=e.end;$('#plannerNotes').value=e.notes;
+    $('#plannerType').disabled=true;syncTaskFields();
   }
+  function syncTaskFields(){const task=$('#plannerType').value==='task';$('#plannerTaskHint').hidden=!task;$('#plannerDateLabel').textContent=task?'due date (optional)':'date';}
   function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>{const phone=window.matchMedia?.('(max-width:640px)').matches;$(phone?'#plannerModal [data-planner-close]':'#plannerTitle')?.focus()},20)}
   function openEvent(id){const e=events.find(x=>x.id===id);if(!e)return;if(e.academicExam){window.CramchySchedules?.edit(e);return;}fillForm(e);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false')}
   function closeModal(){const modal=$('#plannerModal');modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true')}
@@ -341,28 +350,34 @@
         event.preventDefault();event.target.click();
       }
     });
-    section.addEventListener('click',e=>{
+    const onPlannerClick=e=>{
       const show=e.target.closest('[data-planner-show]');if(show){e.preventDefault();setPlannerView(show.dataset.plannerShow);return}
       const nav=e.target.closest('[data-planner-nav]');if(nav){e.preventDefault();moveCalendar(nav.dataset.plannerNav==='next'?1:-1);return}
       if(e.target.closest('[data-planner-add-course-exam]')){e.preventDefault();window.CramchySchedules?.add();return;}
       const add=e.target.closest('[data-planner-add]');if(add){e.preventDefault();openModal('study');return}
       const addTask=e.target.closest('[data-planner-add-task]');if(addTask){e.preventDefault();openModal('task');return}
       const ev=e.target.closest('[data-planner-event]');if(ev){e.preventDefault();e.stopPropagation();openEvent(ev.dataset.plannerEvent);return}
-      const toggle=e.target.closest('[data-planner-toggle-task]');if(toggle){e.preventDefault();const item=events.find(x=>x.id===toggle.dataset.plannerToggleTask);if(item){item.done=!item.done;saveEvents();renderAllPlanner()}return}
+      const toggle=e.target.closest('[data-planner-toggle-task]');if(toggle){e.preventDefault();const item=events.find(x=>x.id===toggle.dataset.plannerToggleTask);if(item){if(item.sharedTask){try{window.CramchyTaskBridge.toggle(item.id);}catch(error){window.alert('Could not save this task. Please try again.');}}else{item.done=!item.done;saveEvents();}renderAllPlanner()}return}
       const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);setPlannerView('day');return}
       if(e.target.closest('[data-planner-close]')){e.preventDefault();closeModal();return}
       if(e.target===$('#plannerModal'))closeModal();
-    });
+    };
+    section.addEventListener('click',onPlannerClick);$('#plannerModal').addEventListener('click',onPlannerClick);
+    $('#plannerType').addEventListener('change',syncTaskFields);
     const form=$('#plannerForm');
     ['#plannerStart','#plannerEnd'].forEach(selector=>$(selector)?.addEventListener('input',clearTimeError));
     form?.addEventListener('submit',e=>{
       e.preventDefault();
       const item={
-        id:editingId||uid(),title:$('#plannerTitle').value.trim()||'Untitled event',type:TYPES.includes($('#plannerType').value)?$('#plannerType').value:'personal',course:$('#plannerCourse').value.trim(),date:$('#plannerDate').value||selectedDate,start:$('#plannerStart').value,end:$('#plannerEnd').value,notes:$('#plannerNotes').value.trim(),done:editingId?Boolean(events.find(x=>x.id===editingId)?.done):false
+        id:editingId||uid(),title:$('#plannerTitle').value.trim()||'Untitled event',type:TYPES.includes($('#plannerType').value)?$('#plannerType').value:'personal',course:$('#plannerCourse').value.trim(),date:$('#plannerType').value==='task'?$('#plannerDate').value:$('#plannerDate').value||selectedDate,start:$('#plannerStart').value,end:$('#plannerEnd').value,notes:$('#plannerNotes').value.trim(),done:editingId?Boolean(window.CramchyTaskBridge?.tasks.find(x=>x.id===editingId)?.done||events.find(x=>x.id===editingId)?.done):false
       };
       clearTimeError();
       const issue=TIME.validate(item.start,item.end);
       if(issue){showTimeError(issue.message,issue.field);return;}
+      if(item.type==='task'&&window.CramchyTaskBridge){
+        try{window.CramchyTaskBridge.put(item);}catch(error){showTimeError('Could not save this task. Your previous task and this form were kept.');return;}
+        closeModal();if(item.date){selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);}renderAllPlanner();return;
+      }
       const previous=events;
       if(editingId)events=events.map(x=>x.id===editingId?item:x);else events=[...events,item];
       try{saveEvents();}catch(error){events=previous;showTimeError('Could not save this event. Your previous events and this form were kept.');return;}
@@ -370,7 +385,9 @@
     });
     $('#plannerDeleteBtn')?.addEventListener('click',()=>{
       if(!editingId)return;
-      events=events.filter(x=>x.id!==editingId);saveEvents();closeModal();renderAllPlanner();
+      const shared=window.CramchyTaskBridge?.tasks.some(t=>t.id===editingId);
+      try{if(shared)window.CramchyTaskBridge.remove(editingId);else{const previous=events;events=events.filter(x=>x.id!==editingId);try{saveEvents();}catch(error){events=previous;throw error;}}}catch(error){showTimeError('Could not delete this item. Please try again.');return;}
+      closeModal();renderAllPlanner();
     });
   }
 
@@ -391,9 +408,12 @@
     renderAllPlanner();
   }
 
+  window.CramchyPlannerTasks={add(){openModal('task');$('#plannerDate').value='';},edit(id){const task=window.CramchyTaskBridge?.tasks.find(t=>t.id===id);if(!task)return;fillForm({id:task.id,title:task.text,type:'task',date:task.date||'',course:task.course||'',start:task.start||'',end:task.end||'',notes:task.notes||''});const modal=$('#plannerModal');modal.classList.add('open');modal.setAttribute('aria-hidden','false');}};
+  $('#sharedTaskAdd')?.addEventListener('click',()=>window.CramchyPlannerTasks.add());
+  window.addEventListener('cramchy:planner-cloud-loaded',()=>{events=loadEvents();legacyTasks=events.filter(e=>e.type==='task');renderAllPlanner();});
   window.addEventListener('cramchy:schedules-changed',renderAllPlanner);
   window.addEventListener('cramchy:backup-restored',()=>{
-    events=loadEvents();
+    events=loadEvents();legacyTasks=events.filter(e=>e.type==='task');
     closeModal();
     renderAllPlanner();
   });
