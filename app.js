@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-auto-checklist-preview-100';
+  const VERSION='2026-10-04-checklist-filter-colors-101';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
