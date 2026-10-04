@@ -5,7 +5,7 @@ const backup=require('../js/backup-data.js');
 const sync=require('../js/cloud-sync.js');
 const KEY='cramchyPlannerEvents_v2';
 const OLD='cramchyPlannerEvents_v1';
-const event=id=>({id,title:'Review '+id,type:'study',course:'PSY101',date:'2026-10-04',start:'09:00',end:'10:00',notes:'Keep me',done:false});
+const event=id=>({id,title:'Review '+id,type:'study',course:'PSY101',date:'2026-10-04',start:'09:00',end:'10:00',notes:'Keep me',done:false,showInTasks:false});
 const plain=value=>JSON.parse(JSON.stringify(value));
 async function harness(options={}){
   class Storage{
@@ -61,6 +61,7 @@ async function harness(options={}){
   const quiz={...event('quiz'),type:'quiz'};
   const quizSync=await harness({local:{[KEY]:JSON.stringify([quiz])}});
   assert.deepEqual(quizSync.inserted[0].events,[quiz],'Quiz type must survive cloud normalization');
+  for(const type of ['assignment','personal']){const typed={...event(type),type,showInTasks:true};const result=await harness({local:{[KEY]:JSON.stringify([typed])}});assert.deepEqual(result.inserted[0].events,[typed]);}
   let h=await harness({local:{[KEY]:JSON.stringify([event('guest')])}});
   assert.deepEqual(h.inserted[0].events,[event('guest')]);
   assert.deepEqual(JSON.parse(h.localStorage.getItem(KEY)),[event('guest')]);

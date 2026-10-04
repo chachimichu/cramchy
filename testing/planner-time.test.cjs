@@ -23,10 +23,10 @@ class Node{
   setCustomValidity(value){this.customValidity=value;}
   reportValidity(){this.reported=true;}
 }
-const selectors=['#view-planner','#plannerForm','#plannerTimeError','#plannerStart','#plannerEnd','#plannerTitle','#plannerType','#plannerCourse','#plannerDate','#plannerNotes','#plannerDeleteBtn','#plannerWeekGrid','#plannerModal','#plannerTaskHint','#plannerDateLabel'];
+const selectors=['#view-planner','#plannerForm','#plannerTimeError','#plannerStart','#plannerEnd','#plannerTitle','#plannerType','#plannerCourse','#plannerDate','#plannerNotes','#plannerDeleteBtn','#plannerWeekGrid','#plannerModal','#plannerTaskHint','#plannerDateLabel','#plannerShowInTasks','#plannerPersonalField'];
 const nodes=new Map(selectors.map(selector=>[selector,new Node()]));
 let writes=0,closes=0,renders=0,failWrite=false;
-const context={window:{},syncTaskFields(){},TIME:time,HOUR_HEIGHT:74,events:[],selectedDate:'2026-10-04',editingId:null,monthCursor:null,TYPES:['class','task','exam','study','personal'],
+const context={window:{CramchySharedTasks:require('../js/shared-tasks.js')},syncTaskFields(){},TIME:time,HOUR_HEIGHT:74,events:[],selectedDate:'2026-10-04',editingId:null,monthCursor:null,TYPES:['class','task','exam','study','personal'],
   $:selector=>nodes.get(selector)||null,pad:value=>String(value).padStart(2,'0'),
   escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;'),
   uid:()=> 'new',saveEvents:()=>{if(failWrite)throw Error('QuotaExceededError');writes++;},closeModal:()=>closes++,setPlannerView:()=>renders++,

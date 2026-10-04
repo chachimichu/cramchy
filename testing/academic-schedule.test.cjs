@@ -21,10 +21,10 @@ state.examData[key].midterms.exams=[exam];
 const app=fs.readFileSync(require.resolve('../app-base.js'),'utf8');
 const planner=fs.readFileSync(require.resolve('../planner-v3.js'),'utf8');
 const calls=[];let stored;
-const ctx={state,window:{CramchyAcademicSchedule:schedule},profileAcademicYear:()=>year,profileTerm:()=>term,
+const ctx={state,window:{CramchyAcademicSchedule:schedule,CramchySharedTasks:require('../js/shared-tasks.js')},profileAcademicYear:()=>year,profileTerm:()=>term,
   activeExamYear:()=>ctx.state.examContext.academicYear,activeExamTerm:()=>ctx.state.examContext.term,
   saveState:()=>calls.push('save'),renderExamMode:()=>calls.push('mode'),switchTab:tab=>calls.push(tab),openExamModal:id=>calls.push(id||'new'),showToast:()=>{},
-  legacyTasks:[],events:[{id:'manual',title:'Personal exam reminder',type:'exam',date:'2026-10-05'}],STORAGE_KEY:'planner',localStorage:{setItem:(key,value)=>{stored=JSON.parse(value);}},
+  legacyTasks:[],events:[{id:'manual',title:'Personal exam reminder',type:'class',date:'2026-10-05'}],STORAGE_KEY:'planner',localStorage:{setItem:(key,value)=>{stored=JSON.parse(value);}},
   renderLabel(){},renderMonth(){},renderWeek(){},renderDay(){},renderSidebar(){},syncLogo(){}};
 vm.createContext(ctx);
 vm.runInContext(app.slice(app.indexOf('window.CramchySchedules='),app.indexOf('\nfunction allDailyTermExams')),ctx);

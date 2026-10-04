@@ -1,0 +1,77 @@
+/* Loaded last: keep dark surfaces and readable controls consistent across workspaces. */
+body[data-theme="dark-study"]{
+  color-scheme:dark;
+  --dark-surface:#2d2932;--dark-raised:#39313d;--dark-input:#242128;--dark-line:#756479;
+  --cram-deep:var(--text-main);--cram-muted:var(--text-soft);--cram-line:var(--dark-line);--cram-rose:#f0b2c8;
+  --planner-deep:var(--text-main);--planner-text:var(--text-main);--planner-muted:var(--text-soft);
+  --planner-line:var(--dark-line);--planner-card:var(--dark-surface);--planner-soft:var(--dark-raised);--planner-rose:#f0b2c8;--planner-pink:#a33660;
+  --border:var(--dark-line);--border-soft:var(--dark-line);
+  --home-blue-soft:#2c3544;--home-task-soft:#40303b;--home-exam-soft:#423035;--home-study-soft:#303b2e;--home-personal-soft:#40382e;
+  --gw-line:var(--dark-line);
+}
+body[data-theme="dark-study"] :is(.card,.closest-exam,.exam-entry-card,.smart-study-card,.daily-stat,.course-card,.task-card,.exam-card,.modal-content,.modal-box,.more-card,.grade-card,.panel,.subject-card,.course-modal,.planner-modal-card,.quick-add-modal,.cramchy-onboard-card){
+  background:var(--dark-surface)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;
+}
+body[data-theme="dark-study"] :is(.section-title,.big-greeting,.planner-panel h3,.planner-head h2,.planner-label){color:var(--text-main)!important;}
+body[data-theme="dark-study"] #view-dashboard :is(#dailyGreeting,.big-greeting){color:var(--text-main)!important;}
+body[data-theme="dark-study"] :is(#dailyMeta,.cramchy-home-copy .daily-meta,.planner-hero-copy p,.planner-legend,.planner-rec p,.planner-weekday,.planner-time-label){color:var(--text-soft)!important;}
+body[data-theme="dark-study"] #view-planner :is(.planner-hero-card p,.planner-legend,.planner-rec p,.planner-weekday,.planner-time-label){color:var(--text-soft)!important;}
+body[data-theme="dark-study"] :is(.btn,.quick-add-main,.planner-primary,.planner-add,.onboard-start,.ask-cramchy-send){background:#a33660!important;color:#fff!important;border-color:#c97997!important;}
+body[data-theme="dark-study"] #view-dashboard .quick-add-main,
+body[data-theme="dark-study"] #view-planner :is(.planner-primary,.planner-add){background:#a33660!important;color:#fff!important;}
+body[data-theme="dark-study"] .btn.secondary{background:#354730!important;color:#deeed5!important;border-color:#899e7e!important;}
+body[data-theme="dark-study"] :is(.btn.ghost,.planner-light,.cloud-btn,.modal-actions button){background:var(--dark-raised)!important;color:var(--text-main)!important;border:1px solid var(--dark-line)!important;}
+body[data-theme="dark-study"] .btn.danger,
+body[data-theme="dark-study"] .planner-danger{background:#8c3048!important;color:#fff!important;}
+body[data-theme="dark-study"] :is(.navbtn.active,.subject-tab-btn.active,.next-tag,.toast){background:#a33660!important;color:#fff!important;}
+body[data-theme="dark-study"] .exam-toolbar #exitExamModeTopBtn.exam-home{background:#a33660!important;border-color:#c97997!important;color:#fff!important;}
+body[data-theme="dark-study"] :is(input,select,textarea){background:var(--dark-input)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] :is(input,textarea)::placeholder{color:#bfaebc!important;opacity:1;}
+body[data-theme="dark-study"] option{background:var(--dark-input);color:var(--text-main);}
+body[data-theme="dark-study"] :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid #f0b2c8!important;outline-offset:3px;}
+body[data-theme="dark-study"] :is(.home-planner-reminders-chip,.home-planner-empty,.home-planner-open,.home-planner-reminder-tag,.home-command-chip,.home-course,.daily-task-row){background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] :is(.home-next-exam,.home-next-exam-date,.home-exam-banner-compact,.home-coming-panel){color:var(--text-main)!important;}
+body[data-theme="dark-study"] :is(.planner-day-cell,.planner-week-grid,.planner-week-slot,.planner-week-head,.planner-time-label,.planner-today,.planner-next,.planner-tabs,.planner-nav button,.planner-agenda-item,.planner-exam-banner){background:var(--dark-surface)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] .planner-day-cell:hover{background:var(--dark-raised)!important;}
+body[data-theme="dark-study"] .planner-day-cell.muted{opacity:.75;}
+body[data-theme="dark-study"] .planner-day-cell.selected{outline-color:#b77d95;}
+body[data-theme="dark-study"] :is(.planner-date-num.today,.planner-week-head.selected span){background:#a33660!important;color:#fff!important;}
+body[data-theme="dark-study"] :is(.planner-tabs button,.planner-week-event span,.planner-agenda-item span,.planner-next span,.planner-exam-banner span){color:var(--text-soft)!important;}
+body[data-theme="dark-study"] .planner-tabs button.active{background:var(--dark-raised)!important;color:var(--text-main)!important;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item){--event-color:#ef89a4;background:color-mix(in srgb,var(--event-color) 18%,var(--dark-surface))!important;color:var(--text-main)!important;border-color:var(--event-color)!important;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).class{--event-color:#8baee8;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).quiz{--event-color:#b899ed;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).study{--event-color:#8eb480;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).assignment{--event-color:#8baee8;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).exam{--event-color:#ee9299;}
+body[data-theme="dark-study"] :is(.planner-event-pill,.planner-week-event,.planner-agenda-item).personal{--event-color:#e9a55d;}
+body[data-theme="dark-study"] .shared-task-done{opacity:1;}
+body[data-theme="dark-study"] :is(.chaowi-name,.chaowi-bubble){background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+/* Legacy grade calculators and exam detail panels also need dark surfaces. */
+body[data-theme="dark-study"] #view-grades{--gw-line:var(--dark-line);}
+body[data-theme="dark-study"] #view-grades :is(.grades-main-tabs,.grades-gwa-hero-card,.grades-gwa-toolbar>.grades-field,.grades-gwa-summary-row>div,.grades-gwa-course-card,.grades-target-grid>div,.grades-inline-result,.grades-empty-choice,.grades-dean-note,.grades-nu-formula,.grades-nu-note-strip,.quick-gwa-result,.quick-gwa-result.quick-gwa-dean){background:var(--dark-surface)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] #view-grades :is(.grades-main-tabs button.active,.grades-main-tabs button[aria-selected=true]){background:var(--dark-raised)!important;color:var(--text-main)!important;}
+body[data-theme="dark-study"] :is(.attachment-panel,.notes-panel,.topic-attachments,.readiness-box,.countdown-box,.countdown-card,.study-history-summary,.exam-mode-card,.exam-period-card){background:var(--dark-surface)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] .btn:not(.ghost):not(.secondary):not(.danger){background:#a33660!important;color:#fff!important;}
+body[data-theme="dark-study"] nav.topnav>#cloudBtn{background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] #view-planner .planner-legend span{color:var(--text-soft)!important;}
+body[data-theme="dark-study"] :is(.planner-empty,.home-planner-reminders-empty,.home-planner-reminders-empty .spark,.quick-gwa-card,.grade-course-card,.category-card,.gwa-formula-card,.gwa-table-wrap,.cloud-auth-card,.cloud-user,.ask-cramchy-panel,.ask-cramchy-compose,.ask-chip){background:var(--dark-surface)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] :is(.quick-gwa-calc-btn,.cloud-primary){background:#a33660!important;color:#fff!important;}
+body[data-theme="dark-study"] :is(.cloud-secondary,.cloud-ghost,.more-shortcut,.schedule-remove-btn){background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] :is(.course-card-dynamic,.schedule-editor,.planner-modal,.exam-empty,.ask-cramchy-head,.ask-bubble,.ask-cramchy-close,.ask-cramchy-launcher){background:var(--dark-surface)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] :is(.planner-form label,.planner-agenda-time){color:var(--text-soft)!important;}
+body[data-theme="dark-study"] :is(.planner-modal-head button,.planner-agenda-item i,.planner-exam-icon){background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] #plannerModal .planner-modal-head{background:var(--dark-surface)!important;}
+body[data-theme="dark-study"] #view-grades{--grade-berry:#f0a6c0;--grade-matcha:#b4c6aa;--grade-lav:#c2a9e6;--grade-blue:#a5bee6;--grade-peach:#efbd99;}
+body[data-theme="dark-study"] #view-grades .grades-grade-pill{background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .topic-row :is(.topic-status,.topic-priority){background:var(--dark-raised)!important;background-color:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .topic-row .status-done,
+body[data-theme="dark-study"].exam-mode-active #view-subjects .topic-row .priority-low{background:#303d2e!important;background-color:#303d2e!important;color:#d8e8cf!important;}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .topic-row .priority-high{background:#49303c!important;background-color:#49303c!important;color:#f7bfd3!important;}
+body[data-theme="dark-study"] .planner-next-date{background:var(--dark-raised)!important;color:var(--text-main)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] .readiness-needs{background:#49303c!important;color:#f7bfd3!important;}
+body[data-theme="dark-study"] .readiness-track{background:#423a27!important;color:#f4db9d!important;}
+body[data-theme="dark-study"] .readiness-ready{background:#303d2e!important;color:#d8e8cf!important;}
+body[data-theme="dark-study"] .sparkle{color:#e8aac2;}
+body[data-theme="dark-study"] nav.topnav{background:var(--dark-surface)!important;border-color:var(--dark-line)!important;}
+body[data-theme="dark-study"] .topnav .navbtn{color:var(--text-main)!important;}
