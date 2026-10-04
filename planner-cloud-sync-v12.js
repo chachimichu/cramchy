@@ -20,13 +20,13 @@
       .map(event=>({
         id:String(event.id||('planner-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8))).slice(0,120),
         title:String(event.title||'Untitled event').slice(0,240),
-        type:['class','task','exam','quiz','study','personal'].includes(event.type)?event.type:'personal',
+        type:['class','task','exam','quiz','study','personal','assignment'].includes(event.type)?event.type:'personal',
         course:String(event.course||'').slice(0,160),
         date:/^\d{4}-\d{2}-\d{2}$/.test(String(event.date||''))?String(event.date):'',
         start:String(event.start||'').slice(0,8),
         end:String(event.end||'').slice(0,8),
         notes:String(event.notes||'').slice(0,2000),
-        done:Boolean(event.done)
+        done:Boolean(event.done),showInTasks:!!event.showInTasks
       }));
   }
 

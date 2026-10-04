@@ -1,8 +1,8 @@
 (function(){
   const STORAGE_KEY='cramchyPlannerEvents_v2';
   const OLD_STORAGE_KEY='cramchyPlannerEvents_v1';
-  const TYPES=['class','task','exam','quiz','study','personal'];
-  const TYPE_LABEL={class:'class',task:'task',exam:'exam',quiz:'quiz',study:'study',personal:'personal'};
+  const TYPES=['class','task','exam','quiz','study','personal','assignment'];
+  const TYPE_LABEL={class:'class',task:'task',exam:'exam',quiz:'quiz',study:'study',personal:'personal',assignment:'assignment'};
   const MAX_ITEMS=8;
   const DAYS_AHEAD=7;
   let renderTimer=null;
@@ -47,7 +47,7 @@
           date:/^\d{4}-\d{2}-\d{2}$/.test(String(event.date||''))?String(event.date):'',
           start:String(event.start||'').slice(0,5),
           end:String(event.end||'').slice(0,5),
-          done:Boolean(event.done)
+          done:Boolean(event.done),showInTasks:!!event.showInTasks
         }))
         .filter(event=>event.date);
     }catch(error){
@@ -82,9 +82,9 @@
   function upcomingPlannerEvents(){
     const today=todayIso();
     const end=addDays(today,DAYS_AHEAD);
-    return [...readPlannerEvents().filter(e=>!window.CramchyTaskBridge||e.type!=='task'),...(window.CramchyTaskBridge?.events()||[]),...(window.CramchySchedules?.events()||[])]
+    return [...readPlannerEvents().filter(e=>!window.CramchyTaskBridge||!window.CramchySharedTasks.actionable(e)),...(window.CramchyTaskBridge?.events()||[]),...(window.CramchySchedules?.events()||[])]
       .filter(event=>event.date>=today&&event.date<=end)
-      .filter(event=>!(event.type==='task'&&event.done))
+      .filter(event=>!(event.sharedTask&&event.done))
       .sort((a,b)=>(a.date+' '+(a.start||'99:99')+' '+a.title).localeCompare(b.date+' '+(b.start||'99:99')+' '+b.title))
       .slice(0,MAX_ITEMS)
       .map(event=>({...event,homeWhen:whenLabel(event,today),homeDateLine:dateLabel(event,today)}));
@@ -195,6 +195,7 @@
     scheduleRender();
     window.addEventListener('cramchy:planner-cloud-loaded',scheduleRender);
     window.addEventListener('cramchy:schedules-changed',scheduleRender);
+    window.addEventListener('cramchy:tasks-changed',scheduleRender);
     window.addEventListener('cramchy:backup-restored',scheduleRender);
     window.addEventListener('cramchy:planner-cloud-synced',scheduleRender);
     window.addEventListener('storage',event=>{

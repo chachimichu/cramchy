@@ -262,6 +262,7 @@ function sanitizeState(parsed){
       id: m.id || cryptoId(),
       text: String(m.text).slice(0,200),
       done: !!m.done,
+      type: ['task','quiz','study','assignment','exam','personal'].includes(m.type)?m.type:'task',showInTasks:true,
       date: /^\d{4}-\d{2}-\d{2}$/.test(String(m.date||''))?String(m.date):'',
       course: String(m.course||'').slice(0,160),
       start: String(m.start||'').slice(0,8),end: String(m.end||'').slice(0,8),
@@ -1807,6 +1808,7 @@ function renderCramchySettings(){
   if(picker){picker.innerHTML=themePickerMarkup(state.profile.theme);picker.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>setThemeChoice(b.dataset.themeChoice,picker)));}
 }
 function renderCramchyTasks(){
+  if(typeof window!=='undefined'&&window.CramchyTasksWorkspace){window.CramchyTasksWorkspace.render();return;}
   const wrap=document.getElementById('cramchyTaskList');if(!wrap)return;
   if(!state.missions.length){wrap.innerHTML=`<div class="shell-empty"><div class="big">nothing here yet</div><p>Add a task below, then use edit to set its due date. Dated tasks appear in Planner automatically.</p></div>`;return;}
   wrap.innerHTML=state.missions.map(m=>`<div class="mission-row"><input type="checkbox" data-cramchy-task-check="${escapeAttr(m.id)}" ${m.done?'checked':''}><span style="flex:1;${m.done?'text-decoration:line-through;opacity:.6;':''}">${escapeHtml(m.text)}</span><span class="shared-task-meta">${m.date?escapeHtml(window.CramchySharedTasks?.dateLabel(m.date)||m.date):'no due date'}${m.course?' · '+escapeHtml(m.course):''}</span><button type="button" class="shared-task-edit" data-task-edit="${escapeAttr(m.id)}">edit</button><button class="icon-btn" data-cramchy-task-delete="${escapeAttr(m.id)}" aria-label="Delete">×</button></div>`).join('');
@@ -2019,6 +2021,7 @@ function renderDailyTasks(){
     <span class="task-text">${escapeHtml(m.text)}</span>
   </label>`).join('');
   wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
+    if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask);}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}
     const item=state.missions.find(m=>m.id===el.dataset.dailyTask); if(item)item.done=el.checked;
     saveState(); renderDailyHome(); renderCramchyTasks(); renderDashboard();
   }));
@@ -4164,6 +4167,7 @@ window.CramchyTaskBridge={
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
     catch(error){state.missions=before;state.importedPlannerTasks=oldImports;throw error;}
     saveState();renderCramchyTasks();renderDashboard();
+    if(typeof window.dispatchEvent==='function')window.dispatchEvent(new CustomEvent('cramchy:tasks-changed'));
   },
   import(events){
     const result=window.CramchySharedTasks.migrate(state.missions,state.importedPlannerTasks,events);
