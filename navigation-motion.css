@@ -1,0 +1,7 @@
+/* One subtle entrance for every route, including Home and Planner.
+   No transformed ancestor: fixed popups keep their viewport positioning. */
+body.cramchy-motion-ready main>.view{animation:none!important;}
+.gw-breadcrumb .gw-back{display:inline-flex;align-items:center;gap:9px;min-height:44px;font-family:var(--cramchy-readable);font-weight:700;background:var(--pink-soft,#f2d5df);color:var(--text-main,#57313f);}
+.gw-breadcrumb .gw-back>span{font-size:1.1rem;}
+.gw-path{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--text-soft,#826570);font-size:.75rem;}
+@media(max-width:640px){.gw-breadcrumb{align-items:start;gap:10px;}.gw-breadcrumb .gw-path{flex-basis:100%;}}

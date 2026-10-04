@@ -4,7 +4,7 @@ class Node{
   constructor(attrs={},tag='div'){this.tag=tag;this.attrs=attrs;this.handlers={};this.dataset={};this.value=attrs.value||'';this.checked=Object.hasOwn(attrs,'checked');this.style={};this.classList={add(){}};this.textContent='';this.isConnected=true;for(const[k,v]of Object.entries(attrs))if(k.startsWith('data-'))this.dataset[k.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=v;}
   setAttribute(k,v){this.attrs[k]=v;}
   addEventListener(k,fn){this.handlers[k]=fn;}
-  insertAdjacentElement(){}
+  insertAdjacentElement(position,node){this.inserted=node;}
   focus(){} reportValidity(){return true;}
   remove(){this.isConnected=false;}
   get innerHTML(){return this.html||'';}
@@ -28,5 +28,6 @@ form.querySelector('#assScore').value='18';form.querySelector('#gwSaveAnother').
 form.querySelector('#cancelAss').handlers.click();click('[data-gw-period]',1);assert(root.innerHTML.includes('No scores yet'));click('[data-gw-add]',0);form=body.last;form.querySelector('#assName').value='Final quiz';form.querySelector('#assScore').value='0';form.querySelector('#assTotal').value='20';form.querySelector('#gwScoreForm').handlers.submit({preventDefault(){}});assert.equal(state.gradebook.a.finals[0].score,0);assert(root.innerHTML.includes('0.00%'));assert.equal(state.gradebook.a.midterms.length,2);
 click('[data-gw-edit]');form=body.last;form.querySelector('#assScore').value='19';form.querySelector('#gwScoreForm').handlers.submit({preventDefault(){}});assert.equal(state.gradebook.a.finals.length,1);assert.equal(state.gradebook.a.finals[0].score,19);click('[data-gw-delete]');assert.equal(state.gradebook.a.finals.length,0);
 state.courses=state.courses.filter(c=>c.id!=='a');ctx.renderGradebook();assert.equal(root.querySelectorAll('[data-gw-course]').length,1);
+ctx.window.CramchyGrades.navigate('gradebook');click('[data-gw-course]');assert(header.inserted.innerHTML.includes('back to course gradebook'));header.inserted.querySelector('[data-gw-back]').handlers.click();assert.equal(root.querySelectorAll('[data-gw-course]').length,1);assert(header.inserted.innerHTML.includes('back to grades'));header.inserted.querySelector('[data-gw-back]').handlers.click();assert.equal(root.querySelectorAll('[data-gw-tool]').length,3);
 ctx.window.CramchyGrades.navigate('gwa');assert.equal(modes.at(-1),'gwa');ctx.window.CramchyGrades.navigate('quickgwa');assert.equal(modes.at(-1),'quickgwa');ctx.switchTab('grades');assert.equal(root.querySelectorAll('[data-gw-tool]').length,3);
 console.log('Grades workspace: landing tools, current-term course list, escaping, category forms, validation, consecutive saves, period separation, editing, deletion, removal and legacy tool routes passed.');
