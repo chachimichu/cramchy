@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-grades-motion-86';
+  const VERSION='2026-10-04-task-weekdays-preview-88';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -151,7 +151,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css','grades-workspace.css','course-schedule.css','navigation-motion.css','grades-motion.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css','grades-workspace.css','course-schedule.css','navigation-motion.css','grades-motion.css','shared-tasks.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -192,6 +192,7 @@
     .then(()=>loadScript('js/backup-data.js?v='+VERSION))
     .then(()=>loadScript('js/study-timer.js?v='+VERSION))
     .then(()=>loadScript('js/academic-schedule.js?v='+VERSION))
+    .then(()=>loadScript('js/shared-tasks.js?v='+VERSION))
     .then(()=>loadScript('js/account-storage.js?v='+VERSION))
     .then(()=>window.CramchyAccounts.boot())
     .then(()=>loadScript('js/cloud-sync.js?v='+VERSION))

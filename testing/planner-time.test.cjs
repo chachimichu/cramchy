@@ -23,10 +23,10 @@ class Node{
   setCustomValidity(value){this.customValidity=value;}
   reportValidity(){this.reported=true;}
 }
-const selectors=['#view-planner','#plannerForm','#plannerTimeError','#plannerStart','#plannerEnd','#plannerTitle','#plannerType','#plannerCourse','#plannerDate','#plannerNotes','#plannerDeleteBtn','#plannerWeekGrid'];
+const selectors=['#view-planner','#plannerForm','#plannerTimeError','#plannerStart','#plannerEnd','#plannerTitle','#plannerType','#plannerCourse','#plannerDate','#plannerNotes','#plannerDeleteBtn','#plannerWeekGrid','#plannerModal','#plannerTaskHint','#plannerDateLabel'];
 const nodes=new Map(selectors.map(selector=>[selector,new Node()]));
 let writes=0,closes=0,renders=0,failWrite=false;
-const context={TIME:time,HOUR_HEIGHT:74,events:[],selectedDate:'2026-10-04',editingId:null,monthCursor:null,TYPES:['class','task','exam','study','personal'],
+const context={window:{},syncTaskFields(){},TIME:time,HOUR_HEIGHT:74,events:[],selectedDate:'2026-10-04',editingId:null,monthCursor:null,TYPES:['class','task','exam','study','personal'],
   $:selector=>nodes.get(selector)||null,pad:value=>String(value).padStart(2,'0'),
   escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;'),
   uid:()=> 'new',saveEvents:()=>{if(failWrite)throw Error('QuotaExceededError');writes++;},closeModal:()=>closes++,setPlannerView:()=>renders++,
@@ -58,3 +58,5 @@ context.renderWeek();html=nodes.get('#plannerWeekGrid').innerHTML;
 assert(html.includes('00:00'));assert(html.includes('left:calc(50% + 3px)'));assert(html.includes('width:calc(50% - 6px)'));
 assert(html.includes('start only'));assert(!html.includes('NaN'));assert(!html.includes('Infinity'));
 console.log('Planner time validation, midnight/early/late visibility, duration geometry, overlapping lanes, legacy warnings, form corrections and failed-save rollback passed.');
+
+failWrite=false;let sharedWrites=0;context.window.CramchyTaskBridge={tasks:[],put(item){if(failWrite)throw Error('quota');sharedWrites++;this.tasks=[item];},remove(){}};context.renderAllPlanner=()=>renders++;nodes.get('#plannerType').value='task';nodes.get('#plannerDate').value='';nodes.get('#plannerStart').value='';nodes.get('#plannerEnd').value='';nodes.get('#plannerForm').handlers.submit({preventDefault(){}});assert.equal(sharedWrites,1);assert.equal(context.window.CramchyTaskBridge.tasks[0].date,'');assert.equal(context.window.CramchyTaskBridge.tasks[0].type,'task');failWrite=true;nodes.get('#plannerForm').handlers.submit({preventDefault(){}});assert.equal(sharedWrites,1);assert(nodes.get('#plannerTimeError').textContent.includes('Could not save this task'));assert(source.includes("document.body.appendChild($('#plannerModal'))"));
