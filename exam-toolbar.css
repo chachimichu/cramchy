@@ -9,12 +9,15 @@ body.exam-mode-active .exam-toolbar {
 .exam-toolbar summary, .exam-home {
   display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer;
   min-height: 44px; padding: 0 12px; box-sizing: border-box;
-  border: 1px solid var(--pink-soft); border-radius: 14px; background: var(--ivory, #fff5f8);
+  border: 1px solid var(--pink-soft); border-radius: 999px; background: var(--ivory, #fff5f8);
   color: var(--text-main, #5a3a3f); font-size: .8rem; font-weight: 700; list-style: none;
-  transition: background-color .18s ease, box-shadow .18s ease;
+  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 .exam-toolbar summary::-webkit-details-marker { display: none; }
-.exam-home { border-color: transparent; background: transparent; white-space: nowrap; }
+.exam-home {
+  border-color: #e8b5c3; background: #ffe1e9; color: #5a3a3f;
+  font-weight: 800; white-space: nowrap; box-shadow: 0 3px 9px rgba(90, 58, 63, .1);
+}
 #examActionsMenu summary { width: 44px; padding: 0; font-size: 1.3rem; }
 .exam-toolbar-menu[open] > summary { background: var(--pink-soft); }
 .exam-toolbar-panel {
@@ -32,4 +35,39 @@ body.exam-mode-active .exam-toolbar {
 @media(max-width: 380px) {
   body.exam-mode-active .exam-toolbar { padding-inline: 10px; gap: 4px; }
   .exam-toolbar summary, .exam-home { padding-inline: 8px; font-size: .75rem; }
+}
+
+/* Small movements make each interaction feel responsive. */
+.exam-toolbar-menu[open] .exam-toolbar-panel {
+  transform-origin: top right;
+  animation: exam-menu-enter .2s ease-out both;
+}
+.exam-toolbar summary > span:last-child { transition: transform .18s ease; }
+.exam-toolbar-menu[open] summary > span:last-child { transform: rotate(180deg); }
+.exam-toolbar :is(summary, button):active { transform: scale(.96); }
+body.exam-mode-active .exam-toolbar { animation: exam-toolbar-enter .25s ease-out both; }
+@media (hover: hover) {
+  .exam-toolbar summary:hover, .exam-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(90, 58, 63, .13);
+  }
+  .exam-home:hover { background: #ffd3df; border-color: #d99aad; }
+}
+@keyframes exam-menu-enter {
+  from { opacity: 0; transform: translateY(-6px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes exam-toolbar-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (max-width: 420px) {
+  body.exam-mode-active .exam-toolbar { flex-wrap: wrap; gap: 8px; }
+  .exam-toolbar-right { margin-left: auto; }
+  .exam-toolbar summary, .exam-home { padding-inline: 8px; font-size: .75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.exam-mode-active .exam-toolbar, .exam-toolbar-menu[open] .exam-toolbar-panel { animation: none; }
+  .exam-toolbar :is(summary, button), .exam-toolbar summary > span:last-child { transition: none; }
+  .exam-toolbar :is(summary, button):is(:hover, :active) { transform: none; }
 }

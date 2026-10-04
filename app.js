@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-exam-navigation-preview-92';
+  const VERSION='2026-10-04-exam-navigation-motion-preview-93';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
