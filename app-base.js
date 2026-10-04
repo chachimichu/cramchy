@@ -412,7 +412,8 @@ function sanitizeState(parsed){
         end:typeof e.end==='string'?e.end:'',
         room:typeof e.room==='string'?e.room.slice(0,50):''
       })): [];
-      return {exams,subjects,subjectNames};
+      const missions=Array.isArray(p.missions)?p.missions.filter(m=>m&&typeof m.text==='string').map(m=>({id:typeof m.id==='string'?m.id.slice(0,160):cryptoId(),text:m.text.slice(0,200),done:!!m.done})):[];
+      return {exams,subjects,subjectNames,missions};
     };
     Object.entries(parsed.examData).slice(0,30).forEach(([key,record])=>{
       if(!record||typeof record!=='object')return;
@@ -582,30 +583,33 @@ function renderDashboard(){
 
 function renderMissions(){
   const list = document.getElementById('missionList');
-  if(!state.missions.length){
+  const workspace=activePeriodData();
+  const scope=document.getElementById('examMissionScope');
+  if(scope)scope.textContent=`${state.examPeriod==='finals'?'finals':'midterms'} missions · ${activeExamTerm()} · ${activeExamYear()}`;
+  if(!workspace.missions.length){
     list.innerHTML = `<div class="empty-state">Add a few realistic goals for today.</div>`;
     return;
   }
   list.innerHTML = '';
-  state.missions.forEach(m => {
+  workspace.missions.forEach(m => {
     const row = document.createElement('div');
     row.className = 'mission-row' + (m.done ? ' done' : '');
     row.innerHTML = `
-      <input type="checkbox" ${m.done ? 'checked' : ''} data-id="${m.id}">
+      <input type="checkbox" ${m.done ? 'checked' : ''} data-id="${escapeAttr(m.id)}">
       <span>${escapeHtml(m.text)}</span>
-      <button class="del" data-id="${m.id}">✕</button>
+      <button class="del" data-id="${escapeAttr(m.id)}">✕</button>
     `;
     list.appendChild(row);
   });
   list.querySelectorAll('input[type=checkbox]').forEach(cb => {
     cb.addEventListener('change', () => {
-      const m = state.missions.find(x => x.id === cb.dataset.id);
+      const m = workspace.missions.find(x => x.id === cb.dataset.id);
       if(m){ m.done = cb.checked; saveState(); renderMissions(); }
     });
   });
   list.querySelectorAll('button.del').forEach(btn => {
     btn.addEventListener('click', () => {
-      state.missions = state.missions.filter(x => x.id !== btn.dataset.id);
+      workspace.missions = workspace.missions.filter(x => x.id !== btn.dataset.id);
       saveState(); renderMissions();
     });
   });
@@ -617,7 +621,7 @@ function addMission(){
   const input = document.getElementById('missionInput');
   const text = input.value.trim();
   if(!text) return;
-  state.missions.push({ id: cryptoId(), text, done: false });
+  activePeriodData().missions.push({ id: cryptoId(), text:text.slice(0,200), done: false });
   input.value = '';
   saveState();
   renderMissions();
@@ -2668,7 +2672,7 @@ function activeExamTerm(){return TERM_OPTIONS.includes(state.examContext?.term)?
 function activeAcademicKey(){return academicKey(activeExamYear(),activeExamTerm());}
 function dailyAcademicKey(){return academicKey(profileAcademicYear(),profileTerm());}
 
-function emptyExamPeriod(){return {exams:[],subjects:{},subjectNames:{}};}
+function emptyExamPeriod(){return {exams:[],subjects:{},subjectNames:{},missions:[]};}
 function emptyTermRecord(){return {midterms:emptyExamPeriod(),finals:emptyExamPeriod()};}
 function cloneJson(v){return JSON.parse(JSON.stringify(v));}
 function normalizeAcademicName(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ');}
@@ -2680,6 +2684,7 @@ function ensureTermRecord(year,term){
   ['midterms','finals'].forEach(period=>{
     const p=state.examData[key][period]||(state.examData[key][period]=emptyExamPeriod());
     if(!Array.isArray(p.exams))p.exams=[];
+    if(!Array.isArray(p.missions))p.missions=[];
     if(!p.subjects||typeof p.subjects!=='object')p.subjects={};
     if(!p.subjectNames||typeof p.subjectNames!=='object')p.subjectNames={};
   });

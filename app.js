@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-brown-headings-89';
+  const VERSION='2026-10-04-exam-mission-isolation-90';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
