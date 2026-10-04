@@ -28,6 +28,8 @@ body.exam-mode-active .exam-toolbar {
   background: var(--ivory, #fffaf6); box-shadow: 0 10px 32px rgba(90, 58, 63, .14);
   display: grid; gap: 8px; color: var(--text-main);
 }
+.exam-toolbar-panel[hidden] { display: none !important; }
+
 /* Safari must also hide our grid panel when its native details menu is closed. */
 .exam-toolbar-menu:not([open]) > .exam-toolbar-panel { display: none; }
 

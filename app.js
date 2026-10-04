@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-exam-toolbar-toggle-preview-95';
+  const VERSION='2026-10-04-exam-toolbar-click-preview-96';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -200,6 +200,7 @@
     .then(()=>window.__cramchyBaseReady||Promise.resolve())
     .then(()=>window.__cramchyTrackerCloudReady||Promise.resolve())
     .then(()=>loadScript('exam-nav-active-v14.js?v='+VERSION))
+    .then(()=>loadScript('exam-toolbar.js?v='+VERSION))
     .then(()=>loadScript('exam-subject-dedupe-v21.js?v='+VERSION))
     .then(()=>loadScript('planner-cloud-sync-v12.js?v='+VERSION))
     .then(()=>window.__cramchyPlannerCloudReady||Promise.resolve())
