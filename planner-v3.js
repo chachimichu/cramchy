@@ -326,7 +326,7 @@
     editingId=e.id;
     $('#plannerModalTitle').textContent='event details';$('#plannerSaveBtn').textContent='save changes';$('#plannerDeleteBtn').style.display='inline-flex';
     $('#plannerTitle').value=e.title;$('#plannerType').value=e.type;$('#plannerCourse').value=e.course;$('#plannerDate').value=e.date;$('#plannerStart').value=e.start;$('#plannerEnd').value=e.end;$('#plannerNotes').value=e.notes;
-    $('#plannerType').disabled=true;syncTaskFields();
+    $('#plannerType').disabled=false;syncTaskFields();
   }
   function syncTaskFields(){const task=$('#plannerType').value==='task';$('#plannerTaskHint').hidden=!task;$('#plannerDateLabel').textContent=task?'due date (optional)':'date';}
   function openModal(type){resetForm(type);const modal=$('#plannerModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');setTimeout(()=>{const phone=window.matchMedia?.('(max-width:640px)').matches;$(phone?'#plannerModal [data-planner-close]':'#plannerTitle')?.focus()},20)}
@@ -375,12 +375,31 @@
       const issue=TIME.validate(item.start,item.end);
       if(issue){showTimeError(issue.message,issue.field);return;}
       if(item.type==='task'&&window.CramchyTaskBridge){
-        try{window.CramchyTaskBridge.put(item);}catch(error){showTimeError('Could not save this task. Your previous task and this form were kept.');return;}
+        const previous=events;
+        const converting=editingId&&events.some(x=>x.id===editingId&&!x.sharedTask&&x.type!=='task');
+        let plannerSaved=false;
+        try{
+          if(converting){events=events.filter(x=>x.id!==editingId);saveEvents();plannerSaved=true;}
+          window.CramchyTaskBridge.put(item);
+        }catch(error){
+          events=previous;
+          if(plannerSaved){try{saveEvents();}catch(rollbackError){console.warn('Planner conversion rollback kept in memory.',rollbackError);}}
+          showTimeError('Could not save this task. Your previous entry and this form were kept.');return;
+        }
         closeModal();if(item.date){selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);}renderAllPlanner();return;
       }
       const previous=events;
-      if(editingId)events=events.map(x=>x.id===editingId?item:x);else events=[...events,item];
-      try{saveEvents();}catch(error){events=previous;showTimeError('Could not save this event. Your previous events and this form were kept.');return;}
+      const convertingTask=editingId&&window.CramchyTaskBridge?.tasks.some(t=>t.id===editingId);
+      if(editingId&&events.some(x=>x.id===editingId))events=events.map(x=>x.id===editingId?item:x);else events=[...events,item];
+      let plannerSaved=false;
+      try{
+        saveEvents();plannerSaved=true;
+        if(convertingTask)window.CramchyTaskBridge.remove(editingId);
+      }catch(error){
+        events=previous;
+        if(plannerSaved){try{saveEvents();}catch(rollbackError){console.warn('Planner conversion rollback kept in memory.',rollbackError);}}
+        showTimeError('Could not save this event. Your previous entry and this form were kept.');return;
+      }
       selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);closeModal();setPlannerView('day');
     });
     $('#plannerDeleteBtn')?.addEventListener('click',()=>{
