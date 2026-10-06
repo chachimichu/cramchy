@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-06-planner-day-add-104';
+  const VERSION='2026-10-06-subtle-tab-motion-105';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
