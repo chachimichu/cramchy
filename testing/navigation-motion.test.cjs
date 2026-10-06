@@ -1,14 +1,24 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-let notify,starts=0,cancels=0;
-const preference={matches:false};
-function view(display){return {display,parentElement:null,classList:{contains:k=>k==='view'},getClientRects(){return this.display==='none'?[]:[{}];},animate(frames,options){starts++;assert(frames.every(f=>!('transform' in f)));assert.equal(options.duration,220);return {cancel(){cancels++;},addEventListener(){}};}};}
+let notify,starts=0,cancels=0,preferenceChange,exam=false;
+const preference={matches:false,addEventListener(name,fn){preferenceChange=fn;}};
+const calls=[];
+function view(display,isPanel=false){return {display,position:'static',parentElement:null,panel:isPanel,children:[],dialog:false,grades:false,classList:{contains:k=>k==='view'},getClientRects(){return this.display==='none'?[]:[{}];},contains(el){return this.children.includes(el)||this.children.some(c=>c.contains(el));},closest(){return this.grades?{}:null;},querySelector(){return this.dialog?{}:null;},querySelectorAll(selector){return selector==='*'?this.children:this.children.filter(c=>c.panel);},animate(frames,options){starts++;calls.push({el:this,frames,options});if(!this.panel){assert(frames.every(f=>!('transform' in f)));assert.equal(options.duration,220);}const listeners={};return {cancel(){cancels++;listeners.cancel?.();},addEventListener(name,fn){listeners[name]=fn;}};}};}
 const home=view('block'),planner=view('none'),main={children:[home,planner]};home.parentElement=planner.parentElement=main;
-const body={classList:{add(){}}},ctx={window:{},document:{body,querySelector:()=>main},matchMedia:()=>preference,getComputedStyle:el=>({display:el.display}),MutationObserver:class{constructor(fn){notify=fn;}observe(){}}};
+const body={classList:{add(){},contains:()=>exam}},ctx={window:{},document:{body,querySelector:()=>main},matchMedia:()=>preference,getComputedStyle:el=>({display:el.display,position:el.position}),MutationObserver:class{constructor(fn){notify=fn;}observe(){}}};
 vm.runInNewContext(fs.readFileSync(require.resolve('../navigation-motion.js'),'utf8'),ctx);
 notify([{target:body}]);assert.equal(starts,0);
 home.display='none';planner.display='block';notify([{target:planner}]);assert.equal(starts,1);
 notify([{target:planner}]);assert.equal(starts,1,'unrelated render must not repeat entrance');
 ctx.window.CramchyMotion.enter(planner);assert.equal(starts,2);assert.equal(cancels,1);
 ctx.window.CramchyMotion.enter(home);assert.equal(starts,2,'hidden views must not animate');
-preference.matches=true;ctx.window.CramchyMotion.enter(planner);assert.equal(starts,2,'reduced motion must skip animation');
-console.log('Navigation motion: route changes, repeat suppression, cancellation, hidden views, reduced motion and transform-free entrance passed.');
+preference.matches=true;ctx.window.CramchyMotion.enter(planner);assert.equal(starts,2,'reduced motion must skip animation');preference.matches=false;
+const first=view('block',true),second=view('block',true),nested=view('block',true),fixed=view('block'),unsafe=view('block',true),dialog=view('block',true);
+fixed.position='fixed';unsafe.children=[fixed];dialog.dialog=true;first.children=[nested];planner.children=[first,second,unsafe,dialog];
+ctx.window.CramchyMotion.enter(planner);assert.equal(starts,5,'only safe top-level panels animate alongside the root');
+const arrivals=calls.filter(c=>c.el.panel);assert.equal(arrivals.length,2);assert.equal(arrivals[0].frames[0].transform,'translateY(8px)');assert.equal(arrivals[1].options.delay,35);assert.equal(arrivals[0].options.duration,300);
+planner.grades=true;const before=starts;ctx.window.CramchyMotion.enter(planner);assert.equal(starts,before+1,'Grades retains its existing card animation without a duplicate');planner.grades=false;
+exam=true;notify([{target:body}]);assert.equal(starts,before+4,'exam context changes animate even when the visible root is reused');
+const same=starts;notify([{target:body}]);assert.equal(starts,same,'unrelated body mutations do not restart motion');
+preference.matches=true;const oldCancels=cancels;preferenceChange();assert(cancels>oldCancels,'enabling reduced motion cancels active animation');
+const skipped=starts;ctx.window.CramchyMotion.enter(planner);assert.equal(starts,skipped);
+console.log('Navigation motion: route and exam context changes, staggered safe panels, Grades deduplication, hidden views, repeat suppression, reduced-motion cancellation and fixed-dialog safety passed.');
