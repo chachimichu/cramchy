@@ -27,3 +27,4 @@
 .home-planner-reminder.assignment{--reminder-accent:var(--check-assignment)}
 
 #view-planner .planner-day-grid{grid-template-columns:minmax(0,1fr)}
+#view-planner .planner-day-add{margin-top:14px;min-height:44px;}
