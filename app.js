@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-04-dark-study-contrast-103';
+  const VERSION='2026-10-06-planner-day-add-104';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){

@@ -129,7 +129,7 @@
               <div class="planner-nav"><button type="button" data-planner-nav="prev" aria-label="previous">‹</button><strong id="plannerLabel"></strong><button type="button" data-planner-nav="next" aria-label="next">›</button></div>
               <div class="planner-view active" id="plannerMonthView"><div class="planner-month-grid" id="plannerMonthGrid"></div></div>
               <div class="planner-view" id="plannerWeekView"><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; scroll horizontally for other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
-              <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><div class="planner-agenda" id="plannerAgenda"></div></div></div></div>
+              <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><button class="planner-add planner-day-add" id="plannerDayAdd" data-planner-add type="button" aria-label="Add event for the selected date">+ add event</button><div class="planner-agenda" id="plannerAgenda"></div></div></div></div>
             </div>
           </div>
         </div>
