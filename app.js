@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-08-confetti-sprinkle-109';
+  const VERSION='2026-10-08-task-sparkle-110';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
