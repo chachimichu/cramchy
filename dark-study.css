@@ -1,4 +1,6 @@
 /* Loaded last: keep dark surfaces and readable controls consistent across workspaces. */
+body[data-theme="dark-study"] #homePlannerReminders :is(.home-calendar-month button,.home-calendar-today){background:var(--dark-raised);border-color:var(--dark-line);color:var(--text-main);}
+body[data-theme="dark-study"] #homePlannerReminders .home-calendar-day-heading{border-color:var(--dark-line);}
 body[data-theme="dark-study"] #dailyTaskList .is-overdue{color:#f0b2c8;}
 body[data-theme="dark-study"]{
   color-scheme:dark;

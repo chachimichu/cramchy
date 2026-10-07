@@ -1,4 +1,30 @@
-/* Home Planner reminders preview v23 — separate display-only synced Planner card on Home. */
+/* A compact Home calendar and a display-only agenda, synced with Planner. */
+#homePlannerReminders .home-calendar-month{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 12px;}
+#homePlannerReminders .home-calendar-month strong{font:700 .9rem var(--cramchy-readable);color:var(--text-main);}
+#homePlannerReminders .home-calendar-month button,#homePlannerReminders .home-calendar-today{min-height:44px;min-width:44px;border:1px solid var(--pink-soft);border-radius:14px;background:var(--ivory);color:var(--text-main);font:700 .75rem var(--cramchy-readable);cursor:pointer;}
+#homePlannerReminders .home-calendar-month button{font-size:1.45rem;}
+#homePlannerReminders .home-calendar-today{padding:0 12px;border-radius:999px;}
+#homePlannerReminders .home-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;}
+#homePlannerReminders .home-calendar-weekday{text-align:center;font:700 .65rem var(--cramchy-readable);color:var(--text-soft);padding:4px 0 7px;}
+#homePlannerReminders .home-calendar-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:48px;padding:5px 1px;border:1px solid transparent;border-radius:14px;background:transparent;color:var(--text-main);font:700 .8rem var(--cramchy-readable);cursor:pointer;}
+#homePlannerReminders .home-calendar-day.is-today{border-color:var(--red-berry);}
+#homePlannerReminders .home-calendar-day[aria-pressed=true]{background:#b63f68;color:#fff;border-color:#b63f68;box-shadow:0 3px 9px #b63f6824;}
+#homePlannerReminders .home-calendar-day:focus-visible,#homePlannerReminders button:focus-visible{outline:2px solid var(--red-berry);outline-offset:2px;}
+#homePlannerReminders .home-calendar-dots{display:flex;align-items:center;justify-content:center;gap:3px;height:7px;}
+#homePlannerReminders .home-calendar-dots i{width:5px;height:5px;border-radius:50%;background:var(--check-task,#ef89a4);}
+#homePlannerReminders .home-calendar-dots i.class{background:#8baee8;}
+#homePlannerReminders .home-calendar-dots i.quiz{background:var(--check-quiz,#9474c6);}
+#homePlannerReminders .home-calendar-dots i.study{background:var(--check-study,#8eb480);}
+#homePlannerReminders .home-calendar-dots i.assignment{background:var(--check-assignment,#708fc0);}
+#homePlannerReminders .home-calendar-dots i.exam{background:var(--check-exam,#ee7279);}
+#homePlannerReminders .home-calendar-dots i.personal{background:var(--check-personal,#e9a55d);}
+#homePlannerReminders .home-calendar-dots small{font-size:.6rem;line-height:1;}
+#homePlannerReminders .home-calendar-hint,#homePlannerReminders .home-calendar-empty{font:500 .7rem/1.6 var(--cramchy-readable);color:var(--text-soft);margin:10px 0;}
+#homePlannerReminders .home-calendar-day-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0 10px;padding-top:14px;border-top:1px solid var(--pink-soft);font:700 .8rem var(--cramchy-readable);color:var(--text-main);}
+#homePlannerReminders .home-calendar-day-heading>span{font-size:.65rem;font-weight:500;color:var(--text-soft);}
+#homePlannerReminders .home-calendar-agenda{display:grid;gap:6px;}
+@media(hover:hover){#homePlannerReminders .home-calendar-day:not([aria-pressed=true]):hover{background:var(--pink-soft);}}
+@media(prefers-reduced-motion:no-preference){#homePlannerReminders .home-calendar-day,#homePlannerReminders .home-calendar-month button,#homePlannerReminders .home-calendar-today{transition:background-color .16s,transform .16s;}#homePlannerReminders .home-calendar-day:active,#homePlannerReminders .home-calendar-month button:active{transform:scale(.95);}#homePlannerReminders .home-calendar-agenda{animation:home-calendar-enter .18s ease;}@keyframes home-calendar-enter{from{opacity:.4}to{opacity:1}}}
 .home-command-grid{
   align-items:stretch!important;
 }

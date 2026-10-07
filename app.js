@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-07-home-task-priority-106';
+  const VERSION='2026-10-07-home-mini-calendar-107';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -213,6 +213,7 @@
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
+    .then(()=>loadScript('js/home-calendar.js?v='+VERSION))
     .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>loadScript('mobile-modal-center-v30.js?v='+VERSION))
     .then(()=>loadScript('js/dialog-accessibility.js?v='+VERSION))

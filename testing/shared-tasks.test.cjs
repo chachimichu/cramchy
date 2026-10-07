@@ -31,8 +31,8 @@ assert.deepEqual(shared.project(migrated.tasks).slice(0,5).map(e=>e.type),types)
 for(const type of [...types,'personal']){const cleanState=ctx.sanitizeState({missions:[{...migrated.tasks[0],type}]});assert.equal(cleanState.missions[0].type,type);}
 console.log('All checklist types survive migration, projection and state reload; classes stay separate and personal entries appear automatically.');
 
-const home=fs.readFileSync(require.resolve('../home-planner-reminders-v23.js'),'utf8');const begin=home.indexOf('  function upcomingPlannerEvents(');
-const homeCtx={window:{CramchySharedTasks:shared,CramchyTaskBridge:{events:()=>shared.project(migrated.tasks)}},todayIso:()=>legacy.date,addDays:()=> '2026-10-16',DAYS_AHEAD:7,MAX_ITEMS:8,readPlannerEvents:()=>old,whenLabel:()=> 'today',dateLabel:e=>e.date};
+const home=fs.readFileSync(require.resolve('../home-planner-reminders-v23.js'),'utf8');const begin=home.indexOf('  function calendarEvents(');
+const homeCtx={window:{CramchySharedTasks:shared,CramchyTaskBridge:{events:()=>shared.project(migrated.tasks)}},calendar:require('../js/home-calendar.js'),readPlannerEvents:()=>old};
 vm.createContext(homeCtx);vm.runInContext(home.slice(begin,home.indexOf('\n  }',begin)+4),homeCtx);
-assert.equal(homeCtx.upcomingPlannerEvents().length,6,'Home lists each imported entry once and hides completed checklist entries');
-assert.equal(new Set(homeCtx.upcomingPlannerEvents().map(e=>e.id)).size,6);
+assert.equal(homeCtx.calendarEvents().length,7,'Home calendar lists each imported entry once, retaining completed schedule history');
+assert.equal(new Set(homeCtx.calendarEvents().map(e=>e.id)).size,7);
