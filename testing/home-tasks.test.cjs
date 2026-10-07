@@ -55,7 +55,7 @@ vm.runInNewContext(fs.readFileSync(require.resolve('../task-home-sync-v9.js'),'u
 advance(0);assert.equal(count(),'1');
 add('Study anatomy');assert.equal(count(),'2');assert.equal(homeChecks().length,2);
 change(taskChecks()[0],true);
-assert.equal(count(),'1');assert.equal(homeChecks()[0].checked,true);
+assert.equal(count(),'1');assert.equal(homeChecks().length,1);assert.equal(homeChecks()[0].dataset.dailyTask,'task-2');
 change(taskChecks()[0],false);
 assert.equal(count(),'2');assert.equal(homeChecks()[0].checked,false);
 // Home edits update app state and the Tasks page without a hidden mirror checkbox.
@@ -63,14 +63,16 @@ change(homeChecks()[1],true);
 assert.equal(count(),'1');assert.equal(context.state.missions[1].done,true);assert.equal(taskChecks()[1].checked,true);
 const deleteButton=nodes.get('cramchyTaskList').querySelectorAll('[data-cramchy-task-delete]')[0];
 deleteButton.handlers.click();
-assert.equal(count(),'0');assert.equal(homeChecks().length,1);assert.equal(homeChecks()[0].dataset.dailyTask,'task-2');
+assert.equal(count(),'0');assert.equal(homeChecks().length,0);
 assert(!nodes.get('dailyTaskList').innerHTML.includes('Review psychology'));
 advance(260);
 assert.equal(cloudSaves,1,'Rapid changes should retain the existing debounced save');
 assert.deepEqual(JSON.parse(persisted.get(context.STORAGE_KEY)).missions,JSON.parse(JSON.stringify(context.state.missions)));
 // A missing Tasks-page container does not stop the Home checkbox from saving.
-nodes.delete('cramchyTaskList');change(homeChecks()[0],false);assert.equal(count(),'1');advance(260);
-assert.equal(JSON.parse(persisted.get(context.STORAGE_KEY)).missions[0].done,false);
+change(taskChecks()[0],false);assert.equal(homeChecks().length,1);
+nodes.delete('cramchyTaskList');change(homeChecks()[0],true);assert.equal(count(),'0');advance(260);
+assert.equal(JSON.parse(persisted.get(context.STORAGE_KEY)).missions[0].done,true);
+context.state.missions[0].done=false;context.saveState();advance(260);
 // Persisted state can be reloaded, and backup/cloud replacements render their new state.
 context.state=JSON.parse(persisted.get(context.STORAGE_KEY));context.renderHomeTaskSummary();assert.equal(count(),'1');
 context.state.missions=[];context.renderHomeTaskSummary();assert.equal(count(),'0');assert(nodes.get('dailyTaskList').innerHTML.includes('nothing due here'));
@@ -78,4 +80,21 @@ context.state.missions=[{id:'imported',text:'<script> is just text',done:false}]
 assert.equal(count(),'1');assert(nodes.get('dailyTaskList').innerHTML.includes('&lt;script&gt;'));
 // Other state saves must keep the existing task count accurate as well.
 context.saveState();assert.equal(count(),'1');advance(260);
+// Priority is computed before the five-row limit, without mutating saved order.
+context.state.missions=[
+  {id:'done',text:'Finished quiz',done:true,date:'2020-01-01',type:'quiz'},
+  {id:'undated',text:'No deadline',done:false},
+  {id:'later',text:'Later work',done:false,date:'2099-12-20',type:'assignment'},
+  {id:'same-late',text:'Afternoon study',done:false,date:'2099-12-10',start:'15:00',type:'study'},
+  {id:'overdue',text:'Older deadline',done:false,date:'2020-01-02',type:'quiz'},
+  {id:'same-early',text:'Morning quiz',done:false,date:'2099-12-10',start:'09:00',type:'quiz'},
+  {id:'soon',text:'Next deadline',done:false,date:'2099-12-01',type:'personal'}
+];
+const original=JSON.stringify(context.state.missions);context.renderHomeTaskSummary();
+assert.equal(count(),'6');assert.deepEqual(homeChecks().map(el=>el.dataset.dailyTask),['overdue','soon','same-early','same-late','later']);
+assert.equal(JSON.stringify(context.state.missions),original);assert(!nodes.get('dailyTaskList').innerHTML.includes('Finished quiz'));
+assert(nodes.get('dailyTaskList').innerHTML.includes('overdue ·'));assert(nodes.get('dailyTaskList').innerHTML.includes('Thu, Dec 10, 2099'));
+assert(nodes.get('dailyTaskList').innerHTML.includes('study block'));assert(nodes.get('dailyTaskList').innerHTML.includes('data-type="quiz"'));
+change(homeChecks()[0],true);assert.equal(count(),'5');assert.equal(homeChecks().at(-1).dataset.dailyTask,'undated');
+assert(nodes.get('dailyTaskList').innerHTML.includes('no date yet'));
 console.log('Immediate Home add/complete/undo/delete, direct checkbox updates, rapid saves, reload and replacement state passed.');

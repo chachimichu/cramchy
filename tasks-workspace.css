@@ -26,5 +26,19 @@
 
 .home-planner-reminder.assignment{--reminder-accent:var(--check-assignment)}
 
+#dailyTaskList .daily-task-row{--check-accent:var(--check-task);align-items:flex-start;}
+#dailyTaskList .daily-task-row[data-type=quiz]{--check-accent:var(--check-quiz)}
+#dailyTaskList .daily-task-row[data-type=study]{--check-accent:var(--check-study)}
+#dailyTaskList .daily-task-row[data-type=assignment]{--check-accent:var(--check-assignment)}
+#dailyTaskList .daily-task-row[data-type=exam]{--check-accent:var(--check-exam)}
+#dailyTaskList .daily-task-row[data-type=personal]{--check-accent:var(--check-personal)}
+#dailyTaskList input{flex:0 0 19px;margin-top:3px;cursor:pointer;}
+#dailyTaskList .home-task-copy{flex:1;min-width:0;font-family:var(--cramchy-readable);}
+#dailyTaskList .task-text{display:block;overflow-wrap:anywhere;line-height:1.5;color:var(--text-main);}
+#dailyTaskList .home-task-details{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:5px;font-size:.7rem;line-height:1.6;color:var(--text-soft);}
+#dailyTaskList .home-task-type{display:inline-flex;align-items:center;gap:5px;color:var(--text-main);font-weight:700;}
+#dailyTaskList .home-task-type::before{content:'';width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:var(--check-accent);}
+#dailyTaskList .is-overdue{color:var(--red-deep);font-weight:700;}
+
 #view-planner .planner-day-grid{grid-template-columns:minmax(0,1fr)}
 #view-planner .planner-day-add{margin-top:14px;min-height:44px;}
