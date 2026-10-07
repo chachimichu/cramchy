@@ -2011,14 +2011,26 @@ function nextCourseLabel(){
 }
 function renderDailyTasks(){
   const wrap=document.getElementById('dailyTaskList'); if(!wrap) return;
-  const tasks=(state.missions||[]).slice(0,5);
+  const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''))?String(value):'';
+  const tasks=(state.missions||[]).filter(m=>m&&!m.done).slice().sort((a,b)=>{
+    const ad=validDate(a.date),bd=validDate(b.date);
+    return (ad||'9999-99-99').localeCompare(bd||'9999-99-99')||(ad&&bd?String(a.start||'23:59').localeCompare(String(b.start||'23:59')):0);
+  }).slice(0,5);
+  const labels={task:'other task',quiz:'quiz',study:'study block',assignment:'assignment',exam:'exam reminder',personal:'personal'};
+  const now=new Date(),today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  function deadline(m){
+    const value=validDate(m.date);if(!value)return 'no date yet';
+    const [y,mo,d]=value.split('-').map(Number),date=new Date(y,mo-1,d,12);
+    const label=date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',...(y!==now.getFullYear()?{year:'numeric'}:{})});
+    return `${value<today?'overdue · ':value===today?'today · ':''}${label}${m.start?' · '+String(m.start):''}`;
+  }
   if(!tasks.length){
-    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here</div><p>Add a task and it will show up on your daily dashboard.</p></div>';
+    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here</div><p>No unfinished tasks. Completed tasks are saved in Tasks.</p></div>';
     return;
   }
-  wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
-    <input type="checkbox" data-daily-task="${escapeAttr(m.id)}" ${m.done?'checked':''}>
-    <span class="task-text">${escapeHtml(m.text)}</span>
+  wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row" data-type="${escapeAttr(Object.hasOwn(labels,m.type)?m.type:'task')}">
+    <input type="checkbox" data-daily-task="${escapeAttr(m.id)}">
+    <span class="home-task-copy"><span class="task-text">${escapeHtml(m.text)}</span><span class="home-task-details"><span class="home-task-type">${Object.hasOwn(labels,m.type)?labels[m.type]:labels.task}</span><span class="home-task-date ${validDate(m.date)&&m.date<today?'is-overdue':''}">${escapeHtml(deadline(m))}</span></span></span>
   </label>`).join('');
   wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
     if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask);}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}

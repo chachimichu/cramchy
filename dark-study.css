@@ -1,4 +1,5 @@
 /* Loaded last: keep dark surfaces and readable controls consistent across workspaces. */
+body[data-theme="dark-study"] #dailyTaskList .is-overdue{color:#f0b2c8;}
 body[data-theme="dark-study"]{
   color-scheme:dark;
   --dark-surface:#2d2932;--dark-raised:#39313d;--dark-input:#242128;--dark-line:#756479;
