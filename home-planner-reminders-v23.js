@@ -3,8 +3,9 @@
   const OLD_STORAGE_KEY='cramchyPlannerEvents_v1';
   const TYPES=['class','task','exam','quiz','study','personal','assignment'];
   const TYPE_LABEL={class:'class',task:'task',exam:'exam',quiz:'quiz',study:'study',personal:'personal',assignment:'assignment'};
-  const MAX_ITEMS=8;
-  const DAYS_AHEAD=7;
+  const MAX_ITEMS=3;
+  const calendar=window.CramchyHomeCalendar;
+  let selectedDate=calendar.iso(new Date());
   let renderTimer=null;
 
   function escapeHtml(value){
@@ -16,22 +17,6 @@
       .replace(/'/g,'&#039;');
   }
   function pad(num){return String(num).padStart(2,'0');}
-  function todayIso(){
-    const now=new Date();
-    return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-  }
-  function dateObj(iso){
-    const parts=String(iso||'').split('-').map(Number);
-    return new Date(parts[0]||2026,(parts[1]||1)-1,parts[2]||1,12,0,0,0);
-  }
-  function addDays(iso,days){
-    const d=dateObj(iso);
-    d.setDate(d.getDate()+days);
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  }
-  function daysBetween(a,b){
-    return Math.round((dateObj(b)-dateObj(a))/86400000);
-  }
   function readPlannerEvents(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem(OLD_STORAGE_KEY)||'[]';
@@ -51,7 +36,7 @@
         }))
         .filter(event=>event.date);
     }catch(error){
-      console.warn('Home planner reminders could not read Planner events.',error);
+      console.warn('Home calendar could not read Planner events.',error);
       return [];
     }
   }
@@ -65,29 +50,8 @@
     const displayHour=((hour+11)%12)+1;
     return `${displayHour}:${pad(minute)} ${suffix}`;
   }
-  function whenLabel(event,today){
-    const diff=daysBetween(today,event.date);
-    if(diff===0) return 'today';
-    if(diff===1) return 'tomorrow';
-    if(diff>1) return `in ${diff} days`;
-    return 'past';
-  }
-  function dateLabel(event,today){
-    const when=whenLabel(event,today);
-    const d=dateObj(event.date);
-    const pretty=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const time=timeLabel(event.start);
-    return `${when} · ${pretty}${time?' · '+time:''}${event.course?' · '+event.course:''}`;
-  }
-  function upcomingPlannerEvents(){
-    const today=todayIso();
-    const end=addDays(today,DAYS_AHEAD);
-    return [...readPlannerEvents().filter(e=>!window.CramchyTaskBridge||!window.CramchySharedTasks.actionable(e)),...(window.CramchyTaskBridge?.events()||[]),...(window.CramchySchedules?.events()||[])]
-      .filter(event=>event.date>=today&&event.date<=end)
-      .filter(event=>!(event.sharedTask&&event.done))
-      .sort((a,b)=>(a.date+' '+(a.start||'99:99')+' '+a.title).localeCompare(b.date+' '+(b.start||'99:99')+' '+b.title))
-      .slice(0,MAX_ITEMS)
-      .map(event=>({...event,homeWhen:whenLabel(event,today),homeDateLine:dateLabel(event,today)}));
+  function calendarEvents(){
+    return calendar.merge(readPlannerEvents().filter(e=>!window.CramchyTaskBridge||!window.CramchySharedTasks.actionable(e)),window.CramchyTaskBridge?.events()||[],window.CramchySchedules?.events()||[]);
   }
   function findTaskCard(){
     const tasks=document.getElementById('dailyTaskList');
@@ -117,12 +81,22 @@
       section.className='home-command-panel home-theme-surface home-planner-reminders';
       section.innerHTML=`
         <div class="home-planner-reminders-head">
-          <div class="home-planner-reminders-title"><span class="dot" aria-hidden="true"></span><h3>planner reminders</h3></div>
-          <span class="home-planner-reminders-chip">next 7 days</span>
+          <div class="home-planner-reminders-title"><span class="dot" aria-hidden="true"></span><h3>my calendar</h3></div>
+          <button class="home-calendar-today" type="button" data-home-calendar-today>today</button>
         </div>
-        <div class="home-planner-reminders-list" id="homePlannerRemindersList"></div>
-        <button class="home-planner-open" type="button" id="homePlannerOpenBtn">open planner</button>`;
+        <div id="homeMiniCalendar"></div>
+        <div class="home-calendar-agenda" id="homePlannerRemindersList" aria-live="polite"></div>
+        <button class="home-planner-open" type="button" id="homePlannerOpenBtn">open planner →</button>`;
+      section.addEventListener('click',event=>{
+        const target=event.target.closest('[data-home-calendar-date],[data-home-calendar-shift],[data-home-calendar-today]');if(!target)return;
+        if(target.hasAttribute('data-home-calendar-date'))selectedDate=target.dataset.homeCalendarDate;
+        else if(target.hasAttribute('data-home-calendar-shift'))selectedDate=calendar.shift(selectedDate,Number(target.dataset.homeCalendarShift));
+        else selectedDate=calendar.iso(new Date());
+        const focusAttr=target.hasAttribute('data-home-calendar-date')?`[data-home-calendar-date="${selectedDate}"]`:target.hasAttribute('data-home-calendar-shift')?`[data-home-calendar-shift="${target.dataset.homeCalendarShift}"]`:'[data-home-calendar-today]';
+        render();section.querySelector(focusAttr)?.focus({preventScroll:true});
+      });
       section.querySelector('#homePlannerOpenBtn')?.addEventListener('click',()=>{
+        if(window.CramchyPlannerCalendar){window.CramchyPlannerCalendar.open(selectedDate);return;}
         const plannerBtn=document.querySelector('.topnav .navbtn[data-tab="planner"]');
         if(plannerBtn){plannerBtn.click();return;}
         document.querySelector('#view-planner')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -151,24 +125,24 @@
     if(!section) return;
     const list=section.querySelector('#homePlannerRemindersList');
     if(!list) return;
-    const events=upcomingPlannerEvents();
-    if(!events.length){
-      list.innerHTML=`
-        <div class="home-planner-reminders-empty">
-
-          <div><strong>nothing plotted this week</strong><p>Planner events and course exams appear here.</p></div>
-        </div>`;
-      return;
-    }
-    list.innerHTML=events.map(event=>`
-      <div class="home-planner-reminder ${event.type} ${event.homeWhen==='today'?'today':''}">
+    const all=calendarEvents(),today=calendar.iso(new Date());
+    const grid=section.querySelector('#homeMiniCalendar');
+    const pretty=value=>calendar.date(value).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    grid.innerHTML=`<div class="home-calendar-month"><button type="button" data-home-calendar-shift="-1" aria-label="Previous month">‹</button><strong>${calendar.date(selectedDate).toLocaleDateString('en-US',{month:'long',year:'numeric'})}</strong><button type="button" data-home-calendar-shift="1" aria-label="Next month">›</button></div><div class="home-calendar-grid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day=>`<span class="home-calendar-weekday" aria-hidden="true">${day}</span>`).join('')}${calendar.cells(selectedDate).map(value=>{
+      if(!value)return '<span aria-hidden="true"></span>';
+      const entries=all.filter(e=>e.date===value),types=[...new Set(entries.map(e=>TYPES.includes(e.type)?e.type:'personal'))];
+      return `<button type="button" class="home-calendar-day ${value===today?'is-today':''}" data-home-calendar-date="${value}" aria-pressed="${value===selectedDate}" ${value===today?'aria-current="date"':''} aria-label="${escapeHtml(pretty(value))}, ${entries.length} ${entries.length===1?'event':'events'}"><span>${calendar.date(value).getDate()}</span><span class="home-calendar-dots" aria-hidden="true">${types.slice(0,3).map(type=>`<i class="${type}"></i>`).join('')}${types.length>3?'<small>+</small>':''}</span></button>`;
+    }).join('')}</div><p class="home-calendar-hint">tap a date to see its events</p>`;
+    const events=all.filter(e=>e.date===selectedDate);
+    list.innerHTML=`<div class="home-calendar-day-heading"><strong>${calendar.date(selectedDate).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</strong><span>${events.length} ${events.length===1?'event':'events'}</span></div>`+(events.length?events.slice(0,MAX_ITEMS).map(event=>`
+      <div class="home-planner-reminder ${event.type}">
         <span class="home-planner-reminder-dot ${event.type}" aria-hidden="true"></span>
         <div class="home-planner-reminder-main">
           <strong title="${escapeHtml(event.title)}">${escapeHtml(event.title)}</strong>
-          <span title="${escapeHtml(event.homeDateLine)}">${escapeHtml(event.homeDateLine)}</span>
+          <span>${escapeHtml(event.start?timeLabel(event.start)+(event.end?' – '+timeLabel(event.end):''):'all day')}${event.course?' · '+escapeHtml(event.course):''}${event.done?' · completed':''}</span>
         </div>
         <span class="home-planner-reminder-tag ${event.type}">${escapeHtml(TYPE_LABEL[event.type]||event.type)}</span>
-      </div>`).join('');
+      </div>`).join('')+(events.length>MAX_ITEMS?`<p class="home-calendar-hint">${events.length-MAX_ITEMS} more in Planner</p>`:''):'<p class="home-calendar-empty">nothing scheduled for this day</p>');
   }
   function scheduleRender(){
     clearTimeout(renderTimer);

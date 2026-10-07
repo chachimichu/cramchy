@@ -45,12 +45,12 @@ ctx.state.examPeriod=null;ctx.window.CramchySchedules.add();assert.equal(calls.a
 assert(planner.includes("window.addEventListener('cramchy:schedules-changed',renderAllPlanner)"));
 const home=fs.readFileSync(require.resolve('../home-planner-reminders-v23.js'),'utf8');
 assert(home.includes('window.CramchySchedules?.events()'));assert(home.includes("'cramchy:schedules-changed',scheduleRender"));
-Object.assign(ctx,{DAYS_AHEAD:7,MAX_ITEMS:8,todayIso:()=> '2026-10-03',addDays:()=> '2026-10-10',readPlannerEvents:()=>[ctx.events[0]],whenLabel:()=> 'tomorrow',dateLabel:e=>e.date});
-const start=home.indexOf('  function upcomingPlannerEvents(');
+Object.assign(ctx,{calendar:require('../js/home-calendar.js'),readPlannerEvents:()=>[ctx.events[0]]});
+const start=home.indexOf('  function calendarEvents(');
 vm.runInContext(home.slice(start,home.indexOf('\n  }',start)+4),ctx);
-assert.equal(ctx.upcomingPlannerEvents().length,2,'Home reminders include the canonical midterm exam plus the manual reminder');
+assert.equal(ctx.calendarEvents().length,3,'Home calendar includes both canonical exam periods plus the manual reminder');
 state.examData[key].midterms.exams[0]={...exam,start:'2026-10-07T08:00:00+08:00'};
-assert(ctx.upcomingPlannerEvents().some(e=>e.date==='2026-10-07'),'Home reads live edits before the debounced storage write');
+assert(ctx.calendarEvents().some(e=>e.date==='2026-10-07'),'Home reads live edits before the debounced storage write');
 state.examData[key].midterms.exams=[];
-assert.equal(ctx.upcomingPlannerEvents().length,1,'Home removes deleted exams');
+assert.equal(ctx.calendarEvents().length,2,'Home removes deleted exams');
 console.log('Shared exams: term/period isolation, edit/delete propagation, canonical edit routing, no duplicate projections and no derived Planner writes passed.');

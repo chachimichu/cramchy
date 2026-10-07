@@ -2033,7 +2033,7 @@ function renderDailyTasks(){
     <span class="home-task-copy"><span class="task-text">${escapeHtml(m.text)}</span><span class="home-task-details"><span class="home-task-type">${Object.hasOwn(labels,m.type)?labels[m.type]:labels.task}</span><span class="home-task-date ${validDate(m.date)&&m.date<today?'is-overdue':''}">${escapeHtml(deadline(m))}</span></span></span>
   </label>`).join('');
   wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
-    if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask);}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}
+    if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask,el.getBoundingClientRect());}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}
     const item=state.missions.find(m=>m.id===el.dataset.dailyTask); if(item)item.done=el.checked;
     saveState(); renderDailyHome(); renderCramchyTasks(); renderDashboard();
   }));
@@ -4190,7 +4190,7 @@ window.CramchyTaskBridge={
     this.commit(old?state.missions.map(t=>t.id===event.id?task:t):[...state.missions,task]);
   },
   remove(id){this.commit(state.missions.filter(t=>t.id!==id));},
-  toggle(id){this.commit(state.missions.map(t=>t.id===id?{...t,done:!t.done}:t));}
+  toggle(id,origin){const item=state.missions.find(t=>t.id===id);if(!item)return;const completed=!item.done;this.commit(state.missions.map(t=>t.id===id?{...t,done:completed}:t));if(completed){try{window.CramchyCelebrate?.task(origin);}catch{}}}
 };
 
 /* Explicit access to gradebook state kept inside the app closure. */

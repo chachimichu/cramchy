@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-07-home-task-priority-106';
+  const VERSION='2026-10-08-original-confetti-111';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -207,12 +207,14 @@
     .then(()=>loadScript('planner-root-compat-v4.js?v='+VERSION))
     .then(()=>loadScript('js/planner-time.js?v='+VERSION))
     .then(()=>loadScript('planner-v3.js?v='+VERSION))
+    .then(()=>loadScript('js/task-celebration.js?v='+VERSION))
     .then(()=>loadScript('tasks-workspace.js?v='+VERSION))
     .then(()=>loadScript('planner-mobile-hotfix-v44.js?v='+VERSION))
     .then(()=>{ window.__cramchyPlannerCloudMarkLoaded?.(); })
     .then(()=>loadScript('home-hierarchy-v5.js?v='+VERSION))
     .then(()=>loadScript('home-command-v6.js?v='+VERSION))
     .then(()=>loadScript('polish-v7.js?v='+VERSION))
+    .then(()=>loadScript('js/home-calendar.js?v='+VERSION))
     .then(()=>loadScript('home-planner-reminders-v23.js?v='+VERSION))
     .then(()=>loadScript('mobile-modal-center-v30.js?v='+VERSION))
     .then(()=>loadScript('js/dialog-accessibility.js?v='+VERSION))

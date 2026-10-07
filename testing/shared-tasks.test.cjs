@@ -7,6 +7,12 @@ const bridge=source.slice(source.indexOf('window.CramchyTaskBridge='),source.ind
 const persisted=new Map();let failure=false;
 const ctx={window:{CramchySharedTasks:shared},state,STORAGE_KEY:'main',localStorage:{setItem(k,v){if(failure)throw Error('quota');persisted.set(k,v);}},saveState(){},renderCramchyTasks(){},renderDashboard(){}};
 vm.runInNewContext(bridge,ctx);const api=ctx.window.CramchyTaskBridge;
+const bursts=[];ctx.window.CramchyCelebrate={task:origin=>bursts.push(origin)};
+const origin={left:20,top:40,width:20,height:20};
+api.toggle('quick',origin);assert.equal(bursts.length,1);assert.equal(bursts[0],origin);
+api.toggle('quick',origin);assert.equal(bursts.length,1,'Undo must not celebrate');
+api.toggle('missing',origin);assert.equal(bursts.length,1);
+failure=true;assert.throws(()=>api.toggle('quick',origin));assert.equal(api.tasks[0].done,false);assert.equal(bursts.length,1,'Failed saves must not celebrate');failure=false;
 api.import([legacy,{...legacy,id:'class',type:'class'}]);assert.equal(api.tasks.length,2);assert.equal(api.events().length,1);assert.equal(api.events()[0].notes,'Keep this');
 api.import([legacy]);assert.equal(api.tasks.length,2,'repeat migration creates no duplicate');
 const id=api.events()[0].id;api.toggle(id);assert.equal(api.tasks[1].done,true);assert.equal(api.events()[0].done,true);
@@ -31,8 +37,8 @@ assert.deepEqual(shared.project(migrated.tasks).slice(0,5).map(e=>e.type),types)
 for(const type of [...types,'personal']){const cleanState=ctx.sanitizeState({missions:[{...migrated.tasks[0],type}]});assert.equal(cleanState.missions[0].type,type);}
 console.log('All checklist types survive migration, projection and state reload; classes stay separate and personal entries appear automatically.');
 
-const home=fs.readFileSync(require.resolve('../home-planner-reminders-v23.js'),'utf8');const begin=home.indexOf('  function upcomingPlannerEvents(');
-const homeCtx={window:{CramchySharedTasks:shared,CramchyTaskBridge:{events:()=>shared.project(migrated.tasks)}},todayIso:()=>legacy.date,addDays:()=> '2026-10-16',DAYS_AHEAD:7,MAX_ITEMS:8,readPlannerEvents:()=>old,whenLabel:()=> 'today',dateLabel:e=>e.date};
+const home=fs.readFileSync(require.resolve('../home-planner-reminders-v23.js'),'utf8');const begin=home.indexOf('  function calendarEvents(');
+const homeCtx={window:{CramchySharedTasks:shared,CramchyTaskBridge:{events:()=>shared.project(migrated.tasks)}},calendar:require('../js/home-calendar.js'),readPlannerEvents:()=>old};
 vm.createContext(homeCtx);vm.runInContext(home.slice(begin,home.indexOf('\n  }',begin)+4),homeCtx);
-assert.equal(homeCtx.upcomingPlannerEvents().length,6,'Home lists each imported entry once and hides completed checklist entries');
-assert.equal(new Set(homeCtx.upcomingPlannerEvents().map(e=>e.id)).size,6);
+assert.equal(homeCtx.calendarEvents().length,7,'Home calendar lists each imported entry once, retaining completed schedule history');
+assert.equal(new Set(homeCtx.calendarEvents().map(e=>e.id)).size,7);

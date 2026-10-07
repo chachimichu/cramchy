@@ -22,7 +22,7 @@
     if(target.dataset.twEdit)window.CramchyPlannerTasks.edit(target.dataset.twEdit);
     if(target.dataset.twDelete){try{api.remove(target.dataset.twDelete)}catch{error('Could not delete this entry. Please try again.');}}
   });
-  root.addEventListener('change',event=>{const id=event.target.dataset.twCheck;if(!id)return;try{api.toggle(id)}catch{event.target.checked=!event.target.checked;error('Could not save completion. Please try again.');}});
+  root.addEventListener('change',event=>{const id=event.target.dataset.twCheck;if(!id)return;try{api.toggle(id,event.target.getBoundingClientRect())}catch{event.target.checked=!event.target.checked;error('Could not save completion. Please try again.');}});
   function error(message){const node=root.querySelector('.tw-error');node.hidden=false;node.textContent=message;}
   window.CramchyTasksWorkspace={render};
   ['cramchy:tasks-changed','cramchy:backup-restored','cramchy:planner-cloud-loaded'].forEach(name=>window.addEventListener(name,render));

@@ -421,6 +421,7 @@
     renderAllPlanner();
   }
 
+  window.CramchyPlannerCalendar={open(date){if(!window.CramchyHomeCalendar?.date(date))return;selectedDate=date;monthCursor=new Date(dateObj(date).getFullYear(),dateObj(date).getMonth(),1,12);document.querySelector('.topnav .navbtn[data-tab="planner"]')?.click();setPlannerView('day');}};
   window.CramchyPlannerTasks={add(){openModal('task');$('#plannerDate').value='';},edit(id){const task=window.CramchyTaskBridge?.tasks.find(t=>t.id===id);if(!task)return;fillForm({id:task.id,title:task.text,type:task.type||'task',showInTasks:true,date:task.date||'',course:task.course||'',start:task.start||'',end:task.end||'',notes:task.notes||''});const modal=$('#plannerModal');modal.classList.add('open');modal.setAttribute('aria-hidden','false');}};
   $('#sharedTaskAdd')?.addEventListener('click',()=>window.CramchyPlannerTasks.add());
   window.addEventListener('cramchy:planner-cloud-loaded',()=>{events=loadEvents();legacyTasks=events.filter(e=>window.CramchySharedTasks.actionable(e));renderAllPlanner();});
