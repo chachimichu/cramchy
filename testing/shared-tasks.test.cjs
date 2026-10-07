@@ -7,6 +7,12 @@ const bridge=source.slice(source.indexOf('window.CramchyTaskBridge='),source.ind
 const persisted=new Map();let failure=false;
 const ctx={window:{CramchySharedTasks:shared},state,STORAGE_KEY:'main',localStorage:{setItem(k,v){if(failure)throw Error('quota');persisted.set(k,v);}},saveState(){},renderCramchyTasks(){},renderDashboard(){}};
 vm.runInNewContext(bridge,ctx);const api=ctx.window.CramchyTaskBridge;
+const bursts=[];ctx.window.CramchyCelebrate={task:origin=>bursts.push(origin)};
+const origin={left:20,top:40,width:20,height:20};
+api.toggle('quick',origin);assert.equal(bursts.length,1);assert.equal(bursts[0],origin);
+api.toggle('quick',origin);assert.equal(bursts.length,1,'Undo must not celebrate');
+api.toggle('missing',origin);assert.equal(bursts.length,1);
+failure=true;assert.throws(()=>api.toggle('quick',origin));assert.equal(api.tasks[0].done,false);assert.equal(bursts.length,1,'Failed saves must not celebrate');failure=false;
 api.import([legacy,{...legacy,id:'class',type:'class'}]);assert.equal(api.tasks.length,2);assert.equal(api.events().length,1);assert.equal(api.events()[0].notes,'Keep this');
 api.import([legacy]);assert.equal(api.tasks.length,2,'repeat migration creates no duplicate');
 const id=api.events()[0].id;api.toggle(id);assert.equal(api.tasks[1].done,true);assert.equal(api.events()[0].done,true);
