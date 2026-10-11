@@ -2735,8 +2735,10 @@ function examSubjectCatalog(year=activeExamYear(),term=activeExamTerm()){
   const record=ensureTermRecord(year,term);
   const catalog=[];
   const byName=new Map();
+  const byId=new Map();
 
   function add(id,name,courseId=''){
+    if(byId.has(String(id)))return;
     const cleanName=String(name||'Untitled course').slice(0,100);
     const key=normalizeAcademicName(cleanName);
     if(!key)return;
@@ -2746,7 +2748,7 @@ function examSubjectCatalog(year=activeExamYear(),term=activeExamTerm()){
       return;
     }
     const item={id:String(id),name:cleanName,courseId};
-    byName.set(key,item);catalog.push(item);
+    byName.set(key,item);byId.set(item.id,item);catalog.push(item);
   }
 
   // Imported/current midterms establish the original subjects for Term 1.
@@ -2766,6 +2768,36 @@ function examSubjectCatalog(year=activeExamYear(),term=activeExamTerm()){
     Object.keys(p.subjects||{}).forEach(id=>add(id,p.subjectNames?.[id]||id));
   });
 
+  // Older built-in labels can describe the same course under a fuller name.
+  // Match only these known presets to a single current-term course, never
+  // fuzzy-match arbitrary course records or rewrite persisted subject IDs.
+  const presetAliases={
+    anatomy:['human anatomy','human anatomy and physiology'],
+    teaching:['principle of teaching','principles of teaching']
+  };
+  const period=record[state.examPeriod==='finals'?'finals':'midterms'];
+  const hasContent=value=>{
+    if(Array.isArray(value))return value.some(hasContent);
+    if(value&&typeof value==='object')return Object.values(value).some(hasContent);
+    return typeof value==='string'?Boolean(value.trim()):Boolean(value);
+  };
+  const used=id=>hasContent(period.subjects?.[id])||(period.exams||[]).some(e=>(e.subjectId||e.id)===id);
+  for(const [presetId,names] of Object.entries(presetAliases)){
+    const preset=catalog.find(item=>item.id===presetId&&names.includes(normalizeAcademicName(item.name)));
+    if(!preset)continue;
+    const courses=coursesForTerm(year,term).filter(c=>names.includes(normalizeAcademicName(c.name)));
+    if(courses.length!==1)continue;
+    const course=courses[0];
+    const alternate=catalog.find(item=>item.id===`course-${course.id}`);
+    if(!alternate){preset.courseId=course.id;preset.name=course.name;continue;}
+    // If both identities contain work in this period, keep both accessible.
+    // Empty auto-created trackers should not create a duplicate choice.
+    if(used(preset.id)&&used(alternate.id))continue;
+    const keep=used(alternate.id)?alternate:preset;
+    const omit=keep===preset?alternate:preset;
+    keep.courseId=course.id;keep.name=course.name;
+    catalog.splice(catalog.indexOf(omit),1);
+  }
   return catalog;
 }
 function ensureExamSubject(period,id,name){
