@@ -13,9 +13,10 @@
   }
   function enter(el){
     if(!el||reduce.matches||typeof el.animate!=='function'||!el.getClientRects().length)return;
-    // Never transform a route: its fixed dialogs must stay attached to the viewport.
-    // One shared fade: cards keep their positions and appear together.
-    animate(el,[{opacity:.7},{opacity:1}],{duration:180,easing:'ease-out'});
+    // Match Planner's gentle rise as one section. A relative offset avoids
+    // transformed ancestors so fixed dialogs remain attached to the viewport.
+    const position=getComputedStyle(el).position||'static';
+    animate(el,[{opacity:0,position:position==='static'?'relative':position,top:'7px'},{opacity:1,position:position==='static'?'relative':position,top:'0px'}],{duration:280,easing:'ease'});
   }
   const visible=()=>Array.from(main.children).filter(el=>el.classList.contains('view')&&getComputedStyle(el).display!=='none');
   const examMode=()=>document.body.classList.contains('exam-mode-active');

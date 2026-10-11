@@ -1,6 +1,7 @@
 /* One subtle entrance for every route, including Home and Planner.
    No transformed ancestor: fixed popups keep their viewport positioning. */
-body.cramchy-motion-ready main>.view{animation:none!important;}
+body.cramchy-motion-ready main>.view,
+body.cramchy-motion-ready.planner-mode-active #view-planner{animation:none!important;}
 /* Small press feedback for navigation and local view selectors. */
 @media(prefers-reduced-motion:no-preference){
   .topnav .navbtn,.planner-tabs button,.cs-switch button,.cs-day-picker button,.tw-status button,.tw-filters button,.exam-menu-trigger{

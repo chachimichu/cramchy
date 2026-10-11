@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-11-smooth-workspace-motion-112';
+  const VERSION='2026-10-11-planner-style-motion-113';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
