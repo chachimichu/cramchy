@@ -28,6 +28,8 @@ body :is(.course-modal,#plannerModal) input:is([type="date"],[type="time"]){
   max-width:100%!important;
   max-inline-size:100%!important;
   box-sizing:border-box!important;
+  -webkit-appearance:none;
+  appearance:none;
   min-height:44px;
   font-size:16px!important;
 }
@@ -38,6 +40,21 @@ body :is(.course-modal,#plannerModal) input::-webkit-date-and-time-value{
 body :is(.course-modal,#plannerModal) input::-webkit-datetime-edit{
   min-width:0;
   padding:0;
+}
+/* iPadOS renders native temporal editors differently when empty or focused.
+   Give each one its own row and an explicit containing block, regardless of
+   portrait/landscape viewport width. This also covers iOS in-app browsers. */
+@supports(-webkit-touch-callout:none){
+  body :is(.course-form-grid,.schedule-row-edit)>div:has(>input:is([type="date"],[type="time"])),
+  #plannerModal .planner-form>label:has(>input:is([type="date"],[type="time"])){
+    grid-column:1/-1!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
 }
 body :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:3px solid var(--red-deep,#9e3656);outline-offset:3px;}
 .planner-nav button,.planner-modal-head button{min-width:44px;min-height:44px;}

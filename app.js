@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-11-tablet-form-fields-115';
+  const VERSION='2026-10-11-ios-temporal-fields-116';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
