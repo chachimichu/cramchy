@@ -22,6 +22,6 @@ const same=starts;notify([{target:body}]);assert.equal(starts,same,'unrelated bo
 preference.matches=true;const oldCancels=cancels;preferenceChange();assert(cancels>oldCancels,'enabling reduced motion cancels active animation');
 const skipped=starts;ctx.window.CramchyMotion.enter(planner);assert.equal(starts,skipped);
 const grades=fs.readFileSync(require.resolve('../grades-motion.css'),'utf8');
-assert(!grades.includes('animation-delay:'));assert(!grades.includes('translateY(-4px)'));
+assert(!grades.includes('animation-delay:'));assert(grades.includes('translateY(-4px)'),'Grades keeps intentional hover feedback');
 assert(!grades.slice(grades.indexOf('@keyframes gw-card-arrive'),grades.indexOf('@keyframes gw-meter-fill')).includes('transform:'));
 console.log('Navigation motion: one opacity-only section fade, stationary cards, hidden views, repeat suppression, exam context and reduced-motion cancellation passed.');

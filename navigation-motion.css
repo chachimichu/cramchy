@@ -4,6 +4,11 @@ body.cramchy-motion-ready main>.view,
 body.cramchy-motion-ready.planner-mode-active #view-planner{animation:none!important;}
 /* Small press feedback for navigation and local view selectors. */
 @media(prefers-reduced-motion:no-preference){
+  #view-exam .exam-choice{transition:transform 180ms ease,box-shadow 180ms ease,border-color 180ms ease;}
+  #view-exam .exam-choice:active{transform:scale(.975);}
+  @media(hover:hover) and (pointer:fine){
+    #view-exam .exam-choice:hover{transform:translateY(-4px);box-shadow:0 12px 28px color-mix(in srgb,var(--text-main,#57313f) 10%,transparent);border-color:var(--red-berry);}
+  }
   .topnav .navbtn,.planner-tabs button,.cs-switch button,.cs-day-picker button,.tw-status button,.tw-filters button,.exam-menu-trigger{
     transition:transform 150ms ease,background-color 180ms ease,border-color 180ms ease,box-shadow 180ms ease;
   }
@@ -12,4 +17,5 @@ body.cramchy-motion-ready.planner-mode-active #view-planner{animation:none!impor
 .gw-breadcrumb .gw-back{display:inline-flex;align-items:center;gap:9px;min-height:44px;font-family:var(--cramchy-readable);font-weight:700;background:var(--pink-soft,#f2d5df);color:var(--text-main,#57313f);}
 .gw-breadcrumb .gw-back>span{font-size:1.1rem;}
 .gw-path{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--text-soft,#826570);font-size:.75rem;}
+#view-exam .exam-choice:focus-visible{outline:2px solid var(--red-berry);outline-offset:4px;}
 @media(max-width:640px){.gw-breadcrumb{align-items:start;gap:10px;}.gw-breadcrumb .gw-path{flex-basis:100%;}}
