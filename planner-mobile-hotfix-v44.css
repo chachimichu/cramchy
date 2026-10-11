@@ -65,8 +65,16 @@ body.planner-modal-open{
 }
 
 #plannerModal .planner-form{
+  grid-template-columns:repeat(2,minmax(0,1fr));
   min-width:0!important;
   overflow:visible!important;
+}
+
+/* Grid labels must shrink too, including at tablet widths. Native Safari
+   date/time controls otherwise contribute their intrinsic width to the track. */
+#plannerModal .planner-form>label{
+  min-width:0!important;
+  max-width:100%;
 }
 
 #plannerModal .planner-form input,

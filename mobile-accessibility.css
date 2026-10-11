@@ -7,6 +7,38 @@
 .course-form-grid>*{min-width:0;}
 .course-modal input,.course-modal select,.course-modal textarea{min-width:0;max-width:100%;}
 .course-modal label,.planner-form label{font-size:.875rem;}
+/* A schedule sits inside a 620px dialog even on a wide iPad or desktop.
+   Size tracks for that dialog rather than trying to squeeze five across. */
+.course-modal .schedule-row-edit{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.course-modal .schedule-row-edit>*{min-width:0;}
+.course-modal .schedule-row-edit>div:first-child{grid-column:1/-1;}
+.course-modal .schedule-row-edit .schedule-room{grid-column:1/-1;}
+.course-modal .schedule-remove-btn{justify-self:end;min-width:44px;min-height:44px;}
+/* Explicit border-box sizing also contains the native iPad date/time editor.
+   Keep the native picker; constrain its field and internal value separately. */
+body :is(.course-modal,#plannerModal) input:is([type="date"],[type="time"]){
+  display:block!important;
+  width:100%!important;
+  inline-size:100%!important;
+  min-width:0!important;
+  min-inline-size:0!important;
+  max-width:100%!important;
+  max-inline-size:100%!important;
+  box-sizing:border-box!important;
+  min-height:44px;
+  font-size:16px!important;
+}
+body :is(.course-modal,#plannerModal) input::-webkit-date-and-time-value{
+  min-width:0;
+  text-align:left;
+}
+body :is(.course-modal,#plannerModal) input::-webkit-datetime-edit{
+  min-width:0;
+  padding:0;
+}
 body :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:3px solid var(--red-deep,#9e3656);outline-offset:3px;}
 .planner-nav button,.planner-modal-head button{min-width:44px;min-height:44px;}
 body.cramchy-dialog-open #chaowiNook{visibility:hidden;pointer-events:none;}
