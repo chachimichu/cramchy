@@ -2,7 +2,6 @@
   'use strict';
   const main=document.querySelector('main');if(!main)return;
   const reduce=matchMedia('(prefers-reduced-motion: reduce)'),running=new WeakMap(),active=new Set();
-  const panels='.card,.planner-hero-card,.planner-panel,.planner-card,.home-command-panel,.home-status-card,.home-recommend-card,.home-courses-section,.cs-board,.course-card-dynamic,.exam-choice,.exam-card,.stat-card,.closest-exam,.motivation-box,.term-status-box,.more-card';
   function animate(el,frames,options){
     running.get(el)?.cancel();
     const animation=el.animate(frames,options),entry={el,animation};
@@ -14,15 +13,10 @@
   }
   function enter(el){
     if(!el||reduce.matches||typeof el.animate!=='function'||!el.getClientRects().length)return;
-    // Never transform a route: its fixed dialogs must stay attached to the viewport.
-    animate(el,[{opacity:.35},{opacity:1}],{duration:220,easing:'cubic-bezier(.2,.7,.3,1)'});
-    // Grades already owns its card animation. Give the other workspaces the same gentle feel.
-    if(el.closest('#view-grades'))return;
-    const candidates=Array.from(el.querySelectorAll(panels)).filter(panel=>panel.getClientRects().length);
-    candidates.filter(panel=>!candidates.some(parent=>parent!==panel&&parent.contains(panel)))
-      .filter(panel=>![panel,...panel.querySelectorAll('*')].some(node=>getComputedStyle(node).position==='fixed'))
-      .filter(panel=>!panel.querySelector('[role="dialog"],[aria-modal="true"]'))
-      .forEach((panel,index)=>animate(panel,[{opacity:.35,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:300,delay:Math.min(index,4)*35,easing:'cubic-bezier(.2,.75,.25,1)'}));
+    // Match Planner's gentle rise as one section. A relative offset avoids
+    // transformed ancestors so fixed dialogs remain attached to the viewport.
+    const position=getComputedStyle(el).position||'static';
+    animate(el,[{opacity:0,position:position==='static'?'relative':position,top:'7px'},{opacity:1,position:position==='static'?'relative':position,top:'0px'}],{duration:280,easing:'ease'});
   }
   const visible=()=>Array.from(main.children).filter(el=>el.classList.contains('view')&&getComputedStyle(el).display!=='none');
   const examMode=()=>document.body.classList.contains('exam-mode-active');

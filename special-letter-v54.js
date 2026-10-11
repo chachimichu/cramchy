@@ -50,10 +50,12 @@
         color:#df7f9c;font:700 19px/1 Georgia,serif;
       }
       .cramchy-letter-close{
-        position:absolute;top:15px;right:16px;width:40px;height:40px;display:grid;place-items:center;
+        position:absolute;top:15px;right:16px;width:44px;height:44px;display:grid;place-items:center;
+        padding:0;box-sizing:border-box;
         border:0;border-radius:50%;background:rgba(239,190,204,.34);color:#8b5263;
         font:500 25px/1 system-ui,sans-serif;cursor:pointer;transition:transform .16s ease,background .16s ease;
       }
+      .cramchy-letter-close svg{display:block;width:18px;height:18px;pointer-events:none}
       .cramchy-letter-close:hover{background:rgba(225,143,168,.35);transform:rotate(4deg) scale(1.04)}
       .cramchy-letter-close:focus-visible{outline:3px solid rgba(203,91,126,.3);outline-offset:3px}
       .cramchy-letter-kicker{
@@ -102,7 +104,7 @@
     overlay.setAttribute('role','presentation');
     overlay.innerHTML=`
       <article class="cramchy-letter-card" role="dialog" aria-modal="true" aria-labelledby="cramchyLetterTitle">
-        <button class="cramchy-letter-close" type="button" aria-label="Close special letter">×</button>
+        <button class="cramchy-letter-close" type="button" aria-label="Close special letter"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
         <h2 class="cramchy-letter-kicker" id="cramchyLetterTitle">A special letter for you</h2>
         <div class="cramchy-letter-body">
           <p class="cramchy-letter-hello">Hello, my dear user!</p>
