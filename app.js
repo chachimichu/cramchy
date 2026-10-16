@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-ask-ai-117';
+  const VERSION='2026-10-16-mobile-card-density-125';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -151,7 +151,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css','grades-workspace.css','course-schedule.css','navigation-motion.css','grades-motion.css','shared-tasks.css','page-heading-color.css','exam-typography.css','exam-toolbar.css','tasks-workspace.css','dark-study.css','welcome-onboarding.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css','grades-workspace.css','course-schedule.css','navigation-motion.css','grades-motion.css','shared-tasks.css','page-heading-color.css','exam-typography.css','exam-toolbar.css','tasks-workspace.css','dark-study.css','welcome-onboarding.css','mobile-navigation.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -229,6 +229,7 @@
     .then(()=>loadScript('course-schedule.js?v='+VERSION))
     .then(()=>loadScript('chunky-type-spacing.js?v='+VERSION))
     .then(()=>loadScript('navigation-motion.js?v='+VERSION))
+    .then(()=>loadScript('mobile-navigation.js?v='+VERSION))
     .then(()=>document.fonts?.ready)
     .then(()=>finishBootSplash())
     .catch(err=>{
