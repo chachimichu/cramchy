@@ -1,0 +1,36 @@
+/* Optional, account-saved reading size. Rem-based UI text follows the user's choice. */
+html[data-cramchy-font-size="small"]{font-size:93.75%}
+html[data-cramchy-font-size="large"]{font-size:112.5%}
+
+.font-size-setting{
+  display:grid;gap:12px;margin-top:20px;padding-top:18px;
+  border-top:1px solid var(--planner-line,#f5d3dc);
+  font-family:var(--font-ui,'Plus Jakarta Sans',system-ui,sans-serif)!important
+}
+.font-size-setting-copy h4{
+  margin:0;color:var(--planner-deep,#5a2432);font-family:var(--font-ui,'Plus Jakarta Sans',system-ui,sans-serif)!important;font-size:1rem;font-weight:850
+}
+.font-size-setting-copy p{
+  margin:4px 0 0;color:var(--planner-muted,#9b737c);font-size:.82rem;line-height:1.5
+}
+.font-size-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.font-size-option{
+  display:flex;min-width:0;min-height:58px;align-items:center;justify-content:center;gap:8px;
+  padding:8px 10px;border:1px solid var(--planner-line,#f5d3dc);border-radius:15px;
+  background:var(--planner-card,#fffdfc);color:var(--planner-deep,#5a2432);
+  font:inherit;font-size:.82rem;font-weight:800;cursor:pointer;
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease
+}
+.font-size-option[aria-pressed="true"]{
+  border-color:var(--planner-rose,#cf5d7b);background:var(--planner-soft,#fff2f5);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--planner-rose,#cf5d7b) 14%,transparent)
+}
+.font-size-option:active{transform:scale(.98)}
+.font-size-sample{font-family:var(--font-ui,system-ui,sans-serif);font-weight:850;line-height:1}
+.font-size-sample.is-small{font-size:1rem}
+.font-size-sample.is-default{font-size:1.2rem}
+.font-size-sample.is-large{font-size:1.4rem}
+body[data-theme="dark-study"] .font-size-option{background:#29252d;color:#f1dde4;border-color:#514654}
+body[data-theme="dark-study"] .font-size-option[aria-pressed="true"]{background:#3a3038;border-color:#d47794}
+@media(max-width:420px){.font-size-options{gap:6px}.font-size-option{gap:5px;padding:8px 5px;font-size:.74rem}}
+@media(prefers-reduced-motion:reduce){.font-size-option{transition:none}}

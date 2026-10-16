@@ -86,7 +86,7 @@ function freshState(){
     petDuoHidden: false,
     petDuoNap: false,
     chaowiPos: { xPct: 6, yPct: 80 },
-    profile: { name:'', academicYear:'2026–2027', term:'Term 1', motivation:'mixed', theme:'strawberry-matcha', onboarded:false },
+    profile: { name:'', academicYear:'2026–2027', term:'Term 1', motivation:'mixed', theme:'strawberry-matcha', fontSize:'default', onboarded:false },
     courses: [],
     gradebook: {},
     quickGwaRows: [
@@ -304,6 +304,7 @@ function sanitizeState(parsed){
       term: typeof p.term === 'string' ? p.term.slice(0,30) : 'Term 1',
       motivation: ['sweet','chaotic','strict','mixed'].includes(p.motivation) ? p.motivation : 'mixed',
       theme: ['strawberry-matcha','strawberry-milk','matcha-latte','lavender','mocha','blueberry-milk','dark-study'].includes(p.theme) ? p.theme : 'strawberry-matcha',
+      fontSize: ['small','default','large'].includes(p.fontSize) ? p.fontSize : 'default',
       onboarded: !!p.onboarded
     };
   }
@@ -1786,6 +1787,7 @@ function getCramchyGreeting(){
 }
 function applyCramchyPersonalization(){
   document.body.dataset.theme=state?.profile?.theme||'strawberry-matcha';
+  document.documentElement.dataset.cramchyFontSize=['small','default','large'].includes(state?.profile?.fontSize)?state.profile.fontSize:'default';
   const g=document.getElementById('cramchyGreeting');if(g)g.textContent=getCramchyGreeting();
 }
 function personalizeMascotText(text){
@@ -1808,6 +1810,8 @@ function renderCramchySettings(){
   if(mot)mot.value=state.profile.motivation||'mixed';
   const picker=document.getElementById('settingsThemePicker');
   if(picker){picker.innerHTML=themePickerMarkup(state.profile.theme);picker.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>setThemeChoice(b.dataset.themeChoice,picker)));}
+  const fontSize=state.profile.fontSize||'default';
+  document.querySelectorAll('[data-font-size-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.fontSizeChoice===fontSize)));
 }
 function renderCramchyTasks(){
   if(typeof window!=='undefined'&&window.CramchyTasksWorkspace){window.CramchyTasksWorkspace.render();return;}
@@ -1838,12 +1842,20 @@ function openCramchyOnboarding(){
   overlay.querySelectorAll('[data-theme-choice]').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.themeChoice;overlay.querySelectorAll('[data-theme-choice]').forEach(b=>{const active=b===btn;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});const art=overlay.querySelector('.onboard-study-illustration');art.src=themeIllustration(selected);art.alt=`A cute ${CRAMCHY_THEMES.find(t=>t.id===selected)?.label||'study'} theme illustration`;document.body.dataset.theme=selected;}));
   overlay.querySelector('#startCramchyBtn').addEventListener('click',()=>{
     const name=overlay.querySelector('#onboardName').value.trim();if(!name){overlay.querySelector('#onboardName').focus();return;}
-    state.profile={name:name.slice(0,40),academicYear:overlay.querySelector('#onboardYear').value.trim().slice(0,30)||'2026–2027',term:overlay.querySelector('#onboardTerm').value,motivation:overlay.querySelector('#onboardMotivation').value,theme:selected,onboarded:true};
+    state.profile={name:name.slice(0,40),academicYear:overlay.querySelector('#onboardYear').value.trim().slice(0,30)||'2026–2027',term:overlay.querySelector('#onboardTerm').value,motivation:overlay.querySelector('#onboardMotivation').value,theme:selected,fontSize:state.profile?.fontSize||'default',onboarded:true};
     saveState();applyCramchyPersonalization();overlay.remove();renderAll();showToast(`welcome to cramchy, ${name.toLowerCase()}`,{longer:true});
   });
 }
 function initCramchyShell(){
   applyCramchyPersonalization();
+  document.getElementById('fontSizeOptions')?.addEventListener('click',event=>{
+    const button=event.target.closest('[data-font-size-choice]');
+    if(!button||!['small','default','large'].includes(button.dataset.fontSizeChoice))return;
+    state.profile.fontSize=button.dataset.fontSizeChoice;
+    document.documentElement.dataset.cramchyFontSize=button.dataset.fontSizeChoice;
+    document.querySelectorAll('[data-font-size-choice]').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));
+    saveState();
+  });
   document.getElementById('cramchyAddTaskBtn')?.addEventListener('click',addCramchyQuickTask);
   document.getElementById('cramchyTaskInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addCramchyQuickTask();});
   document.getElementById('saveProfileBtn')?.addEventListener('click',()=>{
