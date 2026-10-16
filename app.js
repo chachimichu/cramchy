@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-17-save-sync-gap-146';
+  const VERSION='2026-10-17-exam-subject-drag-147';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
