@@ -110,7 +110,7 @@
 
 /* Large text: move the whole main tab row left, leaving a clear action lane at right. */
 @media(min-width:1101px){
-  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>.navbtn[data-tab]{position:relative;left:-64px}
+  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>.navbtn[data-tab]{position:relative;left:-28px}
 }
 
 /* Compact card density on phones only. */
