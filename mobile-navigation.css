@@ -67,6 +67,8 @@
 @media(prefers-reduced-motion:reduce){.mobile-nav-group-trigger,.mobile-nav-caret,.mobile-nav-menu{transition:none!important}}
 
 @media(min-width:721px){
+  /* Keep desktop action toasts clear of the sticky header. */
+  .toast-wrap{top:92px!important;right:18px!important;z-index:130!important}
   nav.topnav{
     width:calc(100% - 24px)!important;max-width:none!important;margin:10px 12px 0!important;
     overflow:visible!important;gap:3px!important;padding:8px 12px!important
