@@ -1,4 +1,9 @@
 /* Desktop navigation polish: center the exam tabs and improve tap/read size. */
+body.exam-mode-active .exam-toolbar{max-width:1180px}
+@media(max-width:720px){
+  body.exam-mode-active .exam-toolbar{padding-inline:12px}
+}
+
 @media(min-width:721px){
   body:not(.exam-mode-active) .topnav>.navbtn{
     font-size:clamp(.76rem,.86vw,.94rem)!important;
