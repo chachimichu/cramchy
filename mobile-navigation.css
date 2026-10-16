@@ -52,7 +52,7 @@
   body[data-theme="dark-study"] .mobile-nav-menu-item{color:#f1dde4}
   body[data-theme="dark-study"] .mobile-nav-menu-item:hover,body[data-theme="dark-study"] .mobile-nav-menu-item:focus-visible{background:#35303a}
   .chaowi-nook{bottom:calc(98px + env(safe-area-inset-bottom))!important}
-  .ask-cramchy-launcher{right:14px!important;bottom:calc(76px + env(safe-area-inset-bottom))!important}
+  .ask-cramchy-launcher{right:14px!important;bottom:calc(98px + env(safe-area-inset-bottom))!important}
   body.mobile-nav-menu-open #chaowiNook,body.mobile-nav-menu-open #askCramchyLauncher{visibility:hidden!important;pointer-events:none!important}
   body[data-theme="dark-study"] nav.topnav{background:rgba(36,32,40,.97)!important;border-color:#514654!important;box-shadow:0 -8px 28px rgba(0,0,0,.25)!important}
   body[data-theme="dark-study"] .topnav>.navbtn[data-tab]{color:#d7c7cf!important}
@@ -67,6 +67,8 @@
 @media(prefers-reduced-motion:reduce){.mobile-nav-group-trigger,.mobile-nav-caret,.mobile-nav-menu{transition:none!important}}
 
 @media(min-width:721px){
+  /* Keep desktop action toasts clear of the sticky header. */
+  .toast-wrap{top:92px!important;right:18px!important;z-index:130!important}
   nav.topnav{
     width:calc(100% - 24px)!important;max-width:none!important;margin:10px 12px 0!important;
     overflow:visible!important;gap:3px!important;padding:8px 12px!important
