@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-welcome-guide-108';
+  const VERSION='2026-10-16-welcome-guide-109';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
