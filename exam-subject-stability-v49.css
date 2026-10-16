@@ -187,3 +187,5 @@ body.exam-mode-active #view-subjects .exam-reorder-handle:focus-visible{
   body.exam-mode-active #view-subjects .subject-tab-item,
   body.exam-mode-active #view-subjects .topic-block{transition:none!important}
 }
+
+body.exam-mode-active #view-subjects .exam-reorder-hint{align-self:center;padding:0 6px;color:var(--text-soft,#8d7379);font-size:.72rem;font-weight:750;white-space:nowrap}
