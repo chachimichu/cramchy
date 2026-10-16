@@ -24,8 +24,8 @@
     color:#87636d!important;font-size:.58rem!important;line-height:1.05!important;font-weight:800!important;text-align:center!important;white-space:nowrap!important
   }
   .topnav>.navbtn[data-tab="dashboard"],.topnav>.navbtn[data-tab="subjects"],.topnav>.navbtn[data-tab="grades"],.topnav>.navbtn[data-tab="more"]{display:flex!important;flex:1 1 0!important}
-  .topnav>.navbtn[data-tab="dashboard"]{order:1}.topnav>.mobile-nav-group[data-nav-group="plan"]{order:2}.topnav>.navbtn[data-tab="subjects"]{order:3}
-  .topnav>.mobile-nav-group[data-nav-group="study"]{order:4}.topnav>.navbtn[data-tab="grades"]{order:5}.topnav>.navbtn[data-tab="more"]{order:6}
+  .topnav>.navbtn[data-tab="dashboard"]{order:1!important}.topnav>.mobile-nav-group[data-nav-group="plan"]{order:2!important}.topnav>.navbtn[data-tab="subjects"]{order:3!important}
+  .topnav>.mobile-nav-group[data-nav-group="study"]{order:4!important}.topnav>.navbtn[data-tab="grades"]{order:5!important}.topnav>.navbtn[data-tab="more"]{order:6!important}
   .topnav>.navbtn[data-tab].active,.topnav>.mobile-nav-group.is-active>.mobile-nav-group-trigger{
     background:linear-gradient(180deg,#ffe8ee,#ffdae4)!important;color:#8f4057!important
   }

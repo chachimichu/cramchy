@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-mobile-nav-groups-123';
+  const VERSION='2026-10-16-mobile-nav-order-124';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
