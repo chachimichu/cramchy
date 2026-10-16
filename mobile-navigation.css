@@ -89,3 +89,54 @@
 @media(min-width:981px){
   body:not(.exam-mode-active) nav.topnav{padding-left:220px!important;padding-right:220px!important}
 }
+
+/* Compact card density on phones only. */
+@media(max-width:720px){
+  main{padding:14px 12px 24px!important}
+  main .section-title{margin:19px 0 9px!important}
+  main .grid,.home-command-grid,.home-command-side,.gw-tool-grid,.gw-course-grid,.gw-category-grid{gap:10px!important}
+  main .card,main .closest-exam,main .exam-entry-card,main .smart-study-card,main .daily-stat,main .course-card,
+  main .task-card,main .exam-card,main .more-card,main .grade-card,main .panel,main .subject-card,
+  main .course-card-dynamic,main .tw-entry,main .gw-tool-card,main .gw-course-card,main .gw-category,
+  main .gw-metric,main .grades-gwa-course-card,main .grades-gwa-summary-row>div,main .grades-gwa-result,
+  main .planner-card,main .planner-panel,main .planner-today,main .planner-tasks,
+  main .home-command-panel,main .home-courses-section,main .home-recommend-card,main .home-next-exam,
+  main .home-courses-section .home-course,main .grades-gwa-hero-card{
+    padding:14px!important;border-radius:18px!important
+  }
+  main .closest-exam{padding:15px!important}
+  .home-status-card{min-height:82px!important;padding:11px 12px 10px 19px!important;border-radius:18px!important}
+  .home-status-card::before{left:9px!important;top:14px!important;width:6px!important;height:6px!important}
+  .home-status-card .value{margin-top:5px!important;font-size:1.3rem!important}
+  .home-command-panel{border-radius:22px!important}
+  .home-today-content>.card,.home-upcoming-content>.card{padding:0!important}
+  .home-today-content>.card{padding:8px!important}
+  .home-today-content .mission-row{padding:9px 10px!important;margin-bottom:6px!important}
+  #view-dashboard .home-recommend-card{min-height:132px!important;padding:13px 100px 13px 13px!important}
+  #view-dashboard .home-study-sticker{width:118px!important}
+  .home-courses-section{margin-top:12px!important;padding:13px!important}
+  .home-courses-section .home-course{min-height:82px!important;padding:10px!important}
+  .home-exam-banner-compact{margin-top:12px!important;padding:13px!important;gap:10px!important}
+  .home-status-strip{gap:8px!important;margin:12px 0!important}
+  .daily-stats{gap:8px!important;margin:12px 0 3px!important}
+  .home-command-heading{margin-bottom:9px!important}
+  #view-planner .planner-sidebar{gap:10px!important}
+  #view-planner .planner-agenda-item{margin-bottom:7px!important}
+  #view-tasks .tw-entry{gap:9px!important;margin-bottom:8px!important}
+  #view-subjects .cs-workspace>.page-head-row{padding:14px!important;gap:10px!important}
+  #view-subjects .cs-board{padding:14px 10px 20px!important}
+  #view-subjects .cs-board-heading{margin-bottom:14px!important;gap:10px!important}
+  #view-subjects .cs-details{padding:12px!important;gap:10px!important}
+  #view-grades .gw-hero{padding:14px!important;margin-bottom:12px!important}
+  #view-grades .gw-breadcrumb{margin:8px 0 14px!important}
+  #view-grades .gw-period-heading{margin:20px 0 10px!important}
+  #view-grades .gw-coverage{padding:14px!important;margin-bottom:12px!important}
+  #view-grades .gw-category-stats{gap:8px!important;margin:12px 0!important;padding:10px!important}
+  #view-grades .gw-details{margin-top:12px!important;padding:13px!important}
+  #view-grades #gwaRoot .grades-gwa-hero-card{padding:15px!important;gap:12px!important}
+  #view-grades #gwaRoot .grades-gwa-result{padding:14px!important}
+  #view-grades #gwaRoot .grades-gwa-summary-row>div{padding:13px!important}
+  #view-grades #gwaRoot .grades-gwa-course-list{gap:10px!important}
+  #view-grades #gwaRoot .grades-gwa-course-card{padding:14px!important}
+  .exam-card{padding:13px!important}
+}
