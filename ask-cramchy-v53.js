@@ -1,13 +1,15 @@
 (function(){
   'use strict';
 
-  const VERSION='V53.1';
+  const VERSION='V54.0';
   const APP_KEY='strawberryMatchaMidtermsState_v1';
   const PLANNER_KEY='cramchyPlannerEvents_v2';
   const GWA_KEY='cramchyTermGwaPlanner_v2';
   const TERM_KEY='cramchyGradesSelectedTerm';
+  const AI_CONSENT_KEY='cramchyGroqDataConsent_v1';
   const TYPE_LABEL={class:'class',task:'task',exam:'exam',study:'study block',personal:'personal event'};
   const context={topic:'',period:'',type:'',lastEventId:''};
+  let aiHistory=[];
 
   function readJson(key,fallback){
     try{
@@ -257,7 +259,7 @@
     if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return "short answer: Charlene Mikaela D. Caco built Cramchy. she’s a Psychology student from NU Clark, and this was her first time building an app. she came up with the whole concept, features, design direction, and tested everything around what she actually needed as a student. AI tools helped with parts of the coding, but the project and all the big decisions are hers.";
     if(has(q,/\blore\b|\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return loreAnswer();
     if(has(q,/\b(why|how).*(called|named)|\bname (story|origin|meaning)|\bwhat does cramchy mean\b/))return loreAnswer();
-    if(has(q,/\b(who are you|what are you|are you (an )?ai|is ask cramchy (an )?ai|ask cramchy)\b/))return 'I’m Ask Cramchy, the app’s built-in academic helper. In this free version I use an offline response library plus the academic data saved in Cramchy; I am not a paid, open-ended AI service. I can still answer questions about your Cramchy data and teach you how the app works.';
+    if(has(q,/\b(who are you|what are you|are you (an )?ai|is ask cramchy (an )?ai|ask cramchy)\b/))return 'I’m Ask Cramchy, your academic helper. I can answer exact questions using your saved Cramchy data, and—if you enable AI—use Groq for open-ended study help with your saved academic context.';
     if(has(q,/\b(features?|what can (cramchy|the app|this app) do|what does (cramchy|the app|this app) do)\b/))return 'a lot, actually LOL—Cramchy has Home, Courses, Tasks, Planner, Study Timer, Grades, Exam Mode, Ask Cramchy, profile/settings, and optional cloud sync. Grades has Course Gradebook, Term GWA, and Quick GWA, while Planner keeps classes, tasks, exams, study blocks, and personal events together.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(home|dashboard)\b/))return 'Home is your daily command center. It summarizes what matters now, shows reminders and upcoming Planner items, and gives you quick ways to jump into Cramchy’s tools.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(courses page|course manager)\b/))return 'Courses is where you set up subjects with details such as course code, units, schedule, room, instructor, academic year, and term. Those course records power schedules, Grades, Exam Mode, and Ask Cramchy answers.';
@@ -265,13 +267,13 @@
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(study timer|timer)\b/))return 'Study gives you a focus timer tied to your subjects and study history. Use it to run a focused session, then let Cramchy record the work you completed.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*exam mode\b/))return 'Exam Mode groups an exam period’s dashboard, schedule, subjects, study timer, countdown, and Matcha Corner. Use it when you want a focused workspace for one term or exam period.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(more|settings|profile)\b/))return 'More contains profile and app controls such as your name, academic year, term, theme, cloud access, and repair options. Your academic year and term also affect which courses and grades Cramchy shows.';
-    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'yep, Cramchy is free to use right now Ask Cramchy also works without a paid AI API, so normal questions don’t create per-message AI charges.';
-    if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Ask Cramchy’s trained response library runs in your browser without a paid AI call. The website still needs to load, and sign-in or cloud syncing needs internet; offline availability for the entire app depends on what your browser has cached.';
-    if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your working Cramchy data is saved in the browser on your device. If you sign in and use Cramchy Cloud, supported data can also sync through the app’s cloud service. Avoid putting sensitive personal information in event notes, and remember that clearing browser storage can remove local-only data.';
+    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'Cramchy is free to use right now. Groq offers a free API tier with usage limits, so AI replies can pause if its limits are reached.';
+    if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Exact answers about saved Cramchy data can run in your browser. Groq-powered study help needs an internet connection and your permission to share AI context; sign-in and cloud syncing also need internet.';
+    if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your Cramchy data is saved in your browser and may sync through Cramchy Cloud if you use it. If you enable Ask Cramchy AI, your messages and saved academic details may be sent to Groq for replies. Your sign-in credentials and API key are not included. You can turn AI sharing off anytime.';
     if(has(q,/\b(account|sign in|login|cloud|sync)\b/))return 'You can use Cramchy locally in the browser. Signing in enables supported cloud syncing so your saved work can follow your account; syncing requires internet.';
     if(has(q,/\b(home screen|install|pwa|favicon|app icon|icon)\b/))return 'On iPhone, open Cramchy in Safari, tap Share, then Add to Home Screen. The installed shortcut uses Cramchy’s high-quality app icon and opens with an app-like standalone view. If an old icon remains, remove the old shortcut and add it again.';
-    if(has(q,/\b(version|latest|update|new)\b/))return 'This preview includes Ask Cramchy '+VERSION+': expanded app knowledge, Planner and newer Grades support, live local-data answers, typo handling, and follow-up context—without a paid AI API.';
-    if(has(q,/\b(perfect|limitations?|answer everything|any question)\b/))return 'I know Cramchy’s features, story, Planner, Grades, classes, tasks, exams, study tools, and the data saved in your app. I am broad, but not a general internet chatbot; if I do not understand something, try naming the feature and the result you want.';
+    if(has(q,/\b(version|latest|update|new)\b/))return 'This Ask Cramchy update adds Groq-powered open-ended study help while keeping exact answers about your saved Cramchy data grounded in the app.';
+    if(has(q,/\b(perfect|limitations?|answer everything|any question)\b/))return 'I can help with study questions and use your saved Cramchy academic data when AI sharing is enabled. I can still make mistakes, so check important grade calculations and school policies against the official source.';
     return null;
   }
 
@@ -315,19 +317,92 @@
     const row=document.createElement('div');row.className='ask-msg '+role;
     const bubble=document.createElement('div');bubble.className='ask-bubble';bubble.textContent=text;
     row.appendChild(bubble);wrap.appendChild(row);wrap.scrollTop=wrap.scrollHeight;
+    return row;
+  }
+  function aiEnabled(){try{return localStorage.getItem(AI_CONSENT_KEY)==='true';}catch(e){return false;}}
+  function aiSafeData(value,key='',depth=0){
+    if(/access.?token|refresh.?token|password|secret|api.?key|authorization|supabase|auth(?:token|session)?|email|phone|avatar|image|attachment|base64|binary|storagekey|schemas?version/i.test(key))return undefined;
+    if(value===null||value===undefined||typeof value==='boolean'||typeof value==='number')return value;
+    if(typeof value==='string')return value.slice(0,700);
+    if(depth>=7)return undefined;
+    if(Array.isArray(value))return value.slice(-80).map(item=>aiSafeData(item,'',depth+1)).filter(item=>item!==undefined);
+    if(typeof value==='object'){
+      const out={};Object.keys(value).slice(0,100).forEach(name=>{const next=aiSafeData(value[name],name,depth+1);if(next!==undefined)out[name]=next;});return out;
+    }
+    return undefined;
+  }
+  function aiContextSnapshot(){
+    const s=appState();
+    return aiSafeData({
+      app:'Cramchy student planner',
+      profile:s.profile,
+      currentTerm:{academicYear:s.profile?.academicYear||'2026–2027',term:currentTerm(s),examPeriod:s.examPeriod||null,examContext:s.examContext||null},
+      courses:s.courses||[],courseGradebook:s.gradebook||{},termGwaRecords:readJson(GWA_KEY,{}),quickGwaRows:s.quickGwaRows||[],
+      tasks:s.missions||[],plannerEvents:plannerEvents(),subjectProgress:s.subjects||{},examData:s.examData||{},
+      studyHistory:s.studyHistory||[],archivedTerms:s.archivedTerms||[]
+    });
+  }
+  function setAiConsent(enabled){try{localStorage.setItem(AI_CONSENT_KEY,enabled?'true':'false');}catch(e){} }
+  function addAiPrivacyCard(wrap){
+    if(!wrap||wrap.querySelector('.ask-ai-privacy-card'))return;
+    const card=document.createElement('div');card.className='ask-ai-privacy-card';
+    card.style.cssText='margin:8px 0 12px;padding:11px 12px;border:1px solid rgba(200,70,94,.16);border-radius:16px;background:rgba(255,255,255,.78);color:var(--text);font-size:.72rem;line-height:1.45';
+    const copy=document.createElement('div');copy.textContent='AI is optional. If enabled, your messages and saved academic data—including grades, courses, schedules, tasks, exams, and study notes—may be sent to Groq for replies. Sign-in credentials and API keys are never included.';card.appendChild(copy);
+    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px';
+    const enable=document.createElement('button');enable.type='button';enable.className='ask-chip';enable.dataset.v53AiConsent='enable';enable.textContent='enable AI with my data';
+    const keepOff=document.createElement('button');keepOff.type='button';keepOff.className='ask-chip';keepOff.dataset.v53AiConsent='off';keepOff.textContent='keep AI off';
+    actions.append(enable,keepOff);card.appendChild(actions);wrap.appendChild(card);
+  }
+  function updateAiPrivacyNote(panel){
+    if(!panel)return;
+    let note=panel.querySelector('.ask-ai-privacy-note');
+    if(!note){note=document.createElement('div');note.className='ask-ai-privacy-note';note.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 12px;color:var(--text-soft);font-size:.64rem;line-height:1.3';panel.querySelector('.ask-cramchy-compose')?.before(note);}
+    if(!note)return;
+    note.replaceChildren();
+    note.textContent=aiEnabled()?'AI sharing is on · your message and saved academic context go to Groq.':'AI sharing is off · saved-data answers still work on this device.';
+    if(aiEnabled()){
+      const off=document.createElement('button');off.type='button';off.className='ask-chip';off.dataset.v53AiConsent='disable';off.textContent='turn off';off.style.cssText='padding:4px 8px;font-size:.62rem;flex:0 0 auto';note.appendChild(off);
+    }
+  }
+  async function askGroq(text){
+    const payload={message:text,history:aiHistory.slice(-8),context:aiContextSnapshot(),dataConsent:true};
+    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    let data={};try{data=await response.json();}catch(e){}
+    if(!response.ok)throw new Error(data.error||'The AI reply is unavailable right now.');
+    const reply=String(data.reply||'').trim();if(!reply)throw new Error('I couldn’t make a reply just now—please try again.');
+    return reply;
+  }
+  function askAiTurn(text){
+    const pending=addMessage('bot','thinking…');pending?.classList.add('ask-ai-pending');
+    askGroq(text).then(reply=>{
+      pending?.remove();addMessage('bot',reply);
+      aiHistory.push({role:'user',content:text},{role:'assistant',content:reply});if(aiHistory.length>12)aiHistory=aiHistory.slice(-12);
+    }).catch(error=>{
+      pending?.remove();
+      const message=error?.message==='AI is not configured yet.'?'AI is almost ready, but the Groq key hasn’t been added to Cramchy’s private server settings yet. Your saved-data answers still work here.':
+        error?.message==='Groq is at its free usage limit right now.'?'Groq has reached its current free usage limit. Try again in a little while.':
+        'I couldn’t reach the AI just now. Your saved-data answers still work—please try again in a bit.';
+      addMessage('bot',message);
+    });
   }
   function submit(raw){
     const input=document.getElementById('askCramchyInput');const text=String(raw||input?.value||'').trim();
     if(!text)return false;
-    const result=answer(text);if(!result)return false;
+    const result=answer(text);
     if(input){input.value='';input.style.height='42px';}
     addMessage('user',text);
-    setTimeout(()=>{addMessage('bot',result.text);if(result.action)result.action();},90);
+    if(result){setTimeout(()=>{addMessage('bot',result.text);if(result.action)result.action();},90);return true;}
+    if(!aiEnabled()){
+      addMessage('bot','For open-ended study help, enable AI above first. Your Cramchy data questions can still be answered here without sending them to Groq.');
+      return true;
+    }
+    askAiTurn(text);
     return true;
   }
   function patchPanel(){
     const panel=document.getElementById('askCramchyPanel');if(!panel||panel.dataset.v53==='yes')return;
     panel.dataset.v53='yes';
+    aiHistory=[];
     const first=panel.querySelector('.ask-msg.bot .ask-bubble');
     if(first)first.textContent=introText();
     const wrap=document.getElementById('askCramchyMessages');
@@ -338,10 +413,14 @@
         const button=document.createElement('button');button.type='button';button.className='ask-chip';button.dataset.v53Query=item[1];button.textContent=item[0];row.appendChild(button);
       });
       wrap.appendChild(row);
+      if(!aiEnabled())addAiPrivacyCard(wrap);
     }
+    updateAiPrivacyNote(panel);
   }
   function install(){
     document.addEventListener('click',event=>{
+      const consent=event.target.closest?.('[data-v53-ai-consent]');
+      if(consent){event.preventDefault();event.stopImmediatePropagation();const action=consent.dataset.v53AiConsent;if(action==='enable'){setAiConsent(true);consent.closest('.ask-ai-privacy-card')?.remove();updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI is on. I can now use your saved academic context to help with open-ended questions. You can turn it off anytime.');}else if(action==='off'){setAiConsent(false);consent.closest('.ask-ai-privacy-card')?.remove();updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','No worries—AI stays off. You can still ask about saved Cramchy data on this device.');}else if(action==='disable'){setAiConsent(false);updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI sharing is off now. Saved-data answers still work locally.');}return;}
       const chip=event.target.closest?.('[data-v53-query]');
       if(chip){event.preventDefault();event.stopImmediatePropagation();submit(chip.dataset.v53Query);return;}
       if(event.target.closest?.('#askCramchySend')){
