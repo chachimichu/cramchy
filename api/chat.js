@@ -2,7 +2,9 @@
 
 const MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 const MAX_MESSAGE_CHARS = 1200;
-const MAX_CONTEXT_CHARS = 50000;
+// Signed-in users can have substantially more saved coursework than a fresh
+// guest profile. Keep a generous bounded snapshot so login does not break AI.
+const MAX_CONTEXT_CHARS = 150000;
 const MAX_HISTORY_TURNS = 10;
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 20;
@@ -59,7 +61,7 @@ module.exports = async function handler(req, res) {
   if (!message || message.length > MAX_MESSAGE_CHARS) return respond(res, 400, { error: 'Please send a shorter message.' });
 
   const context = body.context && typeof body.context === 'object' ? body.context : {};
-  if (JSON.stringify(context).length > MAX_CONTEXT_CHARS) return respond(res, 413, { error: 'There is too much saved context to send in one chat. Try again with a more specific question.' });
+  if (JSON.stringify(context).length > MAX_CONTEXT_CHARS) return respond(res, 413, { error: 'There is too much saved context for one AI request. Try asking about one course or term.' });
   if (!process.env.GROQ_API_KEY) return respond(res, 503, { error: 'AI is not configured yet.' });
   if (!allowRequest(req)) return respond(res, 429, { error: 'Please wait a minute before sending another AI message.' });
 
@@ -86,6 +88,7 @@ module.exports = async function handler(req, res) {
       signal: AbortSignal.timeout(25_000)
     });
     if (upstream.status === 429) return respond(res, 429, { error: 'Groq is at its free usage limit right now.' });
+    if (upstream.status === 413) return respond(res, 413, { error: 'That is too much saved context for one AI request. Try asking about one course or term.' });
     if (!upstream.ok) return respond(res, 502, { error: 'Groq could not make a reply right now.' });
     const result = await upstream.json();
     const reply = result?.choices?.[0]?.message?.content;

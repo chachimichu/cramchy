@@ -1,444 +1,5 @@
-(function(){
-  'use strict';
-
-  const VERSION='V54.0';
-  const APP_KEY='strawberryMatchaMidtermsState_v1';
-  const PLANNER_KEY='cramchyPlannerEvents_v2';
-  const GWA_KEY='cramchyTermGwaPlanner_v2';
-  const TERM_KEY='cramchyGradesSelectedTerm';
-  const AI_CONSENT_KEY='cramchyGroqDataConsent_v1';
-  const TYPE_LABEL={class:'class',task:'task',exam:'exam',study:'study block',personal:'personal event'};
-  const context={topic:'',period:'',type:'',lastEventId:''};
-  let aiHistory=[];
-
-  function readJson(key,fallback){
-    try{
-      const value=JSON.parse(localStorage.getItem(key)||'null');
-      return value===null?fallback:value;
-    }catch(e){return fallback;}
-  }
-
-  function appState(){return readJson(APP_KEY,{profile:{},courses:[],quickGwaRows:[],gradebook:{}});}
-  function userName(){
-    const saved=String(appState().profile?.name||'').trim().replace(/\s+/g,' ');
-    return saved?saved.split(' ')[0].slice(0,24):'bestie';
-  }
-  function introText(){return 'hiii, '+userName()+' what are we working on today? ask me anything about Cramchy or your school stuff.';}
-  function loreAnswer(){
-    return "okay, "+userName()+", here's the Cramchy lore it started as a little side quest by Charlene Mikaela D. Caco, a Psychology student from NU Clarkâ€”and it was literally her first time building an app. she used to cram for basically everything: quizzes, exams, deadlines, any chance she got. so she made Cramchy to help herself get organized and slowly beat the cramming-and-procrastinating cycle. the name happened in the most unserious way too: â€œcramâ€ came from all the cramming, â€œchyâ€ came from her nickname Chachi and gaming username chachimi, and â€œCramchyâ€ sounded like â€œcrunchyâ€ because she was eating chips when she thought of it LOL. it was originally just for her, but she ended up sharing it with friends and other students who might need it too. itâ€™s still growing and it isnâ€™t perfect, but thatâ€™s part of the loreâ€”itâ€™s a real first project built around what its developer actually needed.";
-  }
-  function plannerEvents(){
-    const events=readJson(PLANNER_KEY,[]);
-    return Array.isArray(events)?events.filter(e=>e&&e.date).map(e=>({
-      id:String(e.id||''),title:String(e.title||'Untitled event'),type:TYPE_LABEL[e.type]?e.type:'personal',
-      course:String(e.course||''),date:String(e.date||''),start:String(e.start||''),end:String(e.end||''),
-      notes:String(e.notes||''),done:Boolean(e.done)
-    })):[];
-  }
-
-  function normalize(raw){
-    let q=String(raw||'').toLowerCase().replace(/[â€™â€˜]/g,"'").replace(/[â€“â€”]/g,'-');
-    q=q.replace(/([a-z])\1{2,}/g,'$1');
-    const fixes={
-      'plann?er':'planner','calender':'calendar','scheduel':'schedule','graes':'grades','gradse':'grades',
-      'gradebok':'gradebook','quik':'quick','clases':'classes','clasess':'classes','freatures':'features',
-      'fetures':'features','cramchi':'cramchy','cramchy+':'cramchy','tomorow':'tomorrow','tommorow':'tomorrow',
-      'upcomming':'upcoming','dead line':'deadline','procastinat':'procrastinat','creater':'creator'
-    };
-    Object.keys(fixes).forEach(from=>{q=q.replace(new RegExp('\\b'+from+'\\b','g'),fixes[from]);});
-    return q.replace(/[^a-z0-9.%:'\-\s]/g,' ').replace(/\s+/g,' ').trim();
-  }
-
-  function has(q,pattern){return pattern.test(q);}
-  function pad(n){return String(n).padStart(2,'0');}
-  function iso(date){return date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate());}
-  function dayStart(date){return new Date(date.getFullYear(),date.getMonth(),date.getDate(),0,0,0,0);}
-  function plusDays(date,n){const d=new Date(date);d.setDate(d.getDate()+n);return d;}
-  function parseIso(value){
-    const bits=String(value||'').split('-').map(Number);
-    return new Date(bits[0]||2000,(bits[1]||1)-1,bits[2]||1,12,0,0,0);
-  }
-  function prettyDate(value){
-    return parseIso(value).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-  }
-  function prettyTime(value){
-    if(!value)return 'anytime';
-    const bits=String(value).split(':').map(Number),h=bits[0]||0,m=bits[1]||0;
-    return ((h+11)%12+1)+':'+pad(m)+' '+(h>=12?'PM':'AM');
-  }
-  function dateTime(event){
-    const date=parseIso(event.date),bits=String(event.start||'23:59').split(':').map(Number);
-    date.setHours(bits[0]||0,bits[1]||0,0,0);
-    return date;
-  }
-
-  function periodFrom(q){
-    const now=dayStart(new Date());
-    if(has(q,/\byesterday\b/))return {name:'yesterday',from:plusDays(now,-1),to:now};
-    if(has(q,/\btomorrow\b/))return {name:'tomorrow',from:plusDays(now,1),to:plusDays(now,2)};
-    if(has(q,/\btoday\b|\btonight\b/))return {name:'today',from:now,to:plusDays(now,1)};
-    if(has(q,/\bnext week\b/)){
-      const monday=plusDays(now,(8-(now.getDay()||7))%7||7);
-      return {name:'next week',from:monday,to:plusDays(monday,7)};
-    }
-    if(has(q,/\bthis week\b|\bweek ahead\b|\bnext 7 days\b/))return {name:'the next 7 days',from:now,to:plusDays(now,7)};
-    if(has(q,/\bweekend\b/)){
-      const saturday=plusDays(now,(6-now.getDay()+7)%7);
-      return {name:'this weekend',from:saturday,to:plusDays(saturday,2)};
-    }
-    const exact=q.match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
-    if(exact){const d=dayStart(parseIso(exact[0]));return {name:prettyDate(exact[0]),from:d,to:plusDays(d,1)};}
-    return null;
-  }
-
-  function typeFrom(q){
-    if(has(q,/\b(exam|quiz|test)s?\b/))return 'exam';
-    if(has(q,/\b(task|deadline|assignment|project|homework|due)s?\b/))return 'task';
-    if(has(q,/\b(class|lecture|course meeting)s?\b/))return 'class';
-    if(has(q,/\b(study block|study session|review session)s?\b/))return 'study';
-    if(has(q,/\b(personal|appointment|errand)s?\b/))return 'personal';
-    return '';
-  }
-
-  function filterEvents(q){
-    const now=new Date(),today=dayStart(now);
-    const explicitPeriod=periodFrom(q);
-    const standalone=has(q,/\b(overdue|late|missed|upcoming|next|busiest|free day)\b/);
-    const period=explicitPeriod||(!standalone&&context.topic==='planner'&&context.period?periodFrom(context.period):null);
-    const explicitType=typeFrom(q);
-    const type=explicitType||(!standalone&&context.topic==='planner'?context.type:'');
-    let events=plannerEvents();
-    if(period)events=events.filter(e=>{const d=dayStart(parseIso(e.date));return d>=period.from&&d<period.to;});
-    if(type)events=events.filter(e=>e.type===type);
-    if(has(q,/\boverdue|late|missed\b/))events=events.filter(e=>!e.done&&dateTime(e)<now);
-    else if(has(q,/\b(done|completed|finished)\b/))events=events.filter(e=>e.done);
-    else if(has(q,/\bupcoming|next|ahead\b/)&&!period)events=events.filter(e=>!e.done&&dateTime(e)>=today);
-    return {events:events.sort((a,b)=>dateTime(a)-dateTime(b)),period:period?.name||'',type};
-  }
-
-  function eventLine(event){
-    const course=event.course?' Â· '+event.course:'';
-    const status=event.done?' Â· done':'';
-    return 'â€¢ '+event.title+' â€” '+prettyDate(event.date)+', '+prettyTime(event.start)+course+status;
-  }
-
-  function plannerAnswer(q){
-    const plannerWords=/\b(planner|calendar|event|schedule|agenda|deadline|due|upcoming|overdue|busy|busiest|free day|study block)\b|\bday\b.*\bfree\b/;
-    const follow=context.topic==='planner'&&has(q,/^(and |what about |how about |how many|which one|what time|where|tomorrow|today|next)/);
-    const datedAgenda=Boolean(periodFrom(q))&&has(q,/\b(what do i have|what'?s on|anything|plans?)\b/);
-    if(!plannerWords.test(q)&&!follow&&!datedAgenda)return null;
-    context.topic='planner';
-    const period=periodFrom(q);if(period)context.period=period.name;
-    const type=typeFrom(q);if(type)context.type=type;
-
-    if(has(q,/\b(what is|what's|explain|about) (the )?(planner|calendar)\b/)){
-      return userName()+', Planner is basically your academic life in one calendarâ€”classes, tasks, exams, study blocks, and personal stuff. You can switch between Month, Week, and Day, add notes and times, mark things done, and check whatâ€™s coming next.';
-    }
-    if(has(q,/\b(how (do|can) i|how to|where (do|can) i)\b.*\b(add|create|edit|delete|remove|complete|mark)\b/)){
-      if(has(q,/\b(delete|remove)\b/))return 'Open Planner, tap the event, then choose Delete. Cramchy will remove that calendar event.';
-      if(has(q,/\b(edit)\b/))return 'Open Planner and tap the event you want to change. Edit its title, type, course, date, time, or notes, then save.';
-      if(has(q,/\b(complete|mark)\b/))return 'Open Planner, tap the event, and mark it done. Completed items stay visible with their finished status.';
-      return 'Open Planner and tap â€œadd event.â€ Choose class, task, exam, study block, or personal; then add the date, optional time/course/notes, and save.';
-    }
-    if(has(q,/\b(month|week|day) views?\b|\b(planner )?views?\b|\bswitch views?\b/))return 'Planner has Month, Week, and Day views. Open Planner, then use the view buttons above the calendar.';
-    if(has(q,/\b(sync|cloud|another device|devices)\b/))return 'Planner events save in this browser and can sync through Cramchy Cloud when you are signed in. Cloud syncing needs an internet connection.';
-    if(has(q,/\b(add|create|schedule|put)\b.*\b(event|deadline|exam|task|class|study block)\b/) && !has(q,/\bhow\b/)){
-      return 'I can help you find and plan events, but I will not add one without showing you the form. Open Planner, tap â€œadd event,â€ and enter the details so you can verify them before saving.';
-    }
-
-    const result=filterEvents(q),events=result.events;
-    if(result.period)context.period=result.period;if(result.type)context.type=result.type;
-    if(has(q,/\b(free day|free days|which day is free)\b/)){
-      const start=dayStart(new Date()),counts={};
-      for(let i=0;i<7;i++)counts[iso(plusDays(start,i))]=0;
-      plannerEvents().filter(e=>!e.done&&counts[e.date]!==undefined).forEach(e=>counts[e.date]++);
-      const free=Object.keys(counts).filter(d=>counts[d]===0);
-      return free.length?'Your free days in the next 7 days are '+free.map(prettyDate).join(', ')+'.':'You have at least one Planner event on every day in the next 7 days.';
-    }
-    if(has(q,/\b(busiest|most busy)\b/)){
-      const counts={};plannerEvents().filter(e=>!e.done&&dateTime(e)>=dayStart(new Date())).forEach(e=>counts[e.date]=(counts[e.date]||0)+1);
-      const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-      return entries.length?'Your busiest upcoming day is '+prettyDate(entries[0][0])+' with '+entries[0][1]+' event'+(entries[0][1]===1?'':'s')+'.':'Your Planner has no upcoming events yet.';
-    }
-    if(has(q,/\b(which|what) (one )?(should i do|comes|is) first\b|\bprioriti[sz]e\b/)){
-      const candidates=plannerEvents().filter(e=>!e.done&&dateTime(e)>=dayStart(new Date())).sort((a,b)=>{
-        const rank={exam:0,task:1,class:2,study:3,personal:4};
-        return dateTime(a)-dateTime(b)||(rank[a.type]-rank[b.type]);
-      }).slice(0,3);
-      if(!candidates.length)return 'youâ€™re all clear, '+userName()+'â€”there arenâ€™t any unfinished upcoming Planner events to prioritize right now.';
-      context.lastEventId=candidates[0].id;
-      return 'okay, '+userName()+'â€”letâ€™s start with the closest dated item. hereâ€™s the order Iâ€™d go with:\n'+candidates.map(eventLine).join('\n');
-    }
-    if(has(q,/\bhow many|count\b/)){
-      const label=result.type?TYPE_LABEL[result.type]+'s':'events';
-      const when=result.period?' '+result.period:'';
-      return 'You have '+events.length+' '+label+when+'.';
-    }
-    if(has(q,/\bnext\b/)&&!periodFrom(q)){
-      const next=events.find(e=>!e.done&&dateTime(e)>=new Date());
-      if(!next)return 'looks clear, '+userName()+'â€”you donâ€™t have an upcoming '+(result.type?TYPE_LABEL[result.type]:'Planner event')+' yet.';
-      context.lastEventId=next.id;
-      const notes=next.notes?' Notes: '+next.notes:'';
-      return 'okay, '+userName()+'â€”your next '+TYPE_LABEL[next.type]+' is '+eventLine(next).slice(2)+'.'+notes;
-    }
-    if(has(q,/\b(details|notes|where|what time)\b/)&&context.lastEventId){
-      const event=plannerEvents().find(e=>e.id===context.lastEventId);
-      if(event)return eventLine(event).slice(2)+'.'+(event.notes?' Notes: '+event.notes:' No notes were added.');
-    }
-    const descriptor=(result.type?TYPE_LABEL[result.type]+'s':'events')+(result.period?' '+result.period:'');
-    if(!events.length)return 'youâ€™re clear, '+userName()+'â€”I couldnâ€™t find any '+descriptor+' in your Planner.';
-    const shown=events.slice(0,6);context.lastEventId=shown[0].id;
-    return 'Here '+(shown.length===1?'is':'are')+' your '+descriptor+':\n'+shown.map(eventLine).join('\n')+(events.length>shown.length?'\nâ€¦and '+(events.length-shown.length)+' more.':'');
-  }
-
-  function numeric(value){
-    if(value===''||value===null||value===undefined)return null;
-    const n=Number(value);return Number.isFinite(n)?n:null;
-  }
-  function currentTerm(state){
-    let saved='';try{saved=localStorage.getItem(TERM_KEY)||'';}catch(e){}
-    return saved||state.profile?.term||'Term 1';
-  }
-  function gradeEquivalent(raw){
-    const rounded=Math.round(Number(raw));
-    if(rounded>=96)return '4.0';if(rounded>=90)return '3.5';if(rounded>=84)return '3.0';
-    if(rounded>=78)return '2.5';if(rounded>=72)return '2.0';return 'R';
-  }
-  function termGwaData(){
-    const state=appState(),term=currentTerm(state),year=state.profile?.academicYear||'2026â€“2027';
-    const info=readJson(GWA_KEY,{}),courses=(state.courses||[]).filter(c=>(c.academicYear||year)===year&&(c.term||state.profile?.term||'Term 1')===term);
-    let weighted=0,units=0,included=0;
-    courses.forEach(course=>{
-      const row=info[course.id]||{},mode=row.mode||'none';let grade='';
-      if(mode==='equiv')grade=String(row.grade||'');
-      if(mode==='raw'&&numeric(row.finalRaw)!==null)grade=gradeEquivalent(row.finalRaw);
-      if(mode==='midfinal'&&numeric(row.midtermRaw)!==null&&numeric(row.finalsRaw)!==null)grade=gradeEquivalent((Number(row.midtermRaw)+Number(row.finalsRaw))/2);
-      const u=numeric(row.units)??numeric(course.units)??0,g=numeric(grade);
-      if(g!==null&&g>=1&&u>0){weighted+=g*u;units+=u;included++;}
-    });
-    return {term,year,courses,included,units,gwa:units?weighted/units:null,pending:Math.max(0,courses.length-included)};
-  }
-  function quickGwaData(){
-    const rows=appState().quickGwaRows||[];let weighted=0,units=0,count=0;
-    rows.forEach(row=>{const g=numeric(row.grade),u=numeric(row.units);if(g!==null&&g>=1&&g<=4&&u!==null&&u>0){weighted+=g*u;units+=u;count++;}});
-    return {gwa:units?weighted/units:null,units,count};
-  }
-
-  function gradesAnswer(q){
-    const gradeWords=/\b(gradebook|grades?|gwa|weighted average|grading system|raw percentage|dean'?s list|honors)\b/;
-    const follow=context.topic==='grades'&&has(q,/^(and |what about |how about |how is it|why is it|how.*calculat|which one)/);
-    if(!gradeWords.test(q)&&!follow)return null;
-    const isNew=has(q,/\b(term gwa|quick gwa|three grade|3 grade|grade tools?|grading system|raw percentage|equivalent|round|dean'?s list|honors)\b/);
-    if(!isNew&&context.topic!=='grades')return null;
-    context.topic='grades';context.period='';context.type='';
-
-    if(has(q,/\b(difference|which|three|3)\b.*\b(grade|gwa)|\bgrade tools?\b/))return 'okay, quick bestie breakdown: Course Gradebook estimates one course from your assessment scores, Term GWA combines final course grades and units for the term, and Quick GWA is the fast no-fuss calculator when you already have the grade equivalents.';
-    if(has(q,/\b(course gradebook|gradebook)\b.*\b(how|what|use|for)\b/))return 'Course Gradebook tracks assessment scores inside each course and estimates Midterms, Finals, and Overall results. It is a planning estimate, not an official registrar grade.';
-    if(has(q,/\bquick gwa\b/)){
-      const d=quickGwaData();
-      if(has(q,/\b(what|calculate|current|result|mine|my)\b/)&&d.gwa!==null)return userName()+', your Quick GWA is '+d.gwa.toFixed(2)+' from '+d.count+' row'+(d.count===1?'':'s')+' and '+d.units+' total units.';
-      return 'Quick GWA is the fastest calculator: enter each final grade equivalent and its units. Cramchy computes Î£(grade Ã— units) Ã· Î£(units). It does not change your Course Gradebook.';
-    }
-    if(has(q,/\bterm gwa\b|\bmy gwa\b|\bcurrent gwa\b/)){
-      const d=termGwaData();
-      if(d.gwa!==null)return userName()+', your '+d.term+' GWA is '+d.gwa.toFixed(2)+' across '+d.included+' included course'+(d.included===1?'':'s')+' and '+d.units+' units.'+(d.pending?' '+d.pending+' course'+(d.pending===1?' is':'s are')+' still pending.':'');
-      return 'Term GWA uses final course grades and units for '+d.term+'. Add each course result as a grade equivalent, final raw percentage, or Midterms + Finals raw scores; then Cramchy calculates the weighted average.';
-    }
-    if(has(q,/\b(formula|calculate|computed|weighted average)\b/))return 'GWA formula: add every included courseâ€™s grade equivalent Ã— units, then divide by total included units. Non-numeric marks such as R, INC, P, or F are not included in the numeric GWA calculation.';
-    if(has(q,/\b(raw|round|equivalent|grading system|4\.0|3\.5|3\.0|2\.5|2\.0)\b/))return 'Cramchy follows the NU zero-based scale used in this app: rounded 96â€“100 = 4.0, 90â€“95 = 3.5, 84â€“89 = 3.0, 78â€“83 = 2.5, 72â€“77 = 2.0, and below 72 = R. Raw percentages are rounded first, so 95.50 becomes 96.';
-    if(has(q,/\bdean'?s list|honors\b/))return 'In Cramchyâ€™s current NU guide, a numeric GWA of 3.50 or higher is labeled Deanâ€™s List â€” First Honors, while 3.25â€“3.49 is labeled Second Honors. Always verify official eligibility rules with NU because non-GWA requirements can also apply.';
-    if(has(q,/\b(official|accurate|final)\b/))return 'Cramchy calculates from the data you enter. Gradebook values are estimates; your school portal or registrar remains the official source for final grades and honors eligibility.';
-    return null;
-  }
-
-  function appAnswer(q){
-    const about=/\b(cramchy|this app|the app|developer|creator|founder|built|made|features?|history|story|lore|name|called|cost|price|free|offline|privacy|data|account|cloud|home screen|install|favicon|icon|pwa|version|update|dashboard|courses page|tasks page|study timer|exam mode|settings)\b/;
-    if(!about.test(q))return null;
-
-    if(has(q,/\b(who (built|made|created|developed)|developer|creator|founder)\b/))return "Cramchy was built by Charlene Mikaela D. Caco, a Psychology student from NU Clark it was her first time building an app, and it started as a side quest because she wanted one place that actually fit all her academic needs. she made it for herself first, then decided to share it with friends and other students too.";
-    if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return "short answer: Charlene Mikaela D. Caco built Cramchy. sheâ€™s a Psychology student from NU Clark, and this was her first time building an app. she came up with the whole concept, features, design direction, and tested everything around what she actually needed as a student. AI tools helped with parts of the coding, but the project and all the big decisions are hers.";
-    if(has(q,/\blore\b|\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return loreAnswer();
-    if(has(q,/\b(why|how).*(called|named)|\bname (story|origin|meaning)|\bwhat does cramchy mean\b/))return loreAnswer();
-    if(has(q,/\b(who are you|what are you|are you (an )?ai|is ask cramchy (an )?ai|ask cramchy)\b/))return 'Iâ€™m Ask Cramchy, your academic helper. I can answer exact questions using your saved Cramchy data, andâ€”if you enable AIâ€”use Groq for open-ended study help with your saved academic context.';
-    if(has(q,/\b(features?|what can (cramchy|the app|this app) do|what does (cramchy|the app|this app) do)\b/))return 'a lot, actually LOLâ€”Cramchy has Home, Courses, Tasks, Planner, Study Timer, Grades, Exam Mode, Ask Cramchy, profile/settings, and optional cloud sync. Grades has Course Gradebook, Term GWA, and Quick GWA, while Planner keeps classes, tasks, exams, study blocks, and personal events together.';
-    if(has(q,/\b(what is|what'?s|explain|how.*use).*(home|dashboard)\b/))return 'Home is your daily command center. It summarizes what matters now, shows reminders and upcoming Planner items, and gives you quick ways to jump into Cramchyâ€™s tools.';
-    if(has(q,/\b(what is|what'?s|explain|how.*use).*(courses page|course manager)\b/))return 'Courses is where you set up subjects with details such as course code, units, schedule, room, instructor, academic year, and term. Those course records power schedules, Grades, Exam Mode, and Ask Cramchy answers.';
-    if(has(q,/\b(what is|what'?s|explain|how.*use).*(tasks page|task manager)\b/))return 'Tasks is for academic to-dos and deadlines. Add the task, connect it to a course when useful, set its due date, and mark it complete when finished.';
-    if(has(q,/\b(what is|what'?s|explain|how.*use).*(study timer|timer)\b/))return 'Study gives you a focus timer tied to your subjects and study history. Use it to run a focused session, then let Cramchy record the work you completed.';
-    if(has(q,/\b(what is|what'?s|explain|how.*use).*exam mode\b/))return 'Exam Mode groups an exam periodâ€™s dashboard, schedule, subjects, study timer, countdown, and Matcha Corner. Use it when you want a focused workspace for one term or exam period.';
-    if(has(q,/\b(what is|what'?s|explain|how.*use).*(more|settings|profile)\b/))return 'More contains profile and app controls such as your name, academic year, term, theme, cloud access, and repair options. Your academic year and term also affect which courses and grades Cramchy shows.';
-    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'Cramchy is free to use right now. Groq offers a free API tier with usage limits, so AI replies can pause if its limits are reached.';
-    if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Exact answers about saved Cramchy data can run in your browser. Groq-powered study help needs an internet connection and your permission to share AI context; sign-in and cloud syncing also need internet.';
-    if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your Cramchy data is saved in your browser and may sync through Cramchy Cloud if you use it. If you enable Ask Cramchy AI, your messages and saved academic details may be sent to Groq for replies. Your sign-in credentials and API key are not included. You can turn AI sharing off anytime.';
-    if(has(q,/\b(account|sign in|login|cloud|sync)\b/))return 'You can use Cramchy locally in the browser. Signing in enables supported cloud syncing so your saved work can follow your account; syncing requires internet.';
-    if(has(q,/\b(home screen|install|pwa|favicon|app icon|icon)\b/))return 'On iPhone, open Cramchy in Safari, tap Share, then Add to Home Screen. The installed shortcut uses Cramchyâ€™s high-quality app icon and opens with an app-like standalone view. If an old icon remains, remove the old shortcut and add it again.';
-    if(has(q,/\b(version|latest|update|new)\b/))return 'This Ask Cramchy update adds Groq-powered open-ended study help while keeping exact answers about your saved Cramchy data grounded in the app.';
-    if(has(q,/\b(perfect|limitations?|answer everything|any question)\b/))return 'I can help with study questions and use your saved Cramchy academic data when AI sharing is enabled. I can still make mistakes, so check important grade calculations and school policies against the official source.';
-    return null;
-  }
-
-  const NAV={
-    home:{tab:'dashboard',label:'Home'},courses:{tab:'subjects',label:'Courses'},tasks:{tab:'tasks',label:'Tasks'},
-    planner:{tab:'planner',label:'Planner'},study:{tab:'timer',label:'Study'},grades:{tab:'grades',label:'Grades'},
-    exam:{tab:'exam',label:'Exam Mode'},more:{tab:'more',label:'More'}
-  };
-  function navTarget(q){
-    if(!has(q,/\b(open|go to|show|take me to|navigate)\b/))return null;
-    if(has(q,/\bquick gwa\b/))return {tab:'grades',mode:'quickgwa',label:'Quick GWA'};
-    if(has(q,/\bterm gwa\b/))return {tab:'grades',mode:'gwa',label:'Term GWA'};
-    if(has(q,/\bgradebook\b/))return {tab:'grades',mode:'gradebook',label:'Course Gradebook'};
-    return Object.entries(NAV).find(([word])=>new RegExp('\\b'+word+'\\b').test(q))?.[1]||null;
-  }
-  function navigate(target){
-    if(typeof document==='undefined'||!target)return;
-    const btn=document.querySelector('.topnav .navbtn[data-tab="'+target.tab+'"]');
-    if(btn)btn.click();
-    if(target.mode)setTimeout(()=>document.querySelector('#view-grades [data-grades-mode="'+target.mode+'"]')?.click(),80);
-  }
-
-  function helpAnswer(q){
-    if(!has(q,/^(help|what can i ask|what can you do|show examples|commands|questions)$/))return null;
-    return 'ask away, '+userName()+' try things like:\nâ€¢ â€œwhatâ€™s on my Planner tomorrow?â€\nâ€¢ â€œwhatâ€™s my Term GWA?â€\nâ€¢ â€œwhatâ€™s the lore behind this app?â€\nâ€¢ â€œwho built Cramchy?â€\nâ€¢ â€œhow do I add an event?â€\nâ€¢ â€œwhat should I study next?â€\nyou can also say â€œopen Plannerâ€ or â€œshow Quick GWA.â€';
-  }
-
-  function answer(raw){
-    const q=normalize(raw);if(!q)return null;
-    const nav=navTarget(q);if(nav)return {text:'Opening '+nav.label+' for you.',action:()=>navigate(nav)};
-    const help=helpAnswer(q);if(help)return {text:help};
-    const grades=gradesAnswer(q);if(grades)return {text:grades};
-    const planner=plannerAnswer(q);if(planner)return {text:planner};
-    const app=appAnswer(q);if(app)return {text:app};
-    return null;
-  }
-
-  function addMessage(role,text){
-    const wrap=document.getElementById('askCramchyMessages');if(!wrap)return;
-    wrap.querySelectorAll('.ask-chip-row').forEach(row=>row.remove());
-    const row=document.createElement('div');row.className='ask-msg '+role;
-    const bubble=document.createElement('div');bubble.className='ask-bubble';bubble.textContent=text;
-    row.appendChild(bubble);wrap.appendChild(row);wrap.scrollTop=wrap.scrollHeight;
-    return row;
-  }
-  function aiEnabled(){try{return localStorage.getItem(AI_CONSENT_KEY)==='true';}catch(e){return false;}}
-  function aiSafeData(value,key='',depth=0){
-    if(/access.?token|refresh.?token|password|secret|api.?key|authorization|supabase|auth(?:token|session)?|email|phone|avatar|image|attachment|base64|binary|storagekey|schemas?version/i.test(key))return undefined;
-    if(value===null||value===undefined||typeof value==='boolean'||typeof value==='number')return value;
-    if(typeof value==='string')return value.slice(0,700);
-    if(depth>=7)return undefined;
-    if(Array.isArray(value))return value.slice(-80).map(item=>aiSafeData(item,'',depth+1)).filter(item=>item!==undefined);
-    if(typeof value==='object'){
-      const out={};Object.keys(value).slice(0,100).forEach(name=>{const next=aiSafeData(value[name],name,depth+1);if(next!==undefined)out[name]=next;});return out;
-    }
-    return undefined;
-  }
-  function aiContextSnapshot(){
-    const s=appState();
-    return aiSafeData({
-      app:'Cramchy student planner',
-      profile:s.profile,
-      currentTerm:{academicYear:s.profile?.academicYear||'2026â€“2027',term:currentTerm(s),examPeriod:s.examPeriod||null,examContext:s.examContext||null},
-      courses:s.courses||[],courseGradebook:s.gradebook||{},termGwaRecords:readJson(GWA_KEY,{}),quickGwaRows:s.quickGwaRows||[],
-      tasks:s.missions||[],plannerEvents:plannerEvents(),subjectProgress:s.subjects||{},examData:s.examData||{},
-      studyHistory:s.studyHistory||[],archivedTerms:s.archivedTerms||[]
-    });
-  }
-  function setAiConsent(enabled){try{localStorage.setItem(AI_CONSENT_KEY,enabled?'true':'false');}catch(e){} }
-  function addAiPrivacyCard(wrap){
-    if(!wrap||wrap.querySelector('.ask-ai-privacy-card'))return;
-    const card=document.createElement('div');card.className='ask-ai-privacy-card';
-    card.style.cssText='margin:8px 0 12px;padding:11px 12px;border:1px solid rgba(200,70,94,.16);border-radius:16px;background:rgba(255,255,255,.78);color:var(--text);font-size:.72rem;line-height:1.45';
-    const copy=document.createElement('div');copy.textContent='AI is optional. If enabled, your messages and saved academic dataâ€”including grades, courses, schedules, tasks, exams, and study notesâ€”may be sent to Groq for replies. Sign-in credentials and API keys are never included.';card.appendChild(copy);
-    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px';
-    const enable=document.createElement('button');enable.type='button';enable.className='ask-chip';enable.dataset.v53AiConsent='enable';enable.textContent='enable AI with my data';
-    const keepOff=document.createElement('button');keepOff.type='button';keepOff.className='ask-chip';keepOff.dataset.v53AiConsent='off';keepOff.textContent='keep AI off';
-    actions.append(enable,keepOff);card.appendChild(actions);wrap.appendChild(card);
-  }
-  function updateAiPrivacyNote(panel){
-    if(!panel)return;
-    let note=panel.querySelector('.ask-ai-privacy-note');
-    if(!note){note=document.createElement('div');note.className='ask-ai-privacy-note';note.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 12px;color:var(--text-soft);font-size:.64rem;line-height:1.3';panel.querySelector('.ask-cramchy-compose')?.before(note);}
-    if(!note)return;
-    note.replaceChildren();
-    note.textContent=aiEnabled()?'AI sharing is on Â· your message and saved academic context go to Groq.':'AI sharing is off Â· saved-data answers still work on this device.';
-    if(aiEnabled()){
-      const off=document.createElement('button');off.type='button';off.className='ask-chip';off.dataset.v53AiConsent='disable';off.textContent='turn off';off.style.cssText='padding:4px 8px;font-size:.62rem;flex:0 0 auto';note.appendChild(off);
-    }
-  }
-  async function askGroq(text){
-    const payload={message:text,history:aiHistory.slice(-8),context:aiContextSnapshot(),dataConsent:true};
-    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    let data={};try{data=await response.json();}catch(e){}
-    if(!response.ok)throw new Error(data.error||'The AI reply is unavailable right now.');
-    const reply=String(data.reply||'').trim();if(!reply)throw new Error('I couldnâ€™t make a reply just nowâ€”please try again.');
-    return reply;
-  }
-  function askAiTurn(text){
-    const pending=addMessage('bot','thinkingâ€¦');pending?.classList.add('ask-ai-pending');
-    askGroq(text).then(reply=>{
-      pending?.remove();addMessage('bot',reply);
-      aiHistory.push({role:'user',content:text},{role:'assistant',content:reply});if(aiHistory.length>12)aiHistory=aiHistory.slice(-12);
-    }).catch(error=>{
-      pending?.remove();
-      const message=error?.message==='AI is not configured yet.'?'AI is almost ready, but the Groq key hasnâ€™t been added to Cramchyâ€™s private server settings yet. Your saved-data answers still work here.':
-        error?.message==='Groq is at its free usage limit right now.'?'Groq has reached its current free usage limit. Try again in a little while.':
-        'I couldnâ€™t reach the AI just now. Your saved-data answers still workâ€”please try again in a bit.';
-      addMessage('bot',message);
-    });
-  }
-  function submit(raw){
-    const input=document.getElementById('askCramchyInput');const text=String(raw||input?.value||'').trim();
-    if(!text)return false;
-    const result=answer(text);
-    if(input){input.value='';input.style.height='42px';}
-    addMessage('user',text);
-    if(result){setTimeout(()=>{addMessage('bot',result.text);if(result.action)result.action();},90);return true;}
-    if(!aiEnabled()){
-      addMessage('bot','For open-ended study help, enable AI above first. Your Cramchy data questions can still be answered here without sending them to Groq.');
-      return true;
-    }
-    askAiTurn(text);
-    return true;
-  }
-  function patchPanel(){
-    const panel=document.getElementById('askCramchyPanel');if(!panel||panel.dataset.v53==='yes')return;
-    panel.dataset.v53='yes';
-    aiHistory=[];
-    const first=panel.querySelector('.ask-msg.bot .ask-bubble');
-    if(first)first.textContent=introText();
-    const wrap=document.getElementById('askCramchyMessages');
-    const oldChips=wrap?.querySelector('.ask-chip-row');if(oldChips)oldChips.remove();
-    if(wrap){
-      const row=document.createElement('div');row.className='ask-chip-row';
-      [['planner today','what is on my planner today?'],['my term gwa','what is my term gwa?'],['all features','what features does cramchy have?'],['cramchy lore',"what's the lore behind this app?"]].forEach(item=>{
-        const button=document.createElement('button');button.type='button';button.className='ask-chip';button.dataset.v53Query=item[1];button.textContent=item[0];row.appendChild(button);
-      });
-      wrap.appendChild(row);
-      if(!aiEnabled())addAiPrivacyCard(wrap);
-    }
-    updateAiPrivacyNote(panel);
-  }
-  function install(){
-    document.addEventListener('click',event=>{
-      const consent=event.target.closest?.('[data-v53-ai-consent]');
-      if(consent){event.preventDefault();event.stopImmediatePropagation();const action=consent.dataset.v53AiConsent;if(action==='enable'){setAiConsent(true);consent.closest('.ask-ai-privacy-card')?.remove();updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI is on. I can now use your saved academic context to help with open-ended questions. You can turn it off anytime.');}else if(action==='off'){setAiConsent(false);consent.closest('.ask-ai-privacy-card')?.remove();updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','No worriesâ€”AI stays off. You can still ask about saved Cramchy data on this device.');}else if(action==='disable'){setAiConsent(false);updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI sharing is off now. Saved-data answers still work locally.');}return;}
-      const chip=event.target.closest?.('[data-v53-query]');
-      if(chip){event.preventDefault();event.stopImmediatePropagation();submit(chip.dataset.v53Query);return;}
-      if(event.target.closest?.('#askCramchySend')){
-        const input=document.getElementById('askCramchyInput');
-        if(submit(input?.value||'')){event.preventDefault();event.stopImmediatePropagation();}
-        else if(input)input.value=normalize(input.value);
-      }
-    },true);
-    document.addEventListener('keydown',event=>{
-      if(event.key==='Enter'&&!event.shiftKey&&event.target?.id==='askCramchyInput'){
-        if(submit(event.target.value)){event.preventDefault();event.stopImmediatePropagation();}
-        else event.target.value=normalize(event.target.value);
-      }
-    },true);
-    const observer=new MutationObserver(()=>patchPanel());observer.observe(document.body,{childList:true,subtree:true});
-    patchPanel();
-  }
-
-  window.__cramchyAskV53={version:VERSION,answer,normalize,plannerEvents,termGwaData,quickGwaData,userName,introText,loreAnswer};
-  if(typeof document!=='undefined'&&document.body)install();
-})();
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×_6å:-jZ.¶›­–)Þ³R†gVæ7F–öâ‚—°¢wW6R7G&–7Bs° ¢6öç7BdU%4”ôãÒucSBãs°¢6öç7Bô´U“Òw7G&v&W''”ÖF6†Ö–GFW&×57FFU÷cs°¢6öç7BÄääU%ô´U“Òv7&Ö6‡•ÆææW$WfVçG5÷c"s°¢6öç7Butô´U“Òv7&Ö6‡•FW&ÔwvÆææW%÷c"s°¢6öç7BDU$Õô´U“Òv7&Ö6‡”w&FW56VÆV7FVEFW&Òs°¢6öç7B•ô4ôå4TåEô´U“Òv7&Ö6‡”w&÷FF6öç6VçE÷cs°¢6öç7BE•UôÄ$TÃ×¶6Æ73¢v6Æ72rÇF6³¢wF6²rÆW†Ó¢vW†ÒrÇ7GVG“¢w7GVG’&Æö6²rÇW'6öæÃ¢wW'6öæÂWfVçBwÓ°¢6öç7B6öçFW‡C×·F÷–3¢rrÇW&–öC¢rrÇG—S¢rrÆÆ7DWfVçD–C¢rwÓ°¢ÆWB”†—7F÷'“ÕµÓ° ¢gVæ7F–öâ&VD§6öâ†¶W’ÆfÆÆ&6²—°¢G'—°¢6öç7BfÇVSÔ¥4ôâç'6R†Æö6Å7F÷&vRævWD—FVÒ†¶W’—ÇÂvçVÆÂr“°¢&WGW&âfÇVSÓÓÖçVÆÃöfÆÆ&6³§fÇVS°¢Ö6F6‚†R—·&WGW&âfÆÆ&6³·Ð¢Ð ¢gVæ7F–öâ7FFR‚—·&WGW&â&VD§6öâ„ô´U’Ç·&öf–ÆS§·ÒÆ6÷W'6W3¥µÒÇV–6´wv&÷w3¥µÒÆw&FV&öö³§·×Ò“·Ð¢gVæ7F–öâW6W$æÖR‚—°¢6öç7B6fVCÕ7G&–ær†7FFR‚’ç&öf–ÆSòææÖWÇÂrr’çG&–Ò‚’ç&WÆ6R‚õÇ2²örÂrr“°¢&WGW&â6fVC÷6fVBç7Æ—B‚rr•³Òç6Æ–6RƒÃ#B“¢v&W7F–Rs°¢Ð¢gVæ7F–öâ–çG&õFW‡B‚—·&WGW&âv†––’Âr·W6W$æÖR‚’²rv†B&RvRv÷&¶–æröâFöF“ò6²ÖRç—F†–ær&÷WB7&Ö6‡’÷"–÷W"66†ööÂ7GVfbâs·Ð¢gVæ7F–öâÆ÷&Tç7vW"‚—°¢&WGW&â&ö¶’Â"·W6W$æÖR‚’²"Â†W&Rw2F†R7&Ö6‡’Æ÷&R—B7F'FVB2Æ—GFÆR6–FRVW7B'’6†&ÆVæRÖ–¶VÆBâ66òÂ7–6†öÆöw’7GVFVçBg&öÒåR6Æ&¾(	FæB—Bv2Æ—FW&ÆÇ’†W"f—'7BF–ÖR'V–ÆF–ærââ6†RW6VBFò7&Òf÷"&6–6ÆÇ’WfW'—F†–æs¢V—§¦W2ÂW†×2ÂFVFÆ–æW2Âç’6†æ6R6†Rv÷Bâ6ò6†RÖFR7&Ö6‡’Fò†VÇ†W'6VÆbvWB÷&væ—¦VBæB6Æ÷vÇ’&VBF†R7&ÖÖ–ærÖæB×&ö7&7F–æF–ær7–6ÆRâF†RæÖR†VæVB–âF†RÖ÷7BVç6W&–÷W2v’Föó¢(	Æ7&Þ(	Ò6ÖRg&öÒÆÂF†R7&ÖÖ–ærÂ(	Æ6‡ž(	Ò6ÖRg&öÒ†W"æ–6¶æÖR6†6†’æBvÖ–ærW6W&æÖR6†6†–Ö’ÂæB(	Ä7&Ö6‡ž(	Ò6÷VæFVBÆ–¶R(	Æ7'Væ6‡ž(	Ò&V6W6R6†Rv2VF–ær6†—2v†Vâ6†RF†÷Vv‡Böb—BÄôÂâ—Bv2÷&–v–æÆÇ’§W7Bf÷"†W"Â'WB6†RVæFVBW6†&–ær—Bv—F‚g&–VæG2æB÷F†W"7GVFVçG2v†òÖ–v‡BæVVB—BFöòâ—N(	—27F–ÆÂw&÷v–æræB—B—6î(	—BW&fV7BÂ'WBF†N(	—2'BöbF†RÆ÷&^(	F—N(	—2&VÂf—'7B&ö¦V7B'V–ÇB&÷VæBv†B—G2FWfVÆ÷W"7GVÆÇ’æVVFVBâ#°¢Ð¢gVæ7F–öâÆææW$WfVçG2‚—°¢6öç7BWfVçG3×&VD§6öâ…ÄääU%ô´U’ÅµÒ“°¢&WGW&â'&’æ—4'&’†WfVçG2“öWfVçG2æf–ÇFW"†SÓæRbfRæFFR’æÖ†SÓâ‡°¢–C¥7G&–ær†Ræ–GÇÂrr’ÇF—FÆS¥7G&–ær†RçF—FÆWÇÂuVçF—FÆVBWfVçBr’ÇG—S¥E•UôÄ$TÅ¶RçG—UÓöRçG—S¢wW'6öæÂrÀ¢6÷W'6S¥7G&–ær†Ræ6÷W'6WÇÂrr’ÆFFS¥7G&–ær†RæFFWÇÂrr’Ç7F'C¥7G&–ær†Rç7F'GÇÂrr’ÆVæC¥7G&–ær†RæVæGÇÂrr’À¢æ÷FW3¥7G&–ær†Rææ÷FW7ÇÂrr’ÆFöæS¤&ööÆVâ†RæFöæR¢Ò’“¥µÓ°¢Ð ¢gVæ7F–öâæ÷&ÖÆ—¦R‡&r—°¢ÆWBÕ7G&–ær‡&wÇÂrr’çFôÆ÷vW$66R‚’ç&WÆ6R‚õ¾(	ž(	…ÒörÂ"r"’ç&WÆ6R‚õ¾(	>(	EÒörÂrÒr“°¢×ç&WÆ6R‚ò…¶×¥Ò•Ã³"ÇÒörÂrCr“°¢6öç7Bf—†W3×°¢wÆæãöW"s¢wÆææW"rÂv6ÆVæFW"s¢v6ÆVæF"rÂw66†VGVVÂs¢w66†VGVÆRrÂvw&W2s¢vw&FW2rÂvw&G6Rs¢vw&FW2rÀ¢vw&FV&ö²s¢vw&FV&öö²rÂwV–²s¢wV–6²rÂv6Æ6W2s¢v6Æ76W2rÂv6Æ6W72s¢v6Æ76W2rÂvg&VGW&W2s¢vfVGW&W2rÀ¢vfWGW&W2s¢vfVGW&W2rÂv7&Ö6†’s¢v7&Ö6‡’rÂv7&Ö6‡’²s¢v7&Ö6‡’rÂwFöÖ÷&÷rs¢wFöÖ÷'&÷rrÂwFöÖÖ÷&÷rs¢wFöÖ÷'&÷rrÀ¢wW6öÖÖ–ærs¢wW6öÖ–ærrÂvFVBÆ–æRs¢vFVFÆ–æRrÂw&ö67F–æBs¢w&ö7&7F–æBrÂv7&VFW"s¢v7&VF÷"p¢Ó°¢ö&¦V7Bæ¶W—2†f—†W2’æf÷$V6‚†g&öÓÓç·×ç&WÆ6R†æWr&VtW‡‚uÅÆ"r¶g&öÒ²uÅÆ"rÂvrr’Æf—†W5¶g&öÕÒ“·Ò“°¢&WGW&âç&WÆ6R‚õµæ×£Ó’âS¢uÂÕÇ5ÒörÂrr’ç&WÆ6R‚õÇ2²örÂrr’çG&–Ò‚“°¢Ð ¢gVæ7F–öâ†2‡ÇGFW&â—·&WGW&âGFW&âçFW7B‡“·Ð¢gVæ7F–öâB†â—·&WGW&â7G&–ær†â’çE7F'Bƒ"Âsr“·Ð¢gVæ7F–öâ—6ò†FFR—·&WGW&âFFRævWDgVÆÅ–V"‚’²rÒr·B†FFRævWDÖöçF‚‚’³’²rÒr·B†FFRævWDFFR‚’“·Ð¢gVæ7F–öâF•7F'B†FFR—·&WGW&âæWrFFR†FFRævWDgVÆÅ–V"‚’ÆFFRævWDÖöçF‚‚’ÆFFRævWDFFR‚’ÃÃÃÃ“·Ð¢gVæ7F–öâÇW4F—2†FFRÆâ—¶6öç7BCÖæWrFFR†FFR“¶Bç6WDFFR†BævWDFFR‚’¶â“·&WGW&âC·Ð¢gVæ7F–öâ'6T—6ò‡fÇVR—°¢6öç7B&—G3Õ7G&–ær‡fÇVWÇÂrr’ç7Æ—B‚rÒr’æÖ„çVÖ&W"“°¢&WGW&âæWrFFR†&—G5³×ÇÃ#Â†&—G5³×ÇÃ’ÓÆ&—G5³%×ÇÃÃ"ÃÃÃ“°¢Ð¢gVæ7F–öâ&WGG”FFR‡fÇVR—°¢&WGW&â'6T—6ò‡fÇVR’çFôÆö6ÆTFFU7G&–ær‚vVâÕU2rÇ·vVV¶F“¢w6†÷'BrÆÖöçFƒ¢w6†÷'BrÆF“¢vçVÖW&–2wÒ“°¢Ð¢gVæ7F–öâ&WGG•F–ÖR‡fÇVR—°¢–b‚fÇVR—&WGW&âvç—F–ÖRs°¢6öç7B&—G3Õ7G&–ær‡fÇVR’ç7Æ—B‚s¢r’æÖ„çVÖ&W"’ÆƒÖ&—G5³×ÇÃÆÓÖ&—G5³×ÇÃ°¢&WGW&â‚†‚³’S"³’²s¢r·B†Ò’²rr²†ƒãÓ#òuÒs¢tÒr“°¢Ð¢gVæ7F–öâFFUF–ÖR†WfVçB—°¢6öç7BFFS×'6T—6ò†WfVçBæFFR’Æ&—G3Õ7G&–ær†WfVçBç7F'GÇÂs#3£S’r’ç7Æ—B‚s¢r’æÖ„çVÖ&W"“°¢FFRç6WD†÷W'2†&—G5³×ÇÃÆ&—G5³×ÇÃÃÃ“°¢&WGW&âFFS°¢Ð ¢gVæ7F–öâW&–öDg&öÒ‡—°¢6öç7Bæ÷sÖF•7F'B†æWrFFR‚’“°¢–b††2‡ÂõÆ'–W7FW&F•Æ"ò’—&WGW&â¶æÖS¢w–W7FW&F’rÆg&öÓ§ÇW4F—2†æ÷rÂÓ’ÇFó¦æ÷wÓ°¢–b††2‡ÂõÆ'FöÖ÷'&÷uÆ"ò’—&WGW&â¶æÖS¢wFöÖ÷'&÷rrÆg&öÓ§ÇW4F—2†æ÷rÃ’ÇFó§ÇW4F—2†æ÷rÃ"—Ó°¢–b††2‡ÂõÆ'FöF•Æ'ÅÆ'Föæ–v‡EÆ"ò’—&WGW&â¶æÖS¢wFöF’rÆg&öÓ¦æ÷rÇFó§ÇW4F—2†æ÷rÃ—Ó°¢–b††2‡ÂõÆ&æW‡BvVVµÆ"ò’—°¢6öç7BÖöæF“×ÇW4F—2†æ÷rÂƒ‚Ò†æ÷rævWDF’‚—ÇÃr’’SwÇÃr“°¢&WGW&â¶æÖS¢væW‡BvVV²rÆg&öÓ¦ÖöæF’ÇFó§ÇW4F—2†ÖöæF’Ãr—Ó°¢Ð¢–b††2‡ÂõÆ'F†—2vVVµÆ'ÅÆ'vVV²†VEÆ'ÅÆ&æW‡BrF—5Æ"ò’—&WGW&â¶æÖS¢wF†RæW‡BrF—2rÆg&öÓ¦æ÷rÇFó§ÇW4F—2†æ÷rÃr—Ó°¢–b††2‡ÂõÆ'vVV¶VæEÆ"ò’—°¢6öç7B6GW&F“×ÇW4F—2†æ÷rÂƒbÖæ÷rævWDF’‚’³r’Sr“°¢&WGW&â¶æÖS¢wF†—2vVV¶VæBrÆg&öÓ§6GW&F’ÇFó§ÇW4F—2‡6GW&F’Ã"—Ó°¢Ð¢6öç7BW†7C×æÖF6‚‚õÆ"ƒ#ÆG³'Ò’Ò…ÆG³'Ò’Ò…ÆG³'Ò•Æ"ò“°¢–b†W†7B—¶6öç7BCÖF•7F'B‡'6T—6ò†W†7E³Ò’“·&WGW&â¶æÖS§&WGG”FFR†W†7E³Ò’Æg&öÓ¦BÇFó§ÇW4F—2†BÃ—Ó·Ð¢&WGW&âçVÆÃ°¢Ð ¢gVæ7F–öâG—Tg&öÒ‡—°¢–b††2‡ÂõÆ"†W†×ÇV—§ÇFW7B—3õÆ"ò’—&WGW&âvW†Òs°¢–b††2‡ÂõÆ"‡F6·ÆFVFÆ–æWÆ76–væÖVçGÇ&ö¦V7GÆ†öÖWv÷&·ÆGVR—3õÆ"ò’—&WGW&âwF6²s°¢–b††2‡ÂõÆ"†6Æ77ÆÆV7GW&WÆ6÷W'6RÖVWF–ær—3õÆ"ò’—&WGW&âv6Æ72s°¢–b††2‡ÂõÆ"‡7GVG’&Æö6·Ç7GVG’6W76–öçÇ&Wf–Wr6W76–öâ—3õÆ"ò’—&WGW&âw7GVG’s°¢–b††2‡ÂõÆ"‡W'6öæÇÆö–çFÖVçGÆW'&æB—3õÆ"ò’—&WGW&âwW'6öæÂs°¢&WGW&ârs°¢Ð ¢gVæ7F–öâf–ÇFW$WfVçG2‡—°¢6öç7Bæ÷sÖæWrFFR‚’ÇFöF“ÖF•7F'B†æ÷r“°¢6öç7BW‡Æ–6—EW&–öC×W&–öDg&öÒ‡“°¢6öç7B7FæFÆöæSÖ†2‡ÂõÆ"†÷fW&GVWÆÆFWÆÖ—76VGÇW6öÖ–æwÆæW‡GÆ'W6–W7GÆg&VRF’•Æ"ò“°¢6öç7BW&–öCÖW‡Æ–6—EW&–öGÇÂ‚7FæFÆöæRbf6öçFW‡BçF÷–3ÓÓÒwÆææW"rbf6öçFW‡BçW&–öC÷W&–öDg&öÒ†6öçFW‡BçW&–öB“¦çVÆÂ“°¢6öç7BW‡Æ–6—EG—S×G—Tg&öÒ‡“°¢6öç7BG—SÖW‡Æ–6—EG—WÇÂ‚7FæFÆöæRbf6öçFW‡BçF÷–3ÓÓÒwÆææW"sö6öçFW‡BçG—S¢rr“°¢ÆWBWfVçG3×ÆææW$WfVçG2‚“°¢–b‡W&–öB–WfVçG3ÖWfVçG2æf–ÇFW"†SÓç¶6öç7BCÖF•7F'B‡'6T—6ò†RæFFR’“·&WGW&âCã×W&–öBæg&öÒbfCÇW&–öBçFó·Ò“°¢–b‡G—R–WfVçG3ÖWfVçG2æf–ÇFW"†SÓæRçG—SÓÓ×G—R“°¢–b††2‡ÂõÆ&÷fW&GVWÆÆFWÆÖ—76VEÆ"ò’–WfVçG3ÖWfVçG2æf–ÇFW"†SÓâRæFöæRbfFFUF–ÖR†R“Ææ÷r“°¢VÇ6R–b††2‡ÂõÆ"†FöæWÆ6ö×ÆWFVGÆf–æ—6†VB•Æ"ò’–WfVçG3ÖWfVçG2æf–ÇFW"†SÓæRæFöæR“°¢VÇ6R–b††2‡ÂõÆ'W6öÖ–æwÆæW‡GÆ†VEÆ"ò’bbW&–öB–WfVçG3ÖWfVçG2æf–ÇFW"†SÓâRæFöæRbfFFUF–ÖR†R“ã×FöF’“°¢&WGW&â¶WfVçG3¦WfVçG2ç6÷'B‚†Æ"“ÓæFFUF–ÖR†’ÖFFUF–ÖR†"’’ÇW&–öC§W&–öCòææÖWÇÂrrÇG—WÓ°¢Ð ¢gVæ7F–öâWfVçDÆ–æR†WfVçB—°¢6öç7B6÷W'6SÖWfVçBæ6÷W'6Sòr+rr¶WfVçBæ6÷W'6S¢rs°¢6öç7B7FGW3ÖWfVçBæFöæSòr+rFöæRs¢rs°¢&WGW&â~(
+"r¶WfVçBçF—FÆR²r(	Br·&WGG”FFR†WfVçBæFFR’²rÂr·&WGG•F–ÖR†WfVçBç7F'B’¶6÷W'6R·7FGW3°¢Ð ¢gVæ7F–öâÆææW$ç7vW"‡—°¢6öç7BÆææW%v÷&G3ÒõÆ"‡ÆææW'Æ6ÆVæF'ÆWfVçGÇ66†VGVÆWÆvVæFÆFVFÆ–æWÆGVWÇW6öÖ–æwÆ÷fW&GVWÆ'W7—Æ'W6–W7GÆg&VRF—Ç7GVG’&Æö6²•Æ'ÅÆ&F•Æ"â¥Æ&g&VUÆ"ó°¢6öç7BföÆÆ÷sÖ6öçFW‡BçF÷–3ÓÓÒwÆææW"rbf†2‡Âõâ†æBÇv†B&÷WBÆ†÷r&÷WBÆ†÷rÖç—Çv†–6‚öæWÇv†BF–ÖWÇv†W&WÇFöÖ÷'&÷wÇFöF—ÆæW‡B’ò“°¢6öç7BFFVDvVæFÔ&ööÆVâ‡W&–öDg&öÒ‡’’bf†2‡ÂõÆ"‡v†BFò’†fWÇv†Bs÷2öçÆç—F†–æwÇÆç3ò•Æ"ò“°¢–b‚ÆææW%v÷&G2çFW7B‡’bbföÆÆ÷rbbFFVDvVæF—&WGW&âçVÆÃ°¢6öçFW‡BçF÷–3ÒwÆææW"s°¢6öç7BW&–öC×W&–öDg&öÒ‡“¶–b‡W&–öB–6öçFW‡BçW&–öC×W&–öBææÖS°¢6öç7BG—S×G—Tg&öÒ‡“¶–b‡G—R–6öçFW‡BçG—S×G—S° ¢–b††2‡ÂõÆ"‡v†B—7Çv†Bw7ÆW‡Æ–çÆ&÷WB’‡F†R“ò‡ÆææW'Æ6ÆVæF"•Æ"ò’—°¢&WGW&âW6W$æÖR‚’²rÂÆææW"—2&6–6ÆÇ’–÷W"6FVÖ–2Æ–fR–âöæR6ÆVæF.(	F6Æ76W2ÂF6·2ÂW†×2Â7GVG’&Æö6·2ÂæBW'6öæÂ7GVfbâ–÷R6â7v—F6‚&WGvVVâÖöçF‚ÂvVV²ÂæBF’ÂFBæ÷FW2æBF–ÖW2ÂÖ&²F†–æw2FöæRÂæB6†V6²v†N(	—26öÖ–æræW‡Bâs°¢Ð¢–b††2‡ÂõÆ"††÷r†F÷Æ6â’—Æ†÷rF÷Çv†W&R†F÷Æ6â’’•Æ"â¥Æ"†FGÆ7&VFWÆVF—GÆFVÆWFWÇ&VÖ÷fWÆ6ö×ÆWFWÆÖ&²•Æ"ò’—°¢–b††2‡ÂõÆ"†FVÆWFWÇ&VÖ÷fR•Æ"ò’—&WGW&ât÷VâÆææW"ÂFF†RWfVçBÂF†Vâ6†ö÷6RFVÆWFRâ7&Ö6‡’v–ÆÂ&VÖ÷fRF†B6ÆVæF"WfVçBâs°¢–b††2‡ÂõÆ"†VF—B•Æ"ò’—&WGW&ât÷VâÆææW"æBFF†RWfVçB–÷RvçBFò6†ævRâVF—B—G2F—FÆRÂG—RÂ6÷W'6RÂFFRÂF–ÖRÂ÷"æ÷FW2ÂF†Vâ6fRâs°¢–b††2‡ÂõÆ"†6ö×ÆWFWÆÖ&²•Æ"ò’—&WGW&ât÷VâÆææW"ÂFF†RWfVçBÂæBÖ&²—BFöæRâ6ö×ÆWFVB—FV×27F’f—6–&ÆRv—F‚F†V—"f–æ—6†VB7FGW2âs°¢&WGW&ât÷VâÆææW"æBF(	ÆFBWfVçBî(	Ò6†ö÷6R6Æ72ÂF6²ÂW†ÒÂ7GVG’&Æö6²Â÷"W'6öæÃ²F†VâFBF†RFFRÂ÷F–öæÂF–ÖRö6÷W'6Röæ÷FW2ÂæB6fRâs°¢Ð¢–b††2‡ÂõÆ"†ÖöçF‡ÇvVV·ÆF’’f–Ww3õÆ'ÅÆ"‡ÆææW"“÷f–Ww3õÆ'ÅÆ'7v—F6‚f–Ww3õÆ"ò’—&WGW&âuÆææW"†2ÖöçF‚ÂvVV²ÂæBF’f–Ww2â÷VâÆææW"ÂF†VâW6RF†Rf–Wr'WGFöç2&÷fRF†R6ÆVæF"âs°¢–b††2‡ÂõÆ"‡7–æ7Æ6Æ÷VGÆæ÷F†W"FWf–6WÆFWf–6W2•Æ"ò’—&WGW&âuÆææW"WfVçG26fR–âF†—2'&÷w6W"æB6â7–æ2F‡&÷Vv‚7&Ö6‡’6Æ÷VBv†Vâ–÷R&R6–væVB–ââ6Æ÷VB7–æ6–æræVVG2â–çFW&æWB6öææV7F–öââs°¢–b††2‡ÂõÆ"†FGÆ7&VFWÇ66†VGVÆWÇWB•Æ"â¥Æ"†WfVçGÆFVFÆ–æWÆW†×ÇF6·Æ6Æ77Ç7GVG’&Æö6²•Æ"ò’bb†2‡ÂõÆ&†÷uÆ"ò’—°¢&WGW&ât’6â†VÇ–÷Rf–æBæBÆâWfVçG2Â'WB’v–ÆÂæ÷BFBöæRv—F†÷WB6†÷v–ær–÷RF†Rf÷&Òâ÷VâÆææW"ÂF(	ÆFBWfVçBÎ(	ÒæBVçFW"F†RFWF–Ç26ò–÷R6âfW&–g’F†VÒ&Vf÷&R6f–ærâs°¢Ð ¢6öç7B&W7VÇCÖf–ÇFW$WfVçG2‡’ÆWfVçG3×&W7VÇBæWfVçG3°¢–b‡&W7VÇBçW&–öB–6öçFW‡BçW&–öC×&W7VÇBçW&–öC¶–b‡&W7VÇBçG—R–6öçFW‡BçG—S×&W7VÇBçG—S°¢–b††2‡ÂõÆ"†g&VRF—Æg&VRF—7Çv†–6‚F’—2g&VR•Æ"ò’—°¢6öç7B7F'CÖF•7F'B†æWrFFR‚’’Æ6÷VçG3×·Ó°¢f÷"†ÆWB“Ó¶“Ãs¶’²²–6÷VçG5¶—6ò‡ÇW4F—2‡7F'BÆ’’•ÓÓ°¢ÆææW$WfVçG2‚’æf–ÇFW"†SÓâRæFöæRbf6÷VçG5¶RæFFUÒÓ×VæFVf–æVB’æf÷$V6‚†SÓæ6÷VçG5¶RæFFUÒ²²“°¢6öç7Bg&VSÔö&¦V7Bæ¶W—2†6÷VçG2’æf–ÇFW"†CÓæ6÷VçG5¶EÓÓÓÓ“°¢&WGW&âg&VRæÆVæwFƒòu–÷W"g&VRF—2–âF†RæW‡BrF—2&Rr¶g&VRæÖ‡&WGG”FFR’æ¦ö–â‚rÂr’²râs¢u–÷R†fRBÆV7BöæRÆææW"WfVçBöâWfW'’F’–âF†RæW‡BrF—2âs°¢Ð¢–b††2‡ÂõÆ"†'W6–W7GÆÖ÷7B'W7’•Æ"ò’—°¢6öç7B6÷VçG3×·Ó·ÆææW$WfVçG2‚’æf–ÇFW"†SÓâRæFöæRbfFFUF–ÖR†R“ãÖF•7F'B†æWrFFR‚’’’æf÷$V6‚†SÓæ6÷VçG5¶RæFFUÓÒ†6÷VçG5¶RæFFU×ÇÃ’³“°¢6öç7BVçG&–W3Ôö&¦V7BæVçG&–W2†6÷VçG2’ç6÷'B‚†Æ"“Óæ%³ÒÖ³Ò“°¢&WGW&âVçG&–W2æÆVæwFƒòu–÷W"'W6–W7BW6öÖ–ærF’—2r·&WGG”FFR†VçG&–W5³Õ³Ò’²rv—F‚r¶VçG&–W5³Õ³Ò²rWfVçBr²†VçG&–W5³Õ³ÓÓÓÓòrs¢w2r’²râs¢u–÷W"ÆææW"†2æòW6öÖ–ærWfVçG2–WBâs°¢Ð¢–b††2‡ÂõÆ"‡v†–6‡Çv†B’†öæR“ò‡6†÷VÆB’F÷Æ6öÖW7Æ—2’f—'7EÆ'ÅÆ'&–÷&—F•·7¥ÖUÆ"ò’—°¢6öç7B6æF–FFW3×ÆææW$WfVçG2‚’æf–ÇFW"†SÓâRæFöæRbfFFUF–ÖR†R“ãÖF•7F'B†æWrFFR‚’’’ç6÷'B‚†Æ"“Óç°¢6öç7B&æ³×¶W†Ó£ÇF6³£Æ6Æ73£"Ç7GVG“£2ÇW'6öæÃ£GÓ°¢&WGW&âFFUF–ÖR†’ÖFFUF–ÖR†"—ÇÂ‡&æµ¶çG—UÒ×&æµ¶"çG—UÒ“°¢Ò’ç6Æ–6RƒÃ2“°¢–b‚6æF–FFW2æÆVæwF‚—&WGW&âw–÷^(	—&RÆÂ6ÆV"Âr·W6W$æÖR‚’²~(	GF†W&R&Vî(	—Bç’Væf–æ—6†VBW6öÖ–ærÆææW"WfVçG2Fò&–÷&—F—¦R&–v‡Bæ÷râs°¢6öçFW‡BæÆ7DWfVçD–CÖ6æF–FFW5³Òæ–C°¢&WGW&âvö¶’Âr·W6W$æÖR‚’²~(	FÆWN(	—27F'Bv—F‚F†R6Æ÷6W7BFFVB—FVÒâ†W&^(	—2F†R÷&FW"ž(	–Bvòv—Fƒ¥Æâr¶6æF–FFW2æÖ†WfVçDÆ–æR’æ¦ö–â‚uÆâr“°¢Ð¢–b††2‡ÂõÆ&†÷rÖç—Æ6÷VçEÆ"ò’—°¢6öç7BÆ&VÃ×&W7VÇBçG—SõE•UôÄ$TÅ·&W7VÇBçG—UÒ²w2s¢vWfVçG2s°¢6öç7Bv†Vã×&W7VÇBçW&–öCòrr·&W7VÇBçW&–öC¢rs°¢&WGW&âu–÷R†fRr¶WfVçG2æÆVæwF‚²rr¶Æ&VÂ·v†Vâ²râs°¢Ð¢–b††2‡ÂõÆ&æW‡EÆ"ò’bbW&–öDg&öÒ‡’—°¢6öç7BæW‡CÖWfVçG2æf–æB†SÓâRæFöæRbfFFUF–ÖR†R“ãÖæWrFFR‚’“°¢–b‚æW‡B—&WGW&âvÆöö·26ÆV"Âr·W6W$æÖR‚’²~(	G–÷RFöî(	—B†fRâW6öÖ–ærr²‡&W7VÇBçG—SõE•UôÄ$TÅ·&W7VÇBçG—UÓ¢uÆææW"WfVçBr’²r–WBâs°¢6öçFW‡BæÆ7DWfVçD–CÖæW‡Bæ–C°¢6öç7Bæ÷FW3ÖæW‡Bææ÷FW3òræ÷FW3¢r¶æW‡Bææ÷FW3¢rs°¢&WGW&âvö¶’Âr·W6W$æÖR‚’²~(	G–÷W"æW‡BrµE•UôÄ$TÅ¶æW‡BçG—UÒ²r—2r¶WfVçDÆ–æR†æW‡B’ç6Æ–6Rƒ"’²râr¶æ÷FW3°¢Ð¢–b††2‡ÂõÆ"†FWF–Ç7Ææ÷FW7Çv†W&WÇv†BF–ÖR•Æ"ò’bf6öçFW‡BæÆ7DWfVçD–B—°¢6öç7BWfVçC×ÆææW$WfVçG2‚’æf–æB†SÓæRæ–CÓÓÖ6öçFW‡BæÆ7DWfVçD–B“°¢–b†WfVçB—&WGW&âWfVçDÆ–æR†WfVçB’ç6Æ–6Rƒ"’²râr²†WfVçBææ÷FW3òræ÷FW3¢r¶WfVçBææ÷FW3¢ræòæ÷FW2vW&RFFVBâr“°¢Ð¢6öç7BFW67&—F÷#Ò‡&W7VÇBçG—SõE•UôÄ$TÅ·&W7VÇBçG—UÒ²w2s¢vWfVçG2r’²‡&W7VÇBçW&–öCòrr·&W7VÇBçW&–öC¢rr“°¢–b‚WfVçG2æÆVæwF‚—&WGW&âw–÷^(	—&R6ÆV"Âr·W6W$æÖR‚’²~(	D’6÷VÆFî(	—Bf–æBç’r¶FW67&—F÷"²r–â–÷W"ÆææW"âs°¢6öç7B6†÷vãÖWfVçG2ç6Æ–6RƒÃb“¶6öçFW‡BæÆ7DWfVçD–C×6†÷vå³Òæ–C°¢&WGW&ât†W&Rr²‡6†÷vâæÆVæwFƒÓÓÓòv—2s¢v&Rr’²r–÷W"r¶FW67&—F÷"²s¥Æâr·6†÷vâæÖ†WfVçDÆ–æR’æ¦ö–â‚uÆâr’²†WfVçG2æÆVæwFƒç6†÷vâæÆVæwFƒòuÆî(
+fæBr²†WfVçG2æÆVæwF‚×6†÷vâæÆVæwF‚’²rÖ÷&Râs¢rr“°¢Ð ¢gVæ7F–öâçVÖW&–2‡fÇVR—°¢–b‡fÇVSÓÓÒrwÇÇfÇVSÓÓÖçVÆÇÇÇfÇVSÓÓ×VæFVf–æVB—&WGW&âçVÆÃ°¢6öç7BãÔçVÖ&W"‡fÇVR“·&WGW&âçVÖ&W"æ—4f–æ—FR†â“öã¦çVÆÃ°¢Ð¢gVæ7F–öâ7W'&VçEFW&Ò‡7FFR—°¢ÆWB6fVCÒrs·G'—·6fVCÖÆö6Å7F÷&vRævWD—FVÒ…DU$Õô´U’—ÇÂrs·Ö6F6‚†R—·Ð¢&WGW&â6fVGÇÇ7FFRç&öf–ÆSòçFW&×ÇÂuFW&Òs°¢Ð¢gVæ7F–öâw&FTWV—fÆVçB‡&r—°¢6öç7B&÷VæFVCÔÖF‚ç&÷VæB„çVÖ&W"‡&r’“°¢–b‡&÷VæFVCãÓ“b—&WGW&âsBãs¶–b‡&÷VæFVCãÓ“—&WGW&âs2ãRs¶–b‡&÷VæFVCãÓƒB—&WGW&âs2ãs°¢–b‡&÷VæFVCãÓs‚—&WGW&âs"ãRs¶–b‡&÷VæFVCãÓs"—&WGW&âs"ãs·&WGW&âu"s°¢Ð¢gVæ7F–öâFW&ÔwvFF‚—°¢6öç7B7FFSÖ7FFR‚’ÇFW&ÓÖ7W'&VçEFW&Ò‡7FFR’Ç–V#×7FFRç&öf–ÆSòæ6FVÖ–5–V'ÇÂs##n(	3##rs°¢6öç7B–æfó×&VD§6öâ„utô´U’Ç·Ò’Æ6÷W'6W3Ò‡7FFRæ6÷W'6W7ÇÅµÒ’æf–ÇFW"†3Óâ†2æ6FVÖ–5–V'ÇÇ–V"“ÓÓ×–V"bb†2çFW&×ÇÇ7FFRç&öf–ÆSòçFW&×ÇÂuFW&Òr“ÓÓ×FW&Ò“°¢ÆWBvV–v‡FVCÓÇVæ—G3ÓÆ–æ6ÇVFVCÓ°¢6÷W'6W2æf÷$V6‚†6÷W'6SÓç°¢6öç7B&÷sÖ–æfõ¶6÷W'6Ræ–E×ÇÇ·ÒÆÖöFS×&÷ræÖöFWÇÂvæöæRs¶ÆWBw&FSÒrs°¢–b†ÖöFSÓÓÒvWV—br–w&FSÕ7G&–ær‡&÷ræw&FWÇÂrr“°¢–b†ÖöFSÓÓÒw&rrbfçVÖW&–2‡&÷ræf–æÅ&r’ÓÖçVÆÂ–w&FSÖw&FTWV—fÆVçB‡&÷ræf–æÅ&r“°¢–b†ÖöFSÓÓÒvÖ–Ff–æÂrbfçVÖW&–2‡&÷ræÖ–GFW&Õ&r’ÓÖçVÆÂbfçVÖW&–2‡&÷ræf–æÇ5&r’ÓÖçVÆÂ–w&FSÖw&FTWV—fÆVçB‚„çVÖ&W"‡&÷ræÖ–GFW&Õ&r’´çVÖ&W"‡&÷ræf–æÇ5&r’’ó"“°¢6öç7BSÖçVÖW&–2‡&÷rçVæ—G2“óöçVÖW&–2†6÷W'6RçVæ—G2“óóÆsÖçVÖW&–2†w&FR“°¢–b†rÓÖçVÆÂbfsãÓbgSã—·vV–v‡FVB³Ör§S·Væ—G2³×S¶–æ6ÇVFVB²³·Ð¢Ò“°¢&WGW&â·FW&ÒÇ–V"Æ6÷W'6W2Æ–æ6ÇVFVBÇVæ—G2Æwv§Væ—G3÷vV–v‡FVB÷Væ—G3¦çVÆÂÇVæF–æs¤ÖF‚æÖ‚ƒÆ6÷W'6W2æÆVæwF‚Ö–æ6ÇVFVB—Ó°¢Ð¢gVæ7F–öâV–6´wvFF‚—°¢6öç7B&÷w3Ö7FFR‚’çV–6´wv&÷w7ÇÅµÓ¶ÆWBvV–v‡FVCÓÇVæ—G3ÓÆ6÷VçCÓ°¢&÷w2æf÷$V6‚‡&÷sÓç¶6öç7BsÖçVÖW&–2‡&÷ræw&FR’ÇSÖçVÖW&–2‡&÷rçVæ—G2“¶–b†rÓÖçVÆÂbfsãÓbfsÃÓBbgRÓÖçVÆÂbgSã—·vV–v‡FVB³Ör§S·Væ—G2³×S¶6÷VçB²³·×Ò“°¢&WGW&â¶wv§Væ—G3÷vV–v‡FVB÷Væ—G3¦çVÆÂÇVæ—G2Æ6÷VçGÓ°¢Ð ¢gVæ7F–öâw&FW4ç7vW"‡—°¢6öç7Bw&FUv÷&G3ÒõÆ"†w&FV&öö·Æw&FW3÷ÆwvÇvV–v‡FVBfW&vWÆw&F–ær7—7FV×Ç&rW&6VçFvWÆFVâs÷2Æ—7GÆ†öæ÷'2•Æ"ó°¢6öç7BföÆÆ÷sÖ6öçFW‡BçF÷–3ÓÓÒvw&FW2rbf†2‡Âõâ†æBÇv†B&÷WBÆ†÷r&÷WBÆ†÷r—2—GÇv‡’—2—GÆ†÷râ¦6Æ7VÆGÇv†–6‚öæR’ò“°¢–b‚w&FUv÷&G2çFW7B‡’bbföÆÆ÷r—&WGW&âçVÆÃ°¢6öç7B—4æWsÖ†2‡ÂõÆ"‡FW&ÒwvÇV–6²wvÇF‡&VRw&FWÃ2w&FWÆw&FRFööÇ3÷Æw&F–ær7—7FV×Ç&rW&6VçFvWÆWV|Û›h‘éì¶»§q«^uÕÍ”¤¸¨¡½ÕÉÍ•ÌÁ…•ñ½ÕÉÍ”µ…¹…•È¥qˆ¼¤¥É•ÑÕÉ¸€½ÕÉÍ•Ì¥ÌÝ¡•É”å½ÔÍ•ÐÕÀÍÕ‰©•ÑÌÝ¥Ñ ‘•Ñ…¥±ÌÍÕ …Ì½ÕÉÍ”½‘”°Õ¹¥ÑÌ°Í¡•‘Õ±”°É½½´°¥¹ÍÑÉÕÑ½È°……‘•µ¥Œå•…È°…¹Ñ•É´¸Q¡½Í”½ÕÉÍ”É•½É‘ÌÁ½Ý•ÈÍ¡•‘Õ±•Ì°É…‘•Ì°á…´5½‘”°…¹Í¬É…µ¡ä…¹ÍÝ•ÉÌ¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡Ý¡…Ð¥ÍñÝ¡…ÐœýÍñ•áÁ±…¥¹ñ¡½Ü¸©ÕÍ”¤¸¨¡Ñ…Í­ÌÁ…•ñÑ…Í¬µ…¹…•È¥qˆ¼¤¥É•ÑÕÉ¸€Q…Í­Ì¥Ì™½È……‘•µ¥ŒÑ¼µ‘½Ì…¹‘•…‘±¥¹•Ì¸‘Ñ¡”Ñ…Í¬°½¹¹•Ð¥ÐÑ¼„½ÕÉÍ”Ý¡•¸ÕÍ•™Õ°°Í•Ð¥ÑÌ‘Õ”‘…Ñ”°…¹µ…É¬¥Ð½µÁ±•Ñ”Ý¡•¸™¥¹¥Í¡•¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡Ý¡…Ð¥ÍñÝ¡…ÐœýÍñ•áÁ±…¥¹ñ¡½Ü¸©ÕÍ”¤¸¨¡ÍÑÕ‘äÑ¥µ•ÉñÑ¥µ•È¥qˆ¼¤¥É•ÑÕÉ¸€MÑÕ‘ä¥Ù•Ìå½Ô„™½ÕÌÑ¥µ•ÈÑ¥•Ñ¼å½ÕÈÍÕ‰©•ÑÌ…¹ÍÑÕ‘ä¡¥ÍÑ½Éä¸UÍ”¥ÐÑ¼ÉÕ¸„™½ÕÍ•Í•ÍÍ¥½¸°Ñ¡•¸±•ÐÉ…µ¡äÉ•½ÉÑ¡”Ý½É¬å½Ô½µÁ±•Ñ•¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡Ý¡…Ð¥ÍñÝ¡…ÐœýÍñ•áÁ±…¥¹ñ¡½Ü¸©ÕÍ”¤¸©•á…´µ½‘•qˆ¼¤¥É•ÑÕÉ¸€á…´5½‘”É½ÕÁÌ…¸•á…´Á•É¥½“ŠeÌ‘…Í¡‰½…É°Í¡•‘Õ±”°ÍÕ‰©•ÑÌ°ÍÑÕ‘äÑ¥µ•È°½Õ¹Ñ‘½Ý¸°…¹5…Ñ¡„½É¹•È¸UÍ”¥ÐÝ¡•¸å½ÔÝ…¹Ð„™½ÕÍ•Ý½É­ÍÁ…”™½È½¹”Ñ•É´½È•á…´Á•É¥½¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡Ý¡…Ð¥ÍñÝ¡…ÐœýÍñ•áÁ±…¥¹ñ¡½Ü¸©ÕÍ”¤¸¨¡µ½É•ñÍ•ÑÑ¥¹ÍñÁÉ½™¥±”¥qˆ¼¤¥É•ÑÕÉ¸€5½É”½¹Ñ…¥¹ÌÁÉ½™¥±”…¹…ÁÀ½¹ÑÉ½±ÌÍÕ …Ìå½ÕÈ¹…µ”°……‘•µ¥Œå•…È°Ñ•É´°Ñ¡•µ”°±½Õ…•ÍÌ°…¹É•Á…¥È½ÁÑ¥½¹Ì¸e½ÕÈ……‘•µ¥Œå•…È…¹Ñ•É´…±Í¼…™™•ÐÝ¡¥ ½ÕÉÍ•Ì…¹É…‘•ÌÉ…µ¡äÍ¡½ÝÌ¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡½ÍÑñÁÉ¥•ñÁ…¥‘ñÍÕ‰ÍÉ¥ÁÑ¥½¹ñ™É•”¥qˆ¼¤¥É•ÑÕÉ¸€É…µ¡ä¥Ì™É•”Ñ¼ÕÍ”É¥¡Ð¹½Ü¸É½Ä½™™•ÉÌ„™É•”A$Ñ¥•ÈÝ¥Ñ ÕÍ…”±¥µ¥ÑÌ°Í¼$É•Á±¥•Ì…¸Á…ÕÍ”¥˜¥ÑÌ±¥µ¥ÑÌ…É”É•…¡•¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡½™™±¥¹•ñ¥¹Ñ•É¹•ÑñÝ¥™¥ñ‘…Ñ„½¹¹•Ñ¥½¸¥qˆ¼¤¥É•ÑÕÉ¸€á…Ð…¹ÍÝ•ÉÌ…‰½ÕÐÍ…Ù•É…µ¡ä‘…Ñ„…¸ÉÕ¸¥¸å½ÕÈ‰É½ÝÍ•È¸É½ÄµÁ½Ý•É•ÍÑÕ‘ä¡•±À¹••‘Ì…¸¥¹Ñ•É¹•Ð½¹¹•Ñ¥½¸…¹å½ÕÈÁ•Éµ¥ÍÍ¥½¸Ñ¼Í¡…É”$½¹Ñ•áÐìÍ¥¸µ¥¸…¹±½ÕÍå¹¥¹œ…±Í¼¹••¥¹Ñ•É¹•Ð¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡ÁÉ¥Ù…åñÝ¡•É”¸©‘…Ñ…ñÍ…Ù•‘ñÍÑ½É•‘ñÍ•ÕÉ”¥qˆ¼¤¥É•ÑÕÉ¸€e½ÕÈÉ…µ¡ä‘…Ñ„¥ÌÍ…Ù•¥¸å½ÕÈ‰É½ÝÍ•È…¹µ…äÍå¹ŒÑ¡É½Õ É…µ¡ä±½Õ¥˜å½ÔÕÍ”¥Ð¸%˜å½Ô•¹…‰±”Í¬É…µ¡ä$°å½ÕÈµ•ÍÍ…•Ì…¹Í…Ù•……‘•µ¥Œ‘•Ñ…¥±Ìµ…ä‰”Í•¹ÐÑ¼É½Ä™½ÈÉ•Á±¥•Ì¸e½ÕÈÍ¥¸µ¥¸É•‘•¹Ñ¥…±Ì…¹A$­•ä…É”¹½Ð¥¹±Õ‘•¸e½Ô…¸ÑÕÉ¸$Í¡…É¥¹œ½™˜…¹åÑ¥µ”¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡…½Õ¹ÑñÍ¥¸¥¹ñ±½¥¹ñ±½Õ‘ñÍå¹Œ¥qˆ¼¤¥É•ÑÕÉ¸€e½Ô…¸ÕÍ”É…µ¡ä±½…±±ä¥¸Ñ¡”‰É½ÝÍ•È¸M¥¹¥¹œ¥¸•¹…‰±•ÌÍÕÁÁ½ÉÑ•±½ÕÍå¹¥¹œÍ¼å½ÕÈÍ…Ù•Ý½É¬…¸™½±±½Üå½ÕÈ…½Õ¹ÐìÍå¹¥¹œÉ•ÅÕ¥É•Ì¥¹Ñ•É¹•Ð¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡¡½µ”ÍÉ••¹ñ¥¹ÍÑ…±±ñÁÝ…ñ™…Ù¥½¹ñ…ÁÀ¥½¹ñ¥½¸¥qˆ¼¤¥É•ÑÕÉ¸€=¸¥A¡½¹”°½Á•¸É…µ¡ä¥¸M…™…É¤°Ñ…ÀM¡…É”°Ñ¡•¸‘Ñ¼!½µ”MÉ••¸¸Q¡”¥¹ÍÑ…±±•Í¡½ÉÑÕÐÕÍ•ÌÉ…µ¡çŠeÌ¡¥ µÅÕ…±¥Ñä…ÁÀ¥½¸…¹½Á•¹ÌÝ¥Ñ …¸…ÁÀµ±¥­”ÍÑ…¹‘…±½¹”Ù¥•Ü¸%˜…¸½±¥½¸É•µ…¥¹Ì°É•µ½Ù”Ñ¡”½±Í¡½ÉÑÕÐ…¹…‘¥Ð……¥¸¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡Ù•ÉÍ¥½¹ñ±…Ñ•ÍÑñÕÁ‘…Ñ•ñ¹•Ü¥qˆ¼¤¥É•ÑÕÉ¸€Q¡¥ÌÍ¬É…µ¡äÕÁ‘…Ñ”…‘‘ÌÉ½ÄµÁ½Ý•É•½Á•¸µ•¹‘•ÍÑÕ‘ä¡•±ÀÝ¡¥±”­••Á¥¹œ•á…Ð…¹ÍÝ•ÉÌ…‰½ÕÐå½ÕÈÍ…Ù•É…µ¡ä‘…Ñ„É½Õ¹‘•¥¸Ñ¡”…ÁÀ¸œì(€€€¥˜¡¡…Ì¡Ä°½qˆ¡Á•É™•Ññ±¥µ¥Ñ…Ñ¥½¹Ìýñ…¹ÍÝ•È•Ù•ÉåÑ¡¥¹ñ…¹äÅÕ•ÍÑ¥½¸¥qˆ¼¤¥É•ÑÕÉ¸€$…¸¡•±ÀÝ¥Ñ ÍÑÕ‘äÅÕ•ÍÑ¥½¹Ì…¹ÕÍ”å½ÕÈÍ…Ù•É…µ¡ä……‘•µ¥Œ‘…Ñ„Ý¡•¸$Í¡…É¥¹œ¥Ì•¹…‰±•¸$…¸ÍÑ¥±°µ…­”µ¥ÍÑ…­•Ì°Í¼¡•¬¥µÁ½ÉÑ…¹ÐÉ…‘”…±Õ±…Ñ¥½¹Ì…¹Í¡½½°Á½±¥¥•Ì……¥¹ÍÐÑ¡”½™™¥¥…°Í½ÕÉ”¸œì(€€€É•ÑÕÉ¸¹Õ±°ì(€ô((€½¹ÍÐ9Xõì(€€€¡½µ”éíÑ…ˆè‘…Í¡‰½…Éœ±±…‰•°è!½µ”ô±½ÕÉÍ•ÌéíÑ…ˆèÍÕ‰©•ÑÌœ±±…‰•°è½ÕÉÍ•Ìô±Ñ…Í­ÌéíÑ…ˆèÑ…Í­Ìœ±±…‰•°èQ…Í­Ìô°(€€€Á±…¹¹•ÈéíÑ…ˆèÁ±…¹¹•Èœ±±…‰•°èA±…¹¹•Èô±ÍÑÕ‘äéíÑ…ˆèÑ¥µ•Èœ±±…‰•°èMÑÕ‘äô±É…‘•ÌéíÑ…ˆèÉ…‘•Ìœ±±…‰•°èÉ…‘•Ìô°(€€€•á…´éíÑ…ˆè•á…´œ±±…‰•°èá…´5½‘”ô±µ½É”éíÑ…ˆèµ½É”œ±±…‰•°è5½É”ô(€ôì(€™Õ¹Ñ¥½¸¹…ÙQ…É•Ð¡Ä¥ì(€€€¥˜ …¡…Ì¡Ä°½qˆ¡½Á•¹ñ¼Ñ½ñÍ¡½ÝñÑ…­”µ”Ñ½ñ¹…Ù¥…Ñ”¥qˆ¼¤¥É•ÑÕÉ¸¹Õ±°ì(€€€¥˜¡¡…Ì¡Ä°½q‰ÅÕ¥¬Ý…qˆ¼¤¥É•ÑÕÉ¸íÑ…ˆèÉ…‘•Ìœ±µ½‘”èÅÕ¥­Ý„œ±±…‰•°èEÕ¥¬]ôì(€€€¥˜¡¡…Ì¡Ä°½q‰Ñ•É´Ý…qˆ¼¤¥É•ÑÕÉ¸íÑ…ˆèÉ…‘•Ìœ±µ½‘”èÝ„œ±±…‰•°èQ•É´]ôì(€€€¥˜¡¡…Ì¡Ä°½q‰É…‘•‰½½­qˆ¼¤¥É•ÑÕÉ¸íÑ…ˆèÉ…‘•Ìœ±µ½‘”èÉ…‘•‰½½¬œ±±…‰•°è½ÕÉÍ”É…‘•‰½½¬ôì(€€€É•ÑÕÉ¸=‰©•Ð¹•¹ÑÉ¥•Ì¡9X¤¹™¥¹ ¡mÝ½É‘t¤ôù¹•ÜI•áÀ qqˆœ­Ý½É¬qqˆœ¤¹Ñ•ÍÐ¡Ä¤¤ü¹lÅuññ¹Õ±°ì(€ô(€™Õ¹Ñ¥½¸¹…Ù¥…Ñ”¡Ñ…É•Ð¥ì(€€€¥˜¡ÑåÁ•½˜‘½Õµ•¹ÐôôôÕ¹‘•™¥¹•ñð…Ñ…É•Ð¥É•ÑÕÉ¸ì(€€€½¹ÍÐ‰Ñ¸õ‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È œ¹Ñ½Á¹…Ø€¹¹…Ù‰Ñ¹m‘…Ñ„µÑ…ˆôˆœ­Ñ…É•Ð¹Ñ…ˆ¬œ‰tœ¤ì(€€€¥˜¡‰Ñ¸¥‰Ñ¸¹±¥¬ ¤ì(€€€¥˜¡Ñ…É•Ð¹µ½‘”¥Í•ÑQ¥µ•½ÕÐ  ¤ôù‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È œÙ¥•ÜµÉ…‘•Ìm‘…Ñ„µÉ…‘•Ìµµ½‘”ôˆœ­Ñ…É•Ð¹µ½‘”¬œ‰tœ¤ü¹±¥¬ ¤°àÀ¤ì(€ô((€™Õ¹Ñ¥½¸¡•±Á¹ÍÝ•È¡Ä¥ì(€€€¥˜ …¡…Ì¡Ä°½x¡¡•±ÁñÝ¡…Ð…¸¤…Í­ñÝ¡…Ð…¸å½Ô‘½ñÍ¡½Ü•á…µÁ±•Íñ½µµ…¹‘ÍñÅÕ•ÍÑ¥½¹Ì¤¼¤¥É•ÑÕÉ¸¹Õ±°ì(€€€É•ÑÕÉ¸€…Í¬…Ý…ä°€œ­ÕÍ•É9…µ” ¤¬œÑÉäÑ¡¥¹Ì±¥­”éq»ŠˆƒŠqÝ¡…ÓŠeÌ½¸µäA±…¹¹•ÈÑ½µ½ÉÉ½ÜÿŠuq»ŠˆƒŠqÝ¡…ÓŠeÌµäQ•É´]ÿŠuq»ŠˆƒŠqÝ¡…ÓŠeÌÑ¡”±½É”‰•¡¥¹Ñ¡¥Ì…ÁÀÿŠuq»ŠˆƒŠqÝ¡¼‰Õ¥±ÐÉ…µ¡äÿŠuq»ŠˆƒŠq¡½Ü‘¼$…‘…¸•Ù•¹ÐÿŠuq»ŠˆƒŠqÝ¡…ÐÍ¡½Õ±$ÍÑÕ‘ä¹•áÐÿŠuq¹å½Ô…¸…±Í¼Í…äƒŠq½Á•¸A±…¹¹•ËŠt½ÈƒŠqÍ¡½ÜEÕ¥¬]»Štœì(€ô((€™Õ¹Ñ¥½¸…¹ÍÝ•È¡É…Ü¥ì(€€€½¹ÍÐÄõ¹½Éµ…±¥é”¡É…Ü¤í¥˜ …Ä¥É•ÑÕÉ¸¹Õ±°ì(€€€½¹ÍÐ¹…Øõ¹…ÙQ…É•Ð¡Ä¤í¥˜¡¹…Ø¥É•ÑÕÉ¸íÑ•áÐè=Á•¹¥¹œ€œ­¹…Ø¹±…‰•°¬œ™½Èå½Ô¸œ±…Ñ¥½¸è ¤ôù¹…Ù¥…Ñ”¡¹…Ø¥ôì(€€€½¹ÍÐ¡•±Àõ¡•±Á¹ÍÝ•È¡Ä¤í¥˜¡¡•±À¥É•ÑÕÉ¸íÑ•áÐé¡•±Áôì(€€€½¹ÍÐÉ…‘•ÌõÉ…‘•Í¹ÍÝ•È¡Ä¤í¥˜¡É…‘•Ì¥É•ÑÕÉ¸íÑ•áÐéÉ…‘•Íôì(€€€½¹ÍÐÁ±…¹¹•ÈõÁ±…¹¹•É¹ÍÝ•È¡Ä¤í¥˜¡Á±…¹¹•È¥É•ÑÕÉ¸íÑ•áÐéÁ±…¹¹•Éôì(€€€½¹ÍÐ…ÁÀõ…ÁÁ¹ÍÝ•È¡Ä¤í¥˜¡…ÁÀ¥É•ÑÕÉ¸íÑ•áÐé…ÁÁôì(€€€É•ÑÕÉ¸¹Õ±°ì(€ô((€™Õ¹Ñ¥½¸…‘‘5•ÍÍ…”¡É½±”±Ñ•áÐ¥ì(€€€½¹ÍÐÝÉ…Àõ‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡å5•ÍÍ…•Ìœ¤í¥˜ …ÝÉ…À¥É•ÑÕÉ¸ì(€€€ÝÉ…À¹ÅÕ•ÉåM•±•Ñ½É±° œ¹…Í¬µ¡¥ÀµÉ½Üœ¤¹™½É… ¡É½ÜôùÉ½Ü¹É•µ½Ù” ¤¤ì(€€€½¹ÍÐÉ½Üõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤íÉ½Ü¹±…ÍÍ9…µ”ô…Í¬µµÍœ€œ­É½±”ì(€€€½¹ÍÐ‰Õ‰‰±”õ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤í‰Õ‰‰±”¹±…ÍÍ9…µ”ô…Í¬µ‰Õ‰‰±”œí‰Õ‰‰±”¹Ñ•áÑ½¹Ñ•¹ÐõÑ•áÐì(€€€É½Ü¹…ÁÁ•¹‘¡¥±¡‰Õ‰‰±”¤íÝÉ…À¹…ÁÁ•¹‘¡¥±¡É½Ü¤íÝÉ…À¹ÍÉ½±±Q½ÀõÝÉ…À¹ÍÉ½±±!•¥¡Ðì(€€€É•ÑÕÉ¸É½Üì(€ô(€™Õ¹Ñ¥½¸…¥¹…‰±• ¥íÑÉåíÉ•ÑÕÉ¸±½…±MÑ½É…”¹•Ñ%Ñ•´¡%}=9M9Q}-d¤ôôôÑÉÕ”œíõ…Ñ ¡”¥íÉ•ÑÕÉ¸™…±Í”íõô(€™Õ¹Ñ¥½¸…¥M…™•…Ñ„¡Ù…±Õ”±­•äôœœ±‘•ÁÑ ôÀ¥ì(€€€¥˜ ½…•ÍÌ¸ýÑ½­•¹ñÉ•™É•Í ¸ýÑ½­•¹ñÁ…ÍÍÝ½É‘ñÍ•É•Ññ…Á¤¸ý­•åñ…ÕÑ¡½É¥é…Ñ¥½¹ñÍÕÁ…‰…Í•ñ…ÕÑ  üéÑ½­•¹ñÍ•ÍÍ¥½¸¤ýñ•µ…¥±ñÁ¡½¹•ñ…Ù…Ñ…Éñ¥µ…•ñ…ÑÑ…¡µ•¹Ññ‰…Í”ØÑñ‰¥¹…ÉåñÍÑ½É…•­•åñÍ¡•µ…ÌýÙ•ÉÍ¥½¸½¤¹Ñ•ÍÐ¡­•ä¤¥É•ÑÕÉ¸Õ¹‘•™¥¹•ì(€€€¥˜¡Ù…±Õ”ôôõ¹Õ±±ññÙ…±Õ”ôôõÕ¹‘•™¥¹•‘ññÑåÁ•½˜Ù…±Õ”ôôô‰½½±•…¸ññÑåÁ•½˜Ù…±Õ”ôôô¹Õµ‰•Èœ¥É•ÑÕÉ¸Ù…±Õ”ì(€€€¥˜¡ÑåÁ•½˜Ù…±Õ”ôôôÍÑÉ¥¹œœ¥É•ÑÕÉ¸Ù…±Õ”¹Í±¥” À°ÜÀÀ¤ì(€€€¥˜¡‘•ÁÑ øôÜ¥É•ÑÕÉ¸Õ¹‘•™¥¹•ì(€€€¥˜¡ÉÉ…ä¹¥ÍÉÉ…ä¡Ù…±Õ”¤¥É•ÑÕÉ¸Ù…±Õ”¹Í±¥” ´àÀ¤¹µ…À¡¥Ñ•´ôù…¥M…™•…Ñ„¡¥Ñ•´°œœ±‘•ÁÑ ¬Ä¤¤¹™¥±Ñ•È¡¥Ñ•´ôù¥Ñ•´„ôõÕ¹‘•™¥¹•¤ì(€€€¥˜¡ÑåÁ•½˜Ù…±Õ”ôôô½‰©•Ðœ¥ì(€€€€€½¹ÍÐ½ÕÐõíôí=‰©•Ð¹­•åÌ¡Ù…±Õ”¤¹Í±¥” À°ÄÀÀ¤¹™½É… ¡¹…µ”ôùí½¹ÍÐ¹•áÐõ…¥M…™•…Ñ„¡Ù…±Õ•m¹…µ•t±¹…µ”±‘•ÁÑ ¬Ä¤í¥˜¡¹•áÐ„ôõÕ¹‘•™¥¹•¥½ÕÑm¹…µ•tõ¹•áÐíô¤íÉ•ÑÕÉ¸½ÕÐì(€€€ô(€€€É•ÑÕÉ¸Õ¹‘•™¥¹•ì(€ô(€™Õ¹Ñ¥½¸…¥½¹Ñ•áÑM¹…ÁÍ¡½Ð ¥ì(€€€½¹ÍÐÌõ…ÁÁMÑ…Ñ” ¤ì(€€€É•ÑÕÉ¸…¥M…™•…Ñ„¡ì(€€€€€…ÁÀèÉ…µ¡äÍÑÕ‘•¹ÐÁ±…¹¹•Èœ°(€€€€€ÁÉ½™¥±”éÌ¹ÁÉ½™¥±”°(€€€€€ÕÉÉ•¹ÑQ•É´éí……‘•µ¥e•…ÈéÌ¹ÁÉ½™¥±”ü¹……‘•µ¥e•…ÉñðœÈÀÈÛŠLÈÀÈÜœ±Ñ•É´éÕÉÉ•¹ÑQ•É´¡Ì¤±•á…µA•É¥½éÌ¹•á…µA•É¥½‘ññ¹Õ±°±•á…µ½¹Ñ•áÐéÌ¹•á…µ½¹Ñ•áÑññ¹Õ±±ô°(€€€€€½ÕÉÍ•ÌéÌ¹½ÕÉÍ•Íññmt±½ÕÉÍ•É…‘•‰½½¬éÌ¹É…‘•‰½½­ññíô±Ñ•ÉµÝ…I•½É‘ÌéÉ•…‘)Í½¸¡]}-d±íô¤±ÅÕ¥­Ý…I½ÝÌéÌ¹ÅÕ¥­Ý…I½ÝÍññmt°(€€€€€Ñ…Í­ÌéÌ¹µ¥ÍÍ¥½¹Íññmt±Á±…¹¹•ÉÙ•¹ÑÌéÁ±…¹¹•ÉÙ•¹ÑÌ ¤±ÍÕ‰©•ÑAÉ½É•ÍÌéÌ¹ÍÕ‰©•ÑÍññíô±•á…µ…Ñ„éÌ¹•á…µ…Ñ…ññíô°(€€€€€ÍÑÕ‘å!¥ÍÑ½ÉäéÌ¹ÍÑÕ‘å!¥ÍÑ½Éåññmt±…É¡¥Ù•‘Q•ÉµÌéÌ¹…É¡¥Ù•‘Q•ÉµÍññmt(€€€ô¤ì(€ô(€™Õ¹Ñ¥½¸Í•Ñ¥½¹Í•¹Ð¡•¹…‰±•¥íÑÉåí±½…±MÑ½É…”¹Í•Ñ%Ñ•´¡%}=9M9Q}-d±•¹…‰±•üÑÉÕ”œè™…±Í”œ¤íõ…Ñ ¡”¥íôô(€™Õ¹Ñ¥½¸…‘‘¥AÉ¥Ù…å…É¡ÝÉ…À¥ì(€€€¥˜ …ÝÉ…ÁññÝÉ…À¹ÅÕ•ÉåM•±•Ñ½È œ¹…Í¬µ…¤µÁÉ¥Ù…äµ…Éœ¤¥É•ÑÕÉ¸ì(€€€½¹ÍÐ…Éõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤í…É¹±…ÍÍ9…µ”ô…Í¬µ…¤µÁÉ¥Ù…äµ…Éœì(€€€…É¹ÍÑå±”¹ÍÍQ•áÐôµ…É¥¸èáÁà€À€ÄÉÁàíÁ…‘‘¥¹œèÄÅÁà€ÄÉÁàí‰½É‘•ÈèÅÁàÍ½±¥É‰„ ÈÀÀ°ÜÀ°äÐ°¸ÄØ¤í‰½É‘•ÈµÉ…‘¥ÕÌèÄÙÁàí‰…­É½Õ¹éÉ‰„ ÈÔÔ°ÈÔÔ°ÈÔÔ°¸Üà¤í½±½ÈéÙ…È ´µÑ•áÐ¤í™½¹ÐµÍ¥é”è¸ÜÉÉ•´í±¥¹”µ¡•¥¡ÐèÄ¸ÐÔœì(€€€½¹ÍÐ½Áäõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤í½Áä¹Ñ•áÑ½¹Ñ•¹Ðô$¥Ì½ÁÑ¥½¹…°¸%˜•¹…‰±•°å½ÕÈµ•ÍÍ…•Ì…¹Í…Ù•……‘•µ¥Œ‘…Ñ‡ŠQ¥¹±Õ‘¥¹œÉ…‘•Ì°½ÕÉÍ•Ì°Í¡•‘Õ±•Ì°Ñ…Í­Ì°•á…µÌ°…¹ÍÑÕ‘ä¹½Ñ•ÏŠQµ…ä‰”Í•¹ÐÑ¼É½Ä™½ÈÉ•Á±¥•Ì¸M¥¸µ¥¸É•‘•¹Ñ¥…±Ì…¹A$­•åÌ…É”¹•Ù•È¥¹±Õ‘•¸œí…É¹…ÁÁ•¹‘¡¥±¡½Áä¤ì(€€€½¹ÍÐ…Ñ¥½¹Ìõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤í…Ñ¥½¹Ì¹ÍÑå±”¹ÍÍQ•áÐô‘¥ÍÁ±…äé™±•àí…ÀèÝÁàí…±¥¸µ¥Ñ•µÌé•¹Ñ•Èí™±•àµÝÉ…ÀéÝÉ…Àíµ…É¥¸µÑ½ÀèåÁàœì(€€€½¹ÍÐ•¹…‰±”õ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‰ÕÑÑ½¸œ¤í•¹…‰±”¹ÑåÁ”ô‰ÕÑÑ½¸œí•¹…‰±”¹±…ÍÍ9…µ”ô…Í¬µ¡¥Àœí•¹…‰±”¹‘…Ñ…Í•Ð¹ØÔÍ¥½¹Í•¹Ðô•¹…‰±”œí•¹…‰±”¹Ñ•áÑ½¹Ñ•¹Ðô•¹…‰±”$Ý¥Ñ µä‘…Ñ„œì(€€€½¹ÍÐ­••Á=™˜õ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‰ÕÑÑ½¸œ¤í­••Á=™˜¹ÑåÁ”ô‰ÕÑÑ½¸œí­••Á=™˜¹±…ÍÍ9…µ”ô…Í¬µ¡¥Àœí­••Á=™˜¹‘…Ñ…Í•Ð¹ØÔÍ¥½¹Í•¹Ðô½™˜œí­••Á=™˜¹Ñ•áÑ½¹Ñ•¹Ðô­••À$½™˜œì(€€€…Ñ¥½¹Ì¹…ÁÁ•¹¡•¹…‰±”±­••Á=™˜¤í…É¹…ÁÁ•¹‘¡¥±¡…Ñ¥½¹Ì¤íÝÉ…À¹…ÁÁ•¹‘¡¥±¡…É¤ì(€ô(€™Õ¹Ñ¥½¸ÕÁ‘…Ñ•¥AÉ¥Ù…å9½Ñ”¡Á…¹•°¥ì(€€€¥˜ …Á…¹•°¥É•ÑÕÉ¸ì(€€€±•Ð¹½Ñ”õÁ…¹•°¹ÅÕ•ÉåM•±•Ñ½È œ¹…Í¬µ…¤µÁÉ¥Ù…äµ¹½Ñ”œ¤ì(€€€¥˜ …¹½Ñ”¥í¹½Ñ”õ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤í¹½Ñ”¹±…ÍÍ9…µ”ô…Í¬µ…¤µÁÉ¥Ù…äµ¹½Ñ”œí¹½Ñ”¹ÍÑå±”¹ÍÍQ•áÐô‘¥ÍÁ±…äé™±•àí©ÕÍÑ¥™äµ½¹Ñ•¹ÐéÍÁ…”µ‰•ÑÝ••¸í…±¥¸µ¥Ñ•µÌé•¹Ñ•Èí…ÀèáÁàíÁ…‘‘¥¹œèÕÁà€ÄÉÁàí½±½ÈéÙ…È ´µÑ•áÐµÍ½™Ð¤í™½¹ÐµÍ¥é”è¸ØÑÉ•´í±¥¹”µ¡•¥¡ÐèÄ¸ÌœíÁ…¹•°¹ÅÕ•ÉåM•±•Ñ½È œ¹…Í¬µÉ…µ¡äµ½µÁ½Í”œ¤ü¹‰•™½É”¡¹½Ñ”¤íô(€€€¥˜ …¹½Ñ”¥É•ÑÕÉ¸ì(€€€¹½Ñ”¹É•Á±…•¡¥±‘É•¸ ¤ì(€€€¹½Ñ”¹Ñ•áÑ½¹Ñ•¹Ðõ…¥¹…‰±• ¤ü$Í¡…É¥¹œ¥Ì½¸ƒ
+Üå½ÕÈµ•ÍÍ…”…¹Í…Ù•……‘•µ¥Œ½¹Ñ•áÐ¼Ñ¼É½Ä¸œè$Í¡…É¥¹œ¥Ì½™˜ƒ
+ÜÍ…Ù•µ‘…Ñ„…¹ÍÝ•ÉÌÍÑ¥±°Ý½É¬½¸Ñ¡¥Ì‘•Ù¥”¸œì(€€€¥˜¡…¥¹…‰±• ¤¥ì(€€€€€½¹ÍÐ½™˜õ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‰ÕÑÑ½¸œ¤í½™˜¹ÑåÁ”ô‰ÕÑÑ½¸œí½™˜¹±…ÍÍ9…µ”ô…Í¬µ¡¥Àœí½™˜¹‘…Ñ…Í•Ð¹ØÔÍ¥½¹Í•¹Ðô‘¥Í…‰±”œí½™˜¹Ñ•áÑ½¹Ñ•¹ÐôÑÕÉ¸½™˜œí½™˜¹ÍÑå±”¹ÍÍQ•áÐôÁ…‘‘¥¹œèÑÁà€áÁàí™½¹ÐµÍ¥é”è¸ØÉÉ•´í™±•àèÀ€À…ÕÑ¼œí¹½Ñ”¹…ÁÁ•¹‘¡¥±¡½™˜¤ì(€€€ô(€ô(€…Íå¹Œ™Õ¹Ñ¥½¸…Í­É½Ä¡Ñ•áÐ¥ì(€€€½¹ÍÐÁ…å±½…õíµ•ÍÍ…”éÑ•áÐ±¡¥ÍÑ½Éäé…¥!¥ÍÑ½Éä¹Í±¥” ´à¤±½¹Ñ•áÐé…¥½¹Ñ•áÑM¹…ÁÍ¡½Ð ¤±‘…Ñ…½¹Í•¹ÐéÑÉÕ•ôì(€€€½¹ÍÐÉ•ÍÁ½¹Í”õ…Ý…¥Ð™•Ñ  œ½…Á¤½¡…Ðœ±íµ•Ñ¡½èA=MPœ±¡•…‘•ÉÌéì½¹Ñ•¹ÐµQåÁ”œè…ÁÁ±¥…Ñ¥½¸½©Í½¸ô±‰½‘äé)M=8¹ÍÑÉ¥¹¥™ä¡Á…å±½…¥ô¤ì(€€€±•Ð‘…Ñ„õíôíÑÉåí‘…Ñ„õ…Ý…¥ÐÉ•ÍÁ½¹Í”¹©Í½¸ ¤íõ…Ñ ¡”¥íô(€€€¥˜ …É•ÍÁ½¹Í”¹½¬¥Ñ¡É½Ü¹•ÜÉÉ½È¡‘…Ñ„¹•ÉÉ½ÉñðQ¡”$É•Á±ä¥ÌÕ¹…Ù…¥±…‰±”É¥¡Ð¹½Ü¸œ¤ì(€€€½¹ÍÐÉ•Á±äõMÑÉ¥¹œ¡‘…Ñ„¹É•Á±åñðœœ¤¹ÑÉ¥´ ¤í¥˜ …É•Á±ä¥Ñ¡É½Ü¹•ÜÉÉ½È $½Õ±‘»ŠeÐµ…­”„É•Á±ä©ÕÍÐ¹½ßŠQÁ±•…Í”ÑÉä……¥¸¸œ¤ì(€€€É•ÑÕÉ¸É•Á±äì(€ô(€™Õ¹Ñ¥½¸…Í­¥QÕÉ¸¡Ñ•áÐ¥ì(€€€½¹ÍÐÁ•¹‘¥¹œõ…‘‘5•ÍÍ…” ‰½Ðœ°Ñ¡¥¹­¥¹ŸŠ˜œ¤íÁ•¹‘¥¹œü¹±…ÍÍ1¥ÍÐ¹…‘ …Í¬µ…¤µÁ•¹‘¥¹œœ¤ì(€€€…Í­É½Ä¡Ñ•áÐ¤¹Ñ¡•¸¡É•Á±äôùì(€€€€€Á•¹‘¥¹œü¹É•µ½Ù” ¤í…‘‘5•ÍÍ…” ‰½Ðœ±É•Á±ä¤ì(€€€€€…¥!¥ÍÑ½Éä¹ÁÕÍ ¡íÉ½±”èÕÍ•Èœ±½¹Ñ•¹ÐéÑ•áÑô±íÉ½±”è…ÍÍ¥ÍÑ…¹Ðœ±½¹Ñ•¹ÐéÉ•Á±åô¤í¥˜¡…¥!¥ÍÑ½Éä¹±•¹Ñ øÄÈ¥…¥!¥ÍÑ½Éäõ…¥!¥ÍÑ½Éä¹Í±¥” ´ÄÈ¤ì(€€€ô¤¹…Ñ ¡•ÉÉ½Èôùì(€€€€€Á•¹‘¥¹œü¹É•µ½Ù” ¤ì(€€€€€½¹ÍÐµ•ÍÍ…”õ•ÉÉ½Èü¹µ•ÍÍ…”ôôô$¥Ì¹½Ð½¹™¥ÕÉ•å•Ð¸œü$¥Ì…±µ½ÍÐÉ•…‘ä°‰ÕÐÑ¡”É½Ä­•ä¡…Í»ŠeÐ‰••¸…‘‘•Ñ¼É…µ¡çŠeÌÁÉ¥Ù…Ñ”Í•ÉÙ•ÈÍ•ÑÑ¥¹Ìå•Ð¸e½ÕÈÍ…Ù•µ‘…Ñ„…¹ÍÝ•ÉÌÍÑ¥±°Ý½É¬¡•É”¸œè(€€€€€€€•ÉÉ½Èü¹µ•ÍÍ…”ôôôÉ½Ä¥Ì…Ð¥ÑÌ™É•”ÕÍ…”±¥µ¥ÐÉ¥¡Ð¹½Ü¸œüÉ½Ä¡…ÌÉ•…¡•¥ÑÌÕÉÉ•¹Ð™É•”ÕÍ…”±¥µ¥Ð¸QÉä……¥¸¥¸„±¥ÑÑ±”Ý¡¥±”¸œè(€€€€€€€€½Ñ½¼µÕ Í…Ù•½¹Ñ•áÐ½¤¹Ñ•ÍÐ¡•ÉÉ½Èü¹µ•ÍÍ…•ñðœœ¤üQ¡•É—ŠeÌ„±½Ð½˜Í…Ù•Í¡½½°‘…Ñ„¥¸Ñ¡¥Ì…½Õ¹Ð¸QÉä…Í­¥¹œ…‰½ÕÐ½¹”½ÕÉÍ”½ÈÑ•É´…Ð„Ñ¥µ”¸œè(€€€€€€€€$½Õ±‘»ŠeÐÉ•… Ñ¡”$©ÕÍÐ¹½Ü¸e½ÕÈÍ…Ù•µ‘…Ñ„…¹ÍÝ•ÉÌÍÑ¥±°Ý½É¯ŠQÁ±•…Í”ÑÉä……¥¸¥¸„‰¥Ð¸œì(€€€€€…‘‘5•ÍÍ…” ‰½Ðœ±µ•ÍÍ…”¤ì(€€€ô¤ì(€ô(€™Õ¹Ñ¥½¸ÍÕ‰µ¥Ð¡É…Ü¥ì(€€€½¹ÍÐ¥¹ÁÕÐõ‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡å%¹ÁÕÐœ¤í½¹ÍÐÑ•áÐõMÑÉ¥¹œ¡É…Ýññ¥¹ÁÕÐü¹Ù…±Õ•ñðœœ¤¹ÑÉ¥´ ¤ì(€€€¥˜ …Ñ•áÐ¥É•ÑÕÉ¸™…±Í”ì(€€€½¹ÍÐÉ•ÍÕ±Ðõ…¹ÍÝ•È¡Ñ•áÐ¤ì(€€€¥˜¡¥¹ÁÕÐ¥í¥¹ÁÕÐ¹Ù…±Õ”ôœœí¥¹ÁÕÐ¹ÍÑå±”¹¡•¥¡ÐôœÐÉÁàœíô(€€€…‘‘5•ÍÍ…” ÕÍ•Èœ±Ñ•áÐ¤ì(€€€¥˜¡É•ÍÕ±Ð¥íÍ•ÑQ¥µ•½ÕÐ  ¤ôùí…‘‘5•ÍÍ…” ‰½Ðœ±É•ÍÕ±Ð¹Ñ•áÐ¤í¥˜¡É•ÍÕ±Ð¹…Ñ¥½¸¥É•ÍÕ±Ð¹…Ñ¥½¸ ¤íô°äÀ¤íÉ•ÑÕÉ¸ÑÉÕ”íô(€€€¥˜ ……¥¹…‰±• ¤¥ì(€€€€€…‘‘5•ÍÍ…” ‰½Ðœ°½È½Á•¸µ•¹‘•ÍÑÕ‘ä¡•±À°•¹…‰±”$…‰½Ù”™¥ÉÍÐ¸e½ÕÈÉ…µ¡ä‘…Ñ„ÅÕ•ÍÑ¥½¹Ì…¸ÍÑ¥±°‰”…¹ÍÝ•É•¡•É”Ý¥Ñ¡½ÕÐÍ•¹‘¥¹œÑ¡•´Ñ¼É½Ä¸œ¤ì(€€€€€É•ÑÕÉ¸ÑÉÕ”ì(€€€ô(€€€…Í­¥QÕÉ¸¡Ñ•áÐ¤ì(€€€É•ÑÕÉ¸ÑÉÕ”ì(€ô(€™Õ¹Ñ¥½¸Á…Ñ¡A…¹•° ¥ì(€€€½¹ÍÐÁ…¹•°õ‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡åA…¹•°œ¤í¥˜ …Á…¹•±ññÁ…¹•°¹‘…Ñ…Í•Ð¹ØÔÌôôôå•Ìœ¥É•ÑÕÉ¸ì(€€€Á…¹•°¹‘…Ñ…Í•Ð¹ØÔÌôå•Ìœì(€€€…¥!¥ÍÑ½Éäõmtì(€€€½¹ÍÐ™¥ÉÍÐõÁ…¹•°¹ÅÕ•ÉåM•±•Ñ½È œ¹…Í¬µµÍœ¹‰½Ð€¹…Í¬µ‰Õ‰‰±”œ¤ì(€€€¥˜¡™¥ÉÍÐ¥™¥ÉÍÐ¹Ñ•áÑ½¹Ñ•¹Ðõ¥¹ÑÉ½Q•áÐ ¤ì(€€€½¹ÍÐÝÉ…Àõ‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡å5•ÍÍ…•Ìœ¤ì(€€€½¹ÍÐ½±‘¡¥ÁÌõÝÉ…Àü¹ÅÕ•ÉåM•±•Ñ½È œ¹…Í¬µ¡¥ÀµÉ½Üœ¤í¥˜¡½±‘¡¥ÁÌ¥½±‘¡¥ÁÌ¹É•µ½Ù” ¤ì(€€€¥˜¡ÝÉ…À¥ì(€€€€€½¹ÍÐÉ½Üõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‘¥Øœ¤íÉ½Ü¹±…ÍÍ9…µ”ô…Í¬µ¡¥ÀµÉ½Üœì(€€€€€mlÁ±…¹¹•ÈÑ½‘…äœ°Ý¡…Ð¥Ì½¸µäÁ±…¹¹•ÈÑ½‘…äüt±lµäÑ•É´Ý„œ°Ý¡…Ð¥ÌµäÑ•É´Ý„üt±l…±°™•…ÑÕÉ•Ìœ°Ý¡…Ð™•…ÑÕÉ•Ì‘½•ÌÉ…µ¡ä¡…Ù”üt±lÉ…µ¡ä±½É”œ°‰Ý¡…ÐÌÑ¡”±½É”‰•¡¥¹Ñ¡¥Ì…ÁÀü‰ut¹™½É… ¡¥Ñ•´ôùì(€€€€€€€½¹ÍÐ‰ÕÑÑ½¸õ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð ‰ÕÑÑ½¸œ¤í‰ÕÑÑ½¸¹ÑåÁ”ô‰ÕÑÑ½¸œí‰ÕÑÑ½¸¹±…ÍÍ9…µ”ô…Í¬µ¡¥Àœí‰ÕÑÑ½¸¹‘…Ñ…Í•Ð¹ØÔÍEÕ•Éäõ¥Ñ•µlÅtí‰ÕÑÑ½¸¹Ñ•áÑ½¹Ñ•¹Ðõ¥Ñ•µlÁtíÉ½Ü¹…ÁÁ•¹‘¡¥±¡‰ÕÑÑ½¸¤ì(€€€€€ô¤ì(€€€€€ÝÉ…À¹…ÁÁ•¹‘¡¥±¡É½Ü¤ì(€€€€€¥˜ ……¥¹…‰±• ¤¥…‘‘¥AÉ¥Ù…å…É¡ÝÉ…À¤ì(€€€ô(€€€ÕÁ‘…Ñ•¥AÉ¥Ù…å9½Ñ”¡Á…¹•°¤ì(€ô(€™Õ¹Ñ¥½¸¥¹ÍÑ…±° ¥ì(€€€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ±¥¬œ±•Ù•¹Ðôùì(€€€€€½¹ÍÐ½¹Í•¹Ðõ•Ù•¹Ð¹Ñ…É•Ð¹±½Í•ÍÐü¸ m‘…Ñ„µØÔÌµ…¤µ½¹Í•¹Ñtœ¤ì(€€€€€¥˜¡½¹Í•¹Ð¥í•Ù•¹Ð¹ÁÉ•Ù•¹Ñ•™…Õ±Ð ¤í•Ù•¹Ð¹ÍÑ½Á%µµ•‘¥…Ñ•AÉ½Á……Ñ¥½¸ ¤í½¹ÍÐ…Ñ¥½¸õ½¹Í•¹Ð¹‘…Ñ…Í•Ð¹ØÔÍ¥½¹Í•¹Ðí¥˜¡…Ñ¥½¸ôôô•¹…‰±”œ¥íÍ•Ñ¥½¹Í•¹Ð¡ÑÉÕ”¤í½¹Í•¹Ð¹±½Í•ÍÐ œ¹…Í¬µ…¤µÁÉ¥Ù…äµ…Éœ¤ü¹É•µ½Ù” ¤íÕÁ‘…Ñ•¥AÉ¥Ù…å9½Ñ”¡‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡åA…¹•°œ¤¤í…‘‘5•ÍÍ…” ‰½Ðœ°$¥Ì½¸¸$…¸¹½ÜÕÍ”å½ÕÈÍ…Ù•……‘•µ¥Œ½¹Ñ•áÐÑ¼¡•±ÀÝ¥Ñ ½Á•¸µ•¹‘•ÅÕ•ÍÑ¥½¹Ì¸e½Ô…¸ÑÕÉ¸¥Ð½™˜…¹åÑ¥µ”¸œ¤íõ•±Í”¥˜¡…Ñ¥½¸ôôô½™˜œ¥íÍ•Ñ¥½¹Í•¹Ð¡™…±Í”¤í½¹Í•¹Ð¹±½Í•ÍÐ œ¹…Í¬µ…¤µÁÉ¥Ù…äµ…Éœ¤ü¹É•µ½Ù” ¤íÕÁ‘…Ñ•¥AÉ¥Ù…å9½Ñ”¡‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡åA…¹•°œ¤¤í…‘‘5•ÍÍ…” ‰½Ðœ°9¼Ý½ÉÉ¥•ÏŠQ$ÍÑ…åÌ½™˜¸e½Ô…¸ÍÑ¥±°…Í¬…‰½ÕÐÍ…Ù•É…µ¡ä‘…Ñ„½¸Ñ¡¥Ì‘•Ù¥”¸œ¤íõ•±Í”¥˜¡…Ñ¥½¸ôôô‘¥Í…‰±”œ¥íÍ•Ñ¥½¹Í•¹Ð¡™…±Í”¤íÕÁ‘…Ñ•¥AÉ¥Ù…å9½Ñ”¡‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡åA…¹•°œ¤¤í…‘‘5•ÍÍ…” ‰½Ðœ°$Í¡…É¥¹œ¥Ì½™˜¹½Ü¸M…Ù•µ‘…Ñ„…¹ÍÝ•ÉÌÍÑ¥±°Ý½É¬±½…±±ä¸œ¤íõÉ•ÑÕÉ¸íô(€€€€€½¹ÍÐ¡¥Àõ•Ù•¹Ð¹Ñ…É•Ð¹±½Í•ÍÐü¸ m‘…Ñ„µØÔÌµÅÕ•Éåtœ¤ì(€€€€€¥˜¡¡¥À¥í•Ù•¹Ð¹ÁÉ•Ù•¹Ñ•™…Õ±Ð ¤í•Ù•¹Ð¹ÍÑ½Á%µµ•‘¥…Ñ•AÉ½Á……Ñ¥½¸ ¤íÍÕ‰µ¥Ð¡¡¥À¹‘…Ñ…Í•Ð¹ØÔÍEÕ•Éä¤íÉ•ÑÕÉ¸íô(€€€€€¥˜¡•Ù•¹Ð¹Ñ…É•Ð¹±½Í•ÍÐü¸ œ…Í­É…µ¡åM•¹œ¤¥ì(€€€€€€€½¹ÍÐ¥¹ÁÕÐõ‘½Õµ•¹Ð¹•Ñ±•µ•¹Ñ	å% …Í­É…µ¡å%¹ÁÕÐœ¤ì(€€€€€€€¥˜¡ÍÕ‰µ¥Ð¡¥¹ÁÕÐü¹Ù…±Õ•ñðœœ¤¥í•Ù•¹Ð¹ÁÉ•Ù•¹Ñ•™…Õ±Ð ¤í•Ù•¹Ð¹ÍÑ½Á%µµ•‘¥…Ñ•AÉ½Á……Ñ¥½¸ ¤íô(€€€€€€€•±Í”¥˜¡¥¹ÁÕÐ¥¥¹ÁÕÐ¹Ù…±Õ”õ¹½Éµ…±¥é”¡¥¹ÁÕÐ¹Ù…±Õ”¤ì(€€€€€ô(€€€ô±ÑÉÕ”¤ì(€€€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ­•å‘½Ý¸œ±•Ù•¹Ðôùì(€€€€€¥˜¡•Ù•¹Ð¹­•äôôô¹Ñ•Èœ˜˜…•Ù•¹Ð¹Í¡¥™Ñ-•ä˜™•Ù•¹Ð¹Ñ…É•Ðü¹¥ôôô…Í­É…µ¡å%¹ÁÕÐœ¥ì(€€€€€€€¥˜¡ÍÕ‰µ¥Ð¡•Ù•¹Ð¹Ñ…É•Ð¹Ù…±Õ”¤¥í•Ù•¹Ð¹ÁÉ•Ù•¹Ñ•™…Õ±Ð ¤í•Ù•¹Ð¹ÍÑ½Á%µµ•‘¥…Ñ•AÉ½Á……Ñ¥½¸ ¤íô(€€€€€€€•±Í”•Ù•¹Ð¹Ñ…É•Ð¹Ù…±Õ”õ¹½Éµ…±¥é”¡•Ù•¹Ð¹Ñ…É•Ð¹Ù…±Õ”¤ì(€€€€€ô(€€€ô±ÑÉÕ”¤ì(€€€½¹ÍÐ½‰Í•ÉÙ•Èõ¹•Ü5ÕÑ…Ñ¥½¹=‰Í•ÉÙ•È  ¤ôùÁ…Ñ¡A…¹•° ¤¤í½‰Í•ÉÙ•È¹½‰Í•ÉÙ”¡‘½Õµ•¹Ð¹‰½‘ä±í¡¥±‘1¥ÍÐéÑÉÕ”±ÍÕ‰ÑÉ•”éÑÉÕ•ô¤ì(€€€Á…Ñ¡A…¹•° ¤ì(€ô((€Ý¥¹‘½Ü¹}}É…µ¡åÍ­XÔÌõíÙ•ÉÍ¥½¸éYIM%=8±…¹ÍÝ•È±¹½Éµ…±¥é”±Á±…¹¹•ÉÙ•¹ÑÌ±Ñ•ÉµÝ……Ñ„±ÅÕ¥­Ý……Ñ„±ÕÍ•É9…µ”±¥¹ÑÉ½Q•áÐ±±½É•¹ÍÝ•Éôì(€¥˜¡ÑåÁ•½˜‘½Õµ•¹Ð„ôôÕ¹‘•™¥¹•œ˜™‘½Õµ•¹Ð¹‰½‘ä¥¥¹ÍÑ…±° ¤ì)ô¤ ¤ì(
