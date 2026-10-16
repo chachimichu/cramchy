@@ -4,10 +4,11 @@ html[data-cramchy-font-size="large"]{font-size:112.5%}
 
 .font-size-setting{
   display:grid;gap:12px;margin-top:20px;padding-top:18px;
-  border-top:1px solid var(--planner-line,#f5d3dc)
+  border-top:1px solid var(--planner-line,#f5d3dc);
+  font-family:var(--font-ui,'Plus Jakarta Sans',system-ui,sans-serif)!important
 }
 .font-size-setting-copy h4{
-  margin:0;color:var(--planner-deep,#5a2432);font-size:1rem;font-weight:850
+  margin:0;color:var(--planner-deep,#5a2432);font-family:var(--font-ui,'Plus Jakarta Sans',system-ui,sans-serif)!important;font-size:1rem;font-weight:850
 }
 .font-size-setting-copy p{
   margin:4px 0 0;color:var(--planner-muted,#9b737c);font-size:.82rem;line-height:1.5
