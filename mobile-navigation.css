@@ -84,6 +84,13 @@
   .topnav>.navbtn{padding:6px 5px!important;font-size:.68rem!important;gap:3px!important}
   .topnav .nav-icon{width:14px;height:14px;flex-basis:14px}
 }
+/* iPad and compact desktop: keep the save status clear of the tab row. */
+@media(min-width:981px) and (max-width:1100px){
+  body:not(.exam-mode-active) nav.topnav>#saveIndicator{display:none!important}
+  body:not(.exam-mode-active) nav.topnav{padding-left:150px!important;padding-right:150px!important}
+  body:not(.exam-mode-active) .topnav>.navbtn{font-size:.74rem!important;padding-inline:5px!important;gap:4px!important}
+  body:not(.exam-mode-active) .topnav .nav-icon{width:16px;height:16px;flex-basis:16px}
+}
 @media(min-width:721px){
   body:not(.exam-mode-active) nav.topnav{position:sticky!important;top:10px!important;z-index:120!important;justify-content:center!important;padding-top:14px!important;padding-bottom:14px!important;min-height:70px}
   body:not(.exam-mode-active) nav.topnav>.brand{position:absolute;left:max(26px,calc((100vw - 1180px)/2 + 18px));top:50%;transform:translateY(-50%);margin:0!important}
@@ -91,7 +98,7 @@
   body:not(.exam-mode-active) nav.topnav>#saveIndicator{position:absolute;right:137px;top:50%;transform:translateY(-50%);margin:0!important}
 }
 @media(min-width:981px){
-  body:not(.exam-mode-active) nav.topnav{padding-left:220px!important;padding-right:220px!important}
+  body:not(.exam-mode-active) nav.topnav{padding-left:260px!important;padding-right:260px!important}
 }
 
 /* Compact card density on phones only. */
