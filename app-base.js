@@ -1824,6 +1824,8 @@ function addCramchyQuickTask(){
 }
 function openCramchyOnboarding(){
   if(document.getElementById('cramchyOnboard'))return;
+  const previewOnly=new URLSearchParams(location.search).get('preview-onboarding')==='1';
+  const previousTheme=document.body.dataset.theme||state.profile?.theme||'strawberry-matcha';
   let selected=state.profile?.theme||'strawberry-matcha';
   const overlay=document.createElement('div');overlay.id='cramchyOnboard';overlay.className='cramchy-onboard';
   overlay.innerHTML=`<div class="cramchy-onboard-card">
@@ -1832,11 +1834,12 @@ function openCramchyOnboarding(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label for="onboardYear">academic year</label><input id="onboardYear" maxlength="30" value="${escapeAttr(state.profile?.academicYear||'2026–2027')}"></div><div><label for="onboardTerm">current term</label><select id="onboardTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div></div>
     <div class="onboard-field"><label for="onboardMotivation">how should cramchy motivate you?</label><select id="onboardMotivation"><option value="sweet">Sweet — gentle encouragement</option><option value="chaotic">Chaotic — girl, the deadline.</option><option value="strict">Strict — tell me what needs doing</option><option value="mixed">Mixed — surprise me</option></select></div>
     <div class="onboard-theme-section"><div class="onboard-theme-heading"><label>choose your study space</label><span>pick the colors that feel like you</span></div><div class="theme-picker" id="onboardThemePicker">${themePickerMarkup(selected)}</div></div>
-    <button class="onboard-start" id="startCramchyBtn">enter my academic weapon era →</button></div>`;
+    <button class="onboard-start" id="startCramchyBtn">${previewOnly?'close preview':'enter my academic weapon era →'}</button></div>`;
   document.body.appendChild(overlay);
   overlay.querySelector('#onboardTerm').value=state.profile?.term||'Term 1';overlay.querySelector('#onboardMotivation').value=state.profile?.motivation||'mixed';
   overlay.querySelectorAll('[data-theme-choice]').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.themeChoice;overlay.querySelectorAll('[data-theme-choice]').forEach(b=>{const active=b===btn;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});const art=overlay.querySelector('.onboard-study-illustration');art.src=themeIllustration(selected);art.alt=`A cute ${CRAMCHY_THEMES.find(t=>t.id===selected)?.label||'study'} theme illustration`;document.body.dataset.theme=selected;}));
   overlay.querySelector('#startCramchyBtn').addEventListener('click',()=>{
+    if(previewOnly){overlay.remove();document.body.dataset.theme=previousTheme;return;}
     const name=overlay.querySelector('#onboardName').value.trim();if(!name){overlay.querySelector('#onboardName').focus();return;}
     state.profile={name:name.slice(0,40),academicYear:overlay.querySelector('#onboardYear').value.trim().slice(0,30)||'2026–2027',term:overlay.querySelector('#onboardTerm').value,motivation:overlay.querySelector('#onboardMotivation').value,theme:selected,onboarded:true};
     saveState();applyCramchyPersonalization();overlay.remove();renderAll();showToast(`welcome to cramchy, ${name.toLowerCase()}`,{longer:true});
@@ -1859,7 +1862,7 @@ function initCramchyShell(){
   }
   if(!state.profile?.onboarded)setTimeout(async()=>{
     await window.__cramchyTrackerCloudReady;
-    if(!state.profile?.onboarded)openCramchyOnboarding();
+    if(!state.profile?.onboarded||new URLSearchParams(location.search).get('preview-onboarding')==='1')openCramchyOnboarding();
   },180);
 }
 
