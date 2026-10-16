@@ -74,14 +74,14 @@
     width:calc(100% - 24px)!important;max-width:none!important;margin:10px 12px 0!important;
     overflow:visible!important;gap:3px!important;padding:8px 12px!important
   }
-  .topnav>.navbtn{flex:0 1 auto;padding:8px clamp(5px,.75vw,12px)!important;font-size:clamp(.7rem,.78vw,.84rem)!important;gap:5px!important}
+  .topnav>.navbtn{flex:0 1 auto;padding:8px clamp(5px,.75vw,12px)!important;font-size:clamp(.9rem,.92vw,1rem)!important;gap:6px!important}
   .topnav .nav-icon{width:16px;height:16px;flex-basis:16px}
   .topnav>.brand{flex:0 0 auto;margin-right:2px!important;padding-right:2px!important}
 }
 @media(min-width:721px) and (max-width:980px){
   .topnav .brand,.topnav .save-indicator{display:none!important}
   nav.topnav{justify-content:center!important;padding-right:132px!important;padding-top:14px!important;padding-bottom:14px!important;min-height:70px}
-  .topnav>.navbtn{padding:6px 5px!important;font-size:.68rem!important;gap:3px!important}
+  .topnav>.navbtn{padding:6px 5px!important;font-size:.78rem!important;gap:4px!important}
   .topnav .nav-icon{width:14px;height:14px;flex-basis:14px}
 }
 @media(min-width:721px){
@@ -98,9 +98,9 @@
   body:not(.exam-mode-active) nav.topnav{padding-left:150px!important;padding-right:150px!important}
 }
 @media(min-width:1101px){
-  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav{padding-left:300px!important;padding-right:300px!important}
+  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav{padding-left:280px!important;padding-right:280px!important}
   html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>#saveIndicator{right:100px!important}
-  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>.navbtn[data-tab]{position:relative;left:-28px}
+  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>.navbtn[data-tab]{position:relative;left:-12px}
 }
 
 /* Compact card density on phones only. */
