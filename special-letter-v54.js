@@ -19,7 +19,7 @@
     },
     {
       eyebrow:'01 · choose how to open it',title:'your study space can go anywhere',icon:'⌂',
-      body:`<div class="welcome-choice"><span class="welcome-choice-icon">↗</span><div><strong>On iPhone</strong><p>Open Cramchy in Safari. Tap <b>Share</b> → <b>Add to Home Screen</b> → <b>Add</b>. Open your new Cramchy icon whenever you want to study.</p></div></div>
+      body:`<div class="welcome-choice"><span class="welcome-choice-icon">↗</span><div><strong>On iPhone or iPad</strong><p>Open Cramchy in your browser. Tap the <b>three dots</b> → <b>Share</b> → <b>View More</b> → <b>Add to Home Screen</b> → <b>Add</b>. Open your new Cramchy icon whenever you want to study.</p></div></div>
         <div class="welcome-choice"><span class="welcome-choice-icon">↗</span><div><strong>On Android</strong><p>Open Cramchy in Chrome. Tap <b>⋮</b>, then scroll the menu for <b>Install app</b> or <b>Install and create shortcut</b>. Follow the prompt to install it; if Chrome offers <b>Create shortcut</b>, tap it, then tap <b>Add</b>.</p></div></div>
         <div class="welcome-choice"><span class="welcome-choice-icon">↗</span><div><strong>On the web</strong><p>Open Cramchy in your browser and keep using it there. You can sign in whenever you’re ready.</p></div></div>
         <p class="welcome-note">Chrome’s menu wording can vary a little by device. If you don’t see the install option right away, scroll the three-dot menu.</p>
