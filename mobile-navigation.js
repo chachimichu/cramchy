@@ -41,8 +41,8 @@
   function addMobileGroups(){
     if(nav.querySelector('.mobile-nav-group'))return;
     const groups=[
-      {key:'plan',label:'Plan',icon:'planner',after:'dashboard',items:[['planner','Planner','planner'],['tasks','Tasks','tasks']]},
-      {key:'study',label:'Study',icon:'timer',after:'timer',items:[['timer','Study Timer','timer'],['exam','Exam Mode','exam']]}
+      {key:'plan',label:'plan',icon:'planner',after:'dashboard',items:[['planner','planner','planner'],['tasks','tasks','tasks']]},
+      {key:'study',label:'study',icon:'timer',after:'timer',items:[['timer','study timer','timer'],['exam','exam mode','exam']]}
     ];
     groups.forEach(def=>{
       const anchor=nav.querySelector('.navbtn[data-tab="'+def.after+'"]');
