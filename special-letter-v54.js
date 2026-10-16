@@ -56,7 +56,13 @@
         <p>Use the exam workspace to keep the details for that season together while your course list stays in Courses.</p>`
     },
     {
-      eyebrow:'07 · make it yours',title:'find a rhythm that feels good',icon:'◷',
+      eyebrow:'07 · ask for help',title:'meet ask cramchy',icon:'✦',
+      body:`<p>Open <b>Ask Cramchy</b> from its chat button to ask how to use the app or ask about your saved courses, tasks, Planner, and grades. Suggested prompts can help you get started.</p>
+        <div class="welcome-choice"><span class="welcome-choice-icon">✧</span><div><strong>Need open-ended study help?</strong><p>Enable AI inside the chat for explanations, practice questions, or help planning a study session. It’s optional, and you can switch it off anytime.</p></div></div>
+        <p class="welcome-note">For questions about saved school data, ask about one course or term at a time for clearer answers.</p>`
+    },
+    {
+      eyebrow:'08 · make it yours',title:'find a rhythm that feels good',icon:'◷',
       body:`<p>Open the <b>Study</b> tab for a focused timer session. Choose a study space theme in <b>More → Appearance</b> whenever you want a change of scenery.</p>
         <div class="welcome-finish-card"><span class="welcome-finish-sparkle">✦</span><b>small steps count, too.</b><small>you can change your plans as you go.</small></div>
         <p>You’re all set. Start wherever you are; Cramchy can grow with your routine.</p>`
@@ -166,6 +172,7 @@
     const originalSetItem=Storage.prototype.setItem;
     Storage.prototype.setItem=function(key,value){originalSetItem.call(this,key,value);if(this===window.localStorage&&key===APP_KEY)setTimeout(maybeShow,420)};
     document.addEventListener('click',event=>{if(event.target?.closest?.('#startCramchyBtn'))setTimeout(maybeShow,560)},true);
+    document.addEventListener('click',event=>{if(event.target?.closest?.('#openCramchyGuideBtn')){event.preventDefault();show(true)}},true);
     document.addEventListener('keydown',event=>{if(!document.getElementById('cramchySpecialLetter'))return;if(event.key==='Escape'){finish();return}if(event.key==='ArrowRight')move(1);if(event.key==='ArrowLeft')move(-1)});
     const onboardingObserver=new MutationObserver(records=>{if(records.some(record=>Array.from(record.removedNodes||[]).some(node=>node&&node.id==='cramchyOnboard')))setTimeout(maybeShow,180)});onboardingObserver.observe(document.body,{childList:true});
     setTimeout(maybeShow,900);
