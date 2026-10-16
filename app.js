@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-mobile-card-density-125';
+  const VERSION='2026-10-16-mobile-dock-safe-space-127';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
