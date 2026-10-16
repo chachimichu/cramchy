@@ -45,13 +45,13 @@
     },
     {
       eyebrow:'05 · see how you’re doing',title:'your grades, with the context',icon:'↗',
-      body:`<p>Open <b>Grades → Course Gradebook</b> and choose a course. Add scores under Written &amp; Quizzes, Enabling Activities, Attendance, or Major Exam.</p>
+      body:`<p>Open <b>Grades → Course Gradebook</b> and choose a course. It’s built with National University (NU) students in mind: add scores in the categories your class uses and set weights to match your syllabus. The weights are flexible for other schools, too.</p>
         <div class="welcome-grade"><span>current standing</span><b>weighted by your course setup</b><i>scores · category weights · equivalent grade</i></div>
         <p>The dashboard brings your scores, category percentages, and equivalent grade together. <b>Term GWA</b> gives you a separate term-wide view.</p>`
     },
     {
       eyebrow:'06 · midterms & finals',title:'two exam seasons, kept separate',icon:'✎',
-      body:`<p>Choose <b>Midterms</b> or <b>Finals</b> in Exam Mode. Each has its own schedule, subjects, topics, notes, and study progress for the selected term.</p>
+      body:`<p>Choose <b>Midterms</b> or <b>Finals</b> in Exam Mode. Cramchy keeps NU’s two exam seasons separate, each with its own schedule, subjects, topics, notes, and study progress for the selected term.</p>
         <div class="welcome-season-row"><span>midterms</span><span>finals</span></div>
         <p>Use the exam workspace to keep the details for that season together while your course list stays in Courses.</p>`
     },
