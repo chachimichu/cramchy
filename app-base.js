@@ -1775,6 +1775,8 @@ const CRAMCHY_THEMES=[
 {id:'blueberry-milk',label:'Blueberry Milk',colors:['#708fc0','#dce8f7']},
 {id:'dark-study',label:'Dark Study',colors:['#352833','#8ba181']}];
 
+function themeIllustration(id){return `assets/theme-icons/${CRAMCHY_THEMES.some(t=>t.id===id)?id:'strawberry-matcha'}.webp`;}
+
 function cramchyName(){const n=state?.profile?.name?.trim();return n||'girl';}
 function getCramchyGreeting(){
   const h=new Date().getHours(),name=cramchyName(),term=state?.profile?.term||'Term 1',style=state?.profile?.motivation||'mixed';
@@ -1790,11 +1792,11 @@ function personalizeMascotText(text){
   const n=state?.profile?.name?.trim();return String(text).replaceAll('{name}',n?n.toLowerCase():'girl');
 }
 function themePickerMarkup(selected){
-  return CRAMCHY_THEMES.map(t=>`<button type="button" class="theme-choice ${selected===t.id?'selected':''}" data-theme-choice="${t.id}"><span class="theme-dot" style="background:linear-gradient(135deg,${t.colors[0]} 0 50%,${t.colors[1]} 50% 100%)"></span>${t.label}</button>`).join('');
+  return CRAMCHY_THEMES.map(t=>`<button type="button" class="theme-choice ${selected===t.id?'selected':''}" data-theme-choice="${t.id}" aria-pressed="${selected===t.id}" aria-label="${escapeAttr(t.label)}"><span class="theme-dot" style="background:linear-gradient(135deg,${t.colors[0]} 0 50%,${t.colors[1]} 50% 100%)"></span><span class="theme-art"><img src="${themeIllustration(t.id)}" alt="" aria-hidden="true" width="144" height="144" loading="lazy"></span><span class="theme-name">${t.label}</span><span class="theme-check" aria-hidden="true">✓</span></button>`).join('');
 }
 function setThemeChoice(theme,root=document){
   state.profile.theme=theme;document.body.dataset.theme=theme;
-  root.querySelectorAll?.('[data-theme-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.themeChoice===theme));
+  root.querySelectorAll?.('[data-theme-choice]').forEach(b=>{const selected=b.dataset.themeChoice===theme;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
   saveState();
 }
 function renderCramchySettings(){
@@ -1825,15 +1827,15 @@ function openCramchyOnboarding(){
   let selected=state.profile?.theme||'strawberry-matcha';
   const overlay=document.createElement('div');overlay.id='cramchyOnboard';overlay.className='cramchy-onboard';
   overlay.innerHTML=`<div class="cramchy-onboard-card">
-    <div style="text-align:center;"><img src="assets/cramchy-wordmark.png" alt="cramchy." style="width:min(260px,78%);height:auto;"><br><img src="assets/cramchy-tagline.png" alt="for the girlies entering their academic weapon era" style="width:min(400px,95%);height:auto;margin-top:6px;"></div>
-    <label for="onboardName">what should we call you?</label><input id="onboardName" maxlength="40" placeholder="your nickname">
+    <header class="onboard-hero"><div class="onboard-hero-copy"><img src="assets/cramchy-wordmark.png" alt="cramchy." class="onboard-wordmark"><p class="onboard-tagline">a little study space, made yours</p><span class="onboard-step-label">let’s get you settled in</span></div><img class="onboard-study-illustration" src="${themeIllustration(selected)}" alt="A cute ${CRAMCHY_THEMES.find(t=>t.id===selected)?.label||'strawberry matcha'} drink" width="144" height="144"></header>
+    <div class="onboard-field"><label for="onboardName">what should we call you?</label><input id="onboardName" maxlength="40" placeholder="your nickname" autocomplete="nickname"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label for="onboardYear">academic year</label><input id="onboardYear" maxlength="30" value="${escapeAttr(state.profile?.academicYear||'2026–2027')}"></div><div><label for="onboardTerm">current term</label><select id="onboardTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div></div>
-    <label for="onboardMotivation">how should cramchy motivate you?</label><select id="onboardMotivation"><option value="sweet">Sweet — gentle encouragement</option><option value="chaotic">Chaotic — girl, the deadline.</option><option value="strict">Strict — tell me what needs doing</option><option value="mixed">Mixed — surprise me</option></select>
-    <label>choose your study space</label><div class="theme-picker" id="onboardThemePicker">${themePickerMarkup(selected)}</div>
+    <div class="onboard-field"><label for="onboardMotivation">how should cramchy motivate you?</label><select id="onboardMotivation"><option value="sweet">Sweet — gentle encouragement</option><option value="chaotic">Chaotic — girl, the deadline.</option><option value="strict">Strict — tell me what needs doing</option><option value="mixed">Mixed — surprise me</option></select></div>
+    <div class="onboard-theme-section"><div class="onboard-theme-heading"><label>choose your study space</label><span>pick the colors that feel like you</span></div><div class="theme-picker" id="onboardThemePicker">${themePickerMarkup(selected)}</div></div>
     <button class="onboard-start" id="startCramchyBtn">enter my academic weapon era →</button></div>`;
   document.body.appendChild(overlay);
   overlay.querySelector('#onboardTerm').value=state.profile?.term||'Term 1';overlay.querySelector('#onboardMotivation').value=state.profile?.motivation||'mixed';
-  overlay.querySelectorAll('[data-theme-choice]').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.themeChoice;overlay.querySelectorAll('[data-theme-choice]').forEach(b=>b.classList.toggle('selected',b===btn));document.body.dataset.theme=selected;}));
+  overlay.querySelectorAll('[data-theme-choice]').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.themeChoice;overlay.querySelectorAll('[data-theme-choice]').forEach(b=>{const active=b===btn;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});const art=overlay.querySelector('.onboard-study-illustration');art.src=themeIllustration(selected);art.alt=`A cute ${CRAMCHY_THEMES.find(t=>t.id===selected)?.label||'study'} theme illustration`;document.body.dataset.theme=selected;}));
   overlay.querySelector('#startCramchyBtn').addEventListener('click',()=>{
     const name=overlay.querySelector('#onboardName').value.trim();if(!name){overlay.querySelector('#onboardName').focus();return;}
     state.profile={name:name.slice(0,40),academicYear:overlay.querySelector('#onboardYear').value.trim().slice(0,30)||'2026–2027',term:overlay.querySelector('#onboardTerm').value,motivation:overlay.querySelector('#onboardMotivation').value,theme:selected,onboarded:true};

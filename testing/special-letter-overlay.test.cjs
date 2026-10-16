@@ -4,6 +4,10 @@ assert(!source.includes("overlay.setAttribute('role','dialog')"),'Backdrop must 
 assert(source.includes('class="cramchy-letter-card" role="dialog" aria-modal="true"'),'Inner card owns dialog semantics');
 assert(source.includes('position:fixed;inset:0'),'Backdrop stays fixed');
 assert(source.includes('100dvh'),'Use the mobile dynamic viewport');
-assert(source.includes('overflow:auto;overscroll-behavior:contain'),'Only the letter card scrolls');
+assert(source.includes('overflow:auto;overscroll-behavior:contain'),'Guide content scrolls inside the card');
 assert(source.includes('env(safe-area-inset-top'),'Respect iPhone/iPad safe areas');
-console.log('Special letter: backdrop/card selector separation, dialog semantics, dynamic height, safe areas and internal scrolling passed.');
+assert(source.includes('Add to Home Screen'),'Guide explains how to install on iPhone');
+assert(source.includes('8-digit code'),'Guide matches the email sign-in flow');
+assert(source.includes("function move(direction)"),'Guide has working forward and back navigation');
+assert(source.includes('prefers-reduced-motion:reduce'),'Guide respects reduced-motion preferences');
+console.log('Welcome guide: dialog semantics, responsive viewport, safe areas, navigation, access instructions and reduced-motion support passed.');
