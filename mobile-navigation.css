@@ -108,6 +108,11 @@
   html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>#saveIndicator{right:100px!important}
 }
 
+/* Large text: move the whole main tab row left, leaving a clear action lane at right. */
+@media(min-width:1101px){
+  html[data-cramchy-font-size="large"] body:not(.exam-mode-active) nav.topnav>.navbtn[data-tab]{position:relative;left:-64px}
+}
+
 /* Compact card density on phones only. */
 @media(max-width:720px){
   main{padding:14px 12px 24px!important}
