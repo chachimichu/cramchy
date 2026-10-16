@@ -1146,6 +1146,14 @@
   }
   .cramchy-footer .footer-name{
     margin-top:2px;
+    color:inherit;
+    text-decoration:none;
+  }
+  .cramchy-footer a.footer-name:hover,
+  .cramchy-footer a.footer-name:focus-visible{
+    color:var(--red-deep);
+    text-decoration:underline;
+    text-underline-offset:3px;
   }
 
 
