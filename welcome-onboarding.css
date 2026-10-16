@@ -19,11 +19,11 @@
 .onboard-step-label{display:inline-block;margin-top:7px;padding:4px 9px;border:1px solid #f0d4dc;border-radius:999px;background:#fff7f8;color:#b45c78;font:850 9px/1.2 'Nunito',system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase}
 .onboard-study-illustration{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 5px 6px rgba(139,78,96,.08));transform-origin:center bottom;animation:onboardArtFloat 5s ease-in-out infinite}
 .theme-art{width:46px;height:40px;display:grid;place-items:center;flex:0 0 auto}
-.theme-art img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;transition:transform .2s ease;animation:onboardArtFloat 5s ease-in-out infinite;will-change:transform}
+.theme-art img{display:block;width:92%;height:92%;object-fit:contain;pointer-events:none;transition:transform .2s ease;animation:themeIconFloat 5s ease-in-out infinite;will-change:transform}
 .theme-choice:nth-child(even) .theme-art img{animation-delay:-2.5s}
 #settingsThemePicker .theme-choice{min-width:0;min-height:82px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;overflow:hidden;padding:9px 6px 7px;border:1.5px solid var(--pink-soft);border-radius:16px;background:var(--pink-cream);color:var(--text-main);font:800 .72rem/1.2 'Nunito',system-ui,sans-serif;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
 #settingsThemePicker .theme-choice:hover{transform:translateY(-2px);border-color:var(--red-berry);box-shadow:0 7px 15px rgba(128,69,89,.1)}
-#settingsThemePicker .theme-choice:hover .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.06)}
+#settingsThemePicker .theme-choice:hover .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.02)}
 #settingsThemePicker .theme-choice.selected{border-color:var(--red-berry);box-shadow:0 0 0 3px color-mix(in srgb,var(--red-berry) 17%,transparent)}
 #settingsThemePicker .theme-dot{position:absolute;top:0;left:0;width:100%;height:4px;margin:0;border:0;border-radius:0;box-shadow:none}
 #settingsThemePicker .theme-art{width:38px;height:34px}
@@ -52,7 +52,7 @@
 .cramchy-onboard-card .theme-choice.selected{border-color:#dc6c8b;background:linear-gradient(155deg,#fff,#fff4f6);box-shadow:0 0 0 3px rgba(221,117,147,.13),0 7px 15px rgba(128,69,89,.09);color:#754254}
 .cramchy-onboard-card .theme-dot{position:absolute;top:0;left:0;width:100%;height:4px;margin:0;border:0;border-radius:0;box-shadow:none}
 .cramchy-onboard-card .theme-art{width:39px;height:32px;margin-top:1px}
-.cramchy-onboard-card .theme-choice:hover .theme-art img,.cramchy-onboard-card .theme-choice.selected .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.06)}
+.cramchy-onboard-card .theme-choice:hover .theme-art img,.cramchy-onboard-card .theme-choice.selected .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.02)}
 .cramchy-onboard-card .theme-name{max-width:100%;display:block;overflow-wrap:anywhere;text-align:center}
 .cramchy-onboard-card .theme-check{position:absolute;top:7px;right:7px;width:15px;height:15px;display:grid;place-items:center;border-radius:50%;background:#d86f8e;color:white;font:900 9px/1 'Nunito',system-ui,sans-serif;opacity:0;transform:scale(.7);transition:opacity .16s ease,transform .16s ease}
 .cramchy-onboard-card .theme-choice.selected .theme-check{opacity:1;transform:scale(1)}
@@ -61,6 +61,7 @@
 .cramchy-onboard-card .onboard-start:focus-visible,.cramchy-onboard-card .theme-choice:focus-visible{outline:3px solid rgba(199,76,110,.38);outline-offset:3px}
 @keyframes onboardCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes onboardArtFloat{0%,100%{transform:translateY(1px) rotate(0)}50%{transform:translateY(-4px) rotate(-1deg)}}
+@keyframes themeIconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
 @media(max-width:600px){
   .cramchy-onboard{padding-left:11px;padding-right:11px}
   .cramchy-onboard-card{width:min(510px,100%);max-height:calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:17px 17px 16px;border-radius:25px}
