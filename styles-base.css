@@ -1163,6 +1163,7 @@
   .ask-cramchy-launcher:active{transform:translateY(0) scale(.98)}
   .ask-cramchy-launcher .ask-spark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink-soft),var(--pink-strawberry));box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);overflow:hidden;flex:0 0 34px}.ask-cramchy-launcher .ask-spark img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
   .ask-cramchy-launcher .ask-label{font-size:.83rem;white-space:nowrap}
+  body:has(#askCramchyPanel) #askCramchyLauncher{display:none!important}
   .ask-cramchy-panel{
     position:fixed;right:22px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:9399;
     width:min(390px,calc(100vw - 28px));height:min(570px,calc(100vh - 120px));
