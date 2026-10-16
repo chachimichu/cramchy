@@ -311,11 +311,48 @@
     return null;
   }
 
+  function appendInline(parent,text){
+    const pattern=/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g;
+    let cursor=0,match;
+    while((match=pattern.exec(text))){
+      if(match.index>cursor)parent.appendChild(document.createTextNode(text.slice(cursor,match.index)));
+      const token=match[0],tag=token.startsWith('**')?'strong':token.startsWith('`')?'code':'em';
+      const node=document.createElement(tag);node.textContent=token.startsWith('**')?token.slice(2,-2):token.slice(1,-1);parent.appendChild(node);cursor=pattern.lastIndex;
+    }
+    if(cursor<text.length)parent.appendChild(document.createTextNode(text.slice(cursor)));
+  }
+  function tableCells(line){return line.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(cell=>cell.trim());}
+  function renderChatText(bubble,text){
+    const lines=String(text||'').replace(/\r/g,'').split('\n');
+    const isDivider=line=>/^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+    for(let i=0;i<lines.length;){
+      const line=lines[i].trim();if(!line){i++;continue;}
+      if(line.includes('|')&&((i+1<lines.length&&isDivider(lines[i+1]))||isDivider(line))){
+        const dividerAtStart=isDivider(line);let headers=dividerAtStart?[]:tableCells(line),j=dividerAtStart?i+1:i+2,records=[];
+        while(j<lines.length&&lines[j].includes('|')&&lines[j].trim()&&!isDivider(lines[j])){records.push(tableCells(lines[j]));j++;}
+        const list=document.createElement('div');list.className='ask-ai-table-cards';
+        records.forEach(cells=>{
+          if(!cells.some(Boolean))return;
+          const card=document.createElement('div');card.className='ask-ai-table-card';
+          const title=document.createElement('div');title.className='ask-ai-table-title';appendInline(title,cells[0]||'');card.appendChild(title);
+          cells.slice(1).forEach((value,index)=>{if(!value)return;const detail=document.createElement('div');detail.className='ask-ai-table-detail';const label=document.createElement('span');label.className='ask-ai-table-label';label.textContent=headers[index+1]||(['Course code','Grade','Details'][index]||'Details');const content=document.createElement('span');content.className='ask-ai-table-value';appendInline(content,value);detail.append(label,content);card.appendChild(detail);});
+          list.appendChild(card);
+        });
+        bubble.appendChild(list);i=j;continue;
+      }
+      const heading=line.match(/^#{1,3}\s+(.+)/);
+      if(heading){const h=document.createElement('div');h.className='ask-ai-heading';appendInline(h,heading[1]);bubble.appendChild(h);i++;continue;}
+      const unordered=line.match(/^[-*•]\s+(.+)/),ordered=line.match(/^\d+[.)]\s+(.+)/);
+      if(unordered||ordered){const tag=ordered?'ol':'ul',list=document.createElement(tag);list.className='ask-ai-list';while(i<lines.length){const m=lines[i].trim().match(ordered?/^\d+[.)]\s+(.+)/:/^[-*•]\s+(.+)/);if(!m)break;const li=document.createElement('li');appendInline(li,m[1]);list.appendChild(li);i++;}bubble.appendChild(list);continue;}
+      let paragraph=line,j=i+1;while(j<lines.length&&lines[j].trim()&&!/^#{1,3}\s|^[-*•]\s|^\d+[.)]\s/.test(lines[j].trim())){paragraph+=' '+lines[j].trim();j++;}
+      const p=document.createElement('p');appendInline(p,paragraph);bubble.appendChild(p);i=j;
+    }
+  }
   function addMessage(role,text){
     const wrap=document.getElementById('askCramchyMessages');if(!wrap)return;
     wrap.querySelectorAll('.ask-chip-row').forEach(row=>row.remove());
     const row=document.createElement('div');row.className='ask-msg '+role;
-    const bubble=document.createElement('div');bubble.className='ask-bubble';bubble.textContent=text;
+    const bubble=document.createElement('div');bubble.className='ask-bubble';renderChatText(bubble,text);
     row.appendChild(bubble);wrap.appendChild(row);wrap.scrollTop=wrap.scrollHeight;
     return row;
   }
@@ -358,18 +395,14 @@
   function setAiConsent(enabled){try{localStorage.setItem(AI_CONSENT_KEY,enabled?'true':'false');}catch(e){} }
   function updateAiPrivacyNote(panel){
     if(!panel)return;
-    let note=panel.querySelector('.ask-ai-privacy-note');
-    if(!note){note=document.createElement('div');note.className='ask-ai-privacy-note';note.style.cssText='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;padding:8px 11px;color:var(--text-soft);font-size:.64rem;line-height:1.35;border-top:1px solid rgba(200,70,94,.10);background:rgba(255,255,255,.88)';panel.querySelector('.ask-cramchy-compose')?.before(note);}
-    if(!note)return;
-    note.replaceChildren();
-    const copy=document.createElement('span');copy.style.cssText='flex:1 1 180px';
-    copy.textContent=aiEnabled()?'AI sharing is on · your message and saved academic context go to Groq.':'AI is off. Enable it to send your message and saved academic data (grades, courses, tasks, Planner, and exams) to Groq. Login details and API keys are excluded.';
-    note.appendChild(copy);
-    if(aiEnabled()){
-      const off=document.createElement('button');off.type='button';off.className='ask-chip';off.dataset.v53AiConsent='disable';off.textContent='turn off';off.style.cssText='padding:4px 8px;font-size:.62rem;flex:0 0 auto';note.appendChild(off);
-    }else{
-      const enable=document.createElement('button');enable.type='button';enable.className='ask-chip';enable.dataset.v53AiConsent='enable';enable.textContent='enable AI';enable.style.cssText='padding:5px 9px;font-size:.66rem;flex:0 0 auto';note.appendChild(enable);
-    }
+    panel.querySelector('.ask-ai-privacy-note')?.remove();
+    const wrap=panel.querySelector('#askCramchyMessages');if(!wrap)return;
+    let card=wrap.querySelector('.ask-ai-consent');
+    if(!card){card=document.createElement('div');card.className='ask-msg bot ask-ai-consent';const bubble=document.createElement('div');bubble.className='ask-bubble ask-ai-consent-bubble';card.appendChild(bubble);const first=wrap.querySelector('.ask-msg.bot');if(first)first.after(card);else wrap.prepend(card);}
+    const bubble=card.querySelector('.ask-bubble');bubble.replaceChildren();
+    const title=document.createElement('strong');title.className='ask-ai-consent-title';title.textContent=aiEnabled()?'AI sharing is on':'Want open-ended study help?';bubble.appendChild(title);
+    const copy=document.createElement('p');copy.textContent=aiEnabled()?'Your message and relevant saved academic context are sent to Groq. You can switch this off anytime.':'Turn on Cramchy AI to send your message and relevant saved academic context to Groq. Your login details and API key are never sent.';bubble.appendChild(copy);
+    const button=document.createElement('button');button.type='button';button.className='ask-ai-consent-button';button.dataset.v53AiConsent=aiEnabled()?'disable':'enable';button.textContent=aiEnabled()?'Turn AI off':'Enable AI';bubble.appendChild(button);
   }
   async function askGroq(text){
     const payload={message:text,history:aiHistory.slice(-8),context:aiContextSnapshot(text),dataConsent:true};
@@ -427,7 +460,7 @@
   function install(){
     document.addEventListener('click',event=>{
       const consent=event.target.closest?.('[data-v53-ai-consent]');
-      if(consent){event.preventDefault();event.stopImmediatePropagation();const action=consent.dataset.v53AiConsent;if(action==='enable'){setAiConsent(true);consent.closest('.ask-ai-privacy-card')?.remove();updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI is on. I can now use your saved academic context to help with open-ended questions. You can turn it off anytime.');}else if(action==='off'){setAiConsent(false);consent.closest('.ask-ai-privacy-card')?.remove();updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','No worries—AI stays off. You can still ask about saved Cramchy data on this device.');}else if(action==='disable'){setAiConsent(false);updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI sharing is off now. Saved-data answers still work locally.');}return;}
+      if(consent){event.preventDefault();event.stopImmediatePropagation();const action=consent.dataset.v53AiConsent;if(action==='enable'){setAiConsent(true);updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI is on. I can now use your saved academic context to help with open-ended questions. You can turn it off anytime.');}else if(action==='off'){setAiConsent(false);updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','No worries—AI stays off. You can still ask about saved Cramchy data on this device.');}else if(action==='disable'){setAiConsent(false);updateAiPrivacyNote(document.getElementById('askCramchyPanel'));addMessage('bot','AI sharing is off now. Saved-data answers still work locally.');}return;}
       const chip=event.target.closest?.('[data-v53-query]');
       if(chip){event.preventDefault();event.stopImmediatePropagation();submit(chip.dataset.v53Query);return;}
       if(event.target.closest?.('#askCramchySend')){
