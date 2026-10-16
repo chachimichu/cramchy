@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-17-large-nav-space-140';
+  const VERSION='2026-10-17-large-nav-shift-141';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
