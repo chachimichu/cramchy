@@ -320,27 +320,40 @@
     return row;
   }
   function aiEnabled(){try{return localStorage.getItem(AI_CONSENT_KEY)==='true';}catch(e){return false;}}
-  function aiSafeData(value,key='',depth=0){
+  function aiSafeData(value,key='',depth=0,limits={string:700,array:80,keys:100}){
     if(/access.?token|refresh.?token|password|secret|api.?key|authorization|supabase|auth(?:token|session)?|email|phone|avatar|image|attachment|base64|binary|storagekey|schemas?version/i.test(key))return undefined;
     if(value===null||value===undefined||typeof value==='boolean'||typeof value==='number')return value;
-    if(typeof value==='string')return value.slice(0,700);
+    if(typeof value==='string')return value.slice(0,limits.string);
     if(depth>=7)return undefined;
-    if(Array.isArray(value))return value.slice(-80).map(item=>aiSafeData(item,'',depth+1)).filter(item=>item!==undefined);
+    if(Array.isArray(value))return value.slice(-limits.array).map(item=>aiSafeData(item,'',depth+1,limits)).filter(item=>item!==undefined);
     if(typeof value==='object'){
-      const out={};Object.keys(value).slice(0,100).forEach(name=>{const next=aiSafeData(value[name],name,depth+1);if(next!==undefined)out[name]=next;});return out;
+      const out={};Object.keys(value).slice(0,limits.keys).forEach(name=>{const next=aiSafeData(value[name],name,depth+1,limits);if(next!==undefined)out[name]=next;});return out;
     }
     return undefined;
   }
-  function aiContextSnapshot(){
+  function aiContextSnapshot(question){
     const s=appState();
-    return aiSafeData({
+    const q=String(question||'').toLowerCase();
+    const gradeRelated=/\b(grade|grades|gwa|score|scores|percentage|equivalent|weighted|gradebook|points)\b/.test(q);
+    const plannerRelated=/\b(planner|schedule|class|classes|free|room|professor|today|tomorrow|week|deadline|due|task|tasks|quiz|exam|midterm|final)\b/.test(q);
+    const studyRelated=/\b(study|studying|topic|topics|review|remember|forget|prepare|preparing|progress|explain|teach|concept|exam|midterm|final|quiz|focus)\b/.test(q);
+    const archivedRelated=/\b(previous|last term|archived|past semester|earlier term)\b/.test(q);
+    const raw={
       app:'Cramchy student planner',
       profile:s.profile,
       currentTerm:{academicYear:s.profile?.academicYear||'2026–2027',term:currentTerm(s),examPeriod:s.examPeriod||null,examContext:s.examContext||null},
-      courses:s.courses||[],courseGradebook:s.gradebook||{},termGwaRecords:readJson(GWA_KEY,{}),quickGwaRows:s.quickGwaRows||[],
-      tasks:s.missions||[],plannerEvents:plannerEvents(),subjectProgress:s.subjects||{},examData:s.examData||{},
-      studyHistory:s.studyHistory||[],archivedTerms:s.archivedTerms||[]
-    });
+      courses:s.courses||[]
+    };
+    if(gradeRelated){raw.courseGradebook=s.gradebook||{};raw.termGwaRecords=readJson(GWA_KEY,{});raw.quickGwaRows=s.quickGwaRows||[];}
+    if(plannerRelated){raw.tasks=s.missions||[];raw.plannerEvents=plannerEvents();}
+    if(studyRelated){raw.subjectProgress=s.subjects||{};raw.examData=s.examData||{};raw.studyHistory=s.studyHistory||[];}
+    if(archivedRelated)raw.archivedTerms=s.archivedTerms||[];
+    const limits=[{string:500,array:50,keys:80},{string:320,array:30,keys:60},{string:180,array:14,keys:45},{string:100,array:8,keys:30},{string:60,array:4,keys:20},{string:30,array:2,keys:12}];
+    for(const bound of limits){
+      const safe=aiSafeData(raw,'',0,bound);
+      if(JSON.stringify(safe).length<=45000)return safe;
+    }
+    return aiSafeData({app:raw.app,profile:raw.profile,currentTerm:raw.currentTerm,courses:raw.courses},'',0,{string:30,array:2,keys:12});
   }
   function setAiConsent(enabled){try{localStorage.setItem(AI_CONSENT_KEY,enabled?'true':'false');}catch(e){} }
   function updateAiPrivacyNote(panel){
@@ -359,7 +372,7 @@
     }
   }
   async function askGroq(text){
-    const payload={message:text,history:aiHistory.slice(-8),context:aiContextSnapshot(),dataConsent:true};
+    const payload={message:text,history:aiHistory.slice(-8),context:aiContextSnapshot(text),dataConsent:true};
     const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     let data={};try{data=await response.json();}catch(e){}
     if(!response.ok)throw new Error(data.error||'The AI reply is unavailable right now.');
