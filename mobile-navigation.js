@@ -30,24 +30,56 @@
       const wrap=document.createElement('span');wrap.className='nav-icon';wrap.appendChild(icon(name));button.prepend(wrap);
     });
   }
-  function addMobileMoreLinks(){
-    const more=document.getElementById('view-more');
-    const intro=more?.querySelector(':scope > .small-note');
-    if(!more||!intro||more.querySelector('.mobile-more-shortcuts'))return;
-    const section=document.createElement('section');section.className='mobile-more-shortcuts';section.setAttribute('aria-label','More sections');
-    section.innerHTML='<p>more places to go</p><div class="mobile-more-shortcut-grid"></div>';
-    const grid=section.querySelector('.mobile-more-shortcut-grid');
-    [['subjects','Courses','subjects'],['timer','Study timer','timer'],['exam','Exam Mode','exam']].forEach(([tab,label,iconName])=>{
-      const button=document.createElement('button');button.type='button';button.className='mobile-more-shortcut';button.dataset.mobileNav=tab;
-      const mark=document.createElement('span');mark.className='mobile-more-shortcut-icon';mark.appendChild(icon(iconName));
-      const text=document.createElement('span');text.textContent=label;button.append(mark,text);grid.appendChild(button);
+  function closeMobileGroups(except){
+    nav.querySelectorAll('.mobile-nav-group').forEach(group=>{
+      if(group===except)return;
+      group.classList.remove('is-open');
+      group.querySelector('.mobile-nav-group-trigger')?.setAttribute('aria-expanded','false');
     });
-    intro.after(section);
-    section.addEventListener('click',event=>{
-      const button=event.target.closest('[data-mobile-nav]');if(!button)return;
-      nav.querySelector('.navbtn[data-tab="'+button.dataset.mobileNav+'"]')?.click();
+    if(!nav.querySelector('.mobile-nav-group.is-open'))document.body.classList.remove('mobile-nav-menu-open');
+  }
+  function addMobileGroups(){
+    if(nav.querySelector('.mobile-nav-group'))return;
+    const groups=[
+      {key:'plan',label:'Plan',icon:'planner',after:'dashboard',items:[['planner','Planner','planner'],['tasks','Tasks','tasks']]},
+      {key:'study',label:'Study',icon:'timer',after:'timer',items:[['timer','Study Timer','timer'],['exam','Exam Mode','exam']]}
+    ];
+    groups.forEach(def=>{
+      const anchor=nav.querySelector('.navbtn[data-tab="'+def.after+'"]');
+      if(!anchor)return;
+      const group=document.createElement('div');group.className='mobile-nav-group';group.dataset.navGroup=def.key;
+      const trigger=document.createElement('button');trigger.type='button';trigger.className='mobile-nav-group-trigger';trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-controls','mobile-nav-'+def.key+'-menu');
+      const mark=document.createElement('span');mark.className='mobile-nav-icon';mark.appendChild(icon(def.icon));
+      const label=document.createElement('span');label.className='mobile-nav-label';label.textContent=def.label;
+      const caret=document.createElement('span');caret.className='mobile-nav-caret';caret.setAttribute('aria-hidden','true');caret.textContent='⌃';
+      trigger.append(mark,label,caret);
+      const menu=document.createElement('div');menu.id='mobile-nav-'+def.key+'-menu';menu.className='mobile-nav-menu';menu.setAttribute('role','group');menu.setAttribute('aria-label',def.label+' sections');
+      def.items.forEach(([tab,title,iconName])=>{
+        const item=document.createElement('button');item.type='button';item.className='mobile-nav-menu-item';item.dataset.mobileNav=tab;
+        const itemIcon=document.createElement('span');itemIcon.className='mobile-nav-menu-icon';itemIcon.appendChild(icon(iconName));
+        const itemLabel=document.createElement('span');itemLabel.textContent=title;
+        item.append(itemIcon,itemLabel);menu.appendChild(item);
+      });
+      group.append(trigger,menu);anchor.after(group);
+      trigger.addEventListener('click',()=>{
+        const opening=!group.classList.contains('is-open');closeMobileGroups(group);
+        group.classList.toggle('is-open',opening);trigger.setAttribute('aria-expanded',String(opening));
+        document.body.classList.toggle('mobile-nav-menu-open',opening);
+      });
+      menu.addEventListener('click',event=>{
+        const item=event.target.closest('[data-mobile-nav]');if(!item)return;
+        nav.querySelector('.navbtn[data-tab="'+item.dataset.mobileNav+'"]')?.click();
+        closeMobileGroups();
+      });
     });
   }
-  addIcons();addMobileMoreLinks();
-  new MutationObserver(()=>{addIcons();addMobileMoreLinks();}).observe(nav,{childList:true,subtree:true});
+  nav.addEventListener('click',event=>{
+    const tab=event.target.closest('.navbtn[data-tab]');if(!tab)return;
+    closeMobileGroups();
+    nav.querySelectorAll('.mobile-nav-group').forEach(group=>group.classList.toggle('is-active',group.dataset.navGroup==='plan'?['planner','tasks'].includes(tab.dataset.tab):['timer','exam'].includes(tab.dataset.tab)));
+  });
+  document.addEventListener('click',event=>{if(!event.target.closest('.mobile-nav-group'))closeMobileGroups();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMobileGroups();});
+  addIcons();addMobileGroups();
+  new MutationObserver(()=>{addIcons();addMobileGroups();}).observe(nav,{childList:true,subtree:true});
 })();
