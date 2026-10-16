@@ -3,7 +3,7 @@
   const PREFIX='cramchyAccount_v1:';
   const KEYS=['strawberryMatchaMidtermsState_v1','cramchyPlannerEvents_v2','cramchyPlannerEvents_v1',
     'cramchyTermGwaPlanner_v2','cramchyGradesSelectedTerm','cramchyStudyTimer_v1',
-    'cramchyRecoveryBackup_v1','cramchySpecialLetterSeen_v2','cramchyLastAppVersion',
+    'cramchyRecoveryBackup_v1','cramchySpecialLetterSeen_v2','cramchySpecialLetterSeen_v3','cramchyLastAppVersion',
     'cramchyTrackerSync_v1','cramchyPlannerSync_v1'];
   function physical(owner,key){return PREFIX+encodeURIComponent(owner||'guest')+':'+key;}
   function migrateGuest(storage){
