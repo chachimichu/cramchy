@@ -402,7 +402,7 @@ function sanitizeState(parsed){
     };
     Object.entries(parsed.examData).slice(0,30).forEach(([key,record])=>{
       if(!record||typeof record!=='object')return;
-      out.examData[String(key).slice(0,100)]={midterms:cleanPeriod(record.midterms),finals:cleanPeriod(record.finals)};
+      out.examData[String(key).slice(0,100)]={midterms:cleanPeriod(record.midterms),finals:cleanPeriod(record.finals),subjectOrder:Array.isArray(record.subjectOrder)?record.subjectOrder.filter(id=>typeof id==='string').map(id=>id.slice(0,160)).slice(0,100):[]};
     });
   }
   if(['midterms','finals'].includes(parsed.examPeriod)) out.examPeriod = parsed.examPeriod;
@@ -720,6 +720,79 @@ function renderSchedule(){
 }
 
 /* ===================== SUBJECTS TAB ===================== */
+let examReorderPointerSession=null;
+let examReorderListenersReady=false;
+const examReorderConfigs=new WeakMap();
+function bindExamReorder(container,itemSelector,handleSelector,axis,onCommit){
+  if(!container)return;
+  examReorderConfigs.set(container,{container,itemSelector,handleSelector,axis,onCommit});
+  if(container.dataset.examReorderBound)return;
+  container.dataset.examReorderBound='true';
+  container.addEventListener('pointerdown',event=>{
+    if(examReorderPointerSession)return;
+    const config=examReorderConfigs.get(container);
+    const handle=event.target.closest(handleSelector);
+    const item=handle?.closest(itemSelector);
+    if(!config||!handle||!item||!container.contains(item)||(event.pointerType==='mouse'&&event.button!==0))return;
+    event.preventDefault();
+    const session={config,handle,item,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,active:false,timer:null};
+    examReorderPointerSession=session;
+    const activate=()=>{
+      if(examReorderPointerSession!==session)return;
+      session.active=true;
+      item.classList.add('is-dragging');
+      document.body.classList.add('exam-reorder-active');
+    };
+    if(event.pointerType==='touch')session.timer=setTimeout(activate,220);else activate();
+  });
+  container.addEventListener('keydown',event=>{
+    const config=examReorderConfigs.get(container);
+    const handle=event.target.closest(handleSelector);
+    const item=handle?.closest(itemSelector);
+    if(!config||!handle||!item)return;
+    const keys=config.axis==='horizontal'?{previous:'ArrowLeft',next:'ArrowRight'}:{previous:'ArrowUp',next:'ArrowDown'};
+    const direction=event.key===keys.previous?-1:event.key===keys.next?1:0;
+    if(!direction)return;
+    const items=Array.from(container.querySelectorAll(itemSelector));
+    const index=items.indexOf(item),target=items[index+direction];
+    if(!target)return;
+    event.preventDefault();
+    container.insertBefore(item,direction<0?target:target.nextSibling);
+    config.onCommit();
+  });
+  if(examReorderListenersReady)return;
+  examReorderListenersReady=true;
+  document.addEventListener('pointermove',event=>{
+    const session=examReorderPointerSession;
+    if(!session||event.pointerId!==session.pointerId)return;
+    if(!session.active){
+      if(Math.hypot(event.clientX-session.startX,event.clientY-session.startY)>12){
+        clearTimeout(session.timer);examReorderPointerSession=null;
+      }
+      return;
+    }
+    event.preventDefault();
+    const {config,item}=session;
+    const target=document.elementFromPoint(event.clientX,event.clientY)?.closest(config.itemSelector);
+    if(!target||target===item||!config.container.contains(target))return;
+    const rect=target.getBoundingClientRect();
+    const sameRow=config.axis==='horizontal'&&Math.abs(event.clientY-(rect.top+rect.height/2))<rect.height*.65;
+    const before=sameRow?event.clientX<rect.left+rect.width/2:event.clientY<rect.top+rect.height/2;
+    config.container.insertBefore(item,before?target:target.nextSibling);
+  },{passive:false});
+  const finish=event=>{
+    const session=examReorderPointerSession;
+    if(!session||event.pointerId!==session.pointerId)return;
+    clearTimeout(session.timer);
+    examReorderPointerSession=null;
+    session.item.classList.remove('is-dragging');
+    document.body.classList.remove('exam-reorder-active');
+    if(session.active)session.config.onCommit();
+  };
+  document.addEventListener('pointerup',finish);
+  document.addEventListener('pointercancel',finish);
+}
+
 function renderSubjectsTab(){
   const tabsBox = document.getElementById('subjectTabs');
   tabsBox.innerHTML = '';
@@ -820,11 +893,13 @@ function renderTopicList(){
     const attachments = t.attachments || [];
     const block = document.createElement('div');
     block.className = 'topic-block';
+    block.dataset.topicIndex=String(idx);
     const row = document.createElement('div');
     row.className = 'topic-row';
     const statusCls = t.status === 'Done' ? 'status-done' : (t.status === 'In Progress' ? 'status-inprogress' : 'status-notstarted');
     const prioCls = t.priority === 'High' ? 'priority-high' : (t.priority === 'Medium' ? 'priority-medium' : 'priority-low');
     row.innerHTML = `
+      <button type="button" class="exam-reorder-handle topic-reorder-handle" aria-label="Reorder topic ${escapeAttr(t.name)}" title="Hold and drag to reorder; use up and down arrow keys when focused">⠿</button>
       <input type="text" value="${escapeAttr(t.name)}" data-idx="${idx}" class="topic-name-input">
       <select class="topic-status ${statusCls}" data-idx="${idx}">
         <option value="Not Started" ${t.status==='Not Started'?'selected':''}>Not Started</option>
@@ -849,6 +924,14 @@ function renderTopicList(){
 
     list.appendChild(block);
     renderAttachmentsPanel(idx);
+  });
+
+  bindExamReorder(list,'.topic-block','.topic-reorder-handle','vertical',()=>{
+    const order=Array.from(list.querySelectorAll('.topic-block')).map(block=>Number(block.dataset.topicIndex));
+    const reordered=order.map(index=>topics[index]).filter(Boolean);
+    if(reordered.length===topics.length&&order.some((index,position)=>index!==position)){
+      activeExamSubjects()[id].topics=reordered;expandedAttachments={};saveState();renderSubjectDetail();showToast('topic order saved');
+    }
   });
 
   list.querySelectorAll('.topic-name-input').forEach(inp => {
@@ -2685,7 +2768,7 @@ function activeAcademicKey(){return academicKey(activeExamYear(),activeExamTerm(
 function dailyAcademicKey(){return academicKey(profileAcademicYear(),profileTerm());}
 
 function emptyExamPeriod(){return {exams:[],subjects:{},subjectNames:{},missions:[]};}
-function emptyTermRecord(){return {midterms:emptyExamPeriod(),finals:emptyExamPeriod()};}
+function emptyTermRecord(){return {midterms:emptyExamPeriod(),finals:emptyExamPeriod(),subjectOrder:[]};}
 function cloneJson(v){return JSON.parse(JSON.stringify(v));}
 function normalizeAcademicName(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ');}
 
@@ -2693,6 +2776,7 @@ function ensureTermRecord(year,term){
   if(!state.examData||typeof state.examData!=='object')state.examData={};
   const key=academicKey(year,term);
   if(!state.examData[key])state.examData[key]=emptyTermRecord();
+  if(!Array.isArray(state.examData[key].subjectOrder))state.examData[key].subjectOrder=[];
   ['midterms','finals'].forEach(period=>{
     const p=state.examData[key][period]||(state.examData[key][period]=emptyExamPeriod());
     if(!Array.isArray(p.exams))p.exams=[];
@@ -2812,7 +2896,8 @@ function examSubjectCatalog(year=activeExamYear(),term=activeExamTerm()){
     keep.courseId=course.id;keep.name=course.name;
     catalog.splice(catalog.indexOf(omit),1);
   }
-  return catalog;
+  const order=new Map((record.subjectOrder||[]).map((id,index)=>[id,index]));
+  return catalog.map((item,index)=>({item,index})).sort((a,b)=>(order.get(a.item.id)??1e9)-(order.get(b.item.id)??1e9)||a.index-b.index).map(row=>row.item);
 }
 function ensureExamSubject(period,id,name){
   const p=activePeriodData(period);
@@ -3007,11 +3092,25 @@ function renderSubjectsTab(){
   if(!catalog.some(x=>x.id===state.activeSubject))state.activeSubject=catalog[0].id;
   catalog.forEach(item=>{
     ensureExamSubject(state.examPeriod||'midterms',item.id,item.name);
+    const wrap=document.createElement('div');
+    wrap.className='subject-tab-item'+(state.activeSubject===item.id?' is-active':'');
+    wrap.dataset.subjectId=item.id;
+    const grip=document.createElement('button');
+    grip.type='button';grip.className='exam-reorder-handle subject-reorder-handle';
+    grip.setAttribute('aria-label','Reorder '+item.name);
+    grip.setAttribute('title','Hold and drag to reorder; use left and right arrow keys when focused');
+    grip.textContent='⠿';
     const btn=document.createElement('button');
-    btn.className='subject-tab-btn'+(state.activeSubject===item.id?' active':'');
+    btn.type='button';btn.className='subject-tab-btn'+(state.activeSubject===item.id?' active':'');
     btn.textContent=item.name;
     btn.addEventListener('click',()=>{state.activeSubject=item.id;expandedAttachments={};saveState();renderSubjectsTab();});
-    tabsBox.appendChild(btn);
+    wrap.append(grip,btn);tabsBox.appendChild(wrap);
+  });
+  const reorderHint=document.createElement('span');reorderHint.className='exam-reorder-hint';reorderHint.textContent='hold ⠿ to reorder';tabsBox.appendChild(reorderHint);
+  bindExamReorder(tabsBox,'.subject-tab-item','.subject-reorder-handle','horizontal',()=>{
+    const record=ensureTermRecord(activeExamYear(),activeExamTerm());
+    record.subjectOrder=Array.from(tabsBox.querySelectorAll('.subject-tab-item')).map(el=>el.dataset.subjectId);
+    saveState();renderSubjectsTab();showToast('subject order saved');
   });
   renderSubjectDetail();
 }
