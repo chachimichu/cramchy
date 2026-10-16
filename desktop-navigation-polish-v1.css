@@ -6,11 +6,15 @@ body.exam-mode-active .exam-toolbar{max-width:1180px}
 
 @media(min-width:721px){
   body:not(.exam-mode-active) .topnav>.navbtn{
-    font-size:clamp(.76rem,.86vw,.94rem)!important;
+    font-size:.88rem!important;
     padding:8px clamp(6px,.85vw,14px)!important;
     gap:6px!important;
   }
   body:not(.exam-mode-active) .topnav .nav-icon{width:18px;height:18px;flex-basis:18px}
+}
+
+@media(min-width:721px) and (max-width:980px){
+  body:not(.exam-mode-active) .topnav>.navbtn{font-size:.8rem!important}
 }
 
 @media(min-width:721px){
