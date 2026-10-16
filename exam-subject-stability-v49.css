@@ -126,3 +126,64 @@ body.exam-mode-active #view-subjects .topic-block{
     min-height:40px!important;
   }
 }
+
+
+/* Exam subject and topic reordering: visible grip handles with touch and keyboard support. */
+body.exam-mode-active #view-subjects .subject-tab-item{
+  display:inline-flex;align-items:stretch;overflow:hidden;border:1.5px solid var(--pink-soft);
+  border-radius:999px;background:var(--ivory);transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease
+}
+body.exam-mode-active #view-subjects .subject-tab-item.is-active{
+  border-color:transparent;background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry))
+}
+body.exam-mode-active #view-subjects .subject-tab-item .subject-tab-btn{
+  border:0;border-radius:0;background:transparent;padding:10px 14px 10px 7px
+}
+body.exam-mode-active #view-subjects .subject-tab-item .subject-tab-btn.active{
+  border:0;background:transparent;color:#fff
+}
+body.exam-mode-active #view-subjects .exam-reorder-handle{
+  display:grid;place-items:center;flex:0 0 34px;width:34px;min-width:34px;min-height:38px;
+  padding:0;border:0;border-radius:0;background:transparent;color:var(--red-deep,#8b394f);
+  font:900 1.15rem/1 system-ui,sans-serif;cursor:grab;touch-action:none;
+  user-select:none;-webkit-user-select:none
+}
+body.exam-mode-active #view-subjects .subject-tab-item.is-active .exam-reorder-handle{color:#fff}
+body.exam-mode-active #view-subjects .exam-reorder-handle:active{cursor:grabbing}
+body.exam-mode-active #view-subjects .subject-tab-item.is-dragging,
+body.exam-mode-active #view-subjects .topic-block.is-dragging{
+  opacity:.55;transform:scale(.985);box-shadow:0 8px 22px rgba(90,36,50,.15);z-index:2
+}
+body.exam-mode-active #view-subjects .topic-row .topic-reorder-handle{
+  width:34px!important;min-width:34px!important;min-height:38px!important;border-radius:12px;
+  background:rgba(255,255,255,.68);color:var(--red-deep,#8b394f)
+}
+body.exam-mode-active #view-subjects .topic-row{
+  grid-template-columns:34px minmax(150px,1fr) 142px 112px 72px 78px!important
+}
+body.exam-mode-active #view-subjects .topic-row .topic-name-input{grid-column:2!important}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .subject-tab-item{background:#302b34;border-color:#554953}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .subject-tab-item.is-active{background:#a33660;border-color:transparent}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .subject-tab-item .subject-tab-btn{color:#eadbe0}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .subject-tab-item .subject-tab-btn.active,
+body[data-theme="dark-study"].exam-mode-active #view-subjects .subject-tab-item.is-active .exam-reorder-handle{color:#fff}
+body[data-theme="dark-study"].exam-mode-active #view-subjects .topic-row .topic-reorder-handle{background:#38313a;color:#f4b7c9}
+body.exam-mode-active #view-subjects .subject-tab-item:focus-within,
+body.exam-mode-active #view-subjects .exam-reorder-handle:focus-visible{
+  outline:3px solid color-mix(in srgb,var(--red-berry,#e85d75) 55%,white);outline-offset:2px
+}
+@media(max-width:820px){
+  body.exam-mode-active #view-subjects .topic-row{
+    grid-template-columns:34px minmax(0,1fr) minmax(0,1fr)!important
+  }
+  body.exam-mode-active #view-subjects .topic-row .topic-reorder-handle{grid-column:1!important;grid-row:1!important}
+  body.exam-mode-active #view-subjects .topic-row .topic-name-input{grid-column:2/-1!important;grid-row:1!important}
+  body.exam-mode-active #view-subjects .topic-row .topic-status{grid-column:1/3!important;grid-row:2!important}
+  body.exam-mode-active #view-subjects .topic-row .topic-priority{grid-column:3!important;grid-row:2!important}
+  body.exam-mode-active #view-subjects .topic-row button.attach-toggle{grid-column:1/3!important;grid-row:3!important}
+  body.exam-mode-active #view-subjects .topic-row button.del{grid-column:3!important;grid-row:3!important}
+}
+@media(prefers-reduced-motion:reduce){
+  body.exam-mode-active #view-subjects .subject-tab-item,
+  body.exam-mode-active #view-subjects .topic-block{transition:none!important}
+}
