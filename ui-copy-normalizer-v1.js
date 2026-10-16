@@ -34,6 +34,7 @@
     ['Collectibles','collectibles'],
     ['Backup & Reset','backup & reset'],
     ['Export Backup','export backup'],
+    ['Export Previous Backup','export previous backup'],
     ['Import Backup','import backup'],
     ['Reset Everything','reset everything'],
     ['START','start'],
