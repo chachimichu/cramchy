@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-text-size-control-136';
+  const VERSION='2026-10-16-nav-overlap-case-138';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
