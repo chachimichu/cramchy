@@ -757,7 +757,7 @@ function bindExamReorder(container,itemSelector,handleSelector,axis,onCommit){
     const index=items.indexOf(item),target=items[index+direction];
     if(!target)return;
     event.preventDefault();
-    container.insertBefore(item,direction<0?target:item.nextSibling);
+    container.insertBefore(item,direction<0?target:target.nextSibling);
     config.onCommit();
   });
   if(examReorderListenersReady)return;
@@ -3106,6 +3106,7 @@ function renderSubjectsTab(){
     btn.addEventListener('click',()=>{state.activeSubject=item.id;expandedAttachments={};saveState();renderSubjectsTab();});
     wrap.append(grip,btn);tabsBox.appendChild(wrap);
   });
+  const reorderHint=document.createElement('span');reorderHint.className='exam-reorder-hint';reorderHint.textContent='hold ⠿ to reorder';tabsBox.appendChild(reorderHint);
   bindExamReorder(tabsBox,'.subject-tab-item','.subject-reorder-handle','horizontal',()=>{
     const record=ensureTermRecord(activeExamYear(),activeExamTerm());
     record.subjectOrder=Array.from(tabsBox.querySelectorAll('.subject-tab-item')).map(el=>el.dataset.subjectId);
