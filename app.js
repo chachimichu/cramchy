@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-17-production-nav-font-size-144';
+  const VERSION='2026-10-17-nav-readable-145';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
