@@ -1,11 +1,11 @@
 /* Desktop navigation polish: center the exam tabs and improve tap/read size. */
 @media(min-width:721px){
-  .topnav>.navbtn{
+  body:not(.exam-mode-active) .topnav>.navbtn{
     font-size:clamp(.76rem,.86vw,.94rem)!important;
     padding:8px clamp(6px,.85vw,14px)!important;
     gap:6px!important;
   }
-  .topnav .nav-icon{width:18px;height:18px;flex-basis:18px}
+  body:not(.exam-mode-active) .topnav .nav-icon{width:18px;height:18px;flex-basis:18px}
 }
 
 @media(min-width:721px){
@@ -18,11 +18,6 @@
     position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
     justify-content:center;gap:6px;max-width:calc(100% - 240px);
   }
-  body.exam-mode-active .exam-nav-set .navbtn{
-    font-size:clamp(.72rem,.82vw,.9rem)!important;
-    padding:8px clamp(6px,.72vw,12px)!important;
-  }
-  body.exam-mode-active .exam-nav-set .nav-icon{width:18px;height:18px;flex-basis:18px}
   body.exam-mode-active nav.topnav>.brand{
     position:absolute;left:18px;top:50%;transform:translateY(-50%);
     margin:0!important;
@@ -37,8 +32,6 @@
 
 @media(min-width:721px) and (max-width:980px){
   body.exam-mode-active .exam-nav-set{max-width:calc(100% - 150px)}
-  body.exam-mode-active .exam-nav-set .navbtn{padding:7px 5px!important;font-size:.74rem!important}
-  body.exam-mode-active .exam-nav-set .nav-icon{width:17px;height:17px;flex-basis:17px}
   body.exam-mode-active nav.topnav>.brand,
   body.exam-mode-active nav.topnav>#saveIndicator{display:none!important}
   body.exam-mode-active nav.topnav>#cloudBtn{right:8px}
