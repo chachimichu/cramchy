@@ -13,7 +13,7 @@ function appFunction(name){
 }
 const nodes=new Map();
 class Element{
-  constructor(){this.children=[];this.handlers={};this.style={};this.value='';this._ids=[];}
+  constructor(){this.children=[];this.handlers={};this.style={};this.dataset={};this.value='';this._ids=[];}
   set innerHTML(html){
     this._ids.forEach(id=>nodes.delete(id));this._ids=[];this.children=[];this.html=html;
     for(const match of html.matchAll(/\bid="([^"]+)"/g)){
@@ -22,6 +22,8 @@ class Element{
   }
   get innerHTML(){return this.html||'';}
   appendChild(node){this.children.push(node);}
+  append(...nodes){this.children.push(...nodes);}
+  setAttribute(name,value){this[name]=value;}
   addEventListener(name,callback){this.handlers[name]=callback;}
   querySelectorAll(){return [];}
 }
@@ -34,8 +36,9 @@ const courses=[
 let saved=0;
 const context={
   SUBJECT_ORDER:['legacy'],SUBJECT_NAME:{legacy:'Legacy course'},APP_VERSION:'test',STATE_SCHEMA_VERSION:2,
+  examReorderConfigs:new WeakMap(),examReorderListenersReady:false,examReorderPointerSession:null,
   EXAM_BY_ID:new Proxy({}, {get(){throw Error('Readiness must not consult fixed legacy exams');}}),
-  document:{getElementById:id=>nodes.get(id)||null,createElement:()=>new Element()},
+  document:{getElementById:id=>nodes.get(id)||null,createElement:()=>new Element(),addEventListener(){}},
   expandedAttachments:{},escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;'),escapeAttr:value=>String(value),
   formatExamDate:iso=>iso,formatExamTime:iso=>iso,formatCountdown:()=> 'countdown',
   openExamModal(){},renderAttachmentsPanel(){},saveState(){saved++;},showToast(){},
@@ -45,7 +48,7 @@ const context={
   examSubjectCatalog:()=>context.state.courses.filter(c=>c.academicYear===context.state.examContext.academicYear&&c.term===context.state.examContext.term).map(c=>({id:'course-'+c.id,name:c.name})),
 };
 vm.createContext(context);
-vm.runInContext(['freshSubject','freshState','hoursUntil','ensureExamSubject','activeExamSubjects','examSubjectNameById','examForSubject','subjectStats','readinessLabel','renderTopicList','addTopic','renderSubjectsTab','renderSubjectDetail'].map(appFunction).join('\n'),context);
+vm.runInContext(['freshSubject','freshState','hoursUntil','ensureExamSubject','activeExamSubjects','examSubjectNameById','examForSubject','subjectStats','readinessLabel','bindExamReorder','renderTopicList','addTopic','renderSubjectsTab','renderSubjectDetail'].map(appFunction).join('\n'),context);
 // Real app exports must be accepted by the new backup validator.
 const actualFresh=context.freshState();
 assert(Array.isArray(actualFresh.studyHistory));
