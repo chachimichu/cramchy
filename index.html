@@ -405,17 +405,6 @@
       </div>
     </div>
 
-    <div class="section-title">✧ Backup &amp; Reset</div>
-    <div class="card">
-      <p class="small-note">Keep a copy of your courses, grades, tasks, study progress, Planner events, and Term GWA entries.</p>
-      <div class="backup-actions">
-        <button class="btn secondary" id="exportBtn">Export Backup</button>
-        <button class="btn ghost" id="recoveryExportBtn">Export Previous Backup</button>
-        <button class="btn ghost" id="importBtn">Import Backup</button>
-        <input type="file" id="importFile" accept="application/json" style="display:none;">
-        <button class="btn danger" id="resetBtn">Reset Everything</button>
-      </div>
-    </div>
   </section>
 
 
@@ -501,6 +490,17 @@
       <div id="termManagerStatus"></div>
       <div class="term-manager-actions">
         <button class="more-shortcut" id="archiveCurrentTermBtn">archive current term</button>
+      </div>
+    </div>
+    <div class="section-title">backup &amp; reset</div>
+    <div class="card settings-panel" id="backupSettings">
+      <p class="small-note">Keep a copy of your courses, grades, tasks, study progress, Planner events, and Term GWA entries.</p>
+      <div class="backup-actions">
+        <button class="btn secondary" id="exportBtn" type="button">export backup</button>
+        <button class="btn ghost" id="recoveryExportBtn" type="button">export previous backup</button>
+        <button class="btn ghost" id="importBtn" type="button">import backup</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none;">
+        <button class="btn danger" id="resetBtn" type="button">reset everything</button>
       </div>
     </div>
     <div class="section-title">✦ app health</div>
@@ -679,6 +679,6 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=2026-10-11-exam-catalog-aliases-118"></script>
+<script src="app.js?v=2026-10-16-backup-labels-120"></script>
 </body>
 </html>
