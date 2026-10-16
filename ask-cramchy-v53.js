@@ -323,7 +323,7 @@
   }
   function tableCells(line){return line.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(cell=>cell.trim());}
   function renderChatText(bubble,text){
-    const lines=String(text||'').replace(/\r/g,'').split('\n');
+    const lines=String(text||'').replace(/\r/g,'').replace(/\|\s+\|/g,'|\n|').split('\n');
     const isDivider=line=>/^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
     for(let i=0;i<lines.length;){
       const line=lines[i].trim();if(!line){i++;continue;}
