@@ -1775,18 +1775,7 @@ const CRAMCHY_THEMES=[
 {id:'blueberry-milk',label:'Blueberry Milk',colors:['#708fc0','#dce8f7']},
 {id:'dark-study',label:'Dark Study',colors:['#352833','#8ba181']}];
 
-function themeIllustration(id){
-  const icons={
-    'strawberry-matcha':'<path d="M17 10c1-5 8-5 9 0 5-2 9 3 7 7l-5 10c-3 5-10 5-13 0l-5-10c-2-4 2-9 7-7Z" fill="#f28da8"/><path d="M18 9 14 4l7 3 3-5 2 6 7-2-5 6" fill="#86a87e"/><circle cx="18" cy="16" r="1" fill="#fff5d8"/><circle cx="27" cy="17" r="1" fill="#fff5d8"/><circle cx="22" cy="23" r="1" fill="#fff5d8"/>',
-    'strawberry-milk':'<path d="M17 10c1-5 8-5 9 0 5-2 9 3 7 7l-5 10c-3 5-10 5-13 0l-5-10c-2-4 2-9 7-7Z" fill="#ef8eaa"/><path d="M18 9 14 4l7 3 3-5 2 6 7-2-5 6" fill="#93ae8d"/><circle cx="18" cy="16" r="1" fill="#fff5d8"/><circle cx="27" cy="17" r="1" fill="#fff5d8"/><circle cx="22" cy="23" r="1" fill="#fff5d8"/>',
-    'matcha-latte':'<path d="M10 14h23l-2 16H13l-3-16Z" fill="#c9d9b4" stroke="#71896a" stroke-width="1.7"/><path d="M33 17h4c5 0 4 8-1 8h-4" fill="none" stroke="#71896a" stroke-width="2"/><path d="M15 13c2-4 10-5 14 0" fill="#f3e8ce"/><path d="M20 10c1-4 5-5 8-4-1 4-4 6-8 4Z" fill="#78946f"/>',
-    'lavender':'<path d="M15 31c8-7 12-15 14-27M23 26c-5-4-8-4-11-3m15-4c4-4 7-5 10-4m-12 1c-5-4-6-7-6-10" fill="none" stroke="#788b70" stroke-width="2" stroke-linecap="round"/><g fill="#ad8bcf"><ellipse cx="26" cy="7" rx="2.4" ry="4" transform="rotate(22 26 7)"/><ellipse cx="23" cy="11" rx="2.3" ry="4" transform="rotate(-24 23 11)"/><ellipse cx="34" cy="15" rx="2.4" ry="4" transform="rotate(48 34 15)"/><ellipse cx="15" cy="22" rx="2.4" ry="4" transform="rotate(-58 15 22)"/></g>',
-    'mocha':'<path d="M10 15h23l-2 16H13l-3-16Z" fill="#c48b6c" stroke="#805740" stroke-width="1.7"/><path d="M33 18h4c5 0 4 8-1 8h-4" fill="none" stroke="#805740" stroke-width="2"/><path d="M15 14c2-4 11-5 14 0" fill="#f2dfd0"/><path d="M18 9c-2-3 2-4 0-7m7 7c-2-3 2-4 0-7" fill="none" stroke="#9b6e58" stroke-width="1.7" stroke-linecap="round"/>',
-    'blueberry-milk':'<g fill="#8099c5" stroke="#647eaa" stroke-width="1.3"><circle cx="17" cy="20" r="7"/><circle cx="29" cy="15" r="7"/><circle cx="30" cy="27" r="7"/></g><g fill="#dfeafb"><circle cx="15" cy="18" r="1.5"/><circle cx="27" cy="13" r="1.5"/><circle cx="28" cy="25" r="1.5"/></g><path d="m22 5 1.4 3.5L27 10l-3.6 1.4L22 15l-1.4-3.6L17 10l3.6-1.5L22 5Z" fill="#f4c6d2"/>',
-    'dark-study':'<path d="M29 8c-7 0-12 5-12 12s5 12 12 12c3 0 6-1 8-3-8 1-14-5-14-12 0-4 2-7 6-9Z" fill="#e5cb91"/><path d="m13 10 1 2.5 2.5 1-2.5 1L13 17l-1-2.5-2.5-1 2.5-1 1-2.5Z" fill="#e5cb91"/><circle cx="33" cy="9" r="1.6" fill="#9eb790"/>'
-  };
-  return `<svg viewBox="0 0 48 38" aria-hidden="true" focusable="false">${icons[id]||icons['strawberry-matcha']}</svg>`;
-}
+function themeIllustration(id){return `assets/theme-icons/${CRAMCHY_THEMES.some(t=>t.id===id)?id:'strawberry-matcha'}.webp`;}
 
 function cramchyName(){const n=state?.profile?.name?.trim();return n||'girl';}
 function getCramchyGreeting(){
@@ -1803,7 +1792,7 @@ function personalizeMascotText(text){
   const n=state?.profile?.name?.trim();return String(text).replaceAll('{name}',n?n.toLowerCase():'girl');
 }
 function themePickerMarkup(selected){
-  return CRAMCHY_THEMES.map(t=>`<button type="button" class="theme-choice ${selected===t.id?'selected':''}" data-theme-choice="${t.id}" aria-pressed="${selected===t.id}" aria-label="${escapeAttr(t.label)}"><span class="theme-dot" style="background:linear-gradient(135deg,${t.colors[0]} 0 50%,${t.colors[1]} 50% 100%)"></span><span class="theme-art">${themeIllustration(t.id)}</span><span class="theme-name">${t.label}</span><span class="theme-check" aria-hidden="true">✓</span></button>`).join('');
+  return CRAMCHY_THEMES.map(t=>`<button type="button" class="theme-choice ${selected===t.id?'selected':''}" data-theme-choice="${t.id}" aria-pressed="${selected===t.id}" aria-label="${escapeAttr(t.label)}"><span class="theme-dot" style="background:linear-gradient(135deg,${t.colors[0]} 0 50%,${t.colors[1]} 50% 100%)"></span><span class="theme-art"><img src="${themeIllustration(t.id)}" alt="" aria-hidden="true" width="144" height="144" loading="lazy"></span><span class="theme-name">${t.label}</span><span class="theme-check" aria-hidden="true">✓</span></button>`).join('');
 }
 function setThemeChoice(theme,root=document){
   state.profile.theme=theme;document.body.dataset.theme=theme;
@@ -1838,7 +1827,7 @@ function openCramchyOnboarding(){
   let selected=state.profile?.theme||'strawberry-matcha';
   const overlay=document.createElement('div');overlay.id='cramchyOnboard';overlay.className='cramchy-onboard';
   overlay.innerHTML=`<div class="cramchy-onboard-card">
-    <header class="onboard-hero"><div class="onboard-hero-copy"><img src="assets/cramchy-wordmark.png" alt="cramchy." class="onboard-wordmark"><p class="onboard-tagline">a little study space, made yours</p><span class="onboard-step-label">let’s get you settled in</span></div><svg class="onboard-study-illustration" viewBox="0 0 190 132" role="img" aria-label="An open book, pencil, and leafy study corner"><ellipse cx="97" cy="112" rx="72" ry="10" fill="#f4dce3"/><path d="M27 49c22-9 43-4 62 8v42C70 87 49 83 27 91V49Z" fill="#fff" stroke="#c76d88" stroke-width="3" stroke-linejoin="round"/><path d="M89 57c20-12 43-17 67-8v42c-22-8-45-4-67 8V57Z" fill="#fff" stroke="#c76d88" stroke-width="3" stroke-linejoin="round"/><path d="M89 57v43M40 60c12-3 24-1 35 4m-34 6c11-3 22-1 33 4m27-7c12-6 26-9 40-7m-39 17c12-6 25-9 37-7" fill="none" stroke="#e7a6b8" stroke-width="2" stroke-linecap="round"/><path d="m133 20 7-8 9 43-7 5-9-40Z" fill="#f0a0b6" stroke="#b85c79" stroke-width="2" stroke-linejoin="round"/><path d="m133 20 16-3" stroke="#b85c79" stroke-width="2"/><path d="M157 88c2-22-2-38-13-49m11 34c10-10 17-12 24-12m-26 2c-8-11-16-15-24-16" fill="none" stroke="#78936e" stroke-width="3" stroke-linecap="round"/><path d="M144 57c-1-10 3-15 10-18 1 8-2 14-10 18Zm9 12c7-9 14-11 21-8-4 8-11 11-21 8Zm-4-5c-9-2-14-7-15-14 9 1 14 6 15 14Z" fill="#9eb790"/><path d="m44 28 3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Zm102 0 2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4Z" fill="#e7b66c"/></svg></header>
+    <header class="onboard-hero"><div class="onboard-hero-copy"><img src="assets/cramchy-wordmark.png" alt="cramchy." class="onboard-wordmark"><p class="onboard-tagline">a little study space, made yours</p><span class="onboard-step-label">let’s get you settled in</span></div><img class="onboard-study-illustration" src="${themeIllustration(selected)}" alt="A cute ${CRAMCHY_THEMES.find(t=>t.id===selected)?.label||'strawberry matcha'} drink" width="144" height="144"></header>
     <div class="onboard-field"><label for="onboardName">what should we call you?</label><input id="onboardName" maxlength="40" placeholder="your nickname" autocomplete="nickname"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label for="onboardYear">academic year</label><input id="onboardYear" maxlength="30" value="${escapeAttr(state.profile?.academicYear||'2026–2027')}"></div><div><label for="onboardTerm">current term</label><select id="onboardTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div></div>
     <div class="onboard-field"><label for="onboardMotivation">how should cramchy motivate you?</label><select id="onboardMotivation"><option value="sweet">Sweet — gentle encouragement</option><option value="chaotic">Chaotic — girl, the deadline.</option><option value="strict">Strict — tell me what needs doing</option><option value="mixed">Mixed — surprise me</option></select></div>
@@ -1846,7 +1835,7 @@ function openCramchyOnboarding(){
     <button class="onboard-start" id="startCramchyBtn">enter my academic weapon era →</button></div>`;
   document.body.appendChild(overlay);
   overlay.querySelector('#onboardTerm').value=state.profile?.term||'Term 1';overlay.querySelector('#onboardMotivation').value=state.profile?.motivation||'mixed';
-  overlay.querySelectorAll('[data-theme-choice]').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.themeChoice;overlay.querySelectorAll('[data-theme-choice]').forEach(b=>{const active=b===btn;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});document.body.dataset.theme=selected;}));
+  overlay.querySelectorAll('[data-theme-choice]').forEach(btn=>btn.addEventListener('click',()=>{selected=btn.dataset.themeChoice;overlay.querySelectorAll('[data-theme-choice]').forEach(b=>{const active=b===btn;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});const art=overlay.querySelector('.onboard-study-illustration');art.src=themeIllustration(selected);art.alt=`A cute ${CRAMCHY_THEMES.find(t=>t.id===selected)?.label||'study'} theme illustration`;document.body.dataset.theme=selected;}));
   overlay.querySelector('#startCramchyBtn').addEventListener('click',()=>{
     const name=overlay.querySelector('#onboardName').value.trim();if(!name){overlay.querySelector('#onboardName').focus();return;}
     state.profile={name:name.slice(0,40),academicYear:overlay.querySelector('#onboardYear').value.trim().slice(0,30)||'2026–2027',term:overlay.querySelector('#onboardTerm').value,motivation:overlay.querySelector('#onboardMotivation').value,theme:selected,onboarded:true};
