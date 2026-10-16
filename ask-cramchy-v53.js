@@ -259,7 +259,7 @@
     if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return "short answer: Charlene Mikaela D. Caco built Cramchy. she’s a Psychology student from NU Clark, and this was her first time building an app. she came up with the whole concept, features, design direction, and tested everything around what she actually needed as a student. AI tools helped with parts of the coding, but the project and all the big decisions are hers.";
     if(has(q,/\blore\b|\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return loreAnswer();
     if(has(q,/\b(why|how).*(called|named)|\bname (story|origin|meaning)|\bwhat does cramchy mean\b/))return loreAnswer();
-    if(has(q,/\b(who are you|what are you|are you (an )?ai|is ask cramchy (an )?ai|ask cramchy)\b/))return 'I’m Ask Cramchy, your academic helper. I can answer exact questions using your saved Cramchy data, and—if you enable AI—use Groq for open-ended study help with your saved academic context.';
+    if(has(q,/\b(who are you|what are you|are you (an )?ai|is ask cramchy (an )?ai|ask cramchy)\b/))return 'I’m Ask Cramchy, your academic helper. I can answer exact questions using your saved Cramchy data, and—if you enable AI—help with open-ended study questions using relevant saved academic context.';
     if(has(q,/\b(features?|what can (cramchy|the app|this app) do|what does (cramchy|the app|this app) do)\b/))return 'a lot, actually LOL—Cramchy has Home, Courses, Tasks, Planner, Study Timer, Grades, Exam Mode, Ask Cramchy, profile/settings, and optional cloud sync. Grades has Course Gradebook, Term GWA, and Quick GWA, while Planner keeps classes, tasks, exams, study blocks, and personal events together.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(home|dashboard)\b/))return 'Home is your daily command center. It summarizes what matters now, shows reminders and upcoming Planner items, and gives you quick ways to jump into Cramchy’s tools.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(courses page|course manager)\b/))return 'Courses is where you set up subjects with details such as course code, units, schedule, room, instructor, academic year, and term. Those course records power schedules, Grades, Exam Mode, and Ask Cramchy answers.';
@@ -267,12 +267,12 @@
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(study timer|timer)\b/))return 'Study gives you a focus timer tied to your subjects and study history. Use it to run a focused session, then let Cramchy record the work you completed.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*exam mode\b/))return 'Exam Mode groups an exam period’s dashboard, schedule, subjects, study timer, countdown, and Matcha Corner. Use it when you want a focused workspace for one term or exam period.';
     if(has(q,/\b(what is|what'?s|explain|how.*use).*(more|settings|profile)\b/))return 'More contains profile and app controls such as your name, academic year, term, theme, cloud access, and repair options. Your academic year and term also affect which courses and grades Cramchy shows.';
-    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'Cramchy is free to use right now. Groq offers a free API tier with usage limits, so AI replies can pause if its limits are reached.';
-    if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Exact answers about saved Cramchy data can run in your browser. Groq-powered study help needs an internet connection and your permission to share AI context; sign-in and cloud syncing also need internet.';
-    if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your Cramchy data is saved in your browser and may sync through Cramchy Cloud if you use it. If you enable Ask Cramchy AI, your messages and saved academic details may be sent to Groq for replies. Your sign-in credentials and API key are not included. You can turn AI sharing off anytime.';
+    if(has(q,/\b(cost|price|paid|subscription|free)\b/))return 'Cramchy is free to use right now. AI replies may pause if the AI service reaches its usage limits.';
+    if(has(q,/\b(offline|internet|wifi|data connection)\b/))return 'Exact answers about saved Cramchy data can run in your browser. Open-ended AI study help needs an internet connection and your permission to share AI context; sign-in and cloud syncing also need internet.';
+    if(has(q,/\b(privacy|where.*data|saved|stored|secure)\b/))return 'Your Cramchy data is saved in your browser and may sync through Cramchy Cloud if you use it. If you enable Ask Cramchy AI, your messages and relevant saved academic details may be sent to an AI service for replies. Your sign-in credentials and API key are not included. You can turn AI sharing off anytime.';
     if(has(q,/\b(account|sign in|login|cloud|sync)\b/))return 'You can use Cramchy locally in the browser. Signing in enables supported cloud syncing so your saved work can follow your account; syncing requires internet.';
     if(has(q,/\b(home screen|install|pwa|favicon|app icon|icon)\b/))return 'On iPhone, open Cramchy in Safari, tap Share, then Add to Home Screen. The installed shortcut uses Cramchy’s high-quality app icon and opens with an app-like standalone view. If an old icon remains, remove the old shortcut and add it again.';
-    if(has(q,/\b(version|latest|update|new)\b/))return 'This Ask Cramchy update adds Groq-powered open-ended study help while keeping exact answers about your saved Cramchy data grounded in the app.';
+    if(has(q,/\b(version|latest|update|new)\b/))return 'This Ask Cramchy update adds open-ended AI study help while keeping exact answers about your saved Cramchy data grounded in the app.';
     if(has(q,/\b(perfect|limitations?|answer everything|any question)\b/))return 'I can help with study questions and use your saved Cramchy academic data when AI sharing is enabled. I can still make mistakes, so check important grade calculations and school policies against the official source.';
     return null;
   }
@@ -401,7 +401,7 @@
     if(!card){card=document.createElement('div');card.className='ask-msg bot ask-ai-consent';const bubble=document.createElement('div');bubble.className='ask-bubble ask-ai-consent-bubble';card.appendChild(bubble);const first=wrap.querySelector('.ask-msg.bot');if(first)first.after(card);else wrap.prepend(card);}
     const bubble=card.querySelector('.ask-bubble');bubble.replaceChildren();
     const title=document.createElement('strong');title.className='ask-ai-consent-title';title.textContent=aiEnabled()?'AI sharing is on':'Want open-ended study help?';bubble.appendChild(title);
-    const copy=document.createElement('p');copy.textContent=aiEnabled()?'Your message and relevant saved academic context are sent to Groq. You can switch this off anytime.':'Turn on Cramchy AI to send your message and relevant saved academic context to Groq. Your login details and API key are never sent.';bubble.appendChild(copy);
+    const copy=document.createElement('p');copy.textContent=aiEnabled()?'Your message and relevant saved academic context are shared for AI replies. You can switch this off anytime.':'Turn on Cramchy AI to share your message and relevant saved academic context for AI replies. Your login details and API key are never sent.';bubble.appendChild(copy);
     const button=document.createElement('button');button.type='button';button.className='ask-ai-consent-button';button.dataset.v53AiConsent=aiEnabled()?'disable':'enable';button.textContent=aiEnabled()?'Turn AI off':'Enable AI';bubble.appendChild(button);
   }
   async function askGroq(text){
@@ -419,8 +419,8 @@
       aiHistory.push({role:'user',content:text},{role:'assistant',content:reply});if(aiHistory.length>12)aiHistory=aiHistory.slice(-12);
     }).catch(error=>{
       pending?.remove();
-      const message=error?.message==='AI is not configured yet.'?'AI is almost ready, but the Groq key hasn’t been added to Cramchy’s private server settings yet. Your saved-data answers still work here.':
-        error?.message==='Groq is at its free usage limit right now.'?'Groq has reached its current free usage limit. Try again in a little while.':
+      const message=error?.message==='AI is not configured yet.'?'AI is almost ready, but its private server connection hasn’t been set up yet. Your saved-data answers still work here.':
+        error?.message==='Groq is at its free usage limit right now.'?'The AI service has reached its current usage limit. Try again in a little while.':
         /too much saved context/i.test(error?.message||'')?'There’s a lot of saved school data in this account. Try asking about one course or term at a time.':
         'I couldn’t reach the AI just now. Your saved-data answers still work—please try again in a bit.';
       addMessage('bot',message);
@@ -434,7 +434,7 @@
     addMessage('user',text);
     if(result){setTimeout(()=>{addMessage('bot',result.text);if(result.action)result.action();},90);return true;}
     if(!aiEnabled()){
-      addMessage('bot','For open-ended study help, enable AI above first. Your Cramchy data questions can still be answered here without sending them to Groq.');
+      addMessage('bot','For open-ended study help, enable AI above first. Your Cramchy data questions can still be answered here without AI sharing.');
       return true;
     }
     askAiTurn(text);

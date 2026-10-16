@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-ask-ai-115';
+  const VERSION='2026-10-16-ask-ai-116';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
