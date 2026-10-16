@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-16-cross-device-guide-129';
+  const VERSION='2026-10-16-web-toast-clear-130';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
