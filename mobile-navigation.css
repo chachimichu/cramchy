@@ -153,3 +153,15 @@
   #view-grades #gwaRoot .grades-gwa-course-card{padding:14px!important}
   .exam-card{padding:13px!important}
 }
+
+/* Keep account access and save feedback available from More on phones. */
+.mobile-account-sync{display:none}
+.mobile-account-copy{display:grid;gap:4px;min-width:0}
+.mobile-account-copy strong{color:var(--red-deep);font-size:.9rem}
+.mobile-account-copy span{color:var(--ink,#68434e);font-size:.76rem;line-height:1.4}
+.mobile-account-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media(max-width:720px){
+  .mobile-account-sync{display:flex!important;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px!important;padding:13px!important}
+  .mobile-account-controls #cloudBtn{position:static!important;display:inline-flex!important;align-items:center;justify-content:center;min-height:38px;margin:0!important;padding:8px 12px!important;border-radius:999px!important;white-space:nowrap;font-size:.75rem!important}
+  .mobile-account-controls #saveIndicator{position:static!important;display:inline-flex!important;align-items:center;justify-content:center;min-height:32px;margin:0!important;padding:5px 9px;border-radius:999px;background:var(--soft,#fff0f4);font-size:.7rem;white-space:nowrap}
+}
