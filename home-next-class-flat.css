@@ -15,3 +15,19 @@ main,.view,#view-dashboard,#view-courses,#view-tasks,#view-planner,#view-study,#
   background-color:var(--app-bg-2)!important;
   background-image:none!important;
 }
+
+/* Higher-specificity theme surfaces used by the home and planner layouts. */
+#view-dashboard .home-status-card,
+#view-dashboard .home-recommend-card,
+.home-courses-section .home-course,
+#view-planner .planner-rec{
+  background-color:var(--ivory)!important;
+  background-image:none!important;
+}
+.cramchy-home-header.planner-hero-card,
+#view-planner .planner-hero-card{
+  background-color:var(--app-bg-2)!important;
+  background-image:none!important;
+}
+.cramchy-home-header::before,
+#view-planner .planner-hero-card::before{background:none!important}
