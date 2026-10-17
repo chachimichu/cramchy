@@ -83,14 +83,14 @@
     if(document.getElementById('cramchyWelcomeStyles'))return;
     const style=document.createElement('style');style.id='cramchyWelcomeStyles';
     style.textContent=`
-      .cramchy-letter-overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;width:100%;height:100%;height:100dvh;box-sizing:border-box;overflow:hidden;padding:24px;background:rgba(56,31,42,.46);backdrop-filter:blur(9px);animation:welcomeFade .28s ease both}
-      body.cramchy-letter-open{overflow:hidden!important}
+      .cramchy-letter-overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;width:100%;height:100%;height:100dvh;box-sizing:border-box;overflow:hidden;overscroll-behavior:none;touch-action:pan-y;padding:24px;background:rgba(56,31,42,.46);backdrop-filter:blur(9px);animation:welcomeFade .28s ease both}
+      html.cramchy-letter-open,body.cramchy-letter-open{overflow:hidden!important;overscroll-behavior:none!important}
       .cramchy-letter-card{position:relative;width:min(590px,100%);max-height:min(790px,calc(100dvh - 48px));display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,.95);border-radius:32px;background:radial-gradient(circle at 8% 3%,rgba(255,255,255,.99),transparent 28%),radial-gradient(circle at 100% 90%,rgba(247,199,214,.5),transparent 32%),linear-gradient(145deg,#fffdfb,#fff5f7 58%,#ffedf1);color:#563843;box-shadow:0 30px 90px rgba(46,20,32,.3),0 8px 28px rgba(91,43,63,.12);animation:welcomeArrive .48s cubic-bezier(.2,.8,.2,1) both}
       .welcome-topline{height:5px;flex:0 0 5px;background:linear-gradient(90deg,#ef91a9,#d45a7c,#f4c0cd);transform-origin:left;animation:welcomeLine .8s ease both}
       .cramchy-letter-close{position:absolute;z-index:2;top:16px;right:16px;width:42px;height:42px;display:grid;place-items:center;border:1px solid #f2d9e0;border-radius:50%;background:rgba(255,255,255,.82);color:#845263;font:500 24px/1 system-ui,sans-serif;cursor:pointer;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
       .cramchy-letter-close:hover{background:#ffe7ee;transform:rotate(7deg) scale(1.06);box-shadow:0 5px 14px #d97d9830}
       .cramchy-letter-close:focus-visible,.welcome-arrow:focus-visible,.welcome-text-button:focus-visible,.welcome-back:focus-visible{outline:3px solid #d76483;outline-offset:3px}
-      .welcome-content{min-height:0;display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain;padding:27px clamp(23px,6vw,52px) 0;scrollbar-width:thin;scrollbar-color:#e9a9bc transparent}
+      .welcome-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;padding:27px clamp(23px,6vw,52px) 0;scrollbar-width:thin;scrollbar-color:#e9a9bc transparent}
       .welcome-illustration{position:relative;align-self:center;width:90px;height:78px;display:grid;place-items:center;margin:0 auto 18px;color:#be5a78}
       .welcome-illustration::before{content:'';position:absolute;width:68px;height:68px;border-radius:26px;background:linear-gradient(145deg,#ffe9ef,#f8d4df);box-shadow:inset 0 1px 0 #fff,0 9px 22px #b85b761a;transform:rotate(-7deg);animation:welcomeBadge 4.8s ease-in-out infinite}
       .welcome-illustration span{position:relative;z-index:1;font:500 38px/1 Georgia,serif;animation:welcomeFloat 3.6s ease-in-out infinite}
@@ -123,11 +123,25 @@
       @media(prefers-reduced-motion:reduce){.cramchy-letter-overlay,.cramchy-letter-card,.welcome-topline,.welcome-illustration::before,.welcome-illustration span,.welcome-illustration::after,.welcome-finish-sparkle,.welcome-slide-enter{animation:none!important}.welcome-progress-fill,.welcome-arrow,.welcome-back,.cramchy-letter-close{transition:none!important}}
     `;document.head.appendChild(style);
   }
+  function lockPageScroll(overlay){
+    const root=document.documentElement,body=document.body;
+    const scrollX=window.scrollX||root.scrollLeft||0,scrollY=window.scrollY||root.scrollTop||0;
+    overlay._welcomeScrollLock={scrollX,scrollY,rootOverflow:root.style.overflow,bodyPosition:body.style.position,bodyTop:body.style.top,bodyLeft:body.style.left,bodyRight:body.style.right,bodyWidth:body.style.width,bodyOverflow:body.style.overflow};
+    root.classList.add('cramchy-letter-open');body.classList.add('cramchy-letter-open');
+    root.style.overflow='hidden';body.style.position='fixed';body.style.top=`-${scrollY}px`;body.style.left=`-${scrollX}px`;body.style.right='0';body.style.width='100%';body.style.overflow='hidden';
+  }
+  function unlockPageScroll(overlay){
+    const lock=overlay._welcomeScrollLock;if(!lock)return;
+    const root=document.documentElement,body=document.body;
+    root.classList.remove('cramchy-letter-open');body.classList.remove('cramchy-letter-open');
+    root.style.overflow=lock.rootOverflow;body.style.position=lock.bodyPosition;body.style.top=lock.bodyTop;body.style.left=lock.bodyLeft;body.style.right=lock.bodyRight;body.style.width=lock.bodyWidth;body.style.overflow=lock.bodyOverflow;
+    window.scrollTo(lock.scrollX,lock.scrollY);
+  }
   function finish(){
     const overlay=document.getElementById('cramchySpecialLetter');if(!overlay)return;
     overlay._welcomeProgressObserver?.disconnect();
     try{localStorage.setItem(SEEN_KEY,'1')}catch(e){}
-    overlay.remove();document.body.classList.remove('cramchy-letter-open');
+    overlay.remove();unlockPageScroll(overlay);
     if(previousFocus&&typeof previousFocus.focus==='function')previousFocus.focus();
   }
   function renderStep(direction=1){
@@ -155,7 +169,7 @@
     installStyles();previousFocus=document.activeElement;activeStep=0;
     const overlay=document.createElement('div');overlay.id='cramchySpecialLetter';overlay.className='cramchy-letter-overlay';overlay.setAttribute('role','presentation');
     overlay.innerHTML=`<article class="cramchy-letter-card" role="dialog" aria-modal="true" aria-labelledby="cramchyLetterTitle"><div class="welcome-topline" aria-hidden="true"></div><button class="cramchy-letter-close" type="button" aria-label="Close welcome guide">×</button><div class="welcome-content" tabindex="-1"></div><footer class="welcome-footer"><div class="welcome-progress"><div class="welcome-progress-track" role="progressbar" aria-label="Welcome guide progress" aria-valuemin="1" aria-valuemax="${steps.length}"><div class="welcome-progress-fill"></div></div><span class="welcome-progress-label"></span></div><div class="welcome-controls"><button class="welcome-back" type="button" aria-label="Previous step">←</button><button class="welcome-text-button" type="button">skip guide</button><button class="welcome-arrow" type="button"></button></div></footer></article>`;
-    document.body.appendChild(overlay);document.body.classList.add('cramchy-letter-open');
+    document.body.appendChild(overlay);lockPageScroll(overlay);
     overlay.querySelector('.cramchy-letter-close').addEventListener('click',finish);
     overlay.querySelector('.welcome-back').addEventListener('click',()=>move(-1));
     overlay.querySelector('.welcome-arrow').addEventListener('click',()=>move(1));
