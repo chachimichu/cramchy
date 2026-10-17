@@ -1,5 +1,17 @@
-/* Preview-only: use one clean surface for the home summary cards. */
-#view-dashboard .home-status-card{
+/* Theme-aware flat surfaces preview. Keep existing accents, remove page and card gradients. */
+html,body{
+  background-color:var(--app-bg-1)!important;
+  background-image:none!important;
+}
+main,.view,#view-dashboard,#view-courses,#view-tasks,#view-planner,#view-study,#view-grades,#view-more{
+  background-color:transparent!important;
+  background-image:none!important;
+}
+:is(.card,.panel,.closest-exam,.exam-entry-card,.smart-study-card,.daily-stat,.course-card,.task-card,.exam-card,.modal-content,.modal-box,.more-card,.grade-card,.subject-card,.planner-panel,.planner-card,.home-command-panel,.home-planner-reminders,.home-status-card,.home-theme-surface,.home-next-exam,.home-exam-banner-compact,.home-recommend-card,.home-course,.gw-tool-card,.gw-course-card,.gw-metric,.gw-category,.gw-coverage,.tw-entry){
   background-color:var(--ivory)!important;
+  background-image:none!important;
+}
+:is(.cramchy-home-header,.planner-hero-card,#dailyCountdownBox){
+  background-color:var(--app-bg-2)!important;
   background-image:none!important;
 }
