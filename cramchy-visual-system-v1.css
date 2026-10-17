@@ -1,0 +1,214 @@
+/* Cramchy visual system preview. Colors are owned by the selected theme tokens. */
+:root{
+  --bg:#f6f4e8;--card:#fffef9;--ink:#33402a;--line:var(--ink);
+  --accent:#f08fb0;--accent-strong:#cc4a78;--soft:#dfe9c8;--secondary:#9db97a;--on-accent:var(--ink);
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;
+  --radius-card:17px;--radius-control:13px;
+  --font-ui:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif;
+  --font-display:'DynaPuff','Plus Jakarta Sans',cursive;
+}
+body[data-theme="strawberry-milk"]{
+  --bg:#fff0f5;--card:#ffffff;--ink:#3d2420;--line:var(--ink);
+  --accent:#f684b0;--accent-strong:#d94b86;--soft:#ffd9e6;--secondary:#b8d4b4;--on-accent:var(--ink);
+}
+body[data-theme="strawberry-matcha"]{
+  --bg:#f6f4e8;--card:#fffef9;--ink:#33402a;--line:var(--ink);
+  --accent:#f08fb0;--accent-strong:#cc4a78;--soft:#dfe9c8;--secondary:#9db97a;--on-accent:var(--ink);
+}
+body[data-theme="matcha-latte"]{
+  --bg:#f4f1e1;--card:#fffef8;--ink:#2f3a24;--line:var(--ink);
+  --accent:#a5c47e;--accent-strong:#5f8a3a;--soft:#e3ecce;--secondary:#e8dcc0;--on-accent:var(--ink);
+}
+body[data-theme="lavender"]{
+  --bg:#f4effb;--card:#ffffff;--ink:#3b2b52;--line:var(--ink);
+  --accent:#b9a3e3;--accent-strong:#7a56c2;--soft:#e3d9f7;--secondary:#cfd9f5;--on-accent:var(--ink);
+}
+body[data-theme="mocha"]{
+  --bg:#f6ece2;--card:#fffaf5;--ink:#3a2418;--line:var(--ink);
+  --accent:#c9956f;--accent-strong:#8a4b2a;--soft:#ead7c4;--secondary:#d8b89a;--on-accent:var(--ink);
+}
+body[data-theme="blueberry-milk"]{
+  --bg:#eef3fc;--card:#ffffff;--ink:#1f2f5c;--line:var(--ink);
+  --accent:#7f9de0;--accent-strong:#3f5fc0;--soft:#d6e2f8;--secondary:#c7d6f5;--on-accent:var(--ink);
+}
+body[data-theme="dark-study"]{
+  color-scheme:dark;
+  --bg:#1c1a21;--card:#27232e;--ink:#f2e8ee;--line:#6b6178;
+  --accent:#9fbf9a;--accent-strong:#f2a0bd;--soft:#332f3a;--secondary:#8fa98a;--on-accent:#1c1a21;
+}
+body{
+  --app-bg-1:var(--bg);--app-bg-2:var(--bg);--app-bg-3:var(--bg);
+  --bg-orb-1:var(--bg);--bg-orb-2:var(--bg);
+  --text-main:var(--ink);--text-soft:var(--ink);--planner-deep:var(--ink);
+  --planner-text:var(--ink);--planner-muted:var(--ink);--planner-line:var(--line);
+  --planner-card:var(--card);--planner-pink:var(--accent);--planner-rose:var(--accent-strong);
+  --planner-soft:var(--soft);--planner-cream:var(--bg);
+  --cram-deep:var(--ink);--cram-muted:var(--ink);--cram-line:var(--line);--cram-rose:var(--accent-strong);
+  --pink-blush:var(--soft);--pink-cream:var(--card);--pink-soft:var(--line);
+  --pink-bubblegum:var(--accent);--pink-strawberry:var(--accent);--red-berry:var(--accent-strong);
+  --red-deep:var(--ink);--ivory:var(--card);--cream:var(--bg);
+  --matcha:var(--secondary);--matcha-dark:var(--ink);--matcha-pale:var(--soft);
+  --shadow:none;--shadow-sm:none;--border:var(--line);--border-soft:var(--line);
+  background:var(--bg)!important;color:var(--ink)!important;font:400 1rem/1.55 var(--font-ui)!important;
+}
+*,*::before,*::after{
+  box-shadow:none!important;text-shadow:none!important;backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;background-image:none!important;filter:none!important;
+}
+html{background:var(--bg)!important;scroll-behavior:smooth}
+body,main,.view,.daily-home,.planner-page{background:var(--bg)!important;color:var(--ink)!important}
+body :is(h1,h2,h3,h4,h5,h6,p,label,small,li,dt,dd,th,td,legend,summary,.hint,.small-note,.small,.section-title,.gw-eyebrow,.gw-path,.planner-label,.planner-weekday,.planner-time-label){
+  color:var(--ink)!important;font-family:var(--font-ui)!important;letter-spacing:normal!important;text-transform:none!important;
+}
+h1,h2,.hero h1,.planner-head h2,.planner-hero-copy h2,.cramchy-home-copy .big-greeting{
+  font-family:var(--font-display)!important;line-height:1.12!important;letter-spacing:normal!important;
+}
+h1{font-size:clamp(1.8rem,4vw,2.5rem)!important}
+h2{font-size:clamp(1.45rem,3vw,1.9rem)!important}
+h3{font-size:1.12rem!important;line-height:1.3!important}
+h4{font-size:1rem!important}
+p,li,label{font-size:.95rem;line-height:1.55}
+small,.small-note,.hint,.daily-stat .label,.planner-label{font-size:.78rem!important;line-height:1.4}
+.section-title{font-size:1.18rem!important;font-weight:800!important;margin:24px 0 12px!important}
+main{width:min(100%,1240px)!important;margin-inline:auto!important;padding:var(--space-5) clamp(14px,2.5vw,28px) 48px!important}
+:is(.grid,.settings-grid,.daily-stats,.daily-columns,.home-command-grid,.home-status-strip,.gw-tool-grid,.gw-course-grid,.gw-metrics,.course-grid,.task-grid){
+  min-width:0;gap:var(--space-4)!important
+}
+:is(.card,.panel,.closest-exam,.exam-entry-card,.smart-study-card,.daily-stat,.course-card,.task-card,.exam-card,.modal-content,.modal-box,.more-card,.grade-card,.subject-card,.course-modal,.planner-modal,.planner-modal-card,.planner-panel,.planner-card,.planner-hero-card,.home-command-panel,.home-planner-reminders,.home-status-card,.gw-tool-card,.gw-course-card,.gw-metric,.gw-category,.gw-coverage,.tw-entry,.course-strip>.card){
+  min-width:0!important;background:var(--card)!important;color:var(--ink)!important;
+  border:2px solid var(--line)!important;border-radius:var(--radius-card)!important;
+  padding:18px!important;box-shadow:none!important
+}
+:is(.card,.panel,.planner-panel,.planner-card,.gw-tool-card,.gw-course-card,.gw-metric,.gw-category,.gw-coverage,.tw-entry) :is(h2,h3,h4,p,span,strong,b,label,small){
+  color:var(--ink)!important
+}
+:is(.home-command-panel,.home-status-card,.home-planner-reminders,.planner-panel,.planner-card,.gw-tool-card,.gw-course-card,.gw-metric,.gw-category,.gw-coverage){padding:18px!important}
+.home-status-card{min-height:88px!important}
+.home-status-card::before,.home-heading-dot{display:none!important;content:none!important}
+.home-heading-note{display:none!important}
+.home-status-card .value,.daily-stat .value,.stat-card .num,.countdown-precise{
+  color:var(--ink)!important;font-family:var(--font-display)!important;font-size:1.45rem!important;line-height:1.2!important;
+}
+.daily-stat .value#dailyNextClass{
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;
+  font:800 1.1rem/1.25 var(--font-ui)!important;overflow-wrap:anywhere
+}
+.home-next-course-time{font:600 .78rem/1.35 var(--font-ui)!important;color:var(--ink)!important}
+.daily-stat .label{margin-top:5px!important;font-weight:700!important}
+#dailyCountdownBox{
+  min-height:190px!important;padding:clamp(22px,4vw,36px)!important;
+  border-color:var(--accent-strong)!important;box-shadow:5px 5px 0 var(--accent)!important;
+}
+#dailyCountdownBox h3{font-size:clamp(1.2rem,2.2vw,1.6rem)!important}
+#dailyCountdownBox .tag,.home-next-exam .tag,.next-tag{
+  display:inline-flex!important;align-items:center!important;min-height:30px!important;
+  padding:5px 10px!important;border:2px solid var(--line)!important;border-radius:var(--radius-control)!important;
+  background:var(--accent)!important;color:var(--on-accent)!important;font-weight:800!important
+}
+#dailyCountdownBox .countdown-big,.countdown-big,.countdown-precise{
+  margin-top:12px!important;color:var(--ink)!important;font:800 clamp(2rem,5vw,3.1rem)/1.08 var(--font-display)!important;
+  font-variant-numeric:tabular-nums
+}
+.home-theme-surface,.home-next-exam,.home-exam-banner-compact{background:var(--card)!important}
+.home-coming-panel #dailyCountdownBox:has(h3)~.home-upcoming-content #dailyUpcomingList .upcoming-item:first-child{display:none!important}
+#dailyUpcomingList:has(.upcoming-item:only-child)::after{
+  content:"No other exams coming up";display:block;padding:12px 0;color:var(--ink);font-size:.88rem
+}
+.cramchy-home-header,.planner-hero-card,.home-exam-banner-compact{
+  background:var(--card)!important;border:2px solid var(--line)!important;border-radius:18px!important;
+  padding:clamp(18px,3vw,28px)!important;box-shadow:none!important
+}
+.cramchy-home-logo-zone,.planner-logo-wrap,.home-study-sticker{
+  position:relative!important;display:grid!important;place-items:center!important;
+  min-width:0!important;padding:12px!important;background:var(--soft)!important;
+  border:2px solid var(--line)!important;border-radius:18px!important;box-shadow:none!important
+}
+:is(.cramchy-home-logo,.planner-main-logo,.cramchy-home-illustration,.home-study-sticker img){max-width:100%!important;max-height:210px!important;object-fit:contain!important}
+.cramchy-home-sparkle,.planner-sticker,.cramchy-sticker{filter:none!important;box-shadow:none!important}
+.home-command-grid{grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr)!important}
+.daily-columns{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.home-status-strip,.daily-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+:is(.btn,.quick-add-main,.planner-primary,.planner-light,.planner-add,.planner-danger,.home-planner-open,.navbtn,.subject-tab-btn,.planner-tabs button,.planner-view-tabs button,.tab-btn,.gw-back,.gw-period-tabs button,.tw-status button,.tw-filters button,.chips button,.home-calendar-day,.home-calendar-today,.planner-month-grid button,.planner-week-grid button,.planner-day-grid button,.planner-event-pill,.planner-more,.planner-nav button,.home-calendar-month button,.modal-actions button,.planner-modal-actions button,.ask-cramchy-send,.ask-cramchy-chip,.font-size-option,.theme-choice,.more-shortcut){
+  min-height:40px!important;border:2px solid var(--line)!important;border-radius:var(--radius-control)!important;
+  background:var(--card)!important;color:var(--ink)!important;font:700 .9rem/1.3 var(--font-ui)!important;
+  letter-spacing:normal!important;text-transform:none!important;box-shadow:none!important;filter:none!important;
+  transition:background-color .16s ease,color .16s ease,transform .16s ease!important
+}
+:is(.btn,.quick-add-main,.planner-primary,.planner-add,.home-planner-open,.ask-cramchy-send,.onboard-start){
+  background:var(--accent)!important;color:var(--on-accent)!important;
+  border-color:var(--line)!important;box-shadow:5px 5px 0 var(--accent)!important
+}
+:is(.btn.secondary,.planner-light,.btn.ghost,.planner-danger,.btn.danger,.more-shortcut){
+  background:var(--soft)!important;color:var(--ink)!important
+}
+:is(.navbtn.active,.subject-tab-btn.active,.planner-tabs button.active,[aria-pressed="true"],.gw-period-tabs button[aria-pressed="true"],.tw-status button[aria-pressed="true"],.tw-filters button[aria-pressed="true"],.font-size-option[aria-pressed="true"],.theme-choice.selected){
+  background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--line)!important
+}
+:is(button,a,.btn,.navbtn,.planner-event-pill,.theme-choice,.font-size-option):hover{transform:translateY(-1px)}
+:is(.btn,.quick-add-main,.planner-primary,.planner-add,.home-planner-open,.ask-cramchy-send):hover{background:var(--accent-strong)!important;color:var(--on-accent)!important}
+:is(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--accent-strong)!important;outline-offset:2px!important;box-shadow:none!important
+}
+:is(input[type="text"],input[type="search"],input[type="date"],input[type="time"],input[type="number"],input[type="email"],input[type="password"],textarea,select,.planner-form input,.planner-form select){
+  width:auto;max-width:100%;min-height:42px!important;border:2px solid var(--line)!important;border-radius:var(--radius-control)!important;
+  background:var(--card)!important;color:var(--ink)!important;font:500 .95rem/1.4 var(--font-ui)!important;padding:10px 12px!important
+}
+:is(input,textarea,select)::placeholder{color:var(--ink)!important;opacity:.78}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--accent-strong)!important}
+:is(.mission-row,.topic-row,.planner-next,.planner-legend span,.home-planner-reminder,.home-planner-reminder-tag,.tw-badge,.tw-group h3,.home-calendar-day-heading,.gw-context,.gw-coverage-track,.gw-period-tabs,.gw-category-heading,.gw-subject-toolbar,.planner-tabs,.planner-nav,.planner-modal-head,.planner-modal-actions,.home-calendar-month){
+  background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important
+}
+:is(.home-planner-reminder-dot,.planner-dot,.home-calendar-dots i,.planner-event-pill i){background:var(--accent)!important;color:var(--on-accent)!important}
+:is(.planner-month-grid,.planner-week-grid,.planner-day-grid,.home-calendar-grid,.home-calendar-agenda,.planner-agenda,.planner-week-scroll){
+  min-width:0!important;background:var(--card)!important;color:var(--ink)!important;border-color:var(--line)!important
+}
+:is(.planner-day-cell,.planner-weekday,.planner-week-head,.home-calendar-day,.home-calendar-weekday,.planner-agenda-item,.planner-event-pill,.home-planner-reminder){
+  border:2px solid var(--line)!important;border-radius:var(--radius-control)!important;background:var(--card)!important;color:var(--ink)!important
+}
+.planner-date-num.today,.home-calendar-day.is-today{background:var(--accent)!important;color:var(--on-accent)!important;border:2px solid var(--line)!important}
+:is(.planner-modal-backdrop,.modal-scrim,.modal-backdrop,.ask-cramchy-backdrop){
+  background:color-mix(in srgb,var(--ink) 44%,transparent)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+}
+:is(.modal-content,.modal-box,.course-modal,.planner-modal,.planner-modal-card,.quick-add-modal,.cramchy-onboard-card,.ask-cramchy-panel,.gw-modal-card){
+  width:min(100%,720px)!important;max-width:calc(100vw - 24px)!important;max-height:min(88dvh,900px)!important;
+  overflow:auto!important;background:var(--card)!important;color:var(--ink)!important;border:2px solid var(--line)!important;
+  border-radius:18px!important;box-shadow:none!important
+}
+:is(.home-empty,.shell-empty,.tw-empty,.gw-empty,.home-calendar-empty,.planner-empty,.empty-state,[class*="empty"]){
+  color:var(--ink)!important;background:var(--soft)!important;border:2px solid var(--line)!important;border-radius:16px!important
+}
+:is(.planner-progress,.progress-bar-track,.pbar,.gw-meter,.tw-progress){background:var(--soft)!important;border:1px solid var(--line)!important}
+:is(.planner-progress-fill,.progress-bar-fill,.pbar b,.gw-meter i,.tw-progress i){background:var(--accent)!important}
+:is(.gw-course-card,.gw-tool-card,.theme-choice,.font-size-option){color:var(--ink)!important}
+:is(.gw-course-card,.gw-tool-card,.theme-choice,.font-size-option) :is(h2,h3,h4,p,span,strong,b,small){color:inherit!important}
+:is(.home-task-row,.tw-entry,.gw-score-row,.gw-category,.planner-agenda-item,.planner-legend span){
+  overflow-wrap:anywhere;min-width:0
+}
+#view-dashboard .home-command-panel .home-command-heading{gap:var(--space-2)!important}
+#view-dashboard :is(.home-today-panel,.home-coming-panel,.home-recommend-panel,.home-courses-section){background:var(--card)!important}
+#view-dashboard .home-command-panel .home-command-heading h3{font-size:1.12rem!important}
+#view-dashboard .daily-stats .daily-stat{padding:14px!important}
+#view-dashboard .daily-stats .daily-stat.status-exam{border-color:var(--line)!important}
+#view-dashboard .home-exam-banner-compact{min-height:0!important}
+:is(.gw-equivalent,.gw-period-heading,.gw-category-empty,.gw-path,.planner-empty,.home-calendar-hint){color:var(--ink)!important}
+@media(max-width:900px){
+  .home-command-grid{grid-template-columns:minmax(0,1fr)!important}
+  .daily-columns{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .home-status-strip,.daily-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .cramchy-home-header,.planner-hero-card{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:600px){
+  main{padding:14px 12px 36px!important}
+  :is(.card,.panel,.closest-exam,.exam-entry-card,.smart-study-card,.daily-stat,.course-card,.task-card,.exam-card,.modal-content,.modal-box,.more-card,.grade-card,.subject-card,.planner-panel,.planner-card,.home-command-panel,.gw-tool-card,.gw-course-card,.gw-metric,.gw-category){padding:14px!important}
+  .daily-columns{grid-template-columns:minmax(0,1fr)!important}
+  .home-status-strip,.daily-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .home-status-card{min-height:78px!important}
+  #dailyCountdownBox{min-height:170px!important}
+  #dailyCountdownBox .countdown-big{font-size:2rem!important}
+  :is(.planner-month-grid,.home-calendar-grid){gap:4px!important}
+  :is(.planner-day-cell,.home-calendar-day){min-width:0!important;padding:5px!important}
+  :is(.modal-actions,.planner-modal-actions){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}

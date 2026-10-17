@@ -2178,7 +2178,13 @@ function renderDailyHome(){
   const greeting=h<5?'why are we still awake':h<12?'good morning':h<18?'good afternoon':'good evening';
   const dg=document.getElementById('dailyGreeting'); if(dg) dg.textContent=`${greeting}, ${name}.`;
   const dm=document.getElementById('dailyMeta'); if(dm) dm.textContent=`${state.profile?.term||'Term 1'} · ${state.profile?.academicYear||''}`;
-  const nc=document.getElementById('dailyNextClass'); if(nc)nc.textContent=nextCourseLabel();
+  const nc=document.getElementById('dailyNextClass');
+  if(nc){
+    const course=(state.courses||[])[0];
+    const start=course?.schedules?.find(item=>item&&item.start)?.start||'';
+    const meeting=start?new Date(`1970-01-01T${start}`).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):(course?.schedule||'');
+    nc.innerHTML=`<span>${escapeHtml(nextCourseLabel())}</span>${meeting?`<small class="home-next-course-time">${escapeHtml(meeting)}</small>`:''}`;
+  }
   const st=document.getElementById('dailyStudyTime'); if(st)st.textContent=formatStudyMinutes(minutesToday());
   const ed=document.getElementById('dailyExamDays'); if(ed)ed.textContent=nextExamDays();
   renderDailyCountdown();
