@@ -186,11 +186,11 @@ button.blk{padding:0;cursor:pointer;font:inherit}.in .blk:hover{transform:transl
 @keyframes chip-label{50%{transform:rotate(4deg) translateY(-3px)}}
 @keyframes star-bob{to{translate:0 -5px;rotate:8deg}}
 .grade-demo{width:min(100%,330px)}
-.grade-demo .bars{justify-content:center;gap:14px;height:177px;padding:8px 14px 0;border-bottom:2px solid var(--brown);border-radius:8px 8px 0 0;background:rgba(255,255,255,.3)}
+.grade-demo .bars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));justify-items:center;align-items:end;width:100%;gap:0;height:177px;padding:8px 14px 0;border-bottom:2px solid var(--brown);border-radius:8px 8px 0 0;background:rgba(255,255,255,.3)}
 .grade-demo .bars button{position:relative;display:flex;align-items:flex-start;justify-content:center;width:42px;height:calc(var(--score,70)*1.45px);max-height:145px;padding:5px 2px 0;border:2px solid var(--brown);border-bottom:0;border-radius:11px 11px 0 0;background:var(--pink);font:800 .68rem Nunito,sans-serif;color:var(--brown);transition:height .5s cubic-bezier(.2,.9,.3,1.2),transform .2s;overflow:visible}
 .grade-demo .bars button:nth-child(2){background:#d9c8e8}.grade-demo .bars button:nth-child(3){background:#c9d9b9}.grade-demo .bars button:nth-child(4){background:var(--berry);color:white}
-.grade-demo .bars button span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.65rem}
-.grade-legend{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:5px 14px 0;color:#80645b;font-size:.55rem;font-weight:800;text-align:center;letter-spacing:.04em}
+.grade-demo .bars button span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--brown)}
+.grade-legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;gap:0;padding:5px 14px 0;color:#80645b;font-size:.55rem;font-weight:800;text-align:center;letter-spacing:.04em}
 .grade-demo .count{margin:10px 0 0;color:var(--soft);font-size:.82rem}
 .tabs .card{border:2px solid var(--brown);box-shadow:3px 3px 0 var(--pink)}
 .topics label{padding:4px 2px}
@@ -213,7 +213,7 @@ button.blk{padding:0;cursor:pointer;font:inherit}.in .blk:hover{transform:transl
 <section class="hero wrap" aria-labelledby="h1">
  <div class="bgh" id="bgh" aria-hidden="true"></div>
  <h1 id="h1"><span>plan</span> <span>at</span> <span>your</span> <span>own pace.</span></h1>
- <p>I wanted one place for classes, deadlines, exam prep, and grades. Nothing I found fit the way I needed, so I started building Cramchy for myself.</p>
+ <p>Classes, tasks, exam prep, and grades in one place, so it’s easier to keep your academic life moving.</p>
  <label class="pace"><span>pace</span><input id="pace" type="range" min="0.3" max="3" step="0.1" value="1" aria-label="Adjust the speed of the floating hearts"><span id="pl">steady</span></label>
  <div class="fl f1" data-speed="-.12"><div class="card"><div class="tick done"><i></i>read chapter</div><div class="tick" style="margin-top:8px"><i></i>quiz review</div></div></div>
  <div class="fl f2" data-speed=".1"><div><svg class="ringmini" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="38" fill="#fff" stroke="#3d2420" stroke-width="3"/><circle cx="50" cy="50" r="38" fill="none" stroke="#f684b0" stroke-width="12" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="70" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-family="Fraunces,serif" font-weight="800" font-size="18" fill="#3d2420">25:00</text></svg></div></div>
@@ -223,8 +223,8 @@ button.blk{padding:0;cursor:pointer;font:inherit}.in .blk:hover{transform:transl
 <div class="mqw" aria-hidden="true"><div class="mq"><div class="mqt" id="mqt"></div></div></div>
 
 <section class="story wrap" id="why">
- <p class="big">I'm Charlene, a BS Psychology student at <mark>National University–Clark</mark>. I kept cramming for quizzes, exams, and deadlines, and wanted one app that could hold my school life together.</p>
- <p class="sub rv">I couldn't find one that worked the way I needed, so I made one. It started as my first app and a little side quest; then I shared it with friends and other students.</p>
+ <p class="big">Trying to get your academic life together, one class, deadline, and study session at a time.</p>
+ <p class="sub rv">Cramchy keeps courses, weekly schedules, tasks, exam prep, study sessions, and grades in one place—so you can see what’s next and take it step by step.</p>
 </section>
 
 <div class="wrap">
@@ -251,15 +251,15 @@ button.blk{padding:0;cursor:pointer;font:inherit}.in .blk:hover{transform:transl
 
 
  <section class="name-origin rv" id="name-origin" aria-labelledby="name-title">
-  <div class="name-origin-copy"><p class="name-kicker">the name has a snack story</p><h2 id="name-title">Cram + chips<br><em>= Cramchy.</em></h2><p>“Cram” came from how I was always cramming. “Chy” came from the chips I was eating when I thought of the name. Cramchy sounded a little like “crunchy,” and it stuck.</p></div>
+  <div class="name-origin-copy"><p class="name-kicker">the name has a snack story</p><h2 id="name-title">Cram + chips<br><em>= Cramchy.</em></h2><p>“Cram” came from all the cramming. “Chy” came from the chips I was eating when the name came to mind. Cramchy sounded a little like “crunchy,” and it stuck.</p></div>
   <div class="chip-scene" aria-hidden="true"><span class="chip-shape chip-a"></span><span class="chip-shape chip-b"></span><span class="chip-shape chip-c"></span><span class="chip-crunch">crunch!</span><span class="chip-stars">✦ &nbsp; ✳</span></div>
  </section>
  <section class="who" id="who">
   <figure class="photo rv"><img src="/assets/charlene-about.jpg" alt="Charlene Mikaela D. Caco at a café" width="1536" height="2048" loading="lazy"></figure>
   <div class="rv">
-   <h2>Made by Charlene Mikaela D. Caco</h2>
-   <p>I’m a BS Psychology student at National University–Clark. Cramchy is my first app, built from a problem I kept running into myself.</p>
-   <p>Cramchy is for any student. The gradebook is the NU-specific part at the moment; it is built around National University’s grading system.</p>
+   <h2>The student behind Cramchy</h2>
+   <p>I’m Charlene Mikaela D. Caco, a BS Psychology student at National University–Clark. I built Cramchy after I couldn’t find one app that handled my school life the way I needed. It began as my first app and a small side quest; then I shared it with friends and other students.</p>
+   <p>Cramchy is for any student. The gradebook is the NU-specific part at the moment; it follows National University’s grading system.</p>
    <p class="note">It’s an independent student project, not an official NU app.</p>
    <a class="pill cta" href="/">plan at your own pace</a>
   </div>
