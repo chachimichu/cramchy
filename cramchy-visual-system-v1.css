@@ -214,3 +214,40 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--accent-strong)!imp
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+/* Preview refinement: softer outlines, quieter tabs, and a working flat boot indicator. */
+body{--line-soft:color-mix(in srgb,var(--line) 24%,var(--card))}
+:is(.card,.panel,.closest-exam,.exam-entry-card,.smart-study-card,.daily-stat,.course-card,.task-card,.exam-card,.modal-content,.modal-box,.more-card,.grade-card,.subject-card,.course-modal,.planner-modal,.planner-modal-card,.planner-panel,.planner-card,.planner-hero-card,.home-command-panel,.home-planner-reminders,.home-status-card,.gw-tool-card,.gw-course-card,.gw-metric,.gw-category,.gw-coverage,.tw-entry,.course-strip>.card){
+  border:1px solid var(--line-soft)!important;
+}
+:is(.btn,.quick-add-main,.planner-primary,.planner-light,.planner-add,.planner-danger,.navbtn,.subject-tab-btn,.planner-tabs button,.planner-view-tabs button,.tab-btn,.gw-back,.gw-period-tabs button,.tw-status button,.tw-filters button,.chips button,.home-calendar-day,.home-calendar-today,.planner-month-grid button,.planner-week-grid button,.planner-day-grid button,.planner-event-pill,.planner-more,.planner-nav button,.home-calendar-month button,.modal-actions button,.planner-modal-actions button,.ask-cramchy-send,.ask-cramchy-chip,.font-size-option,.theme-choice,.more-shortcut){
+  border-width:1px!important;border-color:var(--line-soft)!important;
+}
+:is(.navbtn,.subject-tab-btn,.planner-tabs button,.planner-view-tabs button,.tab-btn,.gw-period-tabs button,.tw-status button,.tw-filters button){
+  border-color:transparent!important;background:transparent!important;border-radius:12px!important;
+}
+:is(.navbtn.active,.subject-tab-btn.active,.planner-tabs button.active,.planner-view-tabs button.active,.tab-btn.active,.gw-period-tabs button[aria-pressed="true"],.tw-status button[aria-pressed="true"],.tw-filters button[aria-pressed="true"]){
+  border-color:transparent!important;background:var(--soft)!important;color:var(--ink)!important;
+}
+#cramchyBootSplash{
+  background:var(--bg)!important;background-image:none!important;filter:none!important;
+}
+#cramchyBootSplash::before,#cramchyBootSplash::after{display:none!important}
+.cramchy-boot-shell{
+  background:var(--card)!important;background-image:none!important;color:var(--ink)!important;
+  border:1px solid var(--line-soft)!important;border-radius:24px!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.cramchy-boot-wordmark,.cramchy-boot-sub,.cramchy-boot-copy{color:var(--ink)!important;text-shadow:none!important}
+.cramchy-boot-wordmark{font-family:var(--font-display)!important;letter-spacing:normal!important}
+.cramchy-boot-sub,.cramchy-boot-copy{font-family:var(--font-ui)!important;letter-spacing:normal!important;text-transform:none!important}
+.cramchy-boot-progress{
+  height:10px!important;padding:1px!important;background:var(--soft)!important;
+  border:1px solid var(--line-soft)!important;box-shadow:none!important;
+}
+.cramchy-boot-progress span{
+  background:var(--accent)!important;background-image:none!important;
+  box-shadow:none!important;animation:cramchyBootFill 1.75s cubic-bezier(.22,.75,.22,1) infinite!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .cramchy-boot-progress span{animation:none!important;transform:scaleX(.72)!important;opacity:.85!important}
+}
