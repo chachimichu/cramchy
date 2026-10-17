@@ -54,7 +54,7 @@
   [id*="onboard" i][class*="card" i],
   [id*="profile" i][class*="modal" i],
   [id*="auth" i][class*="modal" i],
-  [role="dialog"]:not(.planner-modal){
+  [role="dialog"]:not(.planner-modal):not(.cramchy-letter-card){
     position:relative!important;
     inset:auto!important;
     left:auto!important;
@@ -81,7 +81,7 @@
   .welcome-card *,
   .onboarding-card *,
   .auth-card *,
-  [role="dialog"]:not(.planner-modal) *{
+  [role="dialog"]:not(.planner-modal):not(.cramchy-letter-card) *{
     max-width:100%;
     box-sizing:border-box;
   }
@@ -94,9 +94,9 @@
   .welcome-card input,
   .onboarding-card input,
   .auth-card input,
-  [role="dialog"]:not(.planner-modal) input,
-  [role="dialog"]:not(.planner-modal) select,
-  [role="dialog"]:not(.planner-modal) textarea{
+  [role="dialog"]:not(.planner-modal):not(.cramchy-letter-card) input,
+  [role="dialog"]:not(.planner-modal):not(.cramchy-letter-card) select,
+  [role="dialog"]:not(.planner-modal):not(.cramchy-letter-card) textarea{
     width:100%!important;
     max-width:100%!important;
     min-width:0!important;
