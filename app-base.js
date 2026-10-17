@@ -4369,4 +4369,23 @@ window.CramchyGradebookBridge={
   get selectedGradeCourseId(){return selectedGradeCourseId;}, set selectedGradeCourseId(value){selectedGradeCourseId=value;},
   get selectedGradePeriod(){return selectedGradePeriod;}, set selectedGradePeriod(value){selectedGradePeriod=value;}
 };
+/* Read-only exam context for Ask Cramchy. */
+window.CramchyExamBridge={
+  upcomingExams(period=null){
+    const now=Date.now();
+    return askAllExamItems().filter(item=>item.exam&&(!period||item.period===period)&&askExamState(item.exam,now)==='upcoming').map(item=>({
+      id:String(item.exam.id||''),name:String(item.exam.name||'Unnamed exam'),period:item.period,
+      start:String(item.exam.start||''),end:String(item.exam.end||''),date:askPrettyDate(item.when),
+      time:formatExamTime(item.exam.start),room:String(item.exam.room||'')
+    }));
+  },
+  inProgressExams(period=null){
+    const now=Date.now();
+    return askAllExamItems().filter(item=>item.exam&&(!period||item.period===period)&&askExamState(item.exam,now)==='in-progress').map(item=>({
+      id:String(item.exam.id||''),name:String(item.exam.name||'Unnamed exam'),period:item.period,
+      start:String(item.exam.start||''),end:String(item.exam.end||''),date:askPrettyDate(item.when),
+      time:formatExamTime(item.exam.start),room:String(item.exam.room||'')
+    }));
+  }
+};
 })();

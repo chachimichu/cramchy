@@ -25,7 +25,7 @@
   }
   function introText(){return 'hiii, '+userName()+' what are we working on today? ask me anything about Cramchy or your school stuff.';}
   function loreAnswer(){
-    return "okay, "+userName()+", here's the Cramchy lore it started as a little side quest by Charlene Mikaela D. Caco, a Psychology student from NU Clark—and it was literally her first time building an app. she used to cram for basically everything: quizzes, exams, deadlines, any chance she got. so she made Cramchy to help herself get organized and slowly beat the cramming-and-procrastinating cycle. the name happened in the most unserious way too: “cram” came from all the cramming, “chy” came from her nickname Chachi and gaming username chachimi, and “Cramchy” sounded like “crunchy” because she was eating chips when she thought of it LOL. it was originally just for her, but she ended up sharing it with friends and other students who might need it too. it’s still growing and it isn’t perfect, but that’s part of the lore—it’s a real first project built around what its developer actually needed.";
+    return "Cramchy started because Charlene wanted one app that could keep her school life together, but couldn’t find one that fit what she needed, so she built it for herself and later shared it with other students. The name combines “cram,” because she used to cram for quizzes, exams, and deadlines, with “Chy,” inspired by the chips she was eating when she came up with the name. Cramchy is for any student. Its gradebook currently follows the National University grading system, but Cramchy is an independent student project, not an official NU app.";
   }
   function plannerEvents(){
     const events=readJson(PLANNER_KEY,[]);
@@ -255,6 +255,8 @@
     const about=/\b(cramchy|this app|the app|developer|creator|founder|built|made|features?|history|story|lore|name|called|cost|price|free|offline|privacy|data|account|cloud|home screen|install|favicon|icon|pwa|version|update|dashboard|courses page|tasks page|study timer|exam mode|settings)\b/;
     if(!about.test(q))return null;
 
+    if(has(q,/\babout( page| the app| cramchy)?\b|\btell me about\b/))return "Cramchy was built for students who want one place to get their academic life together. Charlene started it after she couldn’t find an app that fit her own needs, then shared it with other students. It’s for any student; the gradebook currently accommodates the National University grading system. Cramchy is an independent student project, not an official NU app. The name combines “cram” with “Chy,” inspired by the chips Charlene was eating when she named it.";
+
     if(has(q,/\b(who (built|made|created|developed)|developer|creator|founder)\b/))return "Cramchy was built by Charlene Mikaela D. Caco, a Psychology student from NU Clark it was her first time building an app, and it started as a side quest because she wanted one place that actually fit all her academic needs. she made it for herself first, then decided to share it with friends and other students too.";
     if(has(q,/\b(ai|artificial intelligence|chatgpt)\b.*\b(built|made|create|code|develop)|\b(built|made|coded|developed)\b.*\b(ai|chatgpt)\b/))return "short answer: Charlene Mikaela D. Caco built Cramchy. she’s a Psychology student from NU Clark, and this was her first time building an app. she came up with the whole concept, features, design direction, and tested everything around what she actually needed as a student. AI tools helped with parts of the coding, but the project and all the big decisions are hers.";
     if(has(q,/\blore\b|\b(history|origin|story|why (was|did).*made|purpose|mission)\b/))return loreAnswer();
@@ -301,8 +303,20 @@
     return 'ask away, '+userName()+' try things like:\n• “what’s on my Planner tomorrow?”\n• “what’s my Term GWA?”\n• “what’s the lore behind this app?”\n• “who built Cramchy?”\n• “how do I add an event?”\n• “what should I study next?”\nyou can also say “open Planner” or “show Quick GWA.”';
   }
 
+  function nextExamAnswer(q){
+    if(!/\b(next|upcoming|coming up|closest)\b.*\b(exam|midterms?|finals?)\b|\b(exam|midterms?|finals?)\b.*\b(next|upcoming|coming up|closest)\b/.test(q))return null;
+    const bridge=window.CramchyExamBridge;if(!bridge)return null;
+    const period=/\b(final|finals)\b/.test(q)?'finals':/\b(midterm|midterms)\b/.test(q)?'midterms':null;
+    const exam=bridge.upcomingExams(period)[0];
+    if(exam){const room=exam.room?' · room '+exam.room:'';return 'Your next '+(period?period.slice(0,-1)+' ':'')+'exam is **'+exam.name+'** on **'+exam.date+' at '+exam.time+'**'+room+'.';}
+    const active=bridge.inProgressExams(period)[0];
+    if(active)return '**'+active.name+'** is in progress right now. I don’t see another upcoming '+(period?period.slice(0,-1)+' ':'')+'exam saved after it.';
+    return 'I don’t see any upcoming '+(period?period.slice(0,-1)+' ':'')+'exams saved for your current term. Past exams are excluded. You can check your exam schedule in Exam Mode.';
+  }
+
   function answer(raw){
     const q=normalize(raw);if(!q)return null;
+    const nextExam=nextExamAnswer(q);if(nextExam)return {text:nextExam};
     const nav=navTarget(q);if(nav)return {text:'Opening '+nav.label+' for you.',action:()=>navigate(nav)};
     const help=helpAnswer(q);if(help)return {text:help};
     const grades=gradesAnswer(q);if(grades)return {text:grades};
@@ -377,13 +391,22 @@
     const archivedRelated=/\b(previous|last term|archived|past semester|earlier term)\b/.test(q);
     const raw={
       app:'Cramchy student planner',
+      about:'Cramchy was created by Charlene after she could not find one app that fit her academic needs. It is for any student. The gradebook currently follows the National University grading system. Cramchy is an independent student project, not an official NU app. The name combines cram (cramming) and Chy, inspired by the chips Charlene was eating when she named it.',
       profile:s.profile,
       currentTerm:{academicYear:s.profile?.academicYear||'2026–2027',term:currentTerm(s),examPeriod:s.examPeriod||null,examContext:s.examContext||null},
       courses:s.courses||[]
     };
     if(gradeRelated){raw.courseGradebook=s.gradebook||{};raw.termGwaRecords=readJson(GWA_KEY,{});raw.quickGwaRows=s.quickGwaRows||[];}
     if(plannerRelated){raw.tasks=s.missions||[];raw.plannerEvents=plannerEvents();}
-    if(studyRelated){raw.subjectProgress=s.subjects||{};raw.examData=s.examData||{};raw.studyHistory=s.studyHistory||[];}
+    if(studyRelated){
+      raw.subjectProgress=s.subjects||{};raw.examData=s.examData||{};raw.studyHistory=s.studyHistory||[];
+      if(/\b(next|upcoming|coming up|closest)\b.*\b(exam|midterms?|finals?)\b|\b(exam|midterms?|finals?)\b.*\b(next|upcoming|coming up|closest)\b/.test(q)&&window.CramchyExamBridge){
+        const period=/\b(final|finals)\b/.test(q)?'finals':/\b(midterm|midterms)\b/.test(q)?'midterms':null;
+        raw.referenceTime={now:new Date().toISOString(),local:new Date().toString(),timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone};
+        raw.upcomingExams=window.CramchyExamBridge.upcomingExams(period);
+        raw.inProgressExams=window.CramchyExamBridge.inProgressExams(period);
+      }
+    }
     if(archivedRelated)raw.archivedTerms=s.archivedTerms||[];
     const limits=[{string:500,array:50,keys:80},{string:320,array:30,keys:60},{string:180,array:14,keys:45},{string:100,array:8,keys:30},{string:60,array:4,keys:20},{string:30,array:2,keys:12}];
     for(const bound of limits){
