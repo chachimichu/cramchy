@@ -5,31 +5,31 @@
   const heartSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
   const heartColors = ['#f684b0', '#d94b86', '#ffb3cf', '#ff7aa5'];
 
-  // Small hearts lift gently from a click. Keep the burst close to the pointer.
-  function burst(x, y, amount = 6) {
+  // Restore Claude's fuller radial heart burst.
+  function burst(x, y, amount = 12) {
     if (reducedMotion) return;
     for (let i = 0; i < amount; i++) {
       const heart = document.createElement('span');
       heart.className = 'mh';
       heart.innerHTML = heartSvg;
-      const angle = (-151 + (i * 30 / Math.max(1, amount - 1)) + Math.random() * 12) * Math.PI / 180;
-      const distance = 30 + Math.random() * 30;
+      const angle = Math.PI * 2 * i / amount + Math.random() * .5;
+      const distance = 40 + Math.random() * 80;
       const dx = Math.cos(angle) * distance;
-      const dy = Math.sin(angle) * distance - 7;
-      heart.style.cssText = `left:${x}px;top:${y}px;width:${8 + Math.random() * 6}px;color:${heartColors[i % heartColors.length]}`;
+      const dy = Math.sin(angle) * distance;
+      heart.style.cssText = `left:${x}px;top:${y}px;width:${10 + Math.random() * 12}px;color:${heartColors[i % heartColors.length]}`;
       document.body.append(heart);
       heart.animate([
-        { transform: 'translate(-50%,-50%) scale(.35)', opacity: 0 },
-        { transform: 'translate(-50%,-50%) scale(1)', opacity: .95, offset: .16 },
-        { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.2) rotate(${Math.random() * 35 - 17}deg)`, opacity: 0 }
-      ], { duration: 560 + Math.random() * 130, easing: 'cubic-bezier(.2,.7,.25,1)' }).onfinish = () => heart.remove();
+        { transform: 'translate(-50%,-50%) scale(.4)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy - 20}px)) scale(1) rotate(${Math.random() * 80 - 40}deg)`, opacity: 1, offset: .6 },
+        { transform: `translate(calc(-50% + ${dx * 1.2}px),calc(-50% + ${dy * 1.2 + 30}px)) scale(.3) rotate(${Math.random() * 120 - 60}deg)`, opacity: 0 }
+      ], { duration: 800 + Math.random() * 500, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => heart.remove();
     }
   }
   addEventListener('pointerdown', (event) => burst(event.clientX, event.clientY), { passive: true });
   document.addEventListener('click', (event) => {
     if (event.detail !== 0) return;
-    const box = event.target.getBoundingClientRect();
-    burst(box.left + box.width / 2, box.top + box.height / 2);
+    const bounds = event.target.getBoundingClientRect();
+    burst(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
   });
 
   // The weekly board can be tapped to toggle its little sample class blocks.
@@ -117,6 +117,11 @@
     timerTick();
   });
   drawTimer();
+
+  // Claude's headline hover bounce needs its entrance animation to finish first.
+  document.querySelectorAll('.hero h1 span').forEach((word) => {
+    word.addEventListener('animationend', () => word.classList.add('done'), { once: true });
+  });
 
   // Separate Midterms and Finals demo state, with keyboard-accessible tabs.
   const examTabs = [...document.querySelectorAll('.tabbar [role="tab"]')];
@@ -269,6 +274,32 @@
   addEventListener('resize', onScroll);
   updateScroll();
 
+  // Claude's repeating left-moving feature marquee, with a still version for reduced motion.
+  let pace = 1;
+  const marquee = $('mqt');
+  const marqueeItems = ['courses', 'tasks', 'timers', 'midterms', 'finals', 'grades'];
+  if (marquee) {
+    const group = marqueeItems.map((item) => `<span>${item}</span><i>${heartSvg}</i>`).join('');
+    marquee.innerHTML = reducedMotion
+      ? marqueeItems.map((item) => `<span>${item}</span>`).join('')
+      : group.repeat(8);
+    if (!reducedMotion) {
+      let marqueeX = 0;
+      let scrollVelocity = 0;
+      let previousScroll = scrollY;
+      const moveMarquee = () => {
+        scrollVelocity = scrollVelocity * .92 + (scrollY - previousScroll) * .08;
+        previousScroll = scrollY;
+        marqueeX -= (.7 + Math.abs(scrollVelocity)) * pace;
+        const loopWidth = marquee.scrollWidth / 2;
+        if (loopWidth > 0 && marqueeX <= -loopWidth) marqueeX += loopWidth;
+        marquee.style.transform = `translateX(${marqueeX}px)`;
+        requestAnimationFrame(moveMarquee);
+      };
+      requestAnimationFrame(moveMarquee);
+    }
+  }
+
   if (reducedMotion) {
     if (progressBar) progressBar.style.display = 'none';
     return;
@@ -276,7 +307,6 @@
 
   // Drifting mini hearts, speed controlled by the tiny slider.
   const background = $('bgh');
-  let pace = 1;
   if (background) {
     for (let i = 0; i < 16; i++) {
       const piece = document.createElement('span');
@@ -364,17 +394,9 @@
     });
   });
 
-  // The portrait and feature illustrations tip a little with the pointer.
-  const photo = document.querySelector('.photo');
+  // Keep the creator portrait still on hover; retain the gentle tilt on feature art.
   const aboutSection = $('who');
-  if (finePointer && photo && aboutSection) {
-    aboutSection.addEventListener('pointermove', (event) => {
-      const rect = photo.getBoundingClientRect();
-      const dx = (event.clientX - rect.left - rect.width / 2) / rect.width;
-      const dy = (event.clientY - rect.top - rect.height / 2) / rect.height;
-      photo.style.transform = `perspective(800px) rotateY(${dx * 8}deg) rotateX(${dy * -8}deg)`;
-    });
-    aboutSection.addEventListener('pointerleave', () => { photo.style.transform = ''; });
+  if (finePointer && aboutSection) {
     document.querySelectorAll('.art').forEach((art) => {
       art.addEventListener('pointermove', (event) => {
         const rect = art.getBoundingClientRect();

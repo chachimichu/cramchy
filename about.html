@@ -111,9 +111,9 @@ header{display:flex;justify-content:space-between;align-items:center;padding:20p
 .bars button.hop{animation:hop .5s}
 @keyframes hop{40%{transform:scaleY(.85) scaleX(1.18)}70%{transform:scaleY(1.14) scaleX(.9)}}
 /* who */
-.who{display:grid;grid-template-columns:minmax(220px,360px) 1fr;gap:56px;align-items:center;padding:90px 0 70px}
+.who{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:56px;align-items:center;padding:90px 0 70px}
 .photo{margin:0;position:relative}
-.photo img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:200px 200px 28px 28px;border:2.5px solid var(--brown);box-shadow:10px 10px 0 var(--pink)}
+.photo img{display:block;width:min(100%,300px);height:auto;aspect-ratio:3/4;object-fit:contain;border-radius:200px 200px 28px 28px;border:2.5px solid var(--brown);box-shadow:10px 10px 0 var(--pink)}
 .who h2{font-size:clamp(2rem,4.5vw,3.4rem);margin-bottom:16px}
 .who p{max-width:44ch;margin:0 0 14px}
 .note{color:var(--soft);font-size:.98rem}
