@@ -1,0 +1,40 @@
+:root{color-scheme:light;--ink:#563b3d;--muted:#866d70;--pink:#d85d85;--pink-soft:#f7d9e2;--rose:#fff0f4;--cream:#fff8f4;--green:#dce9d8}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--cream)}
+body{margin:0;color:var(--ink);font-family:"Nunito",ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;background:radial-gradient(circle at 86% 12%,rgba(255,210,223,.62),transparent 27rem),linear-gradient(180deg,#fff9f6 0%,#fff5f7 100%);min-height:100vh}
+a{color:inherit}
+.public-nav,.public-footer{width:min(1100px,calc(100% - 40px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.public-nav{padding:24px 0}
+.wordmark{font-size:1.65rem;font-weight:1000;letter-spacing:.02em;text-decoration:none;color:#743f4c}
+.wordmark span,.dot{color:var(--pink)}
+.nav-link{font-weight:850;color:var(--pink);text-decoration:none;padding:10px 16px;border:1px solid var(--pink-soft);border-radius:999px;background:rgba(255,255,255,.75);transition:transform .18s ease,background .18s ease}
+.nav-link:hover,.primary-link:hover{transform:translateY(-2px)}
+main{width:min(1100px,calc(100% - 40px));margin:34px auto 66px}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.8fr);align-items:center;gap:52px;padding:clamp(30px,6vw,72px);border:1px solid rgba(229,174,190,.7);border-radius:38px;background:rgba(255,255,255,.83);box-shadow:0 22px 70px rgba(130,77,88,.1);overflow:hidden}
+.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:22%;top:-185px;background:var(--rose);pointer-events:none}
+.hero-copy,.hero-note{position:relative;z-index:1}
+.eyebrow{margin:0 0 12px;color:var(--pink);font-size:.77rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
+h1,h2,p{margin-top:0}
+h1{max-width:640px;margin-bottom:18px;font-size:clamp(3.2rem,8vw,6.4rem);line-height:.98;letter-spacing:-.055em;font-weight:1000;color:#54363b}
+h1 span{color:var(--pink)}
+.lead{max-width:620px;margin-bottom:15px;font-size:clamp(1.08rem,2vw,1.32rem);line-height:1.55;font-weight:700;color:#72595e}
+.byline{margin-bottom:26px;color:var(--muted)}
+.byline strong{color:var(--ink)}
+.primary-link{display:inline-flex;align-items:center;gap:14px;padding:13px 21px;border-radius:999px;background:linear-gradient(135deg,#ed87a7,#d65780);color:#fff;text-decoration:none;font-weight:950;box-shadow:0 10px 22px rgba(214,87,128,.22);transition:transform .18s ease,box-shadow .18s ease}
+.primary-link:hover{box-shadow:0 14px 27px rgba(214,87,128,.3)}
+.hero-note{padding:25px 27px 26px;border:1px solid #f2cfda;border-radius:28px;background:linear-gradient(145deg,#fff8fa,#fff5ee);box-shadow:0 13px 30px rgba(130,77,88,.07)}
+.note-icon{display:grid;place-items:center;width:45px;height:45px;margin-bottom:13px;border-radius:15px;background:#fce1e9;color:#b94c70;font-size:1.4rem}
+.note-title{margin-bottom:10px;font-size:1.1rem;font-weight:950}
+.hero-note ul{margin:0;padding-left:19px;color:#765e62;font-weight:750}
+.hero-note li{padding:4px 0}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+.info-card{padding:clamp(24px,4vw,38px);border:1px solid #f0d5dc;border-radius:28px;background:rgba(255,255,255,.85);box-shadow:0 12px 32px rgba(130,77,88,.06)}
+.info-card h2{max-width:480px;margin-bottom:14px;font-size:clamp(1.55rem,3vw,2.1rem);line-height:1.18;letter-spacing:-.025em;font-weight:950}
+.info-card p:not(.eyebrow){color:#735e62}
+.creator-card{background:linear-gradient(145deg,#fff,#fff1f4)}
+.creator-signoff{margin:20px 0 0;padding-top:15px;border-top:1px solid #efd3dc;font-weight:900;color:#ad4f6e!important}
+.public-footer{padding:22px 0 30px;border-top:1px solid #efd8de;color:#8b7377;font-size:.9rem;font-weight:750}
+.public-footer>span:first-child{font-size:1.1rem;font-weight:1000;color:#743f4c}
+.public-footer a{color:#b94c70;text-decoration:none}
+@media(max-width:720px){.public-nav,.public-footer,main{width:min(100% - 28px,560px)}.public-nav{padding:16px 0}.wordmark{font-size:1.45rem}.nav-link{padding:8px 12px;font-size:.88rem}main{margin:20px auto 44px}.hero{grid-template-columns:1fr;gap:28px;padding:28px 23px;border-radius:28px}.hero-note{padding:21px;border-radius:23px}h1{font-size:clamp(3.15rem,17vw,5rem)}.content-grid{grid-template-columns:1fr;gap:14px}.info-card{border-radius:23px}.public-footer{align-items:flex-start;flex-direction:column;gap:5px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
