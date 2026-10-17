@@ -56,6 +56,7 @@ body{
   -webkit-backdrop-filter:none!important;background-image:none!important;filter:none!important;
 }
 html{background:var(--bg)!important;scroll-behavior:smooth}
+svg{color:var(--ink)!important}
 body,main,.view,.daily-home,.planner-page{background:var(--bg)!important;color:var(--ink)!important}
 body :is(h1,h2,h3,h4,h5,h6,p,label,small,li,dt,dd,th,td,legend,summary,.hint,.small-note,.small,.section-title,.gw-eyebrow,.gw-path,.planner-label,.planner-weekday,.planner-time-label){
   color:var(--ink)!important;font-family:var(--font-ui)!important;letter-spacing:normal!important;text-transform:none!important;
@@ -145,7 +146,8 @@ main{width:min(100%,1240px)!important;margin-inline:auto!important;padding:var(-
   background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--line)!important
 }
 :is(button,a,.btn,.navbtn,.planner-event-pill,.theme-choice,.font-size-option):hover{transform:translateY(-1px)}
-:is(.btn,.quick-add-main,.planner-primary,.planner-add,.home-planner-open,.ask-cramchy-send):hover{background:var(--accent-strong)!important;color:var(--on-accent)!important}
+:is(.btn,.quick-add-main,.planner-primary,.planner-add,.home-planner-open,.ask-cramchy-send):hover{background:var(--accent)!important;color:var(--on-accent)!important}
+:is(.btn,.quick-add-main,.planner-primary,.planner-add,.home-planner-open,.ask-cramchy-send) svg{color:var(--on-accent)!important;fill:currentColor!important;stroke:currentColor!important}
 :is(button,a,input,select,textarea,[tabindex]):focus-visible{
   outline:3px solid var(--accent-strong)!important;outline-offset:2px!important;box-shadow:none!important
 }
