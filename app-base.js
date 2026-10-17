@@ -1804,7 +1804,23 @@ function openCloudModal(){
     if(e.key === 'Enter') overlay.querySelector('#cloudVerifyCodeBtn')?.click();
   });
 }
+function placeMobileAccountControls(){
+  const slot=document.getElementById('mobileAccountControls');
+  const nav=document.querySelector('nav.topnav');
+  const cloud=document.getElementById('cloudBtn');
+  const saved=document.getElementById('saveIndicator');
+  if(!slot||!nav||!cloud||!saved)return;
+  const target=window.matchMedia('(max-width:720px)').matches?slot:nav;
+  target.append(cloud,saved);
+}
+function initMobileAccountControls(){
+  placeMobileAccountControls();
+  const media=window.matchMedia('(max-width:720px)');
+  if(media.addEventListener)media.addEventListener('change',placeMobileAccountControls);
+  else media.addListener(placeMobileAccountControls);
+}
 async function initCloudSync(){
+  initMobileAccountControls();
   const btn = document.getElementById('cloudBtn');
   if(!sb){setCloudButton('☁ local only');return;}
   btn?.addEventListener('click', openCloudModal);
