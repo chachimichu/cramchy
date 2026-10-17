@@ -1,100 +1,273 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="index,follow">
-  <title>About Cramchy and Its Creator | Charlene Mikaela D. Caco</title>
-  <meta name="description" content="Meet Cramchy, an academic planner created by student developer Charlene Mikaela D. Caco for managing courses, tasks, study sessions, exams, and grades.">
-  <link rel="canonical" href="https://cramchy.vercel.app/about">
-  <meta name="theme-color" content="#fff8f4">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Cramchy">
-  <meta property="og:title" content="About Cramchy and Its Creator">
-  <meta property="og:description" content="Cramchy is a student planner created by Charlene Mikaela D. Caco to bring academic planning and grades together.">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="About Cramchy and Its Creator">
-  <meta name="twitter:description" content="Cramchy is a student planner created by Charlene Mikaela D. Caco.">
-  <link rel="icon" href="/favicon.ico?v=52" sizes="any">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/seo-public.css">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "ProfilePage",
-        "name": "Charlene Mikaela D. Caco, creator of Cramchy",
-        "mainEntity": { "@id": "https://cramchy.vercel.app/about#charlene-caco" }
-      },
-      {
-        "@type": "Person",
-        "@id": "https://cramchy.vercel.app/about#charlene-caco",
-        "name": "Charlene Mikaela D. Caco",
-        "description": "Student developer and creator of Cramchy, an academic planner for organizing courses, tasks, study sessions, exams, and grades."
-      },
-      {
-        "@type": "SoftwareApplication",
-        "@id": "https://cramchy.vercel.app/about#cramchy",
-        "name": "Cramchy",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Web browser",
-        "description": "A student planner for courses, class schedules, tasks, study sessions, exam planning, and grades.",
-        "creator": { "@id": "https://cramchy.vercel.app/about#charlene-caco" }
-      }
-    ]
-  }
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About Cramchy | Student Planner by Charlene Mikaela D. Caco</title>
+<meta name="description" content="I built Cramchy because I wanted one app for my school life and could not find one that fit. Meet Charlene, explore the app, and hear how it got its name.">
+<meta name="theme-color" content="#f684b0">
+<link rel="canonical" href="https://cramchy.vercel.app/about.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cramchy">
+<meta property="og:title" content="About Cramchy | Student Planner by Charlene Mikaela D. Caco">
+<meta property="og:description" content="I wanted one app for my school life and could not find one that fit, so I built Cramchy for myself.">
+<meta property="og:image" content="https://cramchy.vercel.app/assets/charlene-about.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About Cramchy | Charlene Mikaela D. Caco">
+<meta name="twitter:description" content="The story behind the student app I built for myself.">
+<meta name="twitter:image" content="https://cramchy.vercel.app/assets/charlene-about.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Cramchy","url":"https://cramchy.vercel.app/about.html","mainEntity":{"@type":"SoftwareApplication","name":"Cramchy","applicationCategory":"EducationalApplication","url":"https://cramchy.vercel.app/","creator":{"@type":"Person","name":"Charlene Mikaela D. Caco"}}}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Nunito:wght@500;600;700;800&display=swap">
+<style>
+:root{--cream:#fff4ea;--pink:#f684b0;--blush:#ffd9e6;--berry:#d94b86;--brown:#3d2420;--soft:#7a5a54;box-sizing:border-box}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+
+body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--cream);color:var(--brown);font:500 1.08rem/1.65 Nunito,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.05;margin:0;letter-spacing:-.02em}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--berry);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;max-width:1080px;margin:0 auto}
+.logo{font:800 1.6rem Fraunces,serif;text-decoration:none;color:var(--berry)}
+.pill{background:var(--brown);color:var(--cream);padding:9px 18px;border-radius:99px;text-decoration:none;font-weight:700;transition:background .2s,transform .2s}
+.pill:hover{background:var(--berry);transform:translateY(-2px)}
+/* hero */
+.hero{position:relative;min-height:78vh;display:grid;align-content:center;overflow:hidden}
+.hero h1{font-size:clamp(3.2rem,11vw,8.5rem);font-weight:800;max-width:9ch;position:relative;z-index:2}
+.hero h1 span{display:inline-block;opacity:0;transform:translateY(.5em) rotate(3deg);animation:pop .8s cubic-bezier(.2,.9,.3,1.2) forwards}
+.hero h1 span:nth-child(2){animation-delay:.12s}.hero h1 span:nth-child(3){animation-delay:.24s}.hero h1 span:nth-child(4){animation-delay:.36s}
+@keyframes pop{to{opacity:1;transform:none}}
+.hero p{max-width:30ch;font-size:1.25rem;position:relative;z-index:2;margin:22px 0 0}
+.fl{position:absolute;z-index:1;will-change:transform}
+.fl>div{animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-12px)}}
+.card{background:#fff;border:2.5px solid var(--brown);border-radius:18px;padding:14px 16px;box-shadow:5px 5px 0 var(--pink);font-size:.95rem;font-weight:700}
+.f1{right:6%;top:12%;transform:rotate(4deg)}.f2{right:22%;bottom:10%}.f3{right:2%;bottom:30%}
+.tick{display:flex;gap:8px;align-items:center}.tick i{width:18px;height:18px;border:2.5px solid var(--brown);border-radius:6px;display:inline-block;position:relative}
+.tick.done i{background:var(--pink)}.tick.done i::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--brown);border-width:0 2.5px 2.5px 0;transform:rotate(40deg)}
+.ringmini{width:96px;height:96px}
+/* story */
+.story{padding:90px 24px 40px}
+.story p.big{font:600 clamp(1.6rem,4.2vw,2.9rem)/1.2 Fraunces,serif;max-width:22ch;margin:0}
+.story p.big mark{background:linear-gradient(transparent 55%,var(--blush) 55%);color:inherit;padding:0 .1em}
+.story .sub{max-width:46ch;margin-top:26px;color:var(--soft)}
+/* features */
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:56px 0}
+.feat:nth-of-type(even) .art{order:-1}
+.feat h2{font-size:clamp(1.9rem,4vw,3rem);margin-bottom:12px}
+.feat p{margin:0;max-width:38ch}
+.art{background:var(--blush);border:2.5px solid var(--brown);border-radius:28px;min-height:260px;padding:26px;display:grid;place-items:center;position:relative;overflow:hidden}
+/* reveal */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+/* schedule art */
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:340px;font-size:.8rem;font-weight:700;text-align:center}
+.week b{grid-column:span 1}
+.blk{height:44px;border-radius:10px;background:#fff;border:2px solid var(--brown);transform:scaleY(0);transform-origin:top;transition:transform .5s cubic-bezier(.2,.9,.3,1.2)}
+.in .blk{transform:none}.blk.p{background:var(--pink)}
+.in .blk:nth-child(n+6){transition-delay:.15s}.in .blk:nth-child(n+11){transition-delay:.3s}.in .blk:nth-child(n+16){transition-delay:.45s}
+.blk.e{visibility:hidden}
+/* tasks art */
+.list{display:grid;gap:10px;width:100%;max-width:320px}
+.list .tick{position:relative;background:#fff;border:2.5px solid var(--brown);border-radius:14px;padding:12px 14px;cursor:pointer;transition:transform .2s}
+.list .tick:hover{transform:translateX(4px) rotate(-1deg)}
+.tick input{position:absolute;opacity:0;pointer-events:none}
+.list .tick i{background:#fff;transition:background .25s,transform .3s cubic-bezier(.3,1.6,.5,1)}
+.list .tick i::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--brown);border-width:0 2.5px 2.5px 0;transform:rotate(40deg) scale(0);transition:transform .25s}
+.list .tick input:checked+i{background:var(--pink);transform:scale(1.25) rotate(-8deg)}
+.list .tick input:checked+i::after{transform:rotate(40deg) scale(1)}
+.list .tick input:checked~span{text-decoration:line-through;opacity:.55}
+.list .tick input:focus-visible+i{outline:3px solid var(--berry);outline-offset:3px}
+.count{font-weight:800;text-align:center;margin:12px 0 0}
+/* timer art */
+.timer{text-align:center}
+.tring{position:relative;width:180px;height:180px;margin:0 auto 12px}
+.tring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:14;stroke-linecap:round}
+.timer .bg{stroke:#fff}.timer .fg{stroke:var(--berry);stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset 1s linear}
+.timer .fg.fill{transition:stroke-dashoffset 1.6s cubic-bezier(.5,0,.2,1)}
+.tring .t{position:absolute;inset:0;display:grid;place-items:center;font:800 2.2rem Fraunces,serif}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.chips button{font:800 .9rem Nunito,sans-serif;background:#fff;color:var(--brown);border:2px solid var(--brown);border-radius:99px;padding:4px 14px;cursor:pointer;transition:background .2s,transform .2s}
+.chips button:hover{transform:translateY(-2px)}.chips button[aria-pressed="true"]{background:var(--pink)}
+.chips .go{background:var(--brown);color:var(--cream);min-width:72px}
+/* exam art */
+.tabs{width:100%;max-width:320px}
+.tabbar{display:flex;gap:8px;margin-bottom:12px}
+.tabbar button{flex:1;font:800 .95rem Nunito,sans-serif;padding:10px;border-radius:14px;border:2.5px solid var(--brown);background:#fff;color:var(--brown);cursor:pointer;transition:background .2s}
+.tabbar button[aria-selected="true"]{background:var(--pink)}
+.tabs .card{min-height:150px}
+.topics label{display:flex;gap:8px;align-items:center;cursor:pointer;margin:4px 0}
+.topics input{accent-color:var(--berry);width:18px;height:18px}
+.pbar{height:12px;border:2.5px solid var(--brown);border-radius:99px;background:#fff;margin:10px 0 6px;overflow:hidden}
+.pbar b{display:block;height:100%;background:var(--pink);width:0;transition:width .5s cubic-bezier(.2,.9,.3,1.2)}
+.pt{font-size:.85rem;color:var(--soft)}
+/* grades art */
+.bars{display:flex;gap:14px;align-items:flex-end;height:170px}
+.bars button{width:38px;padding:0;background:var(--pink);border:2.5px solid var(--brown);border-radius:10px 10px 0 0;height:0;cursor:pointer;transform-origin:bottom;transition:height 1s cubic-bezier(.2,.9,.3,1.1),transform .2s}
+.bars button:hover{transform:scaleY(1.08)}
+.in .bars button:nth-child(1){height:90px}.in .bars button:nth-child(2){height:130px;transition-delay:.12s}.in .bars button:nth-child(3){height:110px;transition-delay:.24s}.in .bars button:nth-child(4){height:160px;transition-delay:.36s;background:var(--berry)}
+.bars button.hop{animation:hop .5s}
+@keyframes hop{40%{transform:scaleY(.85) scaleX(1.18)}70%{transform:scaleY(1.14) scaleX(.9)}}
+/* who */
+.who{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:56px;align-items:center;padding:90px 0 70px}
+.photo{margin:0;position:relative}
+.photo img{display:block;width:min(100%,300px);height:auto;aspect-ratio:3/4;object-fit:contain;border-radius:200px 200px 28px 28px;border:2.5px solid var(--brown);box-shadow:10px 10px 0 var(--pink)}
+.who h2{font-size:clamp(2rem,4.5vw,3.4rem);margin-bottom:16px}
+.who p{max-width:44ch;margin:0 0 14px}
+.note{color:var(--soft);font-size:.98rem}
+.cta{display:inline-block;margin-top:14px;font-size:1.1rem;padding:13px 26px}
+footer{text-align:center;padding:30px 24px 40px;color:var(--soft);font-size:.92rem}
+/* cursor + hearts */
+.cur{position:fixed;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;pointer-events:none;z-index:9999;opacity:0;transition:opacity .3s;will-change:transform}
+.cur svg{width:100%;height:100%;fill:var(--pink);stroke:var(--brown);stroke-width:1.6;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.cur.on{opacity:1}.cur.big svg{transform:scale(1.5)}.cur.down svg{transform:scale(.75)}
+.hc,.hc *{cursor:none!important}
+.mh{position:fixed;pointer-events:none;z-index:9998;line-height:0}
+.mh svg,.bgh svg,.ph svg,.mqt svg{display:block;width:100%;fill:currentColor}
+.bgh{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.bgh span{position:absolute;bottom:-50px;line-height:0;opacity:.7;animation:rise linear infinite}
+@keyframes rise{50%{transform:translate(18px,-50vh) rotate(-12deg)}to{transform:translate(-10px,-100vh) rotate(20deg)}}
+.ph{position:absolute;width:30px;line-height:0;animation:bob 5s ease-in-out infinite}.ph svg{fill:var(--pink);stroke:var(--brown);stroke-width:1.5}
+.mqw{overflow:hidden;padding:26px 0}
+.mq{background:var(--pink);border-block:2.5px solid var(--brown);transform:rotate(-1.5deg);margin:0 -30px;padding:12px 0;white-space:nowrap}
+.mqt{display:inline-flex;gap:26px;align-items:center;font:800 1.6rem Fraunces,serif;will-change:transform}
+.mqt i{width:22px;display:block;line-height:0;color:var(--cream)}
+.prog{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:0;z-index:50;pointer-events:none}
+.prog::before{content:"";position:absolute;top:0;left:0;height:4px;width:var(--p,0%);background:var(--pink)}
+.prog span{position:absolute;top:2px;width:20px;line-height:0}.prog svg{width:100%;fill:var(--berry);stroke:var(--brown);stroke-width:1.5}
+.pace{display:flex;align-items:center;gap:12px;margin-top:22px;font-weight:800;position:relative;z-index:2}
+.pace input{-webkit-appearance:none;appearance:none;width:170px;height:12px;border-radius:99px;background:#fff;border:2.5px solid var(--brown);cursor:pointer}
+.pace input::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border:0;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23f684b0' stroke='%233d2420' stroke-width='1.6' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") center/contain no-repeat}
+.pace input::-moz-range-thumb{width:30px;height:30px;border:0;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23f684b0' stroke='%233d2420' stroke-width='1.6' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") center/contain no-repeat}
+#pl{min-width:4.5em}
+.fl .card{cursor:grab;touch-action:none;user-select:none}.fl.drag .card{cursor:grabbing;box-shadow:9px 9px 0 var(--pink)}.fl.drag{z-index:3}
+.fl svg{touch-action:none;cursor:grab}
+.art{transition:transform .25s}
+.photo.in img{animation:photoPop .9s cubic-bezier(.3,1.5,.5,1)}
+@keyframes photoPop{from{transform:scale(.8) rotate(-5deg)}}
+.sw{opacity:.28;transition:opacity .3s}.sw.on{opacity:1}
+.hero h1 span.done{animation:none;opacity:1;transform:none;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.hero h1 span.done:hover{transform:translateY(-10px) rotate(-5deg)}
+button.blk{padding:0;cursor:pointer;font:inherit}.in .blk:hover{transform:translateY(-3px)}
+.hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:.85rem;color:var(--soft);font-weight:700}
+.art{padding-bottom:44px}
+@media(max-width:820px){
+ .feat,.who{grid-template-columns:1fr;gap:28px}
+ .feat:nth-of-type(even) .art{order:0}
+ .feat{padding:36px 0}
+ .hero{min-height:70vh;padding-top:20px}
+ .f1{top:4%;right:2%;--float-scale:.82;transform:rotate(4deg) scale(.82)}.f2{display:none}.f3{bottom:6%;right:2%;--float-scale:.82}
+ .hero p{max-width:24ch}
+ .photo{max-width:300px}
+}
+@media(prefers-reduced-motion:reduce){
+ *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ .rv{opacity:1;transform:none}.hero h1 span{opacity:1;transform:none}.blk{transform:none}
+ .timer .fg{stroke-dashoffset:110}.bars button:nth-child(1){height:90px}.bars button:nth-child(2){height:130px}.bars button:nth-child(3){height:110px}.bars button:nth-child(4){height:160px}
+ .sw{opacity:1}.bgh,.pace{display:none}
+}
+/* Cramchy story details and the little playful touches. */
+.name-origin{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,.85fr);align-items:center;gap:36px;margin:44px auto 70px;padding:clamp(26px,5vw,50px);border:2.5px solid var(--brown);border-radius:30px;background:var(--blush);box-shadow:8px 8px 0 var(--pink);overflow:hidden}
+.name-origin-copy .name-kicker{margin:0 0 12px;color:#8b5367;font-size:.75rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.name-origin h2{margin:0 0 15px;font-size:clamp(2.4rem,5vw,4.5rem);line-height:.98}
+.name-origin h2 em{color:var(--berry);font-style:normal}
+.name-origin-copy>p:last-child{max-width:43ch;margin:0;color:var(--soft)}
+.chip-scene{position:relative;min-height:225px;display:grid;place-items:center;border:2.5px solid var(--brown);border-radius:26px;background:#fff8f1;overflow:hidden}
+.chip-scene:before,.chip-scene:after{content:"";position:absolute;width:180px;height:180px;border:1px dashed rgba(61,36,32,.24);border-radius:50%;animation:chip-orbit 24s linear infinite}
+.chip-scene:after{width:140px;height:140px;animation-direction:reverse}
+.chip-shape{position:absolute;width:85px;height:57px;border:2.5px solid var(--brown);border-radius:53% 47% 45% 55%;background:radial-gradient(circle at 26% 34%,#8c542c 0 2px,transparent 2.5px),radial-gradient(circle at 64% 26%,#8c542c 0 1.8px,transparent 2.5px),radial-gradient(circle at 75% 64%,#8c542c 0 2px,transparent 2.5px),radial-gradient(circle at 42% 70%,#8c542c 0 2px,transparent 2.5px),linear-gradient(145deg,#ffdf8d,#e99b39);box-shadow:3px 4px 0 rgba(61,36,32,.16);animation:chip-float 3.6s ease-in-out infinite}
+.chip-a{transform:translate(-30px,4px) rotate(-23deg)}.chip-b{z-index:1;transform:translate(27px,-9px) rotate(28deg);animation-delay:-1.2s}.chip-c{transform:translate(0,32px) rotate(8deg);animation-delay:-2.1s}
+.chip-crunch{position:absolute;z-index:2;top:20px;right:19px;padding:5px 11px;border:2px solid var(--brown);border-radius:99px;background:var(--pink);color:var(--brown);font:800 1.15rem Fraunces,serif;transform:rotate(7deg);animation:chip-label 2.3s ease-in-out infinite}
+.chip-stars{position:absolute;left:21px;bottom:15px;color:var(--berry);font-size:1.35rem;letter-spacing:.3em;animation:star-bob 2.5s ease-in-out infinite alternate}
+@keyframes chip-float{0%,100%{translate:0 0}50%{translate:0 -8px}}
+@keyframes chip-orbit{to{rotate:360deg}}
+@keyframes chip-label{50%{transform:rotate(4deg) translateY(-3px)}}
+@keyframes star-bob{to{translate:0 -5px;rotate:8deg}}
+.grade-demo{width:min(100%,330px)}
+.grade-demo .bars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));justify-items:center;align-items:end;width:100%;gap:0;height:177px;padding:8px 14px 0;border-bottom:2px solid var(--brown);border-radius:8px 8px 0 0;background:rgba(255,255,255,.3)}
+.grade-demo .bars button{position:relative;display:flex;align-items:flex-start;justify-content:center;width:42px;height:calc(var(--score,70)*1.45px);max-height:145px;padding:5px 2px 0;border:2px solid var(--brown);border-bottom:0;border-radius:11px 11px 0 0;background:var(--pink);font:800 .68rem Nunito,sans-serif;color:var(--brown);transition:height .5s cubic-bezier(.2,.9,.3,1.2),transform .2s;overflow:visible}
+.grade-demo .bars button:nth-child(2){background:#d9c8e8}.grade-demo .bars button:nth-child(3){background:#c9d9b9}.grade-demo .bars button:nth-child(4){background:var(--berry);color:white}
+.grade-demo .bars button span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--brown)}
+.grade-legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;gap:0;padding:5px 14px 0;color:#80645b;font-size:.55rem;font-weight:800;text-align:center;letter-spacing:.04em}
+.grade-demo .count{margin:10px 0 0;color:var(--soft);font-size:.82rem}
+.tabs .card{border:2px solid var(--brown);box-shadow:3px 3px 0 var(--pink)}
+.topics label{padding:4px 2px}
+.hero .pace{font-size:.92rem}
+.hero .pace input{touch-action:pan-x}
+.hero .fl:focus-visible{outline:3px solid var(--berry);outline-offset:5px;border-radius:18px}
+.name-origin.rv{transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.3,1)}
+.name-origin.rv:not(.in){transform:translateY(34px)}
+@media(max-width:820px){.name-origin{grid-template-columns:1fr;gap:22px;margin-top:38px;padding:25px}.chip-scene{min-height:205px}.grade-demo .bars{height:158px}}
+@media(max-width:520px){.name-origin{margin-inline:0;border-radius:24px;box-shadow:5px 5px 0 var(--pink)}.name-origin h2{font-size:clamp(2.35rem,11vw,3.2rem)}.chip-scene{min-height:185px}.grade-demo .bars{gap:10px}.grade-demo .bars button{width:38px}}
+@media(prefers-reduced-motion:reduce){.chip-shape,.chip-scene:before,.chip-scene:after,.chip-crunch,.chip-stars{animation:none}}
+</style>
 </head>
 <body>
-  <header class="public-nav">
-    <a class="wordmark" href="/" aria-label="Cramchy home">cramchy<span>.</span></a>
-    <a class="nav-link" href="/">open the planner <span aria-hidden="true">↗</span></a>
-  </header>
+<div class="cur" id="cur" aria-hidden="true"></div>
+<div class="prog" id="prog" aria-hidden="true"><span id="ph"></span></div>
+<header><a class="logo" href="/">cramchy.</a><a class="pill" href="/">open the planner</a></header>
 
-  <main>
-    <section class="hero" aria-labelledby="page-title">
-      <div class="hero-copy">
-        <p class="eyebrow">a student-built study companion</p>
-        <h1 id="page-title">Meet <span>Cramchy.</span></h1>
-        <p class="lead">A student planner that brings classes, tasks, study sessions, exam prep, and grades into one calm, organized space.</p>
-        <p class="byline">Created by <strong>Charlene Mikaela D. Caco</strong></p>
-        <a class="primary-link" href="/">open Cramchy <span aria-hidden="true">→</span></a>
-      </div>
-      <aside class="hero-note" aria-label="What Cramchy helps with">
-        <span class="note-icon" aria-hidden="true">✿</span>
-        <p class="note-title">One place for your school week</p>
-        <ul>
-          <li>weekly class schedule</li>
-          <li>tasks connected to the planner</li>
-          <li>study timer and exam workspaces</li>
-          <li>course grades and term progress</li>
-        </ul>
-      </aside>
-    </section>
+<main>
+<section class="hero wrap" aria-labelledby="h1">
+ <div class="bgh" id="bgh" aria-hidden="true"></div>
+ <h1 id="h1"><span>plan</span> <span>at</span> <span>your</span> <span>own pace.</span></h1>
+ <p>Classes, tasks, exam prep, and grades in one place, so it’s easier to keep your academic life moving.</p>
+ <label class="pace"><span>pace</span><input id="pace" type="range" min="0.3" max="3" step="0.1" value="1" aria-label="Adjust the speed of the floating hearts"><span id="pl">steady</span></label>
+ <div class="fl f1" data-speed="-.12"><div class="card"><div class="tick done"><i></i>read chapter</div><div class="tick" style="margin-top:8px"><i></i>quiz review</div></div></div>
+ <div class="fl f2" data-speed=".1"><div><svg class="ringmini" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="38" fill="#fff" stroke="#3d2420" stroke-width="3"/><circle cx="50" cy="50" r="38" fill="none" stroke="#f684b0" stroke-width="12" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="70" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-family="Fraunces,serif" font-weight="800" font-size="18" fill="#3d2420">25:00</text></svg></div></div>
+ <div class="fl f3" data-speed="-.2"><div><div class="card" style="background:var(--pink)">midterms szn</div></div></div>
+</section>
 
-    <section class="content-grid" aria-label="About Cramchy">
-      <article class="info-card">
-        <p class="eyebrow">the app</p>
-        <h2>Built around real student routines.</h2>
-        <p>Cramchy is an academic planning app created by student developer Charlene Mikaela D. Caco. It brings course schedules, deadlines, study blocks, exam planning, and grades together so students can see what needs attention and plan at their own pace.</p>
-        <p>Its academic term and exam tools are designed with National University students in mind, including separate Midterms and Finals workspaces. Cramchy is an independent student project and is not an official National University app.</p>
-      </article>
-      <article class="info-card creator-card">
-        <p class="eyebrow">the creator</p>
-        <h2>Charlene Mikaela D. Caco</h2>
-        <p>Charlene created Cramchy to make it easier to keep academic life in one place. She continues to shape the app around the everyday details students need: a clear weekly view, connected tasks, useful exam tools, and a gradebook that explains progress.</p>
-        <p class="creator-signoff">Student developer · Creator of Cramchy</p>
-      </article>
-    </section>
-  </main>
+<div class="mqw" aria-hidden="true"><div class="mq"><div class="mqt" id="mqt"></div></div></div>
 
-  <footer class="public-footer">
-    <span>cramchy<span class="dot">.</span></span>
-    <span>Created by Charlene Mikaela D. Caco</span>
-    <a href="/">go to the planner</a>
-  </footer>
+<section class="story wrap" id="why">
+ <p class="big">Trying to get your <mark>academic life together</mark>, one class, deadline, and study session at a time.</p>
+ <p class="sub rv">Cramchy keeps courses, weekly schedules, tasks, exam prep, study sessions, and grades in one place—so you can see what’s next and take it step by step.</p>
+</section>
+
+<div class="wrap">
+ <section class="feat rv">
+  <div><h2>Courses and repeating schedules</h2><p>Add your subjects once and set their weekly schedule, so classes keep showing up without retyping them every week.</p></div>
+  <div class="art"><div class="week"><b>Mon</b><b>Tue</b><b>Wed</b><b>Thu</b><b>Fri</b><button type="button" class="blk p" aria-label="schedule block"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk p" aria-label="schedule block"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk p" aria-label="schedule block"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk p" aria-label="schedule block"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk p" aria-label="schedule block"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk e" tabindex="-1"></button><button type="button" class="blk p" aria-label="schedule block"></button><button type="button" class="blk p" aria-label="schedule block"></button></div><span class="hint">tap the blocks to color them</span></div>
+ </section>
+ <section class="feat rv">
+  <div><h2>Planner tasks</h2><p>Add a quiz, study block, or deadline once in the planner. It appears in Tasks too, with its type and day.</p></div>
+  <div class="art"><div><div class="list"><label class="tick"><input type="checkbox"><i></i><span>finish reading</span></label><label class="tick"><input type="checkbox"><i></i><span>submit activity</span></label><label class="tick"><input type="checkbox"><i></i><span>quiz on Friday</span></label></div><p class="count" id="cnt" aria-live="polite">0 of 3 done</p></div><span class="hint">tick one off</span></div>
+ </section>
+ <section class="feat rv">
+  <div><h2>Study timers</h2><p>Pick 25, 45, or 60 minutes and start. The ring follows the countdown while you focus.</p></div>
+  <div class="art"><div class="timer"><div class="tring"><svg viewBox="0 0 160 160" aria-hidden="true"><circle class="bg" cx="80" cy="80" r="70"/><circle class="fg" id="fg" cx="80" cy="80" r="70"/></svg><div class="t" id="tt" role="timer" aria-live="off">25:00</div></div><div class="chips"><button type="button" data-m="25" aria-label="25 minutes" aria-pressed="true">25</button><button type="button" data-m="45" aria-label="45 minutes" aria-pressed="false">45</button><button type="button" data-m="60" aria-label="60 minutes" aria-pressed="false">60</button><button type="button" class="go" id="go">start</button></div></div><span class="hint">pick a time, press start</span></div>
+ </section>
+ <section class="feat rv">
+  <div><h2>Midterms and Finals spaces</h2><p>Keep each exam season separate, organize subjects and topics, and see your preparation progress.</p></div>
+  <div class="art"><div class="tabs"><div class="tabbar" role="tablist"><button role="tab" aria-selected="true" data-t="m">midterms szn</button><button role="tab" aria-selected="false" data-t="f">finals szn</button></div><div class="card"><div class="topics" id="topics"></div><div class="pbar"><b id="pb"></b></div><div class="pt" id="pt" aria-live="polite"></div></div></div><span class="hint">tick lessons, then switch tabs</span></div>
+ </section>
+ <section class="feat rv">
+  <div><h2>Course grades</h2><p>Record course scores, category weights, percentages, and equivalent grades. The gradebook currently follows NU’s grading system.</p></div>
+  <div class="art"><div class="grade-demo"><div class="bars" role="group" aria-label="Illustrative course score bars"><button type="button" data-score="78" aria-label="Written works sample score 78 percent"><span>78</span></button><button type="button" data-score="91" aria-label="Activities sample score 91 percent"><span>91</span></button><button type="button" data-score="84" aria-label="Attendance sample score 84 percent"><span>84</span></button><button type="button" data-score="88" aria-label="Major exam sample score 88 percent"><span>88</span></button></div><div class="grade-legend" aria-hidden="true"><span>WW</span><span>EA</span><span>ATT</span><span>EXAM</span></div><p class="count" id="grade-sample" aria-live="polite">sample course scores · 85% average</p></div><span class="hint">tap a bar to change its sample score</span></div>
+ </section>
+
+
+ <section class="name-origin rv" id="name-origin" aria-labelledby="name-title">
+  <div class="name-origin-copy"><p class="name-kicker">the name has a snack story</p><h2 id="name-title">Cram + chips<br><em>= Cramchy.</em></h2><p>“Cram” came from all the cramming. “Chy” came from the chips I was eating when the name came to mind. Cramchy sounded a little like “crunchy,” and it stuck.</p></div>
+  <div class="chip-scene" aria-hidden="true"><span class="chip-shape chip-a"></span><span class="chip-shape chip-b"></span><span class="chip-shape chip-c"></span><span class="chip-crunch">crunch!</span><span class="chip-stars">✦ &nbsp; ✳</span></div>
+ </section>
+ <section class="who" id="who">
+  <figure class="photo rv"><img src="/assets/charlene-about.jpg" alt="Charlene Mikaela D. Caco at a café" width="1536" height="2048" loading="lazy"></figure>
+  <div class="rv">
+   <h2>The student behind Cramchy</h2>
+   <p>I’m Charlene Mikaela D. Caco, a BS Psychology student at National University–Clark. I built Cramchy after I couldn’t find one app that handled my school life the way I needed. It began as my first app and a small side quest; then I shared it with friends and other students.</p>
+   <p>Cramchy is for any student. The gradebook is the NU-specific part at the moment; it follows National University’s grading system.</p>
+   <p class="note">It’s an independent student project, not an official NU app.</p>
+   <a class="pill cta" href="/">plan at your own pace</a>
+  </div>
+ </section>
+</div>
+</main>
+<footer>© 2026 Cramchy · <a href="/">back to the planner</a></footer>
+
+<script src="/about-motion.js" defer></script>
 </body>
 </html>
