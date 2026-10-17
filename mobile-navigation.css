@@ -165,3 +165,8 @@
   .mobile-account-controls #cloudBtn{position:static!important;display:inline-flex!important;align-items:center;justify-content:center;min-height:38px;margin:0!important;padding:8px 12px!important;border-radius:999px!important;white-space:nowrap;font-size:.75rem!important}
   .mobile-account-controls #saveIndicator{position:static!important;display:inline-flex!important;align-items:center;justify-content:center;min-height:32px;margin:0!important;padding:5px 9px;border-radius:999px;background:var(--soft,#fff0f4);font-size:.7rem;white-space:nowrap}
 }
+
+@media(max-width:380px){
+  .mobile-account-sync{flex-wrap:wrap!important}
+  .mobile-account-copy{flex:1 1 100%}
+}
