@@ -1,0 +1,8 @@
+/* Small preview-only tweak: keep the home next-class tile color uniform. */
+#view-dashboard .home-status-card.status-class{
+  background-color:var(--home-blue-soft)!important;
+  background-image:none!important;
+}
+body[data-theme="dark-study"] #view-dashboard .home-status-card.status-class{
+  background-color:var(--app-bg-2)!important;
+}
