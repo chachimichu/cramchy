@@ -303,6 +303,17 @@
     return 'ask away, '+userName()+' try things like:\n• “what’s on my Planner tomorrow?”\n• “what’s my Term GWA?”\n• “what’s the lore behind this app?”\n• “who built Cramchy?”\n• “how do I add an event?”\n• “what should I study next?”\nyou can also say “open Planner” or “show Quick GWA.”';
   }
 
+  function nextExamAnswer(q){
+    if(!/\b(next|upcoming|coming up|closest)\b.*\b(exam|midterms?|finals?)\b|\b(exam|midterms?|finals?)\b.*\b(next|upcoming|coming up|closest)\b/.test(q))return null;
+    const bridge=window.CramchyExamBridge;if(!bridge)return null;
+    const period=/\b(final|finals)\b/.test(q)?'finals':/\b(midterm|midterms)\b/.test(q)?'midterms':null;
+    const exam=bridge.upcomingExams(period)[0];
+    if(exam){const room=exam.room?' · room '+exam.room:'';return 'Your next '+(period?period.slice(0,-1)+' ':'')+'exam is **'+exam.name+'** on **'+exam.date+' at '+exam.time+'**'+room+'.';}
+    const active=bridge.inProgressExams(period)[0];
+    if(active)return '**'+active.name+'** is in progress right now. I don’t see another upcoming '+(period?period.slice(0,-1)+' ':'')+'exam saved after it.';
+    return 'I don’t see any upcoming '+(period?period.slice(0,-1)+' ':'')+'exams saved for your current term. Past exams are excluded. You can check your exam schedule in Exam Mode.';
+  }
+
   function answer(raw){
     const q=normalize(raw);if(!q)return null;
     const nextExam=nextExamAnswer(q);if(nextExam)return {text:nextExam};
