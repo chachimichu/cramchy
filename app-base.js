@@ -1124,7 +1124,7 @@ function updateTimerDisplay(){
   });
   const start=document.getElementById('timerStartBtn'),pause=document.getElementById('timerPauseBtn');
   start.disabled=timerState.running;
-  const startLabel=timerState.phase==='shortBreak'?'start 5-min break':timerState.phase==='longBreak'?'start 15-min break':timerState.session?'resume':'start focus';
+  const startLabel=timerState.phase==='shortBreak'?'start 5-min break':timerState.phase==='longBreak'?'start 15-min break':timerState.session?'resume':timerState.mode==='pomodoro'?'start focus':'start';
   if(start.textContent!==startLabel)start.textContent=startLabel;
   pause.disabled=!timerState.running;
   const locked=Boolean(timerState.session)||timerState.running||isBreak;
