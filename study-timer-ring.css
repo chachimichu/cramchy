@@ -95,3 +95,42 @@
   #view-timer .timer-ring-marker,#view-timer .study-timer-progress,#view-timer .timer-plant-grown,#view-timer .timer-desk-flower{transition:none!important}
   #view-timer .timer-plant-sway,#view-timer .timer-cup-steam path,#view-timer .desk-pencil-scribble,#view-timer .timer-desk-pencil{animation:none!important}
 }
+
+
+/* Clear, compact controls for switching between a free focus timer and Pomodoro. */
+#view-timer .timer-mode-switch{
+  display:flex;gap:6px;width:min(420px,100%);margin:0 auto 6px;padding:5px;
+  border:1px solid var(--timer-line);border-radius:999px;background:var(--timer-soft);
+}
+#view-timer .timer-mode-choice{
+  flex:1;min-height:42px;padding:8px 14px;border:1px solid transparent;border-radius:999px;
+  background:transparent;color:var(--timer-muted);font:700 .95rem/1.2 var(--cramchy-readable,'Nunito',system-ui,sans-serif);
+  cursor:pointer;transition:background-color .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
+}
+#view-timer .timer-mode-choice:hover{transform:translateY(-1px)}
+#view-timer .timer-mode-choice.is-active{
+  background:var(--timer-paper);border-color:var(--timer-line);color:var(--timer-ink);
+}
+#view-timer .timer-mode-choice:focus-visible{
+  outline:3px solid var(--timer-accent-strong);outline-offset:2px;
+}
+#view-timer .timer-mode-hint{
+  max-width:46rem;margin:0 auto 14px;text-align:center;color:var(--timer-muted);
+  font-size:.9rem;line-height:1.45;
+}
+#view-timer .timer-phase-status{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;
+  width:max-content;max-width:100%;margin:12px auto 0;padding:8px 14px;
+  border:1px solid var(--timer-line);border-radius:999px;background:var(--timer-soft);
+  color:var(--timer-muted);font-size:.88rem;line-height:1.35;text-align:center;
+}
+#view-timer .timer-phase-status strong{color:var(--timer-ink);font-weight:800}
+#view-timer .timer-controls #timerSkipBreakBtn[hidden]{display:none!important}
+#view-timer .timer-controls #timerSkipBreakBtn{font:700 .92rem/1.2 var(--cramchy-readable,'Nunito',system-ui,sans-serif)}
+@media(max-width:480px){
+  #view-timer .timer-mode-choice{min-height:40px;padding:7px 9px;font-size:.88rem}
+  #view-timer .timer-phase-status{font-size:.82rem;padding:7px 11px}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-timer .timer-mode-choice{transition:none}
+}
