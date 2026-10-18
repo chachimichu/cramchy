@@ -1,14 +1,14 @@
-/* A calmer, more intentional home greeting card. The selected theme supplies its color. */
+/* Home greeting and main card finish. Theme colors come from the active appearance. */
 #view-dashboard .cramchy-home-header.planner-hero-card{
-  grid-template-columns:88px minmax(0,1fr)!important;
+  grid-template-columns:104px minmax(0,1fr)!important;
   align-items:center!important;
-  gap:18px!important;
-  min-height:0!important;
+  gap:20px!important;
+  min-height:154px!important;
   margin:0 0 16px!important;
-  padding:16px 20px!important;
-  border:1px solid var(--pink-soft,#f5d3dc)!important;
+  padding:20px 24px!important;
+  border:1px solid var(--planner-deep,#5a2432)!important;
   border-radius:24px!important;
-  background:var(--pink-blush,#fff8fa)!important;
+  background:var(--app-bg-2,var(--ivory,#fffdfc))!important;
   box-shadow:none!important;
 }
 #view-dashboard .cramchy-home-header::before,
@@ -19,10 +19,10 @@
 #view-dashboard .cramchy-home-header .cramchy-home-logo-zone{
   display:grid!important;
   place-items:center!important;
-  width:88px!important;
-  max-width:88px!important;
+  width:104px!important;
+  max-width:104px!important;
   aspect-ratio:1;
-  padding:4px!important;
+  padding:5px!important;
   border:1px solid var(--pink-soft,#f5d3dc)!important;
   border-radius:20px!important;
   background:var(--ivory,#fffdfc)!important;
@@ -31,9 +31,9 @@
 #view-dashboard .cramchy-home-header .cramchy-home-illustration{
   display:block!important;
   width:100%!important;
-  max-width:78px!important;
+  max-width:92px!important;
   height:100%!important;
-  max-height:78px!important;
+  max-height:92px!important;
   object-fit:contain!important;
   transform:none!important;
   filter:none!important;
@@ -51,8 +51,8 @@
   grid-column:1!important;
   grid-row:1!important;
   margin:0!important;
-  font-size:clamp(1.9rem,3.4vw,3.35rem)!important;
-  line-height:1.1!important;
+  font-size:clamp(1.65rem,2.8vw,2.65rem)!important;
+  line-height:1.12!important;
 }
 #view-dashboard .cramchy-home-copy.planner-hero-copy p{
   grid-column:1!important;
@@ -84,22 +84,59 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
   background:#a33660!important;
   color:#fff!important;
 }
+
+/* Thin ink-colored outlines identify the large content panels. Keep controls alone. */
+:is(
+  #view-dashboard .home-status-card,
+  #view-dashboard .home-command-panel,
+  #view-dashboard .home-courses-section,
+  #view-dashboard .home-recommend-card,
+  #view-dashboard .closest-exam,
+  #view-dashboard .exam-entry-card,
+  #view-dashboard .smart-study-card,
+  #view-planner .planner-hero-card,
+  #view-planner .planner-panel,
+  #view-planner .planner-card,
+  #view-planner .planner-today,
+  #view-planner .planner-tasks,
+  #view-exam .exam-choice,
+  body.exam-mode-active .exam-mode-card,
+  body.exam-mode-active .exam-period-card,
+  body.exam-mode-active .exam-schedule-card,
+  body.exam-mode-active .exam-subject-card,
+  #view-grades .gw-hero,
+  #view-grades .gw-tool-card
+){
+  border-color:var(--planner-deep,#5a2432)!important;
+  border-width:1px!important;
+}
+#view-dashboard .home-status-card,
+#view-dashboard .home-command-panel,
+#view-dashboard .home-courses-section,
+#view-dashboard .home-recommend-card,
+#view-dashboard .closest-exam,
+#view-dashboard .exam-entry-card,
+#view-dashboard .smart-study-card{
+  border-style:solid!important;
+}
+
 @media(max-width:760px){
   #view-dashboard .cramchy-home-header.planner-hero-card{
-    grid-template-columns:62px minmax(0,1fr)!important;
-    gap:12px!important;
-    padding:13px 14px!important;
+    grid-template-columns:72px minmax(0,1fr)!important;
+    gap:13px!important;
+    min-height:132px!important;
+    padding:16px!important;
     border-radius:20px!important;
   }
   #view-dashboard .cramchy-home-header .cramchy-home-logo-zone{
-    width:62px!important;
-    max-width:62px!important;
+    width:72px!important;
+    max-width:72px!important;
     padding:3px!important;
     border-radius:17px!important;
   }
   #view-dashboard .cramchy-home-header .cramchy-home-illustration{
-    max-width:54px!important;
-    max-height:54px!important;
+    max-width:64px!important;
+    max-height:64px!important;
   }
   #view-dashboard .cramchy-home-copy.planner-hero-copy{
     grid-template-columns:minmax(0,1fr)!important;
@@ -110,8 +147,8 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
   #view-dashboard .cramchy-home-copy.planner-hero-copy h2{
     grid-column:1!important;
     grid-row:1!important;
-    font-size:clamp(1.28rem,5vw,1.8rem)!important;
-    line-height:1.12!important;
+    font-size:clamp(1.2rem,4.5vw,1.6rem)!important;
+    line-height:1.15!important;
   }
   #view-dashboard .cramchy-home-copy.planner-hero-copy p{
     grid-column:1!important;
