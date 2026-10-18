@@ -33,3 +33,52 @@
   letter-spacing:-.018em;
   line-height:1;
 }
+
+
+/* A calm focus orbit layered around the accurate timer ring. */
+#view-timer .study-timer-dial{isolation:isolate}
+#view-timer .study-timer-ring{position:relative;z-index:1}
+#view-timer .study-timer-progress{transition:none;filter:drop-shadow(0 0 0 transparent)}
+#view-timer .study-timer-orbit{
+  position:absolute;inset:-9px;z-index:2;border-radius:50%;pointer-events:none;
+  animation:study-timer-orbit 24s linear infinite paused
+}
+#view-timer .study-timer-orbit-spark{
+  position:absolute;top:-7px;left:50%;display:grid;place-items:center;
+  width:20px;height:20px;transform:translateX(-50%);color:var(--red-berry,#c34e72);
+  font-size:1.05rem;text-shadow:0 2px 7px rgba(180,82,115,.22)
+}
+#view-timer .study-timer-desk-doodles{position:absolute;inset:0;z-index:2;pointer-events:none}
+#view-timer .timer-doodle{
+  position:absolute;display:grid;place-items:center;line-height:1;
+  color:var(--red-deep,#71404d);opacity:.78
+}
+#view-timer .timer-doodle-pencil{right:4%;top:16%;font-size:1.25rem;transform:rotate(24deg)}
+#view-timer .timer-doodle-book{left:4%;bottom:15%;font-size:1.05rem;color:var(--matcha-dark,#718355)}
+#view-timer .timer-doodle-star{right:11%;bottom:10%;font-size:.9rem;color:var(--red-berry,#c34e72)}
+#view-timer .study-timer-finish{position:absolute;inset:0;z-index:3;pointer-events:none}
+#view-timer .study-timer-finish i{
+  position:absolute;left:50%;top:50%;opacity:0;font-style:normal;
+  color:var(--red-berry,#c34e72);font-size:1.25rem
+}
+#view-timer .study-timer-finish i:nth-child(1){--x:-88px;--y:-52px}
+#view-timer .study-timer-finish i:nth-child(2){--x:86px;--y:-44px;color:var(--matcha-dark,#718355)}
+#view-timer .study-timer-finish i:nth-child(3){--x:-75px;--y:62px;color:var(--matcha-dark,#718355)}
+#view-timer .study-timer-finish i:nth-child(4){--x:82px;--y:58px}
+#view-timer:has(#timerPauseBtn:not(:disabled)) .study-timer-orbit{animation-play-state:running}
+#view-timer:has(#timerPauseBtn:not(:disabled)) .study-timer-progress{
+  transition:stroke-dashoffset .92s linear;
+  filter:drop-shadow(0 0 4px color-mix(in srgb,var(--red-berry,#c34e72) 45%,transparent))
+}
+#view-timer:has(#timerPauseBtn:not(:disabled)) .timer-doodle-pencil{animation:timer-pencil-bob 2.8s ease-in-out infinite}
+#view-timer #timerDial[aria-valuenow="0"] .study-timer-finish i{animation:timer-finish-spark 880ms ease-out both}
+#view-timer #timerDial[aria-valuenow="0"] .study-timer-finish i:nth-child(2){animation-delay:70ms}
+#view-timer #timerDial[aria-valuenow="0"] .study-timer-finish i:nth-child(3){animation-delay:120ms}
+#view-timer #timerDial[aria-valuenow="0"] .study-timer-finish i:nth-child(4){animation-delay:190ms}
+@keyframes study-timer-orbit{to{transform:rotate(1turn)}}
+@keyframes timer-pencil-bob{0%,100%{transform:translateY(0) rotate(24deg)}50%{transform:translateY(-4px) rotate(18deg)}}
+@keyframes timer-finish-spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}35%{opacity:1;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.12)}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.72)}}
+@media(prefers-reduced-motion:reduce){
+  #view-timer .study-timer-orbit,#view-timer .timer-doodle-pencil,#view-timer .study-timer-finish i{animation:none!important}
+  #view-timer .study-timer-progress{transition:none!important}
+}
