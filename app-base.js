@@ -1071,8 +1071,19 @@ function updateTimerDisplay(){
   // Ring and digits share this exact remaining-time snapshot; no second clock.
   const duration=timerState.presetMinutes*60;
   const fraction=Math.max(0,Math.min(1,remaining/duration));
-  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String((1-fraction)*100));
+  const elapsed=1-fraction;
+  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(elapsed*100));
   const dial=document.getElementById('timerDial');
+  const sceneStage=!timerState.session?'ready':remaining===0?'complete':elapsed<.12?'starting':elapsed<.45?'growing':elapsed<.78?'flowing':'finishing';
+  if(dial){
+    dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
+    dial.style.setProperty('--focus-growth',String(elapsed));
+    dial.dataset.focusStage=sceneStage;
+    dial.dataset.running=String(Boolean(timerState.running));
+    const caption=document.getElementById('timerSceneCaption');
+    const captions={ready:'your desk is ready',starting:'settling in',growing:'finding your rhythm',flowing:'in the groove',finishing:'home stretch',complete:'look what you did'};
+    if(caption)caption.textContent=captions[sceneStage];
+  }
   if(dial){
     dial.setAttribute('aria-valuemax',String(duration));
     dial.setAttribute('aria-valuenow',String(remaining));
