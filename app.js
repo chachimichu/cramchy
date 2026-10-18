@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-18-study-reference-157';
+  const VERSION='2026-10-18-study-reference-158';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
