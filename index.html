@@ -317,12 +317,21 @@
   <section class="view" id="view-timer">
     <h2 style="color:var(--red-deep); margin-bottom:14px;">Study Timer</h2>
     <div class="card">
+      <div class="timer-mode-switch" role="group" aria-label="Timer style">
+        <button class="timer-mode-choice is-active" type="button" data-timer-mode="focus" aria-pressed="true">focus timer</button>
+        <button class="timer-mode-choice" type="button" data-timer-mode="pomodoro" aria-pressed="false">pomodoro</button>
+      </div>
+      <p class="timer-mode-hint" id="timerModeHint">Focus at your own pace, with no scheduled breaks.</p>
       <label class="field-label">Studying:</label>
       <select id="timerSubjectSelect" style="width:100%; margin-bottom:14px;"></select>
       <div class="preset-row">
         <button class="btn ghost" data-mins="25">25 min</button>
         <button class="btn ghost" data-mins="45">45 min</button>
         <button class="btn ghost" data-mins="60">60 min</button>
+      </div>
+      <div class="timer-phase-status" aria-live="polite">
+        <strong id="timerPhaseLabel">focus</strong>
+        <span id="timerRoundLabel">no scheduled breaks</span>
       </div>
       <div class="study-timer-dial" id="timerDial" role="progressbar" aria-label="Study time remaining" aria-valuemin="0" aria-valuemax="1500" aria-valuenow="1500" aria-valuetext="25 minutes remaining">
         <svg class="study-timer-ring" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
@@ -403,8 +412,9 @@
         <button class="btn" id="timerStartBtn">start</button>
         <button class="btn secondary" id="timerPauseBtn" disabled>pause</button>
         <button class="btn ghost" id="timerResetBtn">reset</button>
+        <button class="btn ghost" id="timerSkipBreakBtn" type="button" hidden>skip break</button>
       </div>
-      <p class="small-note" style="margin-top:12px;">Your timer resumes on this device after a refresh. Pause to take a break; reset to choose another course or duration. Reset discards an unfinished session.</p>
+      <p class="small-note" style="margin-top:12px;">Your timer resumes on this device after a refresh. Pomodoro logs focus rounds only; breaks do not add study time. Reset discards an unfinished session.</p>
     </div>
 
     <div class="section-title">✧ Study History</div>
