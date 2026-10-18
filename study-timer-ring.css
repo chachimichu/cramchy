@@ -1,19 +1,19 @@
 /* Reference-inspired timer face and miniature study desk, recolored for Cramchy. */
 #view-timer{
-  --timer-ink:var(--planner-deep,#5a2432);
-  --timer-muted:var(--planner-muted,#9b737c);
-  --timer-accent:var(--planner-rose,#cf5d7b);
-  --timer-accent-strong:var(--red-deep,var(--planner-rose,#cf5d7b));
-  --timer-paper:var(--planner-card,#fffdfc);
-  --timer-soft:var(--planner-soft,#fff2f5);
-  --timer-line:var(--planner-line,#f5d3dc);
-  --timer-leaf:var(--planner-secondary,#a7bf91);
-  --timer-outline:color-mix(in srgb,var(--planner-rose,#cf5d7b) 72%,var(--planner-deep,#5a2432) 28%);
-  --timer-fill:color-mix(in srgb,var(--planner-pink,var(--planner-rose,#cf5d7b)) 25%,var(--planner-card,#fffdfc));
+  --timer-ink:var(--text-main,#5a2432);
+  --timer-muted:var(--text-soft,#9b737c);
+  --timer-accent:var(--red-berry,#cf5d7b);
+  --timer-accent-strong:var(--red-deep,var(--red-berry,#cf5d7b));
+  --timer-paper:var(--ivory,#fffdfc);
+  --timer-soft:var(--pink-blush,#fff2f5);
+  --timer-line:var(--pink-soft,#f5d3dc);
+  --timer-leaf:var(--matcha,#a7bf91);
+  --timer-outline:color-mix(in srgb,var(--red-berry,#cf5d7b) 72%,var(--text-main,#5a2432) 28%);
+  --timer-fill:color-mix(in srgb,var(--pink-bubblegum,var(--red-berry,#cf5d7b)) 25%,var(--ivory,#fffdfc));
 }
 #view-timer .study-timer-dial{
   position:relative;isolation:isolate;display:grid;place-items:center;
-  width:min(330px,86vw);aspect-ratio:1;margin:14px auto 8px;
+  width:min(350px,86vw);aspect-ratio:1;margin:14px auto 8px;
 }
 #view-timer .study-timer-ring{position:absolute;inset:0;z-index:1;width:100%;height:100%;overflow:visible;pointer-events:none}
 #view-timer .study-timer-ring circle{fill:none}
@@ -43,7 +43,7 @@
 #view-timer .timer-desk-pencil rect,#view-timer .timer-desk-pencil path{stroke:var(--timer-outline);stroke-width:1.25;stroke-linejoin:round}
 #view-timer .desk-pencil-eraser{fill:var(--timer-accent)}
 #view-timer .desk-pencil-band{fill:none;stroke:var(--timer-paper)!important;stroke-width:1.4!important}
-#view-timer .desk-pencil-body{fill:var(--planner-pink,var(--timer-accent))}
+#view-timer .desk-pencil-body{fill:var(--pink-bubblegum,var(--timer-accent))}
 #view-timer .desk-pencil-shine{fill:none;stroke:var(--timer-paper);stroke-width:2.5;stroke-linecap:round;opacity:.9}
 #view-timer .desk-pencil-tip{fill:var(--timer-accent)}
 #view-timer .desk-pencil-lead{fill:var(--timer-ink);stroke:none!important}
@@ -53,8 +53,8 @@
 #view-timer .desk-cup-saucer{fill:var(--timer-soft);stroke:var(--timer-outline);stroke-width:1.35;stroke-linejoin:round}
 #view-timer .desk-cup-body{fill:var(--timer-paper);stroke:var(--timer-outline);stroke-width:1.5;stroke-linejoin:round}
 #view-timer .desk-cup-handle{fill:none;stroke:var(--timer-outline);stroke-width:2.2}
-#view-timer .desk-cup-tea{fill:var(--planner-pink,var(--timer-accent));stroke:var(--timer-outline);stroke-width:1.1}
-#view-timer .desk-cup-heart{fill:var(--planner-pink,var(--timer-accent));stroke:var(--timer-paper);stroke-width:1.1;stroke-linejoin:round}
+#view-timer .desk-cup-tea{fill:var(--pink-bubblegum,var(--timer-accent));stroke:var(--timer-outline);stroke-width:1.1}
+#view-timer .desk-cup-heart{fill:var(--pink-bubblegum,var(--timer-accent));stroke:var(--timer-paper);stroke-width:1.1;stroke-linejoin:round}
 #view-timer .timer-plant-grown{transform-box:fill-box;transform-origin:50% 100%;transform:scale(calc(.3 + var(--focus-growth,0)*.7));transition:transform .65s cubic-bezier(.3,1.4,.5,1)}
 #view-timer .timer-plant-sway{transform-box:fill-box;transform-origin:50px 87px}
 #view-timer .desk-plant-stem{fill:none;stroke:var(--timer-leaf);stroke-width:3;stroke-linecap:round}
@@ -62,11 +62,11 @@
 #view-timer .desk-plant-leaf-vein{fill:none;stroke:var(--timer-paper);stroke-width:1.15;stroke-linecap:round;opacity:.9}
 #view-timer .timer-desk-flower{transform-box:fill-box;transform-origin:center;transform:scale(calc(.52 + var(--focus-growth,0)*.48));transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
 #view-timer .desk-flower-petals circle{fill:var(--timer-accent);stroke:color-mix(in srgb,var(--timer-accent) 65%,var(--timer-paper));stroke-width:1.1}
-#view-timer .desk-flower-petals circle:nth-child(3n){fill:var(--planner-cream,var(--timer-soft))}
+#view-timer .desk-flower-petals circle:nth-child(3n){fill:var(--cream,var(--timer-soft))}
 #view-timer .desk-flower-heart{fill:var(--timer-accent-strong);stroke:var(--timer-paper);stroke-width:1.2}
-#view-timer .desk-flower-center{fill:var(--planner-cream,var(--timer-soft))}
+#view-timer .desk-flower-center{fill:var(--cream,var(--timer-soft))}
 #view-timer .desk-flower-dot{fill:var(--timer-ink);opacity:.45}
-#view-timer .desk-pot-rim{fill:var(--planner-pink,var(--timer-accent));stroke:var(--timer-outline);stroke-width:1.3}
+#view-timer .desk-pot-rim{fill:var(--pink-bubblegum,var(--timer-accent));stroke:var(--timer-outline);stroke-width:1.3}
 #view-timer .desk-pot-body{fill:var(--timer-fill);stroke:var(--timer-outline);stroke-width:1.3;stroke-linejoin:round}
 #view-timer .desk-pot-face{fill:none;stroke:var(--timer-ink);stroke-width:1.6;stroke-linecap:round}
 #view-timer .desk-pot-cheek{fill:var(--timer-accent);opacity:.72}
@@ -85,7 +85,7 @@
 @keyframes timer-pencil-draw{0%{stroke-dashoffset:40}65%,100%{stroke-dashoffset:0}}
 @keyframes timer-pencil-write{50%{transform:rotate(-13deg) translateX(2px)}}
 @media(max-width:480px){
-  #view-timer .study-timer-dial{width:min(300px,88vw);margin:8px auto 4px}
+  #view-timer .study-timer-dial{width:min(320px,90vw);margin:8px auto 4px}
   #view-timer .timer-desk-scene{gap:4px;padding-inline:2px}
   #view-timer .timer-desk-scene svg{flex-basis:24%;width:24%}
   #view-timer .timer-scene-caption{font-size:.82rem}
