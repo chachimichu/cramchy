@@ -15,7 +15,7 @@ body.exam-mode-active .exam-toolbar{max-width:1180px}
 
 @media(min-width:721px){
   body.exam-mode-active nav.topnav{
-    position:sticky!important;top:10px!important;z-index:120!important;
+    position:sticky!important;top:0!important;margin-top:0!important;z-index:120!important;
     justify-content:center!important;overflow:visible!important;
     min-height:70px;padding-top:14px!important;padding-bottom:14px!important;
   }
