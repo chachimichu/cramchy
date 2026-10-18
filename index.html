@@ -342,14 +342,51 @@
               <path class="timer-book-lines" d="M40 235c8-2 15-1 22 2m-22 7c8-2 15-1 22 2m17-9c8-3 15-4 22-2m-22 9c8-3 15-4 22-2"></path>
             </g>
             <g class="timer-focus-plant">
-              <path class="timer-plant-stem" d="M244 235c-1-13 2-22 0-33"></path>
-              <path class="timer-plant-leaf timer-plant-leaf-left" d="M244 218c-15-1-19-9-17-17 11 0 17 5 17 17z"></path>
-              <path class="timer-plant-leaf timer-plant-leaf-right" d="M244 209c1-13 8-19 17-18 1 10-4 17-17 18z"></path>
-              <path class="timer-plant-bloom" d="M244 201c-8-7-2-12 1-8 3-6 8-1 4 4 7-3 9 4 1 6z"></path>
-              <path class="timer-plant-pot" d="M231 235h26l-4 19h-18z"></path>
-              <path class="timer-plant-pot-rim" d="M229 234h30v5h-30z"></path>
+              <g class="timer-plant-growth">
+                <path class="timer-plant-stem" d="M244 239c-1-13 2-25 0-43"></path>
+                <path class="timer-plant-vein" d="M244 230v-14"></path>
+                <path class="timer-plant-leaf timer-plant-leaf-left" d="M244 221c-15-1-20-10-17-18 11 0 17 5 17 18z"></path>
+                <path class="timer-plant-vein timer-leaf-vein-left" d="M242 218l-10-10"></path>
+                <path class="timer-plant-leaf timer-plant-leaf-right" d="M244 211c1-13 8-19 17-18 1 10-4 17-17 18z"></path>
+                <path class="timer-plant-vein timer-leaf-vein-right" d="M246 208l10-11"></path>
+                <g class="timer-flower-bloom" transform="translate(244 194)">
+                  <g class="timer-flower-outer">
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(45)"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(90)"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(135)"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(180)"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(225)"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(270)"></path>
+                    <path d="M0 1C-5-4-6-12 0-19 6-12 5-4 0 1z" transform="rotate(315)"></path>
+                  </g>
+                  <g class="timer-flower-inner">
+                    <path d="M0 1C-4-3-4-9 0-13 4-9 4-3 0 1z"></path>
+                    <path d="M0 1C-4-3-4-9 0-13 4-9 4-3 0 1z" transform="rotate(72)"></path>
+                    <path d="M0 1C-4-3-4-9 0-13 4-9 4-3 0 1z" transform="rotate(144)"></path>
+                    <path d="M0 1C-4-3-4-9 0-13 4-9 4-3 0 1z" transform="rotate(216)"></path>
+                    <path d="M0 1C-4-3-4-9 0-13 4-9 4-3 0 1z" transform="rotate(288)"></path>
+                  </g>
+                  <circle class="timer-flower-center" r="5"></circle>
+                  <circle class="timer-flower-center-dot" r="1.15"></circle>
+                </g>
+              </g>
+              <path class="timer-plant-pot" d="M231 238h26l-4 17h-18z"></path>
+              <path class="timer-plant-pot-rim" d="M229 236h30v5h-30z"></path>
+              <path class="timer-pot-detail" d="M239 246h10"></path>
+              <path class="timer-pot-detail" d="M244 243v6"></path>
             </g>
-            <path class="timer-ground-line" d="M219 257c12-4 27-4 41 0"></path>
+            <g class="timer-teacup">
+              <path class="timer-cup-saucer" d="M167 255c7 4 22 4 29 0"></path>
+              <path class="timer-cup-body" d="M171 238h20l-2 14h-16z"></path>
+              <path class="timer-cup-handle" d="M191 241h4c7 0 6 8 0 8h-5"></path>
+              <path class="timer-cup-tea" d="M173 240h16"></path>
+              <path class="timer-cup-steam" d="M176 232c-4-4 3-5 0-10m8 10c-4-4 3-5 0-10"></path>
+            </g>
+            <g class="timer-pencil-detail" transform="translate(124 249) rotate(-38)">
+              <path d="M0 0h30v5H0z"></path><path d="M30 0l6 2.5L30 5z"></path><path d="M0 0v5"></path>
+            </g>
+            <path class="timer-ground-line" d="M218 260c14-4 29-4 44 0"></path>
             <path class="timer-tiny-star timer-tiny-star-one" d="M103 54v8m-4-4h8"></path>
             <path class="timer-tiny-star timer-tiny-star-two" d="M196 73v6m-3-3h6"></path>
           </svg>
@@ -726,6 +763,6 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=2026-10-18-study-garden-154"></script>
+<script src="app.js?v=2026-10-18-study-garden-155"></script>
 </body>
 </html>
