@@ -1,4 +1,4 @@
-/* Exam hierarchy: playful page titles, readable sections and study details. */
+/* Exam mode: Fredoka for headings and key numbers, clean text for details. */
 body.exam-mode-active :is(#view-dashboard, #view-schedule, #view-subjects, #view-timer, #view-countdown, #view-matcha) * {
   font-family: var(--cramchy-readable) !important;
 }
@@ -9,15 +9,16 @@ body.exam-mode-active #view-subjects .legacy-subjects-panel .section-title,
 body.exam-mode-active #view-timer .section-title,
 body.exam-mode-active #view-countdown .section-title,
 body.exam-mode-active #view-matcha .section-title {
-  font-family: var(--cramchy-readable) !important;
+  font-family: var(--cramchy-display) !important;
   font-size: 1.05rem !important;
   font-weight: 700 !important;
-  letter-spacing: 0 !important;
-  line-height: 1.45;
+  letter-spacing: .015em !important;
+  line-height: 1.35;  letter-spacing: .015em !important;
+  line-height: 1.35;
 }
 
 body.exam-mode-active :is(#view-dashboard, #view-schedule, #view-subjects, #view-timer, #view-countdown, #view-matcha) :is(h3, h4) {
-  font-family: var(--cramchy-readable) !important;
+  font-family: var(--cramchy-display) !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
   line-height: 1.45;
@@ -43,7 +44,7 @@ body.exam-mode-active .exam-nav-set * {
 }
 
 body.exam-mode-active :is(.stat-card .num, .countdown-big, .countdown-precise, .exam-card .countdown, #timerDisplay) {
-  font-family: var(--cramchy-readable) !important;
+  font-family: var(--cramchy-display) !important;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0 !important;
 }
