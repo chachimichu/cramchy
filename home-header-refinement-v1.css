@@ -107,7 +107,7 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
   #view-grades .gw-hero,
   #view-grades .gw-tool-card
 ){
-  border-color:var(--planner-deep,#5a2432)!important;
+  border-color:color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f))!important;
   border-width:1px!important;
 }
 #view-dashboard .home-status-card,
