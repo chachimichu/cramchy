@@ -1072,7 +1072,8 @@ function updateTimerDisplay(){
   const duration=timerState.presetMinutes*60;
   const fraction=Math.max(0,Math.min(1,remaining/duration));
   const elapsed=1-fraction;
-  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(elapsed*100));
+  // The pale track is empty at the start; the darker arc grows as time elapses.
+  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(fraction*100));
   const dial=document.getElementById('timerDial');
   const tickGroup=document.getElementById('timerDialTicks');
   if(tickGroup&&!tickGroup.childElementCount){
