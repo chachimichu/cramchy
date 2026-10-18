@@ -1068,11 +1068,9 @@ function updateTimerDisplay(){
   const remaining=CramchyStudyTimer.remaining(timerState,Date.now());
   const m=Math.floor(remaining/60),s=remaining%60;
   document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  // Ring and digits share this exact remaining-time snapshot; no second clock.
-  const duration=timerState.presetMinutes*60;
+  const duration=CramchyStudyTimer.phaseMinutes(timerState)*60;
   const fraction=Math.max(0,Math.min(1,remaining/duration));
   const elapsed=1-fraction;
-  // The pale track is empty at the start; the darker arc grows as time elapses.
   document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(fraction*100));
   const dial=document.getElementById('timerDial');
   const tickGroup=document.getElementById('timerDialTicks');
@@ -1090,36 +1088,77 @@ function updateTimerDisplay(){
     }
   }
   tickGroup?.querySelectorAll('.timer-tick').forEach((tick,index)=>tick.classList.toggle('is-elapsed',index<Math.floor(elapsed*60)));
-  const sceneStage=!timerState.session?'ready':remaining===0?'complete':elapsed<.12?'starting':elapsed<.45?'growing':elapsed<.78?'flowing':'finishing';
+  const isBreak=timerState.phase==='shortBreak'||timerState.phase==='longBreak';
+  const phaseLabel=timerState.phase==='longBreak'?'long break':timerState.phase==='shortBreak'?'short break':'focus';
+  const sceneStage=!timerState.session&&!isBreak?'ready':remaining===0?'complete':isBreak?'resting':elapsed<.12?'starting':elapsed<.45?'growing':elapsed<.78?'flowing':'finishing';
   if(dial){
     dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
     dial.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.focusStage=sceneStage;
     dial.dataset.running=String(Boolean(timerState.running));
+    dial.dataset.phase=timerState.phase;
     const caption=document.getElementById('timerSceneCaption');
-    const captions={ready:'your desk is ready',starting:'settling in',growing:'finding your rhythm',flowing:'in the groove',finishing:'home stretch',complete:'look what you did'};
+    const captions={ready:'your desk is ready',starting:'settling in',growing:'finding your rhythm',flowing:'in the groove',finishing:'home stretch',complete:isBreak?'break complete':'look what you did',resting:timerState.phase==='longBreak'?'take a longer breather':'rest your eyes'};
     if(caption)caption.textContent=captions[sceneStage];
   }
   if(dial){
     dial.setAttribute('aria-valuemax',String(duration));
     dial.setAttribute('aria-valuenow',String(remaining));
-    dial.setAttribute('aria-valuetext',`${m} minutes ${s} seconds remaining`);
+    dial.setAttribute('aria-valuetext',`${phaseLabel}, ${m} minutes ${s} seconds remaining`);
   }
+  const phaseEl=document.getElementById('timerPhaseLabel');
+  const roundEl=document.getElementById('timerRoundLabel');
+  if(phaseEl)phaseEl.textContent=timerState.mode==='pomodoro'?phaseLabel:'focus timer';
+  if(roundEl){
+    if(timerState.mode!=='pomodoro')roundEl.textContent='no scheduled breaks';
+    else if(timerState.phase==='longBreak')roundEl.textContent='round 4 complete · 15 min rest';
+    else if(timerState.phase==='shortBreak')roundEl.textContent=`round ${timerState.round} complete · 5 min rest`;
+    else roundEl.textContent=`round ${timerState.round} of 4 · ${timerState.round===4?'then a 15 min rest':'then a 5 min rest'}`;
+  }
+  const hint=document.getElementById('timerModeHint');
+  if(hint)hint.textContent=timerState.mode==='pomodoro'?'25, 45, or 60 min focus · 5 min breaks · 15 min after round 4.':'Focus at your own pace, with no scheduled breaks.';
+  document.querySelectorAll('[data-timer-mode]').forEach(btn=>{
+    const active=btn.dataset.timerMode===timerState.mode;
+    btn.classList.toggle('is-active',active);btn.setAttribute('aria-pressed',String(active));
+    btn.disabled=timerState.running||Boolean(timerState.session);
+  });
   const start=document.getElementById('timerStartBtn'),pause=document.getElementById('timerPauseBtn');
   start.disabled=timerState.running;
-  const startLabel=timerState.session?'resume':'start';
+  const startLabel=timerState.phase==='shortBreak'?'start 5-min break':timerState.phase==='longBreak'?'start 15-min break':timerState.session?'resume':'start focus';
   if(start.textContent!==startLabel)start.textContent=startLabel;
   pause.disabled=!timerState.running;
-  document.getElementById('timerSubjectSelect').disabled=Boolean(timerState.session);
-  document.querySelectorAll('[data-mins]').forEach(btn=>{btn.disabled=Boolean(timerState.session);});
+  const locked=Boolean(timerState.session)||timerState.running||isBreak;
+  document.getElementById('timerSubjectSelect').disabled=locked;
+  document.querySelectorAll('[data-mins]').forEach(btn=>{btn.disabled=locked;});
+  const skip=document.getElementById('timerSkipBreakBtn');
+  if(skip){skip.hidden=!isBreak;skip.disabled=timerState.running;}
+}
+function timerAfterPomodoroBreak(timer){
+  const nextRound=timer.phase==='longBreak'?1:Math.min(4,timer.round+1);
+  return {...CramchyStudyTimer.fresh(timer.subject,timer.presetMinutes,'pomodoro'),round:nextRound};
+}
+function timerAfterPomodoroFocus(timer){
+  const phase=timer.round>=4?'longBreak':'shortBreak';
+  const next=CramchyStudyTimer.fresh(timer.subject,timer.presetMinutes,'pomodoro');
+  next.phase=phase;next.round=timer.round;
+  next.remaining=CramchyStudyTimer.phaseMinutes(next)*60;
+  return next;
 }
 function tickStudyTimer(){
   if(timerState.running&&CramchyStudyTimer.remaining(timerState,Date.now())===0){
-    // Finish after an incoming cloud snapshot so it cannot erase this new log.
-    if(typeof cloudLoading!=='undefined'&&cloudLoading){updateTimerDisplay();return;}
-    if(!logStudySession(timerState.session))return;
-    clearInterval(timerIntervalId);timerIntervalId=null;
-    showToast('study session complete ✧');chaowiReact('complete');
+    if(timerState.phase==='focus'){
+      // Finish after an incoming cloud snapshot so it cannot erase this new log.
+      if(typeof cloudLoading!=='undefined'&&cloudLoading){updateTimerDisplay();return;}
+      const nextTimer=timerState.mode==='pomodoro'?timerAfterPomodoroFocus(timerState):CramchyStudyTimer.reset(timerState);
+      if(!logStudySession(timerState.session,nextTimer))return;
+      clearInterval(timerIntervalId);timerIntervalId=null;
+      showToast(timerState.mode==='pomodoro'?'focus round complete · break time':'study session complete ✧');
+      chaowiReact('complete');
+    }else{
+      if(!persistStudyTimer(timerAfterPomodoroBreak(timerState)))return;
+      clearInterval(timerIntervalId);timerIntervalId=null;
+      showToast('break complete · ready for another focus round');
+    }
     renderTimerTab();
   }
   updateTimerDisplay();
@@ -1128,13 +1167,20 @@ function runStudyTimer(){
   clearInterval(timerIntervalId);
   timerIntervalId=timerState.running?setInterval(tickStudyTimer,1000):null;
 }
+document.querySelectorAll('[data-timer-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+  if(timerState.running||timerState.session)return;
+  const mode=btn.dataset.timerMode==='pomodoro'?'pomodoro':'focus';
+  if(timerState.mode===mode&&timerState.phase==='focus')return;
+  if(!persistStudyTimer(CramchyStudyTimer.fresh(timerState.subject,timerState.presetMinutes,mode)))return;
+  clearInterval(timerIntervalId);timerIntervalId=null;updateTimerDisplay();
+}));
 document.getElementById('timerSubjectSelect').addEventListener('change',e=>{
-  if(timerState.session)return;
+  if(timerState.session||timerState.running||timerState.phase!=='focus')return;
   if(!persistStudyTimer({...timerState,subject:e.target.value}))renderTimerTab();
 });
 document.querySelectorAll('[data-mins]').forEach(btn=>btn.addEventListener('click',()=>{
-  if(timerState.session)return;
-  if(persistStudyTimer(CramchyStudyTimer.fresh(timerState.subject,+btn.dataset.mins)))updateTimerDisplay();
+  if(timerState.session||timerState.running||timerState.phase!=='focus')return;
+  if(persistStudyTimer(CramchyStudyTimer.fresh(timerState.subject,+btn.dataset.mins,timerState.mode)))updateTimerDisplay();
 }));
 document.getElementById('timerStartBtn').addEventListener('click',()=>{
   if(timerState.running)return;
@@ -1154,6 +1200,11 @@ document.getElementById('timerPauseBtn').addEventListener('click',()=>{
 });
 document.getElementById('timerResetBtn').addEventListener('click',()=>{
   if(!persistStudyTimer(CramchyStudyTimer.reset(timerState)))return;
+  clearInterval(timerIntervalId);timerIntervalId=null;renderTimerTab();
+});
+document.getElementById('timerSkipBreakBtn').addEventListener('click',()=>{
+  if(timerState.running||!['shortBreak','longBreak'].includes(timerState.phase))return;
+  if(!persistStudyTimer(timerAfterPomodoroBreak(timerState)))return;
   clearInterval(timerIntervalId);timerIntervalId=null;renderTimerTab();
 });
 window.addEventListener('cramchy:backup-restored',()=>{
@@ -3201,9 +3252,8 @@ function renderTimerTab(){
   sel.innerHTML=choices.map(x=>`<option value="${escapeAttr(x.id)}" ${timerState.subject===x.id?'selected':''}>${escapeHtml(x.name)}</option>`).join('');
   updateTimerDisplay();renderHistory();
 }
-function logStudySession(session=timerState.session){
+function logStudySession(session=timerState.session,nextTimer=CramchyStudyTimer.reset(timerState)){
   if(!session)return false;
-  const nextTimer=CramchyStudyTimer.reset(timerState);
   const history=[...state.studyHistory];
   if(!history.some(item=>item.sessionId===session.id))history.unshift({
     subject:session.subject,subjectName:session.subjectName,sessionId:session.id,
