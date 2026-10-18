@@ -1,4 +1,5 @@
-/* Home greeting and main card finish. Theme colors come from the active appearance. */
+/* Home greeting and shared outline finish. Theme colors come from the active appearance. */
+body{--cramchy-outline:color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f));}
 #view-dashboard .cramchy-home-header.planner-hero-card{
   grid-template-columns:104px minmax(0,1fr)!important;
   align-items:center!important;
@@ -6,7 +7,7 @@
   min-height:154px!important;
   margin:0 0 16px!important;
   padding:20px 24px!important;
-  border:1px solid color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f))!important;
+  border:1px solid var(--cramchy-outline,color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f)))!important;
   border-radius:24px!important;
   background:var(--app-bg-2,var(--ivory,#fffdfc))!important;
   box-shadow:none!important;
@@ -125,7 +126,7 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
   body.exam-mode-active .exam-schedule-card,
   body.exam-mode-active .exam-subject-card
 ){
-  border-color:color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f))!important;
+  border-color:var(--cramchy-outline,color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f)))!important;
 }
 #view-dashboard .home-status-card,
 #view-dashboard .home-command-panel,
@@ -135,6 +136,30 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
 #view-dashboard .exam-entry-card,
 #view-dashboard .smart-study-card{
   border-style:solid!important;
+}
+
+/* Reuse the same outline on existing outlined controls; filled and borderless buttons stay as they are. */
+:is(
+  main .view button.btn.ghost,
+  main .view button.btn.secondary,
+  main .view .more-shortcut,
+  #view-planner .planner-light,
+  #view-planner .planner-tabs,
+  #view-planner .planner-nav button,
+  #view-planner .planner-day-cell,
+  #view-tasks .tw-filters button,
+  #view-subjects .cs-switch,
+  #view-subjects .cs-missing button,
+  #view-grades .gw-breadcrumb button,
+  #view-grades .gw-subject-toolbar button,
+  #view-grades .gw-period-tabs,
+  #view-grades .gw-add-score,
+  #view-more .font-size-option,
+  #view-more .theme-choice,
+  body.exam-mode-active .exam-toolbar .exam-menu-trigger,
+  body.exam-mode-active .exam-toolbar .exam-home
+){
+  border-color:var(--cramchy-outline)!important;
 }
 
 @media(max-width:760px){
