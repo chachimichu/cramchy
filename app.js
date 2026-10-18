@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-18-pomodoro-preview-175';
+  const VERSION='2026-10-18-stable-boot-176';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -58,12 +58,12 @@
         backdrop-filter:blur(14px);
       }
       .cramchy-boot-wordmark{
-        margin:0;color:#c85f7e;font-family:'Playfair Display',Georgia,serif;
+        margin:0;color:#c85f7e;font-family:Georgia,"Times New Roman",serif;
         font-size:clamp(58px,10vw,88px);font-weight:600;line-height:.92;letter-spacing:-.055em;
         text-shadow:0 8px 24px rgba(166,74,102,.08);
       }
       .cramchy-boot-sub{
-        margin-top:12px;color:#a77a84;font-family:'Playfair Display',Georgia,serif;
+        margin-top:12px;color:#a77a84;font-family:Georgia,"Times New Roman",serif;
         font-size:15px;font-style:italic;font-weight:600;letter-spacing:.18em;
       }
       .cramchy-boot-progress{
@@ -80,7 +80,7 @@
         box-shadow:0 0 12px rgba(217,111,141,.18);
       }
       .cramchy-boot-copy{
-        color:#a87280;font-family:'Nunito',system-ui,sans-serif;font-size:12px;font-weight:800;
+        color:#a87280;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:12px;font-weight:800;
         letter-spacing:.16em;text-transform:lowercase;
       }
       @keyframes cramchyBootFill{
@@ -116,9 +116,20 @@
 
   }
 
-  function finishBootSplash(){
+  async function finishBootSplash(){
     const splash=document.getElementById('cramchyBootSplash');
     if(!splash) return;
+    try{
+      if(document.fonts&&document.fonts.load){
+        const fonts=Promise.all([
+          document.fonts.load('600 16px Fredoka'),
+          document.fonts.load('400 16px "Plus Jakarta Sans"'),
+          document.fonts.load('400 16px Nunito')
+        ]).catch(()=>{});
+        await Promise.race([fonts,new Promise(resolve=>setTimeout(resolve,1600))]);
+      }
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    }catch(error){console.warn('Boot font/layout settling skipped.',error);}
     document.documentElement.removeAttribute('data-cramchy-booting');
     splash.classList.add('is-leaving');
     setTimeout(()=>{
