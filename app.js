@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-18-stable-boot-177';
+  const VERSION='2026-10-18-stable-boot-178';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -116,22 +116,36 @@
 
   }
 
+  function prepareBootSplashFonts(){
+    if(!document.fonts||!document.fonts.load){
+      document.documentElement.setAttribute('data-cramchy-splash-fonts-ready','');
+      return Promise.resolve();
+    }
+    return Promise.allSettled([
+      document.fonts.load('600 16px "Cramchy Splash Serif"'),
+      document.fonts.load('italic 600 16px "Cramchy Splash Serif"'),
+      document.fonts.load('800 16px "Cramchy Splash Sans"')
+    ]).then(results=>{
+      results.filter(result=>result.status==='rejected').forEach(result=>console.warn('A splash font could not be loaded; using its stable fallback.',result.reason));
+    }).then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+      .then(()=>document.documentElement.setAttribute('data-cramchy-splash-fonts-ready',''));
+  }
+
   async function finishBootSplash(){
     const splash=document.getElementById('cramchyBootSplash');
     if(!splash) return;
     try{
+      await window.__cramchySplashFontsReady;
       if(document.fonts&&document.fonts.load){
-        const fonts=Promise.all([
+        await Promise.all([
           document.fonts.load('600 16px Fredoka'),
           document.fonts.load('400 16px "Plus Jakarta Sans"'),
-          document.fonts.load('400 16px "M PLUS Rounded 1c"'),
-          document.fonts.load('600 16px "Playfair Display"'),
-          document.fonts.load('400 16px Nunito')
-        ]).catch(()=>{});
-        await Promise.race([fonts,new Promise(resolve=>setTimeout(resolve,1600))]);
+          document.fonts.load('400 16px "M PLUS Rounded 1c"')
+        ]);
       }
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     }catch(error){console.warn('Boot font/layout settling skipped.',error);}
+    await new Promise(resolve=>requestAnimationFrame(resolve));
     document.documentElement.removeAttribute('data-cramchy-booting');
     splash.classList.add('is-leaving');
     setTimeout(()=>{
@@ -198,6 +212,7 @@
 
   installFavicon();
   installBootSplash();
+  window.__cramchySplashFontsReady=window.__cramchySplashFontsReady||prepareBootSplashFonts();
   refreshStyles()
     .then(()=>forceFreshBaseBundle())
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
