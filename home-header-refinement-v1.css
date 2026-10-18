@@ -24,7 +24,7 @@ body{--cramchy-outline:color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text
   max-width:104px!important;
   aspect-ratio:1;
   padding:5px!important;
-  border:1px solid var(--pink-soft,#f5d3dc)!important;
+  border:1px solid var(--cramchy-outline)!important;
   border-radius:20px!important;
   background:var(--ivory,#fffdfc)!important;
   box-shadow:none!important;
@@ -147,11 +147,13 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
   #view-planner .planner-tabs,
   #view-planner .planner-nav button,
   #view-planner .planner-day-cell,
+  #view-tasks .tw-status,
   #view-tasks .tw-filters button,
   #view-subjects .cs-switch,
   #view-subjects .cs-missing button,
   #view-grades .gw-breadcrumb button,
   #view-grades .gw-subject-toolbar button,
+  #view-grades .grades-main-tabs,
   #view-grades .gw-period-tabs,
   #view-grades .gw-add-score,
   #view-more .font-size-option,
