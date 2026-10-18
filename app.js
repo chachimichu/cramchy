@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-18-pomodoro-preview-174';
+  const VERSION='2026-10-18-pomodoro-preview-175';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
