@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-18-mobile-account-152';
+  const VERSION='2026-10-18-more-theme-153';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
