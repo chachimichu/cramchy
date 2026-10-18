@@ -1,5 +1,5 @@
 /* Reference-inspired timer face and miniature study desk, recolored for Cramchy. */
-#view-timer .study-timer-dial{
+#view-timer{
   --timer-ink:var(--planner-deep,#5a2432);
   --timer-muted:var(--planner-muted,#9b737c);
   --timer-accent:var(--planner-rose,#cf5d7b);
@@ -8,6 +8,8 @@
   --timer-soft:var(--planner-soft,#fff2f5);
   --timer-line:var(--planner-line,#f5d3dc);
   --timer-leaf:var(--planner-secondary,#a7bf91);
+}
+#view-timer .study-timer-dial{
   position:relative;isolation:isolate;display:grid;place-items:center;
   width:min(330px,86vw);aspect-ratio:1;margin:14px auto 8px;
 }
