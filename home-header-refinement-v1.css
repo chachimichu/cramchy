@@ -6,7 +6,7 @@
   min-height:154px!important;
   margin:0 0 16px!important;
   padding:20px 24px!important;
-  border:1px solid var(--planner-deep,#5a2432)!important;
+  border:1px solid color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f))!important;
   border-radius:24px!important;
   background:var(--app-bg-2,var(--ivory,#fffdfc))!important;
   box-shadow:none!important;
@@ -87,6 +87,7 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
 
 /* Thin ink-colored outlines identify the large content panels. Keep controls alone. */
 :is(
+  main > .view > .card,
   #view-dashboard .home-status-card,
   #view-dashboard .home-command-panel,
   #view-dashboard .home-courses-section,
@@ -99,16 +100,32 @@ body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-m
   #view-planner .planner-card,
   #view-planner .planner-today,
   #view-planner .planner-tasks,
+  #view-subjects .cs-workspace > .page-head-row,
+  #view-subjects .cs-board,
+  #view-subjects .cs-details,
+  #view-subjects .course-card-dynamic,
+  #view-grades .gw-hero,
+  #view-grades .gw-tool-card,
+  #view-grades .gw-course-card,
+  #view-grades .grades-gwa-hero-card,
+  #view-grades .grades-gwa-course-card,
+  #view-grades .grade-course-card,
+  #view-grades .grade-overview-card,
+  #view-grades .category-card,
+  #view-grades .quick-gwa-card,
+  #view-grades .gwa-summary-card,
+  #view-grades .gwa-formula-card,
+  #view-grades .tool-card,
+  #view-more .settings-panel,
+  #view-more .term-manager-card,
   #view-exam .exam-choice,
+  body.exam-mode-active .card,
   body.exam-mode-active .exam-mode-card,
   body.exam-mode-active .exam-period-card,
   body.exam-mode-active .exam-schedule-card,
-  body.exam-mode-active .exam-subject-card,
-  #view-grades .gw-hero,
-  #view-grades .gw-tool-card
+  body.exam-mode-active .exam-subject-card
 ){
   border-color:color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text-main,#5a3a3f))!important;
-  border-width:1px!important;
 }
 #view-dashboard .home-status-card,
 #view-dashboard .home-command-panel,
