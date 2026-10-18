@@ -14,7 +14,7 @@
 .cramchy-home-copy .big-greeting{
   margin:0!important;
   color:var(--cram-deep,#5a2432)!important;
-  font-family:var(--cram-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cram-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:clamp(2.15rem,4vw,4rem)!important;
   line-height:1.03!important;
   letter-spacing:-.03em!important;
