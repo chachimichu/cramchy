@@ -1071,8 +1071,35 @@ function updateTimerDisplay(){
   // Ring and digits share this exact remaining-time snapshot; no second clock.
   const duration=timerState.presetMinutes*60;
   const fraction=Math.max(0,Math.min(1,remaining/duration));
-  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String((1-fraction)*100));
+  const elapsed=1-fraction;
+  // The pale track is empty at the start; the darker arc grows as time elapses.
+  document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(fraction*100));
   const dial=document.getElementById('timerDial');
+  const tickGroup=document.getElementById('timerDialTicks');
+  if(tickGroup&&!tickGroup.childElementCount){
+    for(let i=0;i<60;i++){
+      const angle=(i/60)*Math.PI*2-Math.PI/2;
+      const major=i%5===0,r1=major?140:144,r2=152;
+      const tick=document.createElementNS('http://www.w3.org/2000/svg','line');
+      tick.setAttribute('x1',String(160+r1*Math.cos(angle)));
+      tick.setAttribute('y1',String(160+r1*Math.sin(angle)));
+      tick.setAttribute('x2',String(160+r2*Math.cos(angle)));
+      tick.setAttribute('y2',String(160+r2*Math.sin(angle)));
+      tick.setAttribute('class','timer-tick'+(major?' major':''));
+      tickGroup.appendChild(tick);
+    }
+  }
+  tickGroup?.querySelectorAll('.timer-tick').forEach((tick,index)=>tick.classList.toggle('is-elapsed',index<Math.floor(elapsed*60)));
+  const sceneStage=!timerState.session?'ready':remaining===0?'complete':elapsed<.12?'starting':elapsed<.45?'growing':elapsed<.78?'flowing':'finishing';
+  if(dial){
+    dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
+    dial.style.setProperty('--focus-growth',String(elapsed));
+    dial.dataset.focusStage=sceneStage;
+    dial.dataset.running=String(Boolean(timerState.running));
+    const caption=document.getElementById('timerSceneCaption');
+    const captions={ready:'your desk is ready',starting:'settling in',growing:'finding your rhythm',flowing:'in the groove',finishing:'home stretch',complete:'look what you did'};
+    if(caption)caption.textContent=captions[sceneStage];
+  }
   if(dial){
     dial.setAttribute('aria-valuemax',String(duration));
     dial.setAttribute('aria-valuenow',String(remaining));

@@ -103,6 +103,7 @@
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=2026-10-16-chat-launcher-1">
 </head>
@@ -324,11 +325,79 @@
         <button class="btn ghost" data-mins="60">60 min</button>
       </div>
       <div class="study-timer-dial" id="timerDial" role="progressbar" aria-label="Study time remaining" aria-valuemin="0" aria-valuemax="1500" aria-valuenow="1500" aria-valuetext="25 minutes remaining">
-        <svg class="study-timer-ring" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-          <circle class="study-timer-track" cx="60" cy="60" r="54"></circle>
-          <circle class="study-timer-progress" id="timerRingProgress" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"></circle>
+        <svg class="study-timer-ring" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
+          <g id="timerDialTicks"></g>
+          <circle class="study-timer-track" cx="160" cy="160" r="128"></circle>
+          <circle class="study-timer-progress" id="timerRingProgress" cx="160" cy="160" r="128" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"></circle>
+          <g class="timer-ring-marker" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" transform="translate(149 19) scale(.92)"></path>
+          </g>
+          <path class="timer-orbit-star" d="M72 78v9m-4.5-4.5h9"></path>
+          <path class="timer-orbit-star timer-orbit-star-two" d="M247 92v7m-3.5-3.5h7"></path>
+          <circle class="timer-orbit-dot" cx="252" cy="232" r="2.5"></circle>
         </svg>
-        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-center">
+          <div class="timer-display" id="timerDisplay">25:00</div>
+          <div class="timer-scene-caption" id="timerSceneCaption" aria-hidden="true">your desk is ready</div>
+        </div>
+      </div>
+      <div class="timer-desk-scene" aria-hidden="true">
+        <svg class="timer-desk-book" viewBox="0 0 112 76">
+          <ellipse cx="56" cy="70" rx="45" ry="4" class="desk-ground"></ellipse>
+          <path class="desk-book-cover" d="M7 17Q29 12 55 20Q81 12 105 17V61Q81 55 55 65Q29 55 7 61Z"></path>
+          <path class="desk-book-page" d="M12 18Q33 14 53 21V58Q33 51 12 56Z"></path>
+          <path class="desk-book-page" d="M99 18Q78 14 57 21V58Q78 51 99 56Z"></path>
+          <path class="desk-book-line" d="M17 28q14-3 30 3M17 37q14-3 30 3M17 46q13-2 26 2M94 28q-14-3-30 3m30 6q-14-3-30 3m27 6q-11-2-22 2"></path>
+          <path class="desk-book-spine" d="M55 20v44"></path>
+          <path class="desk-book-ribbon" d="M51 56v14l4-4 4 4V57"></path>
+        </svg>
+        <svg class="timer-desk-pencil" viewBox="0 0 120 38">
+          <g transform="rotate(-10 60 19)">
+            <rect x="8" y="10" width="20" height="17" rx="5" class="desk-pencil-eraser"></rect>
+            <path d="M24 10v17m5-17v17" class="desk-pencil-band"></path>
+            <path d="M29 10h61v17H29z" class="desk-pencil-body"></path>
+            <path d="M36 15h46" class="desk-pencil-shine"></path>
+            <path d="M90 10l22 8.5L90 27z" class="desk-pencil-tip"></path>
+            <path d="M106 16l6 2.5-6 2.5z" class="desk-pencil-lead"></path>
+          </g>
+          <path class="desk-pencil-scribble" d="M74 34q5-5 10 0t10 0t10 0"></path>
+        </svg>
+        <svg class="timer-desk-cup" viewBox="0 0 84 82">
+          <ellipse cx="42" cy="75" rx="32" ry="4" class="desk-ground"></ellipse>
+          <g class="timer-cup-steam"><path d="M27 28q-5-5 0-10t0-10"></path><path d="M40 28q-5-5 0-10t0-10"></path><path d="M53 28q-5-5 0-10t0-10"></path></g>
+          <path class="desk-cup-saucer" d="M8 69q34 11 68 0l-6-5H14z"></path>
+          <path class="desk-cup-body" d="M16 35h43v14a21.5 21.5 0 0 1-43 0z"></path>
+          <path class="desk-cup-handle" d="M59 41h5a8 8 0 0 1 0 16h-7"></path>
+          <ellipse class="desk-cup-tea" cx="37.5" cy="35" rx="21.5" ry="5.5"></ellipse>
+          <path class="desk-cup-heart" d="M37.5 55c-4-3-8-6-8-10a4.2 4.2 0 0 1 8-2 4.2 4.2 0 0 1 8 2c0 4-4 7-8 10z"></path>
+          <path class="desk-cup-heart" d="M37.5 8c-3-2-5-4-5-7a2.8 2.8 0 0 1 5-1 2.8 2.8 0 0 1 5 1c0 3-2 5-5 7z"></path>
+        </svg>
+        <svg class="timer-desk-plant" viewBox="0 0 100 132">
+          <ellipse cx="50" cy="128" rx="30" ry="3.5" class="desk-ground"></ellipse>
+          <g class="timer-plant-sway">
+            <g class="timer-plant-grown">
+              <path class="desk-plant-stem" d="M50 88c0-15 3-29 0-45"></path>
+              <path class="desk-plant-vein" d="M50 78V64"></path>
+              <g transform="translate(50 75) rotate(153)"><path class="desk-plant-leaf" d="M0 0C8-11 24-11 32 0 24 11 8 11 0 0Z"></path><path class="desk-plant-leaf-vein" d="M3 0h26"></path></g>
+              <g transform="translate(50 65) rotate(-27)"><path class="desk-plant-leaf" d="M0 0C8-11 24-11 32 0 24 11 8 11 0 0Z"></path><path class="desk-plant-leaf-vein" d="M3 0h26"></path></g>
+              <g transform="translate(50 56) rotate(198) scale(.78)"><path class="desk-plant-leaf" d="M0 0C8-11 24-11 32 0 24 11 8 11 0 0Z"></path><path class="desk-plant-leaf-vein" d="M3 0h26"></path></g>
+              <g class="timer-desk-flower" transform="translate(50 37)">
+                <g class="desk-flower-petals">
+                  <circle cx="0" cy="-15" r="8"></circle><circle cx="10.6" cy="-10.6" r="8"></circle><circle cx="15" cy="0" r="8"></circle><circle cx="10.6" cy="10.6" r="8"></circle><circle cx="0" cy="15" r="8"></circle><circle cx="-10.6" cy="10.6" r="8"></circle><circle cx="-15" cy="0" r="8"></circle><circle cx="-10.6" cy="-10.6" r="8"></circle>
+                </g>
+                <circle class="desk-flower-heart" cx="0" cy="0" r="7"></circle>
+                <circle class="desk-flower-center" cx="0" cy="0" r="4"></circle>
+                <circle class="desk-flower-dot" cx="-2" cy="-1" r="1"></circle><circle class="desk-flower-dot" cx="2" cy="1" r="1"></circle>
+              </g>
+            </g>
+            <rect class="desk-pot-rim" x="23" y="87" width="54" height="13" rx="5"></rect>
+            <path class="desk-pot-body" d="M28 99h44l-5 27H33z"></path>
+            <circle class="desk-pot-eye" cx="44" cy="110" r="1.6"></circle><circle class="desk-pot-eye" cx="56" cy="110" r="1.6"></circle>
+            <path class="desk-pot-face" d="M47 116q3 3 6 0"></path>
+            <circle class="desk-pot-cheek" cx="40" cy="115" r="2.2"></circle><circle class="desk-pot-cheek" cx="60" cy="115" r="2.2"></circle>
+            <path class="desk-pot-detail" d="M40 105h20"></path>
+          </g>
+        </svg>
       </div>
       <div class="timer-controls">
         <button class="btn" id="timerStartBtn">start</button>
@@ -508,7 +577,7 @@
         <button class="more-shortcut" id="archiveCurrentTermBtn">archive current term</button>
       </div>
     </div>
-    <div class="section-title">✧ Backup &amp; Reset</div>
+    <div class="section-title">✦ Backup &amp; Reset</div>
     <div class="card">
       <p class="small-note">Keep a copy of your courses, grades, tasks, study progress, Planner events, and Term GWA entries.</p>
       <div class="backup-actions">
@@ -525,7 +594,7 @@
       <p class="hint">Use this if buttons act weird after an update. It repairs saved Cramchy data without deleting your courses, grades, tasks, or study history.</p>
       <button class="btn secondary" id="repairDataBtn" type="button" style="width:100%;">repair app data ✦</button>
     </div>
-    <div class="section-title">✧ about Cramchy</div>
+    <div class="section-title">✦ about Cramchy</div>
     <div class="card settings-panel" style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
       <div><h3>the story behind Cramchy</h3><p class="hint" style="margin-bottom:0;">Why it was made, who it’s for, and how it got its name.</p></div>
       <a class="btn secondary" href="/about.html">read the story</a>
@@ -699,6 +768,6 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=2026-10-18-mobile-account-152"></script>
+<script src="app.js?v=2026-10-18-study-reference-172"></script>
 </body>
 </html>

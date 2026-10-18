@@ -5,7 +5,7 @@
   const managed=new WeakMap();
   function apply(el){
     if(!(el instanceof HTMLElement)||['SCRIPT','STYLE','LINK'].includes(el.tagName))return;
-    const chunky=/DynaPuff/i.test(getComputedStyle(el).fontFamily);
+    const chunky=/Fredoka/i.test(getComputedStyle(el).fontFamily);
     if(chunky){
       if(!managed.has(el))managed.set(el,{value:el.style.getPropertyValue('letter-spacing'),priority:el.style.getPropertyPriority('letter-spacing')});
       if(el.style.getPropertyValue('letter-spacing')!=='.015em')el.style.setProperty('letter-spacing','.015em','important');
