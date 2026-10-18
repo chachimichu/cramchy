@@ -1074,6 +1074,21 @@ function updateTimerDisplay(){
   const elapsed=1-fraction;
   document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(elapsed*100));
   const dial=document.getElementById('timerDial');
+  const tickGroup=document.getElementById('timerDialTicks');
+  if(tickGroup&&!tickGroup.childElementCount){
+    for(let i=0;i<60;i++){
+      const angle=(i/60)*Math.PI*2-Math.PI/2;
+      const major=i%5===0,r1=major?140:144,r2=152;
+      const tick=document.createElementNS('http://www.w3.org/2000/svg','line');
+      tick.setAttribute('x1',String(160+r1*Math.cos(angle)));
+      tick.setAttribute('y1',String(160+r1*Math.sin(angle)));
+      tick.setAttribute('x2',String(160+r2*Math.cos(angle)));
+      tick.setAttribute('y2',String(160+r2*Math.sin(angle)));
+      tick.setAttribute('class','timer-tick'+(major?' major':''));
+      tickGroup.appendChild(tick);
+    }
+  }
+  tickGroup?.querySelectorAll('.timer-tick').forEach((tick,index)=>tick.classList.toggle('is-elapsed',index<Math.floor(elapsed*60)));
   const sceneStage=!timerState.session?'ready':remaining===0?'complete':elapsed<.12?'starting':elapsed<.45?'growing':elapsed<.78?'flowing':'finishing';
   if(dial){
     dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
