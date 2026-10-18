@@ -38,7 +38,7 @@ body[data-theme="dark-study"] #view-planner .planner-rec{
 .home-status-strip{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin:18px 0!important;}
 .home-status-card{position:relative!important;overflow:hidden!important;min-height:112px!important;padding:17px 17px 15px 23px!important;text-align:left!important;border-radius:22px!important;border:1px solid transparent!important;box-shadow:0 10px 24px rgba(86,57,68,.07)!important;}
 .home-status-card::before{content:"";position:absolute;left:12px;top:18px;width:7px;height:7px;border-radius:999px;background:var(--status-accent);box-shadow:0 0 0 5px color-mix(in srgb,var(--status-accent) 14%,transparent);}
-.home-status-card .value{font-family:var(--font-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;font-size:1.55rem!important;color:var(--text-main)!important;margin-top:9px!important;}
+.home-status-card .value{font-family:var(--font-display,'Fredoka','Plus Jakarta Sans',cursive)!important;font-size:1.55rem!important;color:var(--text-main)!important;margin-top:9px!important;}
 .home-status-card .label{color:var(--text-soft)!important;letter-spacing:0!important;text-transform:none!important;font-size:.78rem!important;}
 .home-status-card.status-class{--status-accent:var(--home-blue);background:linear-gradient(135deg,var(--home-blue-soft),var(--app-bg-2,#fff))!important;border-color:#d7e5f8!important}
 .home-status-card.status-task{--status-accent:var(--home-task);background:linear-gradient(135deg,var(--home-task-soft),var(--app-bg-2,#fff))!important;border-color:#f7d6df!important}
@@ -52,7 +52,7 @@ body[data-theme="dark-study"] .home-status-card{background:linear-gradient(135de
 body[data-theme="dark-study"] .home-command-panel{background:var(--app-bg-2);border-color:var(--pink-soft);}
 .home-command-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
 .home-command-heading>div{display:flex;align-items:center;gap:9px}
-.home-command-heading h3{margin:0;color:var(--text-main)!important;font-family:var(--font-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;font-size:1.22rem!important;letter-spacing:-.02em;}
+.home-command-heading h3{margin:0;color:var(--text-main)!important;font-family:var(--font-display,'Fredoka','Plus Jakarta Sans',cursive)!important;font-size:1.22rem!important;letter-spacing:-.02em;}
 .home-heading-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto}
 .dot-class{background:var(--home-blue)} .dot-task{background:var(--home-task)} .dot-exam{background:var(--home-exam)} .dot-study{background:var(--home-study)}
 .home-heading-note{color:var(--text-soft);font-size:.73rem;font-weight:800;white-space:nowrap}
