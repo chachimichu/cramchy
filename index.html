@@ -328,10 +328,34 @@
           <circle class="study-timer-track" cx="60" cy="60" r="54"></circle>
           <circle class="study-timer-progress" id="timerRingProgress" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"></circle>
         </svg>
-        <div class="study-timer-orbit" aria-hidden="true"><span class="study-timer-orbit-spark">✦</span></div>
-        <div class="study-timer-desk-doodles" aria-hidden="true"><span class="timer-doodle timer-doodle-pencil">✎</span><span class="timer-doodle timer-doodle-book">▤</span><span class="timer-doodle timer-doodle-star">✧</span></div>
-        <div class="study-timer-finish" aria-hidden="true"><i>✦</i><i>✧</i><i>✦</i><i>✧</i></div>
+        <div class="study-timer-art" aria-hidden="true">
+          <svg class="timer-scene-art" viewBox="0 0 300 300" focusable="false">
+            <path class="timer-orbit-guide" d="M150 16a134 134 0 1 1-.1 0" pathLength="100"></path>
+            <g class="timer-flight-marker">
+              <path class="timer-flight-trail" d="M0 0c-5 2-8 5-10 10"></path>
+              <path class="timer-paper-plane" d="M0 0 17-6 9 9 6 3 0 0Zm6 3 7-6"></path>
+            </g>
+            <g class="timer-open-book">
+              <path d="M31 225c13-5 26-4 38 3v28c-12-7-25-8-38-3z"></path>
+              <path d="M69 228c12-7 25-8 38-3v28c-13-5-26-4-38 3z"></path>
+              <path class="timer-book-spine" d="M69 228v28"></path>
+              <path class="timer-book-lines" d="M40 235c8-2 15-1 22 2m-22 7c8-2 15-1 22 2m17-9c8-3 15-4 22-2m-22 9c8-3 15-4 22-2"></path>
+            </g>
+            <g class="timer-focus-plant">
+              <path class="timer-plant-stem" d="M244 235c-1-13 2-22 0-33"></path>
+              <path class="timer-plant-leaf timer-plant-leaf-left" d="M244 218c-15-1-19-9-17-17 11 0 17 5 17 17z"></path>
+              <path class="timer-plant-leaf timer-plant-leaf-right" d="M244 209c1-13 8-19 17-18 1 10-4 17-17 18z"></path>
+              <path class="timer-plant-bloom" d="M244 201c-8-7-2-12 1-8 3-6 8-1 4 4 7-3 9 4 1 6z"></path>
+              <path class="timer-plant-pot" d="M231 235h26l-4 19h-18z"></path>
+              <path class="timer-plant-pot-rim" d="M229 234h30v5h-30z"></path>
+            </g>
+            <path class="timer-ground-line" d="M219 257c12-4 27-4 41 0"></path>
+            <path class="timer-tiny-star timer-tiny-star-one" d="M103 54v8m-4-4h8"></path>
+            <path class="timer-tiny-star timer-tiny-star-two" d="M196 73v6m-3-3h6"></path>
+          </svg>
+        </div>
         <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-scene-caption" id="timerSceneCaption" aria-hidden="true">your desk is ready</div>
       </div>
       <div class="timer-controls">
         <button class="btn" id="timerStartBtn">start</button>
