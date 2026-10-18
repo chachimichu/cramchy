@@ -38,6 +38,7 @@
 /* A calm focus orbit layered around the accurate timer ring. */
 #view-timer .study-timer-dial{isolation:isolate}
 #view-timer .study-timer-ring{position:relative;z-index:1}
+#view-timer #timerDisplay{z-index:4}
 #view-timer .study-timer-progress{transition:none;filter:drop-shadow(0 0 0 transparent)}
 #view-timer .study-timer-orbit{
   position:absolute;inset:-9px;z-index:2;border-radius:50%;pointer-events:none;
