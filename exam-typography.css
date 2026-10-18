@@ -13,14 +13,13 @@ body.exam-mode-active #view-matcha .section-title {
   font-size: 1.05rem !important;
   font-weight: 700 !important;
   letter-spacing: .015em !important;
-  line-height: 1.35;  letter-spacing: .015em !important;
   line-height: 1.35;
 }
 
 body.exam-mode-active :is(#view-dashboard, #view-schedule, #view-subjects, #view-timer, #view-countdown, #view-matcha) :is(h3, h4) {
   font-family: var(--cramchy-display) !important;
   font-weight: 700 !important;
-  letter-spacing: 0 !important;
+  letter-spacing: .015em !important;
   line-height: 1.45;
 }
 
