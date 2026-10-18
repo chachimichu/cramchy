@@ -1,7 +1,7 @@
 /* Typography polish v17 — refined: playful page headers, clean cards. No font files, no layout or copy changes. */
 :root{
   --cramchy-readable:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --cramchy-display:'DynaPuff','Plus Jakarta Sans',cursive;
+  --cramchy-display:'Fredoka','Plus Jakarta Sans',cursive;
 }
 
 body,button,input,select,textarea{
