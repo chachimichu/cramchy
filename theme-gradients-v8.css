@@ -57,8 +57,11 @@ body[data-theme="dark-study"]{
   --cram-banner-border:#756277;
 }
 
-/* Hero banners: these are the visual anchors of Home + Planner. */
-.cramchy-home-header.planner-hero-card,
+/* The Home greeting uses one soft theme shade; Planner keeps its banner gradient. */
+.cramchy-home-header.planner-hero-card{
+  background:var(--cram-banner-2)!important;
+  border-color:var(--cram-banner-border)!important;
+}
 #view-planner .planner-hero-card{
   background:linear-gradient(
     104deg,
