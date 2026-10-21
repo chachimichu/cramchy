@@ -2278,16 +2278,58 @@ function renderDynamicCourses(){
     document.getElementById('emptyAddCourseBtn')?.addEventListener('click',()=>openCourseModal());
     return;
   }
-  grid.innerHTML=courses.map(c=>{
-    const schedules=normalizeCourseSchedules(c);
-    const scheduleHtml=schedules.length?schedules.map(s=>`<div class="schedule-chip"><span>${escapeHtml(scheduleText(s))}</span></div>`).join(''):'<div class="schedule-chip"><span>no class schedule yet</span></div>';
-    const accent=COURSE_COLORS[c.color]||COURSE_COLORS.pink;
-    return `<div class="course-card-dynamic" style="--course-accent:${accent}"><div class="course-accent"></div><div class="course-card-body">
-      <div class="course-top"><div><h3>${escapeHtml(c.name)}</h3><div class="meta">${escapeHtml(c.code||'No code')}${c.units?` · ${c.units} units`:''}<br>${escapeHtml(c.professor||'Professor not set')}${c.section?` · ${escapeHtml(c.section)}`:''}</div></div></div>
-      <div class="schedule-stack">${scheduleHtml}</div>
-      <div class="course-card-help">You can change details anytime. “Schedules” lets you add multiple meeting days.</div>
-      <div class="course-actions"><button data-edit-course="${c.id}">✎ edit course</button><button data-schedule-course="${c.id}">🗓 edit schedules</button><button class="danger" data-delete-course="${c.id}">remove course</button></div>
-    </div></div>`;
+  const dayInfo=[['Monday','M'],['Tuesday','T'],['Wednesday','W'],['Thursday','T'],['Friday','F'],['Saturday','S'],['Sunday','S']];
+  function upcomingClass(schedules){
+    const now=new Date();let best=null;
+    schedules.forEach(s=>{
+      if(!DAY_NAMES.includes(s.day)||!/^[0-9]{2}:[0-9]{2}$/.test(s.start||''))return;
+      const [hh,mm]=s.start.split(':').map(Number),day=DAY_NAMES.indexOf(s.day);
+      let delta=(day-now.getDay()+7)%7;const when=new Date(now);when.setSeconds(0,0);when.setHours(hh,mm,0,0);when.setDate(now.getDate()+delta);
+      if(when<=now)when.setDate(when.getDate()+7);if(!best||when<best.when)best={schedule:s,when};
+    });
+    if(!best)return '';
+    const today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),date=new Date(best.when.getFullYear(),best.when.getMonth(),best.when.getDate());
+    const gap=Math.round((date-today)/86400000),label=gap===0?'today':gap===1?'tomorrow':best.when.toLocaleDateString(undefined,{weekday:'long'});
+    return `<div class="course-next"><i aria-hidden="true"></i><span>next class: <b>${label} · ${displayTime24(best.schedule.start)}</b></span></div>`;
+  }
+  function scheduleCards(schedules){
+    if(!schedules.length)return '<div class="course-no-schedule">no class schedule yet</div>';
+    const groups=[];
+    schedules.forEach(s=>{
+      const key=s.legacy?`legacy:${s.room||''}`:[s.start||'',s.end||'',s.room||''].join('|');
+      let group=groups.find(g=>g.key===key);if(!group){group={key,days:[],schedule:s};groups.push(group);}
+      if(s.day&&!group.days.includes(s.day))group.days.push(s.day);
+    });
+    return groups.map(g=>{
+      g.days.sort((a,b)=>DAY_NAMES.indexOf(a)-DAY_NAMES.indexOf(b));const s=g.schedule;
+      const day=g.days.length?g.days.map(d=>d.slice(0,3)).join(', '):(s.legacy?'Schedule':'Day not set');
+      const time=s.legacy?(s.room||'Schedule not set'):(s.start&&s.end?`${displayTime24(s.start)}–${displayTime24(s.end)}`:s.start?displayTime24(s.start):'Time not set');
+      const room=!s.legacy&&s.room?' · '+s.room:'';
+      return `<div class="schedule-chip"><b>${escapeHtml(day)}</b><span>${escapeHtml(time+room)}</span></div>`;
+    }).join('');
+  }
+  grid.innerHTML=courses.map((c,index)=>{
+    const schedules=normalizeCourseSchedules(c),accent=COURSE_COLORS[c.color]||COURSE_COLORS.pink;
+    const activeDays=new Set(schedules.map(s=>s.day).filter(Boolean));
+    const daysLabel=dayInfo.filter(([name])=>activeDays.has(name)).map(([,short])=>short).join(', ');
+    const scheme=courseScheme(c),weights=[['Written & quizzes',scheme.ww],['Enabling activities',scheme.pt],['Attendance',scheme.attendance],['Major exam',scheme.exam]];
+    const safeWeights=weights.map(([label,value])=>[label,Math.max(0,Math.min(100,Number(value)||0))]);
+    const weightBar=safeWeights.map(([label,value],i)=>`<i style="flex:${value};--weight-tone:${(i+1)*22}%" title="${escapeHtml(label)} ${value}%"></i>`).join('');
+    const weightText=safeWeights.map(([,value])=>value).join(' / ');
+    return `<article class="course-card-dynamic" style="--course-accent:${accent};--course-order:${index}">
+      <div class="course-spine" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="course-card-body"><div class="course-top"><div>
+        <span class="course-code-pill">${escapeHtml(c.code||'No code')}</span>
+        <h3>${escapeHtml(c.name)}</h3>
+        <div class="meta">${Number(c.units)||0} units · ${escapeHtml(c.professor||'Professor not set')}${c.section?' · '+escapeHtml(c.section):''}</div>
+      </div></div>
+      <div class="course-day-strip" aria-label="${daysLabel?'Meets on '+escapeHtml(daysLabel):'No meeting days set'}">${dayInfo.map(([name,short])=>`<span class="${activeDays.has(name)?'on':''}" title="${name}">${short}</span>`).join('')}</div>
+      ${upcomingClass(schedules)}
+      <div class="schedule-stack">${scheduleCards(schedules)}</div>
+      <div class="course-grading"><div class="course-grading-head"><span>grading weights</span><b>${weightText}</b></div><div class="course-weight-bar" role="img" aria-label="Grading weights: ${safeWeights.map(([label,value])=>label+' '+value+'%').join(', ')}">${weightBar}</div></div>
+      <div class="course-actions"><button type="button" data-edit-course="${escapeAttr(c.id)}">edit course</button><button type="button" data-schedule-course="${escapeAttr(c.id)}">edit schedules</button><button type="button" class="danger" data-delete-course="${escapeAttr(c.id)}">remove course</button></div>
+      </div>
+    </article>`;
   }).join('');
   grid.querySelectorAll('[data-edit-course]').forEach(b=>b.addEventListener('click',()=>openCourseModal(b.dataset.editCourse,false)));
   grid.querySelectorAll('[data-schedule-course]').forEach(b=>b.addEventListener('click',()=>openCourseModal(b.dataset.scheduleCourse,true)));
@@ -2323,8 +2365,16 @@ function scheduleRowMarkup(s={}){
     <button type="button" class="schedule-remove-btn" data-remove-schedule aria-label="Remove schedule">×</button>
   </div>`;
 }
+function nextCourseColor(existing=null){
+  const colors=Object.keys(COURSE_COLORS);
+  const term=existing?.term||state.profile?.term||'Term 1';
+  const year=existing?.academicYear||state.profile?.academicYear||'2026–2027';
+  const used=new Set((state.courses||[]).filter(c=>c.id!==existing?.id&&(c.term||term)===term&&(c.academicYear||year)===year).map(c=>c.color).filter(color=>colors.includes(color)));
+  return colors.find(color=>!used.has(color))||colors[(state.courses||[]).length%colors.length]||'pink';
+}
 function openCourseModal(courseId=null,focusSchedules=false){
   const existing=(state.courses||[]).find(c=>c.id===courseId);
+  const initialColor=COURSE_COLORS[existing?.color]?existing.color:nextCourseColor(existing);
   const schedules=existing?normalizeCourseSchedules(existing).filter(s=>!s.legacy):[];
   const scheme=courseScheme(existing);
   const scrim=document.createElement('div'); scrim.className='modal-scrim';
@@ -2338,7 +2388,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
       <div><label>section</label><input id="courseSection" value="${escapeAttr(existing?.section||'')}"></div>
       <div><label>default room</label><input id="courseRoom" value="${escapeAttr(existing?.room||'')}"></div>
       <div><label>term</label><input id="courseTerm" value="${escapeAttr(existing?.term||state.profile?.term||'Term 1')}"></div>
-      <div><label>course color</label><select id="courseColor">${Object.keys(COURSE_COLORS).map(k=>`<option value="${k}" ${existing?.color===k?'selected':''}>${k}</option>`).join('')}</select></div>
+      <div class="course-color-field"><label>course color</label><input id="courseColor" type="hidden" value="${escapeAttr(initialColor)}"><div class="course-color-options" role="group" aria-label="Course color">${Object.entries(COURSE_COLORS).map(([name,color])=>`<button type="button" class="course-color-option${initialColor===name?' is-selected':''}" data-course-color="${name}" aria-label="${name}" aria-pressed="${initialColor===name}" title="${name}" style="--course-swatch:${color}"><span></span></button>`).join('')}</div></div>
       <div class="schedule-editor" id="scheduleEditor"><div class="schedule-editor-head"><div><strong>class schedules</strong><div class="small-note">Add more than one meeting day if needed.</div></div><button type="button" class="more-shortcut" id="addScheduleRowBtn">+ schedule</button></div><div id="scheduleRows">${(schedules.length?schedules:[{}]).map(scheduleRowMarkup).join('')}</div></div>
       <div class="weight-editor"><strong>grading weights</strong><div class="small-note">Default is your 30 / 20 / 10 / 40 system. Total must equal 100%.</div><div class="weight-grid">
         <div><label>Written & Quizzes</label><input id="weightWW" type="number" min="0" max="100" step="1" value="${scheme.ww}"></div>
@@ -2350,6 +2400,10 @@ function openCourseModal(courseId=null,focusSchedules=false){
     <div class="modal-actions"><button class="more-shortcut" id="cancelCourseModal">cancel</button><button class="btn" id="saveCourseModal">${existing?'save changes':'add course'}</button></div>
   </div>`;
   document.body.appendChild(scrim);
+  scrim.querySelectorAll('[data-course-color]').forEach(button=>button.addEventListener('click',()=>{
+    scrim.querySelector('#courseColor').value=button.dataset.courseColor;
+    scrim.querySelectorAll('[data-course-color]').forEach(option=>{const selected=option===button;option.classList.toggle('is-selected',selected);option.setAttribute('aria-pressed',String(selected));});
+  }));
   const rows=scrim.querySelector('#scheduleRows');
   const bindRemove=()=>scrim.querySelectorAll('[data-remove-schedule]').forEach(btn=>{btn.onclick=()=>{const row=btn.closest('[data-schedule-row]'); if(scrim.querySelectorAll('[data-schedule-row]').length>1)row.remove(); else{row.querySelectorAll('input').forEach(i=>i.value='');row.querySelector('select').value='';}}});
   bindRemove();
