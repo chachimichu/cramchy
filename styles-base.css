@@ -780,6 +780,13 @@
   .course-actions button{border:1px solid var(--pink-soft);background:var(--pink-cream);color:var(--red-deep);border-radius:12px;padding:8px 10px;font:inherit;font-size:.76rem;font-weight:800}
   .course-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .course-form-grid .full{grid-column:1/-1}
+  .course-color-field{grid-column:1/-1}
+  .course-color-options{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:5px 2px 7px}
+  .course-color-option{width:34px;height:34px;display:grid;place-items:center;border:1.5px solid rgba(98,70,76,.42);border-radius:50%;padding:0;background:transparent;cursor:pointer;transition:transform .14s ease,box-shadow .14s ease}
+  .course-color-option span{width:25px;height:25px;border-radius:50%;background:var(--course-swatch);display:block}
+  .course-color-option:hover{transform:scale(1.08)}
+  .course-color-option.is-selected{box-shadow:0 0 0 3px #fffafc,0 0 0 5px var(--course-swatch)}
+  .course-color-option:focus-visible{outline:3px solid var(--red-berry);outline-offset:4px}
   .modal-scrim{position:fixed;inset:0;z-index:320;background:rgba(70,45,56,.28);backdrop-filter:blur(5px);display:grid;place-items:center;padding:18px}
   .course-modal{width:min(620px,96vw);max-height:90vh;overflow:auto;background:#fffafc;border:1px solid var(--pink-soft);border-radius:26px;padding:22px;box-shadow:0 28px 70px rgba(85,52,64,.2)}
   .course-modal label{display:block;font-size:.76rem;font-weight:900;color:var(--red-deep);margin:10px 0 5px}
