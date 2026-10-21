@@ -177,7 +177,8 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(239,137,164,.1
   border:1px solid var(--control-border);border-radius:14px;
   background:var(--control-surface);box-shadow:none;
 }
-#cramchyTaskList .tw-status{margin:0 0 14px}
+#cramchyTaskList .tw-status{display:inline-flex;width:max-content;max-width:100%;margin:0 0 14px}
+#cramchyTaskList .tw-status button{flex:0 0 auto;white-space:nowrap}
 #cramchyTaskList .tw-status button,
 #view-planner .planner-tabs button,
 #view-timer .timer-mode-choice,
@@ -196,8 +197,10 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(239,137,164,.1
 #cramchyTaskList .tw-status button span{color:inherit}
 #view-planner .planner-tabs{width:max-content;max-width:100%}
 #view-planner .planner-tabs button{flex:1;min-width:68px;padding-inline:16px}
-#view-timer .timer-mode-switch{width:min(420px,100%);margin:0 auto 6px}
-#view-timer .timer-mode-choice{flex:1}
+#view-timer .timer-mode-switch{width:max-content!important;max-width:100%;justify-content:flex-start;margin:0 auto 6px}
+#view-timer .timer-mode-choice,
+#view-timer .timer-mode-choice.is-active{flex:0 1 auto!important;min-width:0;white-space:nowrap;border-radius:10px!important;padding-inline:14px}
+#view-timer .timer-mode-choice.is-active{background:var(--control-selected)!important;color:var(--text-main,#57313f)!important;box-shadow:none!important}
 #view-timer .preset-row{width:max-content;max-width:100%;margin:0 auto 14px}
 #view-timer .preset-row button{min-width:68px}
 #view-timer .timer-mode-choice:hover{transform:none}
