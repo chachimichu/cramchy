@@ -2446,7 +2446,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
       <div><label>section</label><input id="courseSection" value="${escapeAttr(existing?.section||'')}"></div>
       <div><label>default room</label><input id="courseRoom" value="${escapeAttr(existing?.room||'')}"></div>
       <div><label>term</label><input id="courseTerm" value="${escapeAttr(existing?.term||state.profile?.term||'Term 1')}"></div>
-      <div><label>course color</label><select id="courseColor">${Object.keys(COURSE_COLORS).map(k=>`<option value="${k}" ${existing?.color===k?'selected':''}>${k}</option>`).join('')}</select></div>
+      <div class="course-color-field"><label>course color</label><input id="courseColor" type="hidden" value="${escapeAttr(initialColor)}"><div class="course-color-options" role="group" aria-label="Course color">${Object.entries(COURSE_COLORS).map(([name,color])=>`<button type="button" class="course-color-option${initialColor===name?' is-selected':''}" data-course-color="${name}" aria-label="${name}" aria-pressed="${initialColor===name}" title="${name}" style="--course-swatch:${color}"><span></span></button>`).join('')}</div></div>
       <div class="schedule-editor" id="scheduleEditor"><div class="schedule-editor-head"><div><strong>class schedules</strong><div class="small-note">Add more than one meeting day if needed.</div></div><button type="button" class="more-shortcut" id="addScheduleRowBtn">+ schedule</button></div><div id="scheduleRows">${(schedules.length?schedules:[{}]).map(scheduleRowMarkup).join('')}</div></div>
       <div class="weight-editor"><strong>grading weights</strong><div class="small-note">Default is your 30 / 20 / 10 / 40 system. Total must equal 100%.</div><div class="weight-grid">
         <div><label>Written & Quizzes</label><input id="weightWW" type="number" min="0" max="100" step="1" value="${scheme.ww}"></div>
@@ -2458,6 +2458,10 @@ function openCourseModal(courseId=null,focusSchedules=false){
     <div class="modal-actions"><button class="more-shortcut" id="cancelCourseModal">cancel</button><button class="btn" id="saveCourseModal">${existing?'save changes':'add course'}</button></div>
   </div>`;
   document.body.appendChild(scrim);
+  scrim.querySelectorAll('[data-course-color]').forEach(button=>button.addEventListener('click',()=>{
+    scrim.querySelector('#courseColor').value=button.dataset.courseColor;
+    scrim.querySelectorAll('[data-course-color]').forEach(option=>{const selected=option===button;option.classList.toggle('is-selected',selected);option.setAttribute('aria-pressed',String(selected));});
+  }));
   const rows=scrim.querySelector('#scheduleRows');
   const bindRemove=()=>scrim.querySelectorAll('[data-remove-schedule]').forEach(btn=>{btn.onclick=()=>{const row=btn.closest('[data-schedule-row]'); if(scrim.querySelectorAll('[data-schedule-row]').length>1)row.remove(); else{row.querySelectorAll('input').forEach(i=>i.value='');row.querySelector('select').value='';}}});
   bindRemove();
