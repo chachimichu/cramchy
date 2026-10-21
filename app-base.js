@@ -2380,7 +2380,7 @@ function renderDynamicCourses(){
     const daysLabel=dayInfo.filter(([name])=>activeDays.has(name)).map(([,short])=>short).join(', ');
     const scheme=courseScheme(c),weights=[['Written & quizzes',scheme.ww],['Enabling activities',scheme.pt],['Attendance',scheme.attendance],['Major exam',scheme.exam]];
     const safeWeights=weights.map(([label,value])=>[label,Math.max(0,Math.min(100,Number(value)||0))]);
-    const weightBar=safeWeights.map(([label,value],i)=>`<i style="flex:${value};--weight-tone:${(i+1)*22}" title="${escapeHtml(label)} ${value}%"></i>`).join('');
+    const weightBar=safeWeights.map(([label,value],i)=>`<i style="flex:${value};--weight-tone:${(i+1)*22}%" title="${escapeHtml(label)} ${value}%"></i>`).join('');
     const weightText=safeWeights.map(([,value])=>value).join(' / ');
     return `<article class="course-card-dynamic" style="--course-accent:${accent};--course-order:${index}">
       <div class="course-spine" aria-hidden="true"><i></i><i></i><i></i></div>
