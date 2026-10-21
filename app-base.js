@@ -2416,7 +2416,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
       <div><label>section</label><input id="courseSection" value="${escapeAttr(existing?.section||'')}"></div>
       <div><label>default room</label><input id="courseRoom" value="${escapeAttr(existing?.room||'')}"></div>
       <div><label>term</label><input id="courseTerm" value="${escapeAttr(existing?.term||state.profile?.term||'Term 1')}"></div>
-`      <div><label>course color</label><select id="courseColor">${Object.keys(COURSE_COLORS).map(k=>`<option value="${k}" ${existing?.color===k?'selected':''}>${k}</option>`).join('')}</select></div>`
+      <div><label>course color</label><select id="courseColor">${Object.keys(COURSE_COLORS).map(k=>`<option value="${k}" ${existing?.color===k?'selected':''}>${k}</option>`).join('')}</select></div>
       <div class="schedule-editor" id="scheduleEditor"><div class="schedule-editor-head"><div><strong>class schedules</strong><div class="small-note">Add more than one meeting day if needed.</div></div><button type="button" class="more-shortcut" id="addScheduleRowBtn">+ schedule</button></div><div id="scheduleRows">${(schedules.length?schedules:[{}]).map(scheduleRowMarkup).join('')}</div></div>
       <div class="weight-editor"><strong>grading weights</strong><div class="small-note">Default is your 30 / 20 / 10 / 40 system. Total must equal 100%.</div><div class="weight-grid">
         <div><label>Written & Quizzes</label><input id="weightWW" type="number" min="0" max="100" step="1" value="${scheme.ww}"></div>
