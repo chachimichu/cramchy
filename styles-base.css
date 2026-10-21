@@ -771,7 +771,7 @@
   .exam-mini-nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
   .exam-mini-nav button{border:1px solid var(--pink-soft);background:var(--pink-cream);color:var(--red-deep);border-radius:999px;padding:9px 12px;font-weight:800}
   .course-grid-dynamic{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
-  .course-card-dynamic{border:1px solid var(--pink-soft);background:var(--card-bg,#fff);border-radius:20px;padding:16px}
+  .course-card-dynamic{border:1px solid var(--pink-soft);background:var(--card-bg,#fff);border-radius:20px;padding:0;overflow:hidden}
   .course-card-dynamic .course-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .course-card-dynamic h3{color:var(--red-deep);font-size:1.15rem}
   .course-card-dynamic .meta{font-size:.8rem;color:var(--text-soft);font-weight:650;margin-top:4px;line-height:1.5}
@@ -886,8 +886,9 @@
   .regular-courses-panel{display:block}.legacy-subjects-panel{display:none}
   body.exam-mode-active .regular-courses-panel{display:none}body.exam-mode-active .legacy-subjects-panel{display:block}
   .course-card-dynamic{position:relative;overflow:hidden}
-  .course-accent{position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--course-accent,var(--pink-strawberry))}
-  .course-card-body{padding-left:7px}
+  .course-accent{position:relative;left:auto;top:auto;bottom:auto;width:100%;height:104px;display:grid;place-items:center;background:color-mix(in srgb,var(--course-accent,var(--pink-strawberry)) 16%,white);border-bottom:1px solid color-mix(in srgb,var(--course-accent,var(--pink-strawberry)) 18%,var(--pink-soft));color:var(--course-accent,var(--pink-strawberry))}
+  .course-accent span{font-size:2rem;font-weight:700;opacity:.45}
+  .course-card-body{padding:14px 16px 16px}
   .schedule-stack{display:grid;gap:6px;margin-top:11px}
   .schedule-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--pink-blush);border-radius:11px;padding:8px 10px;font-size:.76rem;color:var(--text-soft);font-weight:750}
   .course-actions .danger{color:#a43f55;background:#fff0f3;border-color:#f1c4ce}
