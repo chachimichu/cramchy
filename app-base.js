@@ -1131,7 +1131,11 @@ function updateTimerDisplay(){
   pause.disabled=!timerState.running;
   const locked=Boolean(timerState.session)||timerState.running||isBreak;
   document.getElementById('timerSubjectSelect').disabled=locked;
-  document.querySelectorAll('[data-mins]').forEach(btn=>{btn.disabled=locked;});
+  document.querySelectorAll('[data-mins]').forEach(btn=>{
+    const active=Number(btn.dataset.mins)===timerState.presetMinutes;
+    btn.disabled=locked;
+    btn.setAttribute('aria-pressed',String(active));
+  });
   const skip=document.getElementById('timerSkipBreakBtn');
   if(skip){skip.hidden=!isBreak;skip.disabled=timerState.running;}
 }
