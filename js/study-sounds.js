@@ -61,7 +61,7 @@
     master.connect(ctx.destination);
     return ctx.resume();
   }
-  function track(node){nodes.push(node);return node;}
+  function track(node){nodes.push(node);node.onended=function(){nodes=nodes.filter(item=>item!==node);};return node;}
   function noiseSource(){
     const buffer=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate);
     const data=buffer.getChannelData(0);
