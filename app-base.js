@@ -2294,7 +2294,7 @@ function initDailyHome(){
 
 
 /* ===================== COURSES v2 + GRADEBOOK ===================== */
-const COURSE_COLORS={pink:'#e98aa7',matcha:'#91aa78',lavender:'#9b82c7',blue:'#779cca',peach:'#d99678',rose:'#c96f83'};
+const COURSE_COLORS={pink:'#e98aa7',yellow:'#e6bd58',blue:'#779cca',matcha:'#91aa78',rose:'#c96f83',peach:'#d99678',lavender:'#9b82c7',gray:'#b7b0b2'};
 const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const GRADE_CATEGORIES={ww:'Written Works & Quizzes',pt:'Enabling Activities',attendance:'Attendance',exam:'Major Exam'};
 let selectedGradeCourseId=null;
@@ -2360,7 +2360,7 @@ function renderDynamicCourses(){
     const schedules=normalizeCourseSchedules(c);
     const scheduleHtml=schedules.length?schedules.map(s=>`<div class="schedule-chip"><span>${escapeHtml(scheduleText(s))}</span></div>`).join(''):'<div class="schedule-chip"><span>no class schedule yet</span></div>';
     const accent=COURSE_COLORS[c.color]||COURSE_COLORS.pink;
-    return `<div class="course-card-dynamic" style="--course-accent:${accent}"><div class="course-accent"></div><div class="course-card-body">
+    return `<div class="course-card-dynamic" style="--course-accent:${accent}"><div class="course-accent" aria-hidden="true"><span>▤</span></div><div class="course-card-body">
       <div class="course-top"><div><h3>${escapeHtml(c.name)}</h3><div class="meta">${escapeHtml(c.code||'No code')}${c.units?` · ${c.units} units`:''}<br>${escapeHtml(c.professor||'Professor not set')}${c.section?` · ${escapeHtml(c.section)}`:''}</div></div></div>
       <div class="schedule-stack">${scheduleHtml}</div>
       <div class="course-card-help">You can change details anytime. “Schedules” lets you add multiple meeting days.</div>
@@ -2401,8 +2401,14 @@ function scheduleRowMarkup(s={}){
     <button type="button" class="schedule-remove-btn" data-remove-schedule aria-label="Remove schedule">×</button>
   </div>`;
 }
+function nextCourseColor(){
+  const colors=Object.keys(COURSE_COLORS),term=state.profile?.term||'Term 1',year=state.profile?.academicYear||'2026–2027';
+  const used=new Set((state.courses||[]).filter(c=>(c.term||term)===term&&(c.academicYear||year)===year).map(c=>c.color).filter(color=>colors.includes(color)));
+  return colors.find(color=>!used.has(color))||colors[(state.courses||[]).length%colors.length];
+}
 function openCourseModal(courseId=null,focusSchedules=false){
   const existing=(state.courses||[]).find(c=>c.id===courseId);
+  const initialColor=existing?.color||nextCourseColor();
   const schedules=existing?normalizeCourseSchedules(existing).filter(s=>!s.legacy):[];
   const scheme=courseScheme(existing);
   const scrim=document.createElement('div'); scrim.className='modal-scrim';
@@ -2416,7 +2422,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
       <div><label>section</label><input id="courseSection" value="${escapeAttr(existing?.section||'')}"></div>
       <div><label>default room</label><input id="courseRoom" value="${escapeAttr(existing?.room||'')}"></div>
       <div><label>term</label><input id="courseTerm" value="${escapeAttr(existing?.term||state.profile?.term||'Term 1')}"></div>
-      <div><label>course color</label><select id="courseColor">${Object.keys(COURSE_COLORS).map(k=>`<option value="${k}" ${existing?.color===k?'selected':''}>${k}</option>`).join('')}</select></div>
+      <div class="full"><label>course color</label><div class="course-color-options" role="radiogroup" aria-label="Course color">${Object.entries(COURSE_COLORS).map(([k,color])=>`<label class="course-color-swatch" title="${k}"><input type="radio" name="courseColor" value="${k}" ${initialColor===k?'checked':''} aria-label="${k}"><span style="--swatch:${color}"></span></label>`).join('')}</div></div>
       <div class="schedule-editor" id="scheduleEditor"><div class="schedule-editor-head"><div><strong>class schedules</strong><div class="small-note">Add more than one meeting day if needed.</div></div><button type="button" class="more-shortcut" id="addScheduleRowBtn">+ schedule</button></div><div id="scheduleRows">${(schedules.length?schedules:[{}]).map(scheduleRowMarkup).join('')}</div></div>
       <div class="weight-editor"><strong>grading weights</strong><div class="small-note">Default is your 30 / 20 / 10 / 40 system. Total must equal 100%.</div><div class="weight-grid">
         <div><label>Written & Quizzes</label><input id="weightWW" type="number" min="0" max="100" step="1" value="${scheme.ww}"></div>
@@ -2441,7 +2447,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
     const gradingScheme={ww:Number(scrim.querySelector('#weightWW').value)||0,pt:Number(scrim.querySelector('#weightPT').value)||0,attendance:Number(scrim.querySelector('#weightAttendance').value)||0,exam:Number(scrim.querySelector('#weightExam').value)||0};
     const totalW=Object.values(gradingScheme).reduce((a,b)=>a+b,0);if(Math.abs(totalW-100)>0.001){showToast('grading weights must total 100%');return;}
     const newSchedules=[...scrim.querySelectorAll('[data-schedule-row]')].map(row=>({id:cryptoId(),day:row.querySelector('[data-sch-day]').value,start:row.querySelector('[data-sch-start]').value,end:row.querySelector('[data-sch-end]').value,room:row.querySelector('[data-sch-room]').value.trim().slice(0,50)})).filter(s=>s.day||s.start||s.end||s.room);
-    const course={id:existing?.id||cryptoId(),name:name.slice(0,80),code:scrim.querySelector('#courseCode').value.trim().slice(0,30),professor:scrim.querySelector('#courseProf').value.trim().slice(0,80),section:scrim.querySelector('#courseSection').value.trim().slice(0,40),units:Math.max(0,Math.min(20,Number(scrim.querySelector('#courseUnits').value)||0)),room:scrim.querySelector('#courseRoom').value.trim().slice(0,40),color:scrim.querySelector('#courseColor').value,term:scrim.querySelector('#courseTerm').value.trim().slice(0,30),academicYear:existing?.academicYear||state.profile?.academicYear||'2026–2027',schedule:'',schedules:newSchedules,gradingScheme,gwaFinalGrade:existing?.gwaFinalGrade||'',gwaMode:existing?.gwaMode||'auto'};
+    const course={id:existing?.id||cryptoId(),name:name.slice(0,80),code:scrim.querySelector('#courseCode').value.trim().slice(0,30),professor:scrim.querySelector('#courseProf').value.trim().slice(0,80),section:scrim.querySelector('#courseSection').value.trim().slice(0,40),units:Math.max(0,Math.min(20,Number(scrim.querySelector('#courseUnits').value)||0)),room:scrim.querySelector('#courseRoom').value.trim().slice(0,40),color:scrim.querySelector('input[name="courseColor"]:checked')?.value||initialColor,term:scrim.querySelector('#courseTerm').value.trim().slice(0,30),academicYear:existing?.academicYear||state.profile?.academicYear||'2026–2027',schedule:'',schedules:newSchedules,gradingScheme,gwaFinalGrade:existing?.gwaFinalGrade||'',gwaMode:existing?.gwaMode||'auto'};
     if(existing)state.courses=state.courses.map(c=>c.id===existing.id?course:c);else state.courses.push(course);
     if(!state.gradebook)state.gradebook={};if(!state.gradebook[course.id])state.gradebook[course.id]={midterms:[],finals:[]};
     saveState();renderDynamicCourses();renderDailyHome();renderGradebook();renderGwaCalculator();scrim.remove();showToast(existing?'course updated':'course added');
