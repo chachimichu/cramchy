@@ -66,6 +66,7 @@
     {
       eyebrow:'08 · make it yours',title:'find a rhythm that feels good',icon:'◷',
       body:`<p>Open the <b>Study</b> tab for a focused timer session. Choose a study space theme in <b>More → Appearance</b> whenever you want a change of scenery.</p>
+        <div class="welcome-choice"><span class="welcome-choice-icon">♫</span><div><strong>Choose a study sound</strong><p>On the Study timer, pick Gamma waves, White noise, café ambience, rain, or lo-fi study beats. Tap play or pause and adjust the volume.</p></div></div>
         <div class="welcome-finish-card"><span class="welcome-finish-sparkle">✦</span><b>small steps count, too.</b><small>you can change your plans as you go.</small></div>
         <p>You’re all set. Start wherever you are; Cramchy can grow with your routine.</p>`
     }
