@@ -11,7 +11,7 @@
 #view-timer .study-sound-choice.is-selected{border-color:var(--red-berry);background:var(--pink-blush);color:var(--red-deep);box-shadow:0 0 0 2px color-mix(in srgb,var(--red-berry) 14%,transparent)}
 #view-timer .study-sound-choice:focus-visible,#view-timer .study-sound-play:focus-visible,#view-timer .study-sound-volume input:focus-visible{outline:3px solid var(--red-berry);outline-offset:3px}
 #view-timer .study-sounds-controls{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}
-#view-timer .study-sound-play{min-height:42px;padding:9px 16px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--pink-bubblegum,#ef89a4),var(--red-berry,#cf5d7b));color:white;font:800 .9rem/1.2 var(--font-ui,system-ui,sans-serif);cursor:pointer}
+#view-timer .study-sound-play{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:148px;min-height:42px;padding:9px 16px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--pink-bubblegum,#ef89a4),var(--red-berry,#cf5d7b));color:white;font:800 .9rem/1.2 var(--font-ui,system-ui,sans-serif);cursor:pointer}
 #view-timer .study-sound-volume{display:flex;align-items:center;gap:10px;color:var(--text-soft);font-size:.8rem;font-weight:800}
 #view-timer .study-sound-volume input{width:min(180px,38vw);accent-color:var(--red-berry)}
 #view-timer .study-sounds-note{min-height:1.2em;margin:12px 0 0;color:var(--text-soft);font-size:.78rem;line-height:1.4}
@@ -27,3 +27,4 @@
 @media(prefers-reduced-motion:reduce){
   #view-timer .study-sound-choice{transition:none}
 }
+#view-timer .study-sound-icon{display:block;width:15px;height:15px;flex:0 0 15px;fill:currentColor}

@@ -7,7 +7,7 @@
     {id:'white',name:'White noise',note:'Steady, even broadband noise.'},
     {id:'cafe',name:'Café ambience',note:'A warm, low café-like room hum.'},
     {id:'rain',name:'Rain',note:'Layered soft rain texture.'},
-    {id:'lofi',name:'Lo-fi study beats',note:'Royalty-free chill beats for a cozy study session.'}
+    {id:'lofi',name:'Lo-fi study beats',note:'A cozy chill beat for your study session.'}
   ];
   let selected='gamma',volume=0.2,ctx=null,master=null,nodes=[],scheduler=0,running=false,runId=0,lofiAudio=null,lofiSource=null,lofiGain=null;
   try{
@@ -46,7 +46,10 @@
       button.classList.toggle('is-selected',active);
       button.setAttribute('aria-pressed',String(active));
     });
-    toggle.textContent=running?'Ⅱ pause sound':'▶ play sound';
+    toggle.innerHTML=running
+      ? '<svg class="study-sound-icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg><span>pause sound</span>'
+      : '<svg class="study-sound-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.8c0-.6.7-1 1.2-.7l8.1 5.1a.95.95 0 0 1 0 1.6l-8.1 5.1c-.5.3-1.2-.1-1.2-.7V2.8z"/></svg><span>play sound</span>';
+    toggle.setAttribute('aria-label',running?'Pause study sounds':'Play study sounds');
     toggle.setAttribute('aria-pressed',String(running));
     status.textContent=running?'playing '+activeChoice().name.toLowerCase():'paused';
     note.textContent=activeChoice().note;
