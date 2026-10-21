@@ -23,6 +23,15 @@
     crumb.querySelector('[data-gw-back]')?.addEventListener('click',()=>navigate(page==='course'?'gradebook':'home'));
     crumb.querySelector('[data-gw-home]')?.addEventListener('click',()=>navigate('home'));
   }
+  function courseAccents(list){
+    const palette=['pink','yellow','matcha','lavender','blue','peach','rose'],used=new Set(),accents=new Map();
+    list.forEach(c=>{
+      let key=palette.includes(c.color)?c.color:'pink';
+      if(used.has(key))key=palette.find(color=>!used.has(color))||key;
+      used.add(key);accents.set(c.id,key==='yellow'?'#e6bd58':(COURSE_COLORS[key]||COURSE_COLORS.pink));
+    });
+    return accents;
+  }
   function navigate(mode){
     if(mode==='gradebook'){page='courses';courseId=null;}else page=['gwa','quickgwa'].includes(mode)?mode:'home';
     if(page==='gwa'||page==='quickgwa'){originalSetMode(page);if(page==='gwa')window.CramchyTermGwa?.render();banner(page==='gwa'?'term GWA':'quick GWA',page==='gwa'?'Your course grades, units, and term average.':'A quick calculation from the grades you enter.');breadcrumbs();}
@@ -38,7 +47,8 @@
   function bindPicker(){root.querySelector('#gwYear')?.addEventListener('change',e=>{year=e.target.value;render();});root.querySelector('#gwTerm')?.addEventListener('change',e=>{term=e.target.value;render();});}
   function courseList(){
     banner('course gradebook','Choose a subject to see its grades and add scores.');
-    root.innerHTML=picker()+`<div class="gw-course-grid">${courses().map(c=>{const s=summary(c),entries=(api.state.gradebook?.[c.id]?.midterms||[]).length+(api.state.gradebook?.[c.id]?.finals||[]).length;return `<button type="button" class="gw-course-card" data-gw-course="${attr(c.id)}" style="--gw-accent:${COURSE_COLORS[c.color]||COURSE_COLORS.pink}"><span class="gw-course-code">${escape(c.code||'Subject')} · ${points(c.units||0)} units</span><h3>${escape(c.name)}</h3><div class="gw-course-periods"><div><span>Midterms</span><strong>${pct(s.midterms.value)}</strong></div><div><span>Finals</span><strong>${pct(s.finals.value)}</strong></div></div><div class="gw-course-footer"><span>${entries} saved score${entries===1?'':'s'}</span><b>open subject →</b></div></button>`;}).join('')}</div>${!courses().length?'<div class="gw-empty"><h3>No courses in this term yet</h3><p>Add courses in Courses; they will appear here automatically.</p><button type="button" class="btn" id="gwAddCourse">add a course</button></div>':''}`;
+    const list=courses(),accents=courseAccents(list);
+    root.innerHTML=picker()+`<div class="gw-course-grid">${list.map(c=>{const s=summary(c),entries=(api.state.gradebook?.[c.id]?.midterms||[]).length+(api.state.gradebook?.[c.id]?.finals||[]).length,accent=accents.get(c.id);return `<button type="button" class="gw-course-card" data-gw-course="${attr(c.id)}" style="--gw-accent:${accent};border-top:4px solid ${accent} !important"><span class="gw-course-code">${escape(c.code||'Subject')} · ${points(c.units||0)} units</span><h3>${escape(c.name)}</h3><div class="gw-course-periods"><div><span>Midterms</span><strong>${pct(s.midterms.value)}</strong></div><div><span>Finals</span><strong>${pct(s.finals.value)}</strong></div></div><div class="gw-course-footer"><span>${entries} saved score${entries===1?'':'s'}</span><b>open subject →</b></div></button>`;}).join('')}</div>${!list.length?'<div class="gw-empty"><h3>No courses in this term yet</h3><p>Add courses in Courses; they will appear here automatically.</p><button type="button" class="btn" id="gwAddCourse">add a course</button></div>':''}`;
     bindPicker();root.querySelector('#gwAddCourse')?.addEventListener('click',()=>openCourseModal());root.querySelectorAll('[data-gw-course]').forEach(b=>b.addEventListener('click',()=>{courseId=b.dataset.gwCourse;api.selectedGradeCourseId=courseId;page='course';render();window.CramchyMotion?.enter(root);}));
   }
   function metric(title,value,eq,subtitle,tone){return `<div class="gw-metric ${tone}"><span>${title}</span><strong>${pct(value)}</strong><div class="gw-equivalent">${eq?`equivalent <b>${eq}</b>`:'not yet available'}</div><div class="gw-meter" aria-hidden="true"><i style="width:${Math.max(0,Math.min(100,value||0))}%"></i></div><p>${escape(subtitle)}</p></div>`;}
