@@ -7,7 +7,7 @@
     {id:'white',name:'White noise',note:'Steady, even broadband noise.'},
     {id:'cafe',name:'Café ambience',note:'A warm, low café-like room hum.'},
     {id:'rain',name:'Rain',note:'Layered soft rain texture.'},
-    {id:'lofi',name:'Lo-fi',note:'A gentle, original looping synth groove.'}
+    {id:'lofi',name:'Lo-fi study beats',note:'Original chill beats with soft drums, warm keys, and a mellow melody.'}
   ];
   let selected='gamma',volume=0.2,ctx=null,master=null,nodes=[],scheduler=0,running=false,runId=0,beat=0,nextBeat=0;
   try{
@@ -24,7 +24,7 @@
         '<button type="button" class="study-sound-choice" data-study-sound="white"><span aria-hidden="true">〰</span><b>white noise</b></button>'+
         '<button type="button" class="study-sound-choice" data-study-sound="cafe"><span aria-hidden="true">☕</span><b>café</b></button>'+
         '<button type="button" class="study-sound-choice" data-study-sound="rain"><span aria-hidden="true">☂</span><b>rain</b></button>'+
-        '<button type="button" class="study-sound-choice" data-study-sound="lofi"><span aria-hidden="true">♫</span><b>lo-fi</b></button>'+
+        '<button type="button" class="study-sound-choice" data-study-sound="lofi"><span aria-hidden="true">♫</span><b>lo-fi study</b></button>'+
       '</div>'+
       '<div class="study-sounds-controls"><button type="button" class="study-sound-play" id="studySoundToggle" aria-pressed="false">▶ play sound</button><label class="study-sound-volume" for="studySoundVolume"><span>volume</span><input id="studySoundVolume" type="range" min="0" max="0.5" step="0.01" aria-label="Study sound volume"></label></div>'+
       '<p class="study-sounds-note" id="studySoundNote"></p>'+
