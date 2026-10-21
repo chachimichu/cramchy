@@ -97,19 +97,20 @@
 }
 
 
-/* Clear, compact controls for switching between a free focus timer and Pomodoro. */
+/* Course-style compact controls for switching between Focus Timer and Pomodoro. */
 #view-timer .timer-mode-switch{
-  display:flex;gap:6px;width:min(420px,100%);margin:0 auto 6px;padding:5px;
-  border:1px solid var(--timer-line);border-radius:999px;background:var(--timer-soft);
+  display:flex;align-items:stretch;gap:4px;width:max-content;max-width:100%;margin:0 auto 6px;padding:4px;
+  border:1px solid color-mix(in srgb,var(--red-berry,#db7895) 14%,transparent);
+  border-radius:14px;background:var(--app-bg-2,#fffaf3);
 }
 #view-timer .timer-mode-choice{
-  flex:1;min-height:42px;padding:8px 14px;border:1px solid transparent;border-radius:999px;
-  background:transparent;color:var(--timer-muted);font:700 .95rem/1.2 var(--cramchy-readable,'Nunito',system-ui,sans-serif);
-  cursor:pointer;transition:background-color .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
+  flex:0 1 auto;min-width:0;min-height:40px;padding:9px 14px;border:0;border-radius:10px;
+  background:transparent;color:var(--text-main,#57313f);font:700 .8rem var(--cramchy-readable,'Nunito',system-ui,sans-serif);
+  white-space:nowrap;cursor:pointer;transition:background-color .16s ease,color .16s ease;
 }
-#view-timer .timer-mode-choice:hover{transform:translateY(-1px)}
+#view-timer .timer-mode-choice:hover{transform:none}
 #view-timer .timer-mode-choice.is-active{
-  background:var(--timer-paper);border-color:var(--timer-line);color:var(--timer-ink);
+  background:var(--pink-soft,#f2d5df);border:0;border-radius:10px;color:var(--text-main,#57313f);box-shadow:none;
 }
 #view-timer .timer-mode-choice:focus-visible{
   outline:3px solid var(--timer-accent-strong);outline-offset:2px;
