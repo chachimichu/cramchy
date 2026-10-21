@@ -1095,6 +1095,8 @@ function updateTimerDisplay(){
     dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
     dial.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.focusStage=sceneStage;
+    const deskScene=dial.nextElementSibling;
+    if(deskScene&&deskScene.classList.contains('timer-desk-scene'))deskScene.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.running=String(Boolean(timerState.running));
     dial.dataset.phase=timerState.phase;
     const caption=document.getElementById('timerSceneCaption');

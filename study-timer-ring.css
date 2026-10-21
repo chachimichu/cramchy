@@ -60,7 +60,7 @@
 #view-timer .desk-plant-stem{fill:none;stroke:var(--timer-leaf);stroke-width:3;stroke-linecap:round}
 #view-timer .desk-plant-leaf{fill:var(--timer-leaf);stroke:color-mix(in srgb,var(--timer-leaf) 68%,var(--timer-outline));stroke-width:1.05;stroke-linejoin:round}
 #view-timer .desk-plant-leaf-vein{fill:none;stroke:var(--timer-paper);stroke-width:1.15;stroke-linecap:round;opacity:.9}
-#view-timer .timer-desk-flower{transform-box:fill-box;transform-origin:center;transform:scale(calc(.52 + var(--focus-growth,0)*.48));transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+#view-timer .timer-desk-flower{transform-box:fill-box;transform-origin:center;transform:scale(calc(.88 + var(--focus-growth,0)*.55));transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
 #view-timer .desk-flower-petals circle{fill:var(--timer-accent);stroke:color-mix(in srgb,var(--timer-accent) 65%,var(--timer-paper));stroke-width:1.1}
 #view-timer .desk-flower-petals circle:nth-child(3n){fill:var(--cream,var(--timer-soft))}
 #view-timer .desk-flower-heart{fill:var(--timer-accent-strong);stroke:var(--timer-paper);stroke-width:1.2}
@@ -80,7 +80,7 @@
 #view-timer #timerDial[data-running="true"] ~ .timer-desk-scene .timer-cup-steam path:nth-child(3){animation-delay:1.6s}
 #view-timer #timerDial[data-running="true"] ~ .timer-desk-scene .desk-pencil-scribble{animation:timer-pencil-draw 1.8s ease-in-out infinite}
 #view-timer #timerDial[data-running="true"] ~ .timer-desk-scene .timer-desk-pencil{animation:timer-pencil-write 1.1s ease-in-out infinite}
-#view-timer #timerDial[data-focus-stage="complete"] ~ .timer-desk-scene .timer-desk-flower{transform:scale(1.08)}
+#view-timer #timerDial[data-focus-stage="complete"] ~ .timer-desk-scene .timer-desk-flower{transform:scale(1.45)}
 @keyframes timer-plant-sway{50%{transform:rotate(3deg)}}
 @keyframes timer-steam{0%{opacity:0;transform:translateY(7px)}40%{opacity:.78}100%{opacity:0;transform:translateY(-9px)}}
 @keyframes timer-pencil-draw{0%{stroke-dashoffset:40}65%,100%{stroke-dashoffset:0}}
