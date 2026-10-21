@@ -2431,8 +2431,16 @@ function scheduleRowMarkup(s={}){
     <button type="button" class="schedule-remove-btn" data-remove-schedule aria-label="Remove schedule">×</button>
   </div>`;
 }
+function nextCourseColor(existing=null){
+  const colors=Object.keys(COURSE_COLORS);
+  const term=existing?.term||state.profile?.term||'Term 1';
+  const year=existing?.academicYear||state.profile?.academicYear||'2026–2027';
+  const used=new Set((state.courses||[]).filter(c=>c.id!==existing?.id&&(c.term||term)===term&&(c.academicYear||year)===year).map(c=>c.color).filter(color=>colors.includes(color)));
+  return colors.find(color=>!used.has(color))||colors[(state.courses||[]).length%colors.length]||'pink';
+}
 function openCourseModal(courseId=null,focusSchedules=false){
   const existing=(state.courses||[]).find(c=>c.id===courseId);
+  const initialColor=COURSE_COLORS[existing?.color]?existing.color:nextCourseColor(existing);
   const schedules=existing?normalizeCourseSchedules(existing).filter(s=>!s.legacy):[];
   const scheme=courseScheme(existing);
   const scrim=document.createElement('div'); scrim.className='modal-scrim';
