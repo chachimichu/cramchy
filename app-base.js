@@ -2202,29 +2202,17 @@ function nextCourseLabel(){
 }
 function renderDailyTasks(){
   const wrap=document.getElementById('dailyTaskList'); if(!wrap) return;
-  const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''))?String(value):'';
-  const tasks=(state.missions||[]).filter(m=>m&&!m.done).slice().sort((a,b)=>{
-    const ad=validDate(a.date),bd=validDate(b.date);
-    return (ad||'9999-99-99').localeCompare(bd||'9999-99-99')||(ad&&bd?String(a.start||'23:59').localeCompare(String(b.start||'23:59')):0);
-  }).slice(0,5);
-  const labels={task:'other task',quiz:'quiz',study:'study block',assignment:'assignment',exam:'exam reminder',personal:'personal'};
-  const now=new Date(),today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  function deadline(m){
-    const value=validDate(m.date);if(!value)return 'no date yet';
-    const [y,mo,d]=value.split('-').map(Number),date=new Date(y,mo-1,d,12);
-    const label=date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',...(y!==now.getFullYear()?{year:'numeric'}:{})});
-    return `${value<today?'overdue · ':value===today?'today · ':''}${label}${m.start?' · '+String(m.start):''}`;
-  }
+  const tasks=(state.missions||[]).slice(0,5);
   if(!tasks.length){
-    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here</div><p>No unfinished tasks. Completed tasks are saved in Tasks.</p></div>';
+    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here</div><p>Add a task and it will show up on your daily dashboard.</p></div>';
     return;
   }
-  wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row" data-type="${escapeAttr(Object.hasOwn(labels,m.type)?m.type:'task')}">
-    <input type="checkbox" data-daily-task="${escapeAttr(m.id)}">
-    <span class="home-task-copy"><span class="task-text">${escapeHtml(m.text)}</span><span class="home-task-details"><span class="home-task-type">${Object.hasOwn(labels,m.type)?labels[m.type]:labels.task}</span><span class="home-task-date ${validDate(m.date)&&m.date<today?'is-overdue':''}">${escapeHtml(deadline(m))}</span></span></span>
+  wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
+    <input type="checkbox" data-daily-task="${escapeAttr(m.id)}" ${m.done?'checked':''}>
+    <span class="task-text">${escapeHtml(m.text)}</span>
   </label>`).join('');
   wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
-    if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask,el.getBoundingClientRect());}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}
+    if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask);}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}
     const item=state.missions.find(m=>m.id===el.dataset.dailyTask); if(item)item.done=el.checked;
     saveState(); renderDailyHome(); renderCramchyTasks(); renderDashboard();
   }));
@@ -2356,16 +2344,58 @@ function renderDynamicCourses(){
     document.getElementById('emptyAddCourseBtn')?.addEventListener('click',()=>openCourseModal());
     return;
   }
-  grid.innerHTML=courses.map(c=>{
-    const schedules=normalizeCourseSchedules(c);
-    const scheduleHtml=schedules.length?schedules.map(s=>`<div class="schedule-chip"><span>${escapeHtml(scheduleText(s))}</span></div>`).join(''):'<div class="schedule-chip"><span>no class schedule yet</span></div>';
-    const accent=COURSE_COLORS[c.color]||COURSE_COLORS.pink;
-    return `<div class="course-card-dynamic" style="--course-accent:${accent}"><div class="course-accent"></div><div class="course-card-body">
-      <div class="course-top"><div><h3>${escapeHtml(c.name)}</h3><div class="meta">${escapeHtml(c.code||'No code')}${c.units?` · ${c.units} units`:''}<br>${escapeHtml(c.professor||'Professor not set')}${c.section?` · ${escapeHtml(c.section)}`:''}</div></div></div>
-      <div class="schedule-stack">${scheduleHtml}</div>
-      <div class="course-card-help">You can change details anytime. “Schedules” lets you add multiple meeting days.</div>
-      <div class="course-actions"><button data-edit-course="${c.id}">✎ edit course</button><button data-schedule-course="${c.id}">🗓 edit schedules</button><button class="danger" data-delete-course="${c.id}">remove course</button></div>
-    </div></div>`;
+  const dayInfo=[['Monday','M'],['Tuesday','T'],['Wednesday','W'],['Thursday','T'],['Friday','F'],['Saturday','S'],['Sunday','S']];
+  function upcomingClass(schedules){
+    const now=new Date();let best=null;
+    schedules.forEach(s=>{
+      if(!DAY_NAMES.includes(s.day)||!/^[0-9]{2}:[0-9]{2}$/.test(s.start||''))return;
+      const [hh,mm]=s.start.split(':').map(Number),day=DAY_NAMES.indexOf(s.day);
+      let delta=(day-now.getDay()+7)%7;const when=new Date(now);when.setSeconds(0,0);when.setHours(hh,mm,0,0);when.setDate(now.getDate()+delta);
+      if(when<=now)when.setDate(when.getDate()+7);if(!best||when<best.when)best={schedule:s,when};
+    });
+    if(!best)return '';
+    const today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),date=new Date(best.when.getFullYear(),best.when.getMonth(),best.when.getDate());
+    const gap=Math.round((date-today)/86400000),label=gap===0?'today':gap===1?'tomorrow':best.when.toLocaleDateString(undefined,{weekday:'long'});
+    return `<div class="course-next"><i aria-hidden="true"></i><span>next class: <b>${label} · ${displayTime24(best.schedule.start)}</b></span></div>`;
+  }
+  function scheduleCards(schedules){
+    if(!schedules.length)return '<div class="course-no-schedule">no class schedule yet</div>';
+    const groups=[];
+    schedules.forEach(s=>{
+      const key=s.legacy?`legacy:${s.room||''}`:[s.start||'',s.end||'',s.room||''].join('|');
+      let group=groups.find(g=>g.key===key);if(!group){group={key,days:[],schedule:s};groups.push(group);}
+      if(s.day&&!group.days.includes(s.day))group.days.push(s.day);
+    });
+    return groups.map(g=>{
+      g.days.sort((a,b)=>DAY_NAMES.indexOf(a)-DAY_NAMES.indexOf(b));const s=g.schedule;
+      const day=g.days.length?g.days.map(d=>d.slice(0,3)).join(', '):(s.legacy?'Schedule':'Day not set');
+      const time=s.legacy?(s.room||'Schedule not set'):(s.start&&s.end?`${displayTime24(s.start)}–${displayTime24(s.end)}`:s.start?displayTime24(s.start):'Time not set');
+      const room=!s.legacy&&s.room?' · '+s.room:'';
+      return `<div class="schedule-chip"><b>${escapeHtml(day)}</b><span>${escapeHtml(time+room)}</span></div>`;
+    }).join('');
+  }
+  grid.innerHTML=courses.map((c,index)=>{
+    const schedules=normalizeCourseSchedules(c),accent=COURSE_COLORS[c.color]||COURSE_COLORS.pink;
+    const activeDays=new Set(schedules.map(s=>s.day).filter(Boolean));
+    const daysLabel=dayInfo.filter(([name])=>activeDays.has(name)).map(([,short])=>short).join(', ');
+    const scheme=courseScheme(c),weights=[['Written & quizzes',scheme.ww],['Enabling activities',scheme.pt],['Attendance',scheme.attendance],['Major exam',scheme.exam]];
+    const safeWeights=weights.map(([label,value])=>[label,Math.max(0,Math.min(100,Number(value)||0))]);
+    const weightBar=safeWeights.map(([label,value],i)=>`<i style="flex:${value};--weight-tone:${(i+1)*22}" title="${escapeHtml(label)} ${value}%"></i>`).join('');
+    const weightText=safeWeights.map(([,value])=>value).join(' / ');
+    return `<article class="course-card-dynamic" style="--course-accent:${accent};--course-order:${index}">
+      <div class="course-spine" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="course-card-body"><div class="course-top"><div>
+        <span class="course-code-pill">${escapeHtml(c.code||'No code')}</span>
+        <h3>${escapeHtml(c.name)}</h3>
+        <div class="meta">${Number(c.units)||0} units · ${escapeHtml(c.professor||'Professor not set')}${c.section?' · '+escapeHtml(c.section):''}</div>
+      </div></div>
+      <div class="course-day-strip" aria-label="${daysLabel?'Meets on '+escapeHtml(daysLabel):'No meeting days set'}">${dayInfo.map(([name,short])=>`<span class="${activeDays.has(name)?'on':''}" title="${name}">${short}</span>`).join('')}</div>
+      ${upcomingClass(schedules)}
+      <div class="schedule-stack">${scheduleCards(schedules)}</div>
+      <div class="course-grading"><div class="course-grading-head"><span>grading weights</span><b>${weightText}</b></div><div class="course-weight-bar" role="img" aria-label="Grading weights: ${safeWeights.map(([label,value])=>label+' '+value+'%').join(', ')}">${weightBar}</div></div>
+      <div class="course-actions"><button type="button" data-edit-course="${escapeAttr(c.id)}">edit course</button><button type="button" data-schedule-course="${escapeAttr(c.id)}">edit schedules</button><button type="button" class="danger" data-delete-course="${escapeAttr(c.id)}">remove course</button></div>
+      </div>
+    </article>`;
   }).join('');
   grid.querySelectorAll('[data-edit-course]').forEach(b=>b.addEventListener('click',()=>openCourseModal(b.dataset.editCourse,false)));
   grid.querySelectorAll('[data-schedule-course]').forEach(b=>b.addEventListener('click',()=>openCourseModal(b.dataset.scheduleCourse,true)));
