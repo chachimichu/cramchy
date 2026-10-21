@@ -135,3 +135,14 @@
 @media(prefers-reduced-motion:reduce){
   #view-timer .timer-mode-choice{transition:none}
 }
+
+/* Mark the selected focus duration like the other theme-aware segmented choices. */
+#view-timer .preset-row button[aria-pressed="true"]{
+  background:var(--pink-soft,#f2d5df)!important;
+  border:1px solid color-mix(in srgb,var(--red-berry,#db7895) 24%,transparent)!important;
+  border-radius:10px!important;color:var(--text-main,#57313f)!important;
+  box-shadow:none!important;
+}
+#view-timer .preset-row button[aria-pressed="false"]{
+  border-radius:10px!important;color:var(--text-main,#57313f)!important;
+}
