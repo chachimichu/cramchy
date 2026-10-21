@@ -2202,9 +2202,12 @@ function nextCourseLabel(){
 }
 function renderDailyTasks(){
   const wrap=document.getElementById('dailyTaskList'); if(!wrap) return;
-  const tasks=(state.missions||[]).slice(0,5);
+  const allTasks=(state.missions||[]).filter(Boolean);
+  const tasks=allTasks.filter(task=>!task.done).slice(0,5);
   if(!tasks.length){
-    wrap.innerHTML='<div class="shell-empty" style="padding:18px 10px;"><div class="big">nothing due here</div><p>Add a task and it will show up on your daily dashboard.</p></div>';
+    const title=allTasks.length?'all caught up!':'nothing due here';
+    const message=allTasks.length?'You’ve finished your tasks for now. Add another whenever you need.':'Add a task and it will show up on your daily dashboard.';
+    wrap.innerHTML=`<div class="shell-empty" style="padding:18px 10px;"><div class="big">${title}</div><p>${message}</p></div>`;
     return;
   }
   wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
