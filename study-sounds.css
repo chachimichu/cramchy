@@ -1,0 +1,29 @@
+#view-timer .study-sounds-card{margin:18px 0 22px;padding:clamp(16px,3vw,24px);border:1px solid var(--pink-soft);border-radius:22px;background:var(--card-bg,#fffdfc);box-shadow:0 12px 30px rgba(164,78,100,.08)}
+#view-timer .study-sounds-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+#view-timer .study-sounds-head h3{margin:0;color:var(--red-deep);font:700 1.15rem/1.25 var(--font-display,'Fredoka',sans-serif);text-transform:lowercase}
+#view-timer .study-sounds-head p{margin:5px 0 0;color:var(--text-soft);font-size:.88rem}
+#view-timer .study-sounds-status{flex:0 0 auto;border:1px solid var(--pink-soft);border-radius:999px;padding:5px 10px;background:var(--pink-cream);color:var(--text-soft);font-size:.75rem;font-weight:800}
+#view-timer .study-sounds-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+#view-timer .study-sound-choice{display:grid;justify-items:center;gap:6px;min-height:74px;padding:10px 6px;border:1px solid var(--pink-soft);border-radius:15px;background:var(--app-bg-2,#fff);color:var(--text-soft);font:inherit;cursor:pointer;transition:transform .16s ease,border-color .16s ease,background-color .16s ease}
+#view-timer .study-sound-choice>span{font-size:1.25rem;line-height:1}
+#view-timer .study-sound-choice b{font-size:.7rem;line-height:1.2;text-align:center;font-weight:800}
+#view-timer .study-sound-choice:hover{transform:translateY(-1px);border-color:var(--red-berry)}
+#view-timer .study-sound-choice.is-selected{border-color:var(--red-berry);background:var(--pink-blush);color:var(--red-deep);box-shadow:0 0 0 2px color-mix(in srgb,var(--red-berry) 14%,transparent)}
+#view-timer .study-sound-choice:focus-visible,#view-timer .study-sound-play:focus-visible,#view-timer .study-sound-volume input:focus-visible{outline:3px solid var(--red-berry);outline-offset:3px}
+#view-timer .study-sounds-controls{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}
+#view-timer .study-sound-play{min-height:42px;padding:9px 16px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--pink-bubblegum,#ef89a4),var(--red-berry,#cf5d7b));color:white;font:800 .9rem/1.2 var(--font-ui,system-ui,sans-serif);cursor:pointer}
+#view-timer .study-sound-volume{display:flex;align-items:center;gap:10px;color:var(--text-soft);font-size:.8rem;font-weight:800}
+#view-timer .study-sound-volume input{width:min(180px,38vw);accent-color:var(--red-berry)}
+#view-timer .study-sounds-note{min-height:1.2em;margin:12px 0 0;color:var(--text-soft);font-size:.78rem;line-height:1.4}
+@media(max-width:600px){
+  #view-timer .study-sounds-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #view-timer .study-sound-choice{min-height:66px}
+}
+@media(max-width:380px){
+  #view-timer .study-sounds-controls{align-items:flex-start;flex-direction:column}
+  #view-timer .study-sound-volume{width:100%;justify-content:space-between}
+  #view-timer .study-sound-volume input{flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-timer .study-sound-choice{transition:none}
+}
