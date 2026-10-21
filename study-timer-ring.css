@@ -55,7 +55,7 @@
 #view-timer .desk-cup-handle{fill:none;stroke:var(--timer-outline);stroke-width:2.2}
 #view-timer .desk-cup-tea{fill:var(--pink-bubblegum,var(--timer-accent));stroke:var(--timer-outline);stroke-width:1.1}
 #view-timer .desk-cup-heart{fill:var(--pink-bubblegum,var(--timer-accent));stroke:var(--timer-paper);stroke-width:1.1;stroke-linejoin:round}
-#view-timer .timer-plant-grown{transform-box:fill-box;transform-origin:50% 100%;transform:scale(calc(.3 + var(--focus-growth,0)*.7));transition:transform .65s cubic-bezier(.3,1.4,.5,1)}
+#view-timer .timer-plant-grown{transform-box:fill-box;transform-origin:50% 100%;transform:scale(calc(.62 + var(--focus-growth,0)*.38));transition:transform .65s cubic-bezier(.3,1.4,.5,1)}
 #view-timer .timer-plant-sway{transform-box:fill-box;transform-origin:50px 87px}
 #view-timer .desk-plant-stem{fill:none;stroke:var(--timer-leaf);stroke-width:3;stroke-linecap:round}
 #view-timer .desk-plant-leaf{fill:var(--timer-leaf);stroke:color-mix(in srgb,var(--timer-leaf) 68%,var(--timer-outline));stroke-width:1.05;stroke-linejoin:round}
