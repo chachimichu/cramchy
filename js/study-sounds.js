@@ -21,7 +21,7 @@
       '<div class="study-sounds-head"><div><h3 id="studySoundsTitle">study sounds</h3><p>Choose a soft background for your session.</p></div><span class="study-sounds-status" id="studySoundStatus" role="status" aria-live="polite">paused</span></div>'+
       '<div class="study-sounds-options" role="group" aria-label="Choose a study sound">'+
         '<button type="button" class="study-sound-choice" data-study-sound="gamma"><span aria-hidden="true">〰</span><b>gamma waves</b></button>'+
-        '<button type="button" class="study-sound-choice" data-study-sound="white"><span aria-hidden="true">〰</span><b>white noise</b></button>'+
+        '<button type="button" class="study-sound-choice" data-study-sound="white"><span aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20" style="display:block;fill:currentColor"><circle cx="3" cy="4" r="1.3"/><circle cx="8" cy="3" r=".7"/><circle cx="15" cy="5" r="1.1"/><circle cx="5" cy="9" r=".7"/><circle cx="11" cy="8" r="1.4"/><circle cx="17" cy="10" r=".6"/><circle cx="2" cy="15" r=".8"/><circle cx="8" cy="14" r="1"/><circle cx="14" cy="16" r="1.4"/><circle cx="18" cy="15" r=".7"/></svg></span><b>white noise</b></button>'+
         '<button type="button" class="study-sound-choice" data-study-sound="cafe"><span aria-hidden="true">☕</span><b>café</b></button>'+
         '<button type="button" class="study-sound-choice" data-study-sound="rain"><span aria-hidden="true">☂</span><b>rain</b></button>'+
         '<button type="button" class="study-sound-choice" data-study-sound="lofi"><span aria-hidden="true">♫</span><b>lo-fi study</b></button>'+
@@ -40,6 +40,7 @@
     try{localStorage.setItem('cramchyStudySounds_v1',JSON.stringify({selected:selected,volume:volume}));}catch(_){}
   }
   function activeChoice(){return choices.find(choice=>choice.id===selected)||choices[0];}
+  function effectiveLevel(){return Math.min(1,volume*2);}
   function paint(){
     card.querySelectorAll('[data-study-sound]').forEach(button=>{
       const active=button.dataset.studySound===selected;
@@ -104,7 +105,7 @@
     }else if(selected==='lofi'){
       if(!lofiAudio){
         lofiAudio=new Audio(new URL('assets/lofi-study.mp3',window.location.href).href);
-        lofiAudio.loop=true;lofiAudio.preload='auto';
+        lofiAudio.loop=true;lofiAudio.preload='auto';lofiAudio.volume=1;
         lofiSource=ctx.createMediaElementSource(lofiAudio);
         lofiGain=ctx.createGain();lofiGain.gain.value=0.85;
         lofiSource.connect(lofiGain);lofiGain.connect(master);
@@ -116,7 +117,7 @@
     }
     const now=ctx.currentTime;
     master.gain.cancelScheduledValues(now);master.gain.setValueAtTime(0,now);
-    master.gain.linearRampToValueAtTime(volume,now+0.35);
+    master.gain.linearRampToValueAtTime(effectiveLevel(),now+0.35);
   }
   function stopLayers(){
     runId++;
@@ -156,8 +157,7 @@
   slider.addEventListener('input',()=>{
     volume=Number(slider.value);save();
     if(running&&ctx&&master){
-      if(selected==='lofi'&&lofiAudio)lofiAudio.volume=Math.min(1,volume*2);
-      const now=ctx.currentTime;master.gain.cancelScheduledValues(now);master.gain.setTargetAtTime(volume,now,0.05);
+      const now=ctx.currentTime;master.gain.cancelScheduledValues(now);master.gain.setTargetAtTime(effectiveLevel(),now,0.05);
     }
   });
   paint();
