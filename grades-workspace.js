@@ -16,6 +16,15 @@
   const header=view.querySelector(':scope > .page-head-row');header.classList.add('gw-hero');
   const crumb=document.createElement('nav');crumb.className='gw-breadcrumb';crumb.setAttribute('aria-label','Grades navigation');header.insertAdjacentElement('afterend',crumb);
   function courses(){return (api.state.courses||[]).filter(c=>(c.academicYear||profileAcademicYear())===year&&(c.term||profileTerm())===term);}
+  function courseAccents(list){
+    const palette=['pink','yellow','matcha','lavender','blue','peach','rose'],used=new Set(),accents=new Map();
+    list.forEach(c=>{
+      let key=palette.includes(c.color)?c.color:'pink';
+      if(used.has(key))key=palette.find(color=>!used.has(color))||key;
+      used.add(key);accents.set(c.id,key==='yellow'?'#e6bd58':(COURSE_COLORS[key]||COURSE_COLORS.pink));
+    });
+    return accents;
+  }
   function summary(c){return math.course(api.state.gradebook?.[c.id],courseScheme(c));}
   function banner(title,subtitle){header.innerHTML=`<div><span class="gw-eyebrow">your academic workspace</span><h2>${escape(title)}</h2><p>${escape(subtitle)}</p></div><span class="gw-hero-icon" aria-hidden="true">▤</span>`;}
   function breadcrumbs(){

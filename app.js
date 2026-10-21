@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-18-mobile-account-152';
+  const VERSION='2026-10-18-stable-boot-178';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
@@ -116,9 +116,36 @@
 
   }
 
-  function finishBootSplash(){
+  function prepareBootSplashFonts(){
+    if(!document.fonts||!document.fonts.load){
+      document.documentElement.setAttribute('data-cramchy-splash-fonts-ready','');
+      return Promise.resolve();
+    }
+    return Promise.allSettled([
+      document.fonts.load('600 16px "Cramchy Splash Serif"'),
+      document.fonts.load('italic 600 16px "Cramchy Splash Serif"'),
+      document.fonts.load('800 16px "Cramchy Splash Sans"')
+    ]).then(results=>{
+      results.filter(result=>result.status==='rejected').forEach(result=>console.warn('A splash font could not be loaded; using its stable fallback.',result.reason));
+    }).then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+      .then(()=>document.documentElement.setAttribute('data-cramchy-splash-fonts-ready',''));
+  }
+
+  async function finishBootSplash(){
     const splash=document.getElementById('cramchyBootSplash');
     if(!splash) return;
+    try{
+      await window.__cramchySplashFontsReady;
+      if(document.fonts&&document.fonts.load){
+        await Promise.all([
+          document.fonts.load('600 16px Fredoka'),
+          document.fonts.load('400 16px "Plus Jakarta Sans"'),
+          document.fonts.load('400 16px "M PLUS Rounded 1c"')
+        ]);
+      }
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    }catch(error){console.warn('Boot font/layout settling skipped.',error);}
+    await new Promise(resolve=>requestAnimationFrame(resolve));
     document.documentElement.removeAttribute('data-cramchy-booting');
     splash.classList.add('is-leaving');
     setTimeout(()=>{
@@ -151,7 +178,7 @@
   }
 
   function refreshStyles(){
-    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css','grades-workspace.css','course-schedule.css','navigation-motion.css','grades-motion.css','shared-tasks.css','page-heading-color.css','exam-typography.css','exam-toolbar.css','tasks-workspace.css','dark-study.css','welcome-onboarding.css', 'mobile-navigation.css','desktop-navigation-polish-v1.css','text-size-control-v1.css'];
+    const sheets=['styles.css','design-v3.css','home-hero-v4.css','home-hierarchy-v5.css','home-command-v6.css','polish-v7.css','theme-gradients-v8.css','typography-polish-v17.css','home-planner-reminders-v23.css','mobile-shell-fix-v30.css','planner-mobile-hotfix-v44.css','planner-week-time.css','grades-nu-polish-v1.css','grades-stable-v42.css','grades-quick-gwa-v43.css','exam-subject-stability-v49.css','mobile-accessibility.css','home-compact-header.css','study-timer-ring.css','grades-workspace.css','course-schedule.css','navigation-motion.css','grades-motion.css','shared-tasks.css','page-heading-color.css','exam-typography.css','exam-toolbar.css','tasks-workspace.css','dark-study.css','welcome-onboarding.css', 'mobile-navigation.css','desktop-navigation-polish-v1.css','text-size-control-v1.css','home-header-refinement-v1.css'];
     return Promise.all(sheets.map(loadFreshStylesheet));
   }
 
@@ -185,6 +212,7 @@
 
   installFavicon();
   installBootSplash();
+  window.__cramchySplashFontsReady=window.__cramchySplashFontsReady||prepareBootSplashFonts();
   refreshStyles()
     .then(()=>forceFreshBaseBundle())
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))

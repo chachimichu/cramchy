@@ -1,7 +1,7 @@
 /* Typography polish v17 — refined: playful page headers, clean cards. No font files, no layout or copy changes. */
 :root{
   --cramchy-readable:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --cramchy-display:'DynaPuff','Plus Jakarta Sans',cursive;
+  --cramchy-display:'Fredoka','Plus Jakarta Sans',cursive;
 }
 
 body,button,input,select,textarea{
@@ -47,11 +47,12 @@ body.exam-mode-active #view-matcha > h2{
   letter-spacing:-.03em!important;
 }
 
-/* Section/card headings: clean, smooth, not spiky or overly chunky. */
+/* Section/card headings use the rounded Fredoka display font. */
 #view-dashboard .home-command-heading h3,
 #view-dashboard .home-planner-reminders-title h3,
 #view-dashboard .home-courses-section .home-command-heading h3,
 #view-dashboard .section-title,
+.view .section-title,
 #view-dashboard .home-recommend-card .copy h3,
 #view-dashboard .home-exam-banner-compact h3,
 #view-dashboard .closest-exam h3,
@@ -74,7 +75,7 @@ body.exam-mode-active .card h3,
 body.exam-mode-active .section-title,
 body.exam-mode-active .subject-card h3,
 body.exam-mode-active .exam-card h3{
-  font-family:var(--cramchy-readable)!important;
+  font-family:var(--cramchy-display)!important;
   font-weight:700!important;
   letter-spacing:-.018em!important;
 }
@@ -96,7 +97,7 @@ body.exam-mode-active .exam-card h3{
   letter-spacing:-.012em!important;
 }
 
-/* Numbers/times: clean, tabular, and smoother than the chunky display font. */
+/* Dashboard numbers and timers use Fredoka with tabular numerals. */
 #view-dashboard .home-status-card .value,
 #view-dashboard .daily-stat .value,
 #view-dashboard #dailyNextClass,
@@ -115,7 +116,7 @@ body.exam-mode-active .countdown-precise,
 body.exam-mode-active .stat-card .num,
 body.exam-mode-active .daily-stat .value,
 body.exam-mode-active [class*="countdown"]{
-  font-family:var(--cramchy-readable)!important;
+  font-family:var(--cramchy-display)!important;
   font-weight:800!important;
   letter-spacing:-.025em!important;
   font-variant-numeric:tabular-nums!important;

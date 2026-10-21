@@ -27,7 +27,25 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=52">
 <link rel="manifest" href="/site.webmanifest?v=52">
 <style id="cramchyBootSplashStyle">
+      @font-face{
+        font-family:'Cramchy Splash Serif';font-style:normal;font-weight:600;font-display:block;
+        src:url('assets/fonts/splash-playfair-600-latin.woff2') format('woff2');
+        unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+      }
+      @font-face{
+        font-family:'Cramchy Splash Serif';font-style:italic;font-weight:600;font-display:block;
+        src:url('assets/fonts/splash-playfair-600-italic-latin.woff2') format('woff2');
+        unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+      }
+      @font-face{
+        font-family:'Cramchy Splash Sans';font-style:normal;font-weight:800;font-display:block;
+        src:url('assets/fonts/splash-nunito-800-latin.woff2') format('woff2');
+        unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+      }
       html[data-cramchy-booting] body > :not(#cramchyBootSplash){visibility:hidden!important;}
+      html:not([data-cramchy-splash-fonts-ready]) .cramchy-boot-wordmark,
+      html:not([data-cramchy-splash-fonts-ready]) .cramchy-boot-sub,
+      html:not([data-cramchy-splash-fonts-ready]) .cramchy-boot-copy{visibility:hidden;}
 
       #cramchyBootSplash{
         position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;
@@ -52,24 +70,26 @@
       }
       #cramchyBootSplash.is-leaving{opacity:0;visibility:hidden;}
       .cramchy-boot-shell{
-        position:relative;z-index:2;width:min(620px,calc(100vw - 32px));text-align:center;
-        padding:46px 34px 42px;border-radius:40px;
+        position:relative;z-index:2;box-sizing:border-box;width:min(620px,calc(100vw - 32px));height:286px;
+        display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;
+        padding:46px 34px 0;border-radius:40px;
         background:linear-gradient(180deg,rgba(255,252,248,.94),rgba(255,246,248,.92));
         border:1px solid rgba(255,255,255,.92);
         box-shadow:0 30px 80px rgba(118,68,82,.16),0 8px 26px rgba(118,68,82,.07);
         backdrop-filter:blur(14px);
       }
       .cramchy-boot-wordmark{
-        margin:0;color:#c85f7e;font-family:'Playfair Display',Georgia,serif;
-        font-size:clamp(58px,10vw,88px);font-weight:600;line-height:.92;letter-spacing:-.055em;
+        display:flex;align-items:center;justify-content:center;width:100%;height:81px;flex:none;
+        margin:0;color:#c85f7e;font-family:'Cramchy Splash Serif',Georgia,serif;
+        font-size:clamp(58px,10vw,88px);font-weight:600;line-height:81px;letter-spacing:-.055em;
         text-shadow:0 8px 24px rgba(166,74,102,.08);
       }
       .cramchy-boot-sub{
-        margin-top:12px;color:#a77a84;font-family:'Playfair Display',Georgia,serif;
-        font-size:15px;font-style:italic;font-weight:600;letter-spacing:.18em;
+        height:18px;flex:none;margin-top:12px;color:#a77a84;font-family:'Cramchy Splash Serif',Georgia,serif;
+        font-size:15px;font-style:italic;font-weight:600;line-height:18px;letter-spacing:.18em;
       }
       .cramchy-boot-progress{
-        width:min(320px,78%);height:9px;margin:42px auto 18px;padding:2px;
+        box-sizing:border-box;flex:none;width:min(320px,78%);height:9px;margin:42px auto 18px;padding:2px;
         border-radius:999px;background:rgba(231,174,190,.28);
         box-shadow:inset 0 1px 3px rgba(135,75,92,.08),0 5px 15px rgba(181,83,111,.07);
         overflow:hidden;
@@ -82,8 +102,8 @@
         box-shadow:0 0 12px rgba(217,111,141,.18);
       }
       .cramchy-boot-copy{
-        color:#a87280;font-family:'Nunito',system-ui,sans-serif;font-size:12px;font-weight:800;
-        letter-spacing:.16em;text-transform:lowercase;
+        height:16px;flex:none;color:#a87280;font-family:'Cramchy Splash Sans',Nunito,system-ui,sans-serif;
+        font-size:12px;font-weight:800;line-height:16px;letter-spacing:.16em;text-transform:lowercase;
       }
       @keyframes cramchyBootFill{
         0%{transform:scaleX(.03);opacity:.72}
@@ -92,9 +112,9 @@
         100%{transform:scaleX(1);opacity:0}
       }
       @media(max-width:600px){
-        .cramchy-boot-shell{width:min(92vw,520px);padding:38px 22px 36px;border-radius:30px}
-        .cramchy-boot-wordmark{font-size:clamp(54px,18vw,76px)}
-        .cramchy-boot-sub{font-size:13px}.cramchy-boot-progress{margin-top:34px;width:min(280px,82%)}
+        .cramchy-boot-shell{width:min(92vw,520px);height:246px;padding:38px 22px 0;border-radius:30px}
+        .cramchy-boot-wordmark{height:65px;font-size:clamp(54px,18vw,76px);line-height:65px}
+        .cramchy-boot-sub{height:16px;font-size:13px;line-height:16px}.cramchy-boot-progress{margin-top:34px;width:min(280px,82%)}
       }
       @media(prefers-reduced-motion:reduce){
         #cramchyBootSplash{transition:none}.cramchy-boot-progress span{animation:none;transform:scaleX(.72);opacity:.85}
@@ -103,6 +123,10 @@
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="assets/fonts/splash-playfair-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/splash-playfair-600-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/splash-nunito-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=2026-10-16-chat-launcher-1">
 </head>
@@ -233,7 +257,7 @@
     <div class="legacy-dashboard">
 
     <div class="hero">
-      <div class="ribbon">✧</div>
+      
       <div class="regular-brand-hero">
         <img class="hero-wordmark" src="assets/cramchy-wordmark.png" alt="cramchy.">
         <img class="hero-tagline-image" src="assets/cramchy-tagline.png" alt="for the girlies entering their academic weapon era">
@@ -316,6 +340,11 @@
   <section class="view" id="view-timer">
     <h2 style="color:var(--red-deep); margin-bottom:14px;">Study Timer</h2>
     <div class="card">
+      <div class="timer-mode-switch" role="group" aria-label="Timer style">
+        <button class="timer-mode-choice is-active" type="button" data-timer-mode="focus" aria-pressed="true">focus timer</button>
+        <button class="timer-mode-choice" type="button" data-timer-mode="pomodoro" aria-pressed="false">pomodoro</button>
+      </div>
+      <p class="timer-mode-hint" id="timerModeHint">Focus at your own pace, with no scheduled breaks.</p>
       <label class="field-label">Studying:</label>
       <select id="timerSubjectSelect" style="width:100%; margin-bottom:14px;"></select>
       <div class="preset-row">
@@ -323,19 +352,92 @@
         <button class="btn ghost" data-mins="45">45 min</button>
         <button class="btn ghost" data-mins="60">60 min</button>
       </div>
+      <div class="timer-phase-status" aria-live="polite">
+        <strong id="timerPhaseLabel">focus</strong>
+        <span id="timerRoundLabel">no scheduled breaks</span>
+      </div>
       <div class="study-timer-dial" id="timerDial" role="progressbar" aria-label="Study time remaining" aria-valuemin="0" aria-valuemax="1500" aria-valuenow="1500" aria-valuetext="25 minutes remaining">
-        <svg class="study-timer-ring" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-          <circle class="study-timer-track" cx="60" cy="60" r="54"></circle>
-          <circle class="study-timer-progress" id="timerRingProgress" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"></circle>
+        <svg class="study-timer-ring" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
+          <g id="timerDialTicks"></g>
+          <circle class="study-timer-track" cx="160" cy="160" r="128"></circle>
+          <circle class="study-timer-progress" id="timerRingProgress" cx="160" cy="160" r="128" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"></circle>
+          <g class="timer-ring-marker" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" transform="translate(149 19) scale(.92)"></path>
+          </g>
+          <path class="timer-orbit-star" d="M72 78v9m-4.5-4.5h9"></path>
+          <path class="timer-orbit-star timer-orbit-star-two" d="M247 92v7m-3.5-3.5h7"></path>
+          <circle class="timer-orbit-dot" cx="252" cy="232" r="2.5"></circle>
         </svg>
-        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-center">
+          <div class="timer-display" id="timerDisplay">25:00</div>
+          <div class="timer-scene-caption" id="timerSceneCaption" aria-hidden="true">your desk is ready</div>
+        </div>
+      </div>
+      <div class="timer-desk-scene" aria-hidden="true">
+        <svg class="timer-desk-book" viewBox="0 0 112 76">
+          <ellipse cx="56" cy="70" rx="45" ry="4" class="desk-ground"></ellipse>
+          <path class="desk-book-cover" d="M7 17Q29 12 55 20Q81 12 105 17V61Q81 55 55 65Q29 55 7 61Z"></path>
+          <path class="desk-book-page" d="M12 18Q33 14 53 21V58Q33 51 12 56Z"></path>
+          <path class="desk-book-page" d="M99 18Q78 14 57 21V58Q78 51 99 56Z"></path>
+          <path class="desk-book-line" d="M17 28q14-3 30 3M17 37q14-3 30 3M17 46q13-2 26 2M94 28q-14-3-30 3m30 6q-14-3-30 3m27 6q-11-2-22 2"></path>
+          <path class="desk-book-spine" d="M55 20v44"></path>
+          <path class="desk-book-ribbon" d="M51 56v14l4-4 4 4V57"></path>
+        </svg>
+        <svg class="timer-desk-pencil" viewBox="0 0 120 38">
+          <g transform="rotate(-10 60 19)">
+            <rect x="8" y="10" width="20" height="17" rx="5" class="desk-pencil-eraser"></rect>
+            <path d="M24 10v17m5-17v17" class="desk-pencil-band"></path>
+            <path d="M29 10h61v17H29z" class="desk-pencil-body"></path>
+            <path d="M36 15h46" class="desk-pencil-shine"></path>
+            <path d="M90 10l22 8.5L90 27z" class="desk-pencil-tip"></path>
+            <path d="M106 16l6 2.5-6 2.5z" class="desk-pencil-lead"></path>
+          </g>
+          <path class="desk-pencil-scribble" d="M74 34q5-5 10 0t10 0t10 0"></path>
+        </svg>
+        <svg class="timer-desk-cup" viewBox="0 0 84 82">
+          <ellipse cx="42" cy="75" rx="32" ry="4" class="desk-ground"></ellipse>
+          <g class="timer-cup-steam"><path d="M27 28q-5-5 0-10t0-10"></path><path d="M40 28q-5-5 0-10t0-10"></path><path d="M53 28q-5-5 0-10t0-10"></path></g>
+          <path class="desk-cup-saucer" d="M8 69q34 11 68 0l-6-5H14z"></path>
+          <path class="desk-cup-body" d="M16 35h43v14a21.5 21.5 0 0 1-43 0z"></path>
+          <path class="desk-cup-handle" d="M59 41h5a8 8 0 0 1 0 16h-7"></path>
+          <ellipse class="desk-cup-tea" cx="37.5" cy="35" rx="21.5" ry="5.5"></ellipse>
+          <path class="desk-cup-heart" d="M37.5 55c-4-3-8-6-8-10a4.2 4.2 0 0 1 8-2 4.2 4.2 0 0 1 8 2c0 4-4 7-8 10z"></path>
+          <path class="desk-cup-heart" d="M37.5 8c-3-2-5-4-5-7a2.8 2.8 0 0 1 5-1 2.8 2.8 0 0 1 5 1c0 3-2 5-5 7z"></path>
+        </svg>
+        <svg class="timer-desk-plant" viewBox="0 0 100 132">
+          <ellipse cx="50" cy="128" rx="30" ry="3.5" class="desk-ground"></ellipse>
+          <g class="timer-plant-sway">
+            <g class="timer-plant-grown">
+              <path class="desk-plant-stem" d="M50 88c0-15 3-29 0-45"></path>
+              <path class="desk-plant-vein" d="M50 78V64"></path>
+              <g transform="translate(50 75) rotate(153)"><path class="desk-plant-leaf" d="M0 0C8-11 24-11 32 0 24 11 8 11 0 0Z"></path><path class="desk-plant-leaf-vein" d="M3 0h26"></path></g>
+              <g transform="translate(50 65) rotate(-27)"><path class="desk-plant-leaf" d="M0 0C8-11 24-11 32 0 24 11 8 11 0 0Z"></path><path class="desk-plant-leaf-vein" d="M3 0h26"></path></g>
+              <g transform="translate(50 56) rotate(198) scale(.78)"><path class="desk-plant-leaf" d="M0 0C8-11 24-11 32 0 24 11 8 11 0 0Z"></path><path class="desk-plant-leaf-vein" d="M3 0h26"></path></g>
+              <g class="timer-desk-flower" transform="translate(50 37)">
+                <g class="desk-flower-petals">
+                  <circle cx="0" cy="-15" r="8"></circle><circle cx="10.6" cy="-10.6" r="8"></circle><circle cx="15" cy="0" r="8"></circle><circle cx="10.6" cy="10.6" r="8"></circle><circle cx="0" cy="15" r="8"></circle><circle cx="-10.6" cy="10.6" r="8"></circle><circle cx="-15" cy="0" r="8"></circle><circle cx="-10.6" cy="-10.6" r="8"></circle>
+                </g>
+                <circle class="desk-flower-heart" cx="0" cy="0" r="7"></circle>
+                <circle class="desk-flower-center" cx="0" cy="0" r="4"></circle>
+                <circle class="desk-flower-dot" cx="-2" cy="-1" r="1"></circle><circle class="desk-flower-dot" cx="2" cy="1" r="1"></circle>
+              </g>
+            </g>
+            <rect class="desk-pot-rim" x="23" y="87" width="54" height="13" rx="5"></rect>
+            <path class="desk-pot-body" d="M28 99h44l-5 27H33z"></path>
+            <circle class="desk-pot-eye" cx="44" cy="110" r="1.6"></circle><circle class="desk-pot-eye" cx="56" cy="110" r="1.6"></circle>
+            <path class="desk-pot-face" d="M47 116q3 3 6 0"></path>
+            <circle class="desk-pot-cheek" cx="40" cy="115" r="2.2"></circle><circle class="desk-pot-cheek" cx="60" cy="115" r="2.2"></circle>
+            <path class="desk-pot-detail" d="M40 105h20"></path>
+          </g>
+        </svg>
       </div>
       <div class="timer-controls">
         <button class="btn" id="timerStartBtn">start</button>
         <button class="btn secondary" id="timerPauseBtn" disabled>pause</button>
         <button class="btn ghost" id="timerResetBtn">reset</button>
+        <button class="btn ghost" id="timerSkipBreakBtn" type="button" hidden>skip break</button>
       </div>
-      <p class="small-note" style="margin-top:12px;">Your timer resumes on this device after a refresh. Pause to take a break; reset to choose another course or duration. Reset discards an unfinished session.</p>
+      <p class="small-note" style="margin-top:12px;">Your timer resumes on this device after a refresh. Pomodoro logs focus rounds only; breaks do not add study time. Reset discards an unfinished session.</p>
     </div>
 
     <div class="section-title">✧ Study History</div>
@@ -508,7 +610,7 @@
         <button class="more-shortcut" id="archiveCurrentTermBtn">archive current term</button>
       </div>
     </div>
-    <div class="section-title">✧ Backup &amp; Reset</div>
+    <div class="section-title">✦ Backup &amp; Reset</div>
     <div class="card">
       <p class="small-note">Keep a copy of your courses, grades, tasks, study progress, Planner events, and Term GWA entries.</p>
       <div class="backup-actions">
@@ -525,7 +627,7 @@
       <p class="hint">Use this if buttons act weird after an update. It repairs saved Cramchy data without deleting your courses, grades, tasks, or study history.</p>
       <button class="btn secondary" id="repairDataBtn" type="button" style="width:100%;">repair app data ✦</button>
     </div>
-    <div class="section-title">✧ about Cramchy</div>
+    <div class="section-title">✦ about Cramchy</div>
     <div class="card settings-panel" style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
       <div><h3>the story behind Cramchy</h3><p class="hint" style="margin-bottom:0;">Why it was made, who it’s for, and how it got its name.</p></div>
       <a class="btn secondary" href="/about.html">read the story</a>
@@ -698,7 +800,18 @@
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<script>
+  window.__cramchySplashFontsReady=(document.fonts&&document.fonts.load
+    ?Promise.allSettled([
+      document.fonts.load('600 16px "Cramchy Splash Serif"'),
+      document.fonts.load('italic 600 16px "Cramchy Splash Serif"'),
+      document.fonts.load('800 16px "Cramchy Splash Sans"')
+    ])
+    :Promise.resolve()
+  ).then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+    .then(()=>document.documentElement.setAttribute('data-cramchy-splash-fonts-ready',''));
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=2026-10-18-mobile-account-152"></script>
+<script src="app.js?v=2026-10-18-stable-boot-178"></script>
 </body>
 </html>

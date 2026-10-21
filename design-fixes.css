@@ -38,12 +38,12 @@ body.planner-mode-active #view-planner{display:block!important;}
 .cramchy-home-copy .daily-title{max-width:650px!important;text-align:left!important;}
 .cramchy-home-kicker{color:var(--cram-rose,#cf5d7b)!important;letter-spacing:.24em!important;text-transform:uppercase!important;font-weight:900!important;font-size:.77rem!important;margin-bottom:10px!important;}
 .cramchy-home-copy .daily-title h1{font-family:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif!important;font-size:.88rem!important;text-transform:lowercase!important;letter-spacing:.06em!important;color:var(--cram-muted,#9b737c)!important;font-weight:900!important;margin:0 0 8px!important;}
-.cramchy-home-copy .big-greeting{font-family:'DynaPuff','Plus Jakarta Sans',cursive!important;color:var(--cram-deep,#5a2432)!important;font-size:clamp(2.15rem,4vw,4rem)!important;line-height:1.03!important;letter-spacing:-.03em!important;}
+.cramchy-home-copy .big-greeting{font-family:'Fredoka','Plus Jakarta Sans',cursive!important;color:var(--cram-deep,#5a2432)!important;font-size:clamp(2.15rem,4vw,4rem)!important;line-height:1.03!important;letter-spacing:-.03em!important;}
 .cramchy-home-copy .daily-meta{color:#7c5862!important;font-size:1rem!important;line-height:1.6!important;font-weight:750!important;margin-top:12px!important;}
 .cramchy-home-actions{display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin-top:20px!important;}
 .cramchy-home-actions .quick-add-main{position:static!important;padding:12px 18px!important;border-radius:17px!important;background:linear-gradient(135deg,#f48ca5,#df6686)!important;color:#fff!important;font-weight:900!important;}
 .cramchy-sticker{position:absolute!important;left:14px!important;bottom:8px!important;transform:rotate(-7deg)!important;background:rgba(255,253,252,.72)!important;border:1px solid rgba(245,211,220,.9)!important;color:#a86b78!important;border-radius:14px!important;padding:8px 11px!important;font-weight:900!important;font-size:.72rem!important;box-shadow:0 10px 24px rgba(164,78,100,.09)!important;}
-.cramchy-sparkle{position:absolute!important;color:#df6686!important;font-family:'DynaPuff',cursive!important;filter:drop-shadow(0 5px 10px rgba(164,78,100,.12))!important;}
+.cramchy-sparkle{position:absolute!important;color:#df6686!important;font-family:'Fredoka',cursive!important;filter:drop-shadow(0 5px 10px rgba(164,78,100,.12))!important;}
 .sparkle-a{right:14px!important;top:24px!important;font-size:1.55rem!important;}
 .sparkle-b{left:18px!important;top:18px!important;font-size:1.05rem!important;}
 

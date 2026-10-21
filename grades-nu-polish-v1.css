@@ -10,7 +10,7 @@
 
 #view-grades .page-head-row{margin-bottom:8px;}
 #view-grades .page-head-row h2{
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:clamp(2rem,4vw,3.1rem)!important;
   letter-spacing:-.06em!important;
 }
@@ -75,7 +75,7 @@
 .grades-main-tabs button::after{display:none!important;content:none!important;}
 .grades-main-tabs button span{
   display:block;
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:1.03rem;
   font-weight:850;
   letter-spacing:-.035em;
@@ -173,7 +173,7 @@
 }
 .grade-course-card .grade-big{
   color:var(--course-accent)!important;
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:1.45rem!important;
   letter-spacing:-.045em!important;
 }
@@ -227,7 +227,7 @@
 .grades-gwa-hero-card h3{
   margin:8px 0 5px;
   color:var(--text-main,#56363d)!important;
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:clamp(1.55rem,3vw,2.25rem);
   letter-spacing:-.055em;
   line-height:1.02;
@@ -263,7 +263,7 @@
   display:block;
   margin:3px 0;
   color:var(--grade-matcha);
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:2.62rem;
   letter-spacing:-.06em;
   line-height:1;
@@ -320,7 +320,7 @@
   display:block;
   margin-top:2px;
   color:var(--text-main,#56363d);
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:1.35rem;
   letter-spacing:-.04em;
 }
@@ -374,7 +374,7 @@
   background:linear-gradient(135deg,color-mix(in srgb,var(--card-accent) 19%,rgba(255,255,255,.82)),rgba(255,255,255,.58));
   border:1px solid color-mix(in srgb,var(--card-accent) 20%,rgba(255,255,255,.68));
   color:var(--card-accent);
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:.95rem;
   font-weight:850;
   text-align:center;
@@ -432,7 +432,7 @@
   display:block;
   margin:2px 0;
   color:var(--text-main,#56363d);
-  font-family:var(--cramchy-display,'DynaPuff','Plus Jakarta Sans',cursive)!important;
+  font-family:var(--cramchy-display,'Fredoka','Plus Jakarta Sans',cursive)!important;
   font-size:1.05rem;
   letter-spacing:-.035em;
 }

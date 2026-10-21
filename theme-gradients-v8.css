@@ -58,7 +58,10 @@ body[data-theme="dark-study"]{
 }
 
 /* Hero banners: these are the visual anchors of Home + Planner. */
-.cramchy-home-header.planner-hero-card,
+.cramchy-home-header.planner-hero-card{
+  background:var(--cram-banner-2)!important;
+  border-color:var(--cram-banner-border)!important;
+}
 #view-planner .planner-hero-card{
   background:linear-gradient(
     104deg,

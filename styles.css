@@ -1,5 +1,5 @@
 @import url("styles-base.css?v=2026-10-16-chat-launcher-1");
-@import url("https://fonts.googleapis.com/css2?family=DynaPuff:wght@500;600;700&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root{
   --planner-deep:#5a2432;
@@ -14,7 +14,7 @@
   --planner-shadow:0 18px 45px rgba(164,78,100,.12);
   --planner-shadow-small:0 10px 25px rgba(164,78,100,.08);
   --font-ui:'Plus Jakarta Sans','M PLUS Rounded 1c',system-ui,sans-serif;
-  --font-display:'DynaPuff','Plus Jakarta Sans',cursive;
+  --font-display:'Fredoka','Plus Jakarta Sans',cursive;
 }
 
 body,button,input,select,textarea{font-family:var(--font-ui)!important;}
