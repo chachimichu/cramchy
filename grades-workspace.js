@@ -17,11 +17,11 @@
   const crumb=document.createElement('nav');crumb.className='gw-breadcrumb';crumb.setAttribute('aria-label','Grades navigation');header.insertAdjacentElement('afterend',crumb);
   function courses(){return (api.state.courses||[]).filter(c=>(c.academicYear||profileAcademicYear())===year&&(c.term||profileTerm())===term);}
   function courseAccents(list){
-    const palette=Object.keys(COURSE_COLORS),used=new Set(),accents=new Map(),tints={pink:'#ffe1ec',matcha:'#e8f1dd',lavender:'#eee5fa',blue:'#e1edfc',peach:'#fae7d8',rose:'#f8dce5'};
+    const palette=Object.keys(COURSE_COLORS),used=new Set(),accents=new Map();
     list.forEach(c=>{
       let key=palette.includes(c.color)?c.color:'pink';
       if(used.has(key))key=palette.find(color=>!used.has(color))||key;
-      used.add(key);accents.set(c.id,{accent:COURSE_COLORS[key]||COURSE_COLORS.pink,tint:tints[key]||tints.pink});
+      used.add(key);accents.set(c.id,COURSE_COLORS[key]||COURSE_COLORS.pink);
     });
     return accents;
   }
@@ -48,7 +48,7 @@
   function courseList(){
     banner('course gradebook','Choose a subject to see its grades and add scores.');
     const list=courses(),accents=courseAccents(list);
-    root.innerHTML=picker()+`<div class="gw-course-grid">${list.map(c=>{const s=summary(c),entries=(api.state.gradebook?.[c.id]?.midterms||[]).length+(api.state.gradebook?.[c.id]?.finals||[]).length,color=accents.get(c.id);return `<button type="button" class="gw-course-card" data-gw-course="${attr(c.id)}" style="--gw-accent:${color.accent};background:linear-gradient(145deg,${color.tint} 0%,#fff 100%);border-color:${color.accent};border-left:6px solid ${color.accent}"><span class="gw-course-code">${escape(c.code||'Subject')} · ${points(c.units||0)} units</span><h3>${escape(c.name)}</h3><div class="gw-course-periods"><div><span>Midterms</span><strong>${pct(s.midterms.value)}</strong></div><div><span>Finals</span><strong>${pct(s.finals.value)}</strong></div></div><div class="gw-course-footer"><span>${entries} saved score${entries===1?'':'s'}</span><b>open subject →</b></div></button>`;}).join('')}</div>${!list.length?'<div class="gw-empty"><h3>No courses in this term yet</h3><p>Add courses in Courses; they will appear here automatically.</p><button type="button" class="btn" id="gwAddCourse">add a course</button></div>':''}`;
+    root.innerHTML=picker()+`<div class="gw-course-grid">${list.map(c=>{const s=summary(c),entries=(api.state.gradebook?.[c.id]?.midterms||[]).length+(api.state.gradebook?.[c.id]?.finals||[]).length;return `<button type="button" class="gw-course-card" data-gw-course="${attr(c.id)}" style="--gw-accent:${accents.get(c.id)}"><span class="gw-course-code">${escape(c.code||'Subject')} · ${points(c.units||0)} units</span><h3>${escape(c.name)}</h3><div class="gw-course-periods"><div><span>Midterms</span><strong>${pct(s.midterms.value)}</strong></div><div><span>Finals</span><strong>${pct(s.finals.value)}</strong></div></div><div class="gw-course-footer"><span>${entries} saved score${entries===1?'':'s'}</span><b>open subject →</b></div></button>`;}).join('')}</div>${!list.length?'<div class="gw-empty"><h3>No courses in this term yet</h3><p>Add courses in Courses; they will appear here automatically.</p><button type="button" class="btn" id="gwAddCourse">add a course</button></div>':''}`;
     bindPicker();root.querySelector('#gwAddCourse')?.addEventListener('click',()=>openCourseModal());root.querySelectorAll('[data-gw-course]').forEach(b=>b.addEventListener('click',()=>{courseId=b.dataset.gwCourse;api.selectedGradeCourseId=courseId;page='course';render();window.CramchyMotion?.enter(root);}));
   }
   function metric(title,value,eq,subtitle,tone){return `<div class="gw-metric ${tone}"><span>${title}</span><strong>${pct(value)}</strong><div class="gw-equivalent">${eq?`equivalent <b>${eq}</b>`:'not yet available'}</div><div class="gw-meter" aria-hidden="true"><i style="width:${Math.max(0,Math.min(100,value||0))}%"></i></div><p>${escape(subtitle)}</p></div>`;}
