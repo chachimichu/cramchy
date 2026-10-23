@@ -23,6 +23,30 @@
     }
     Promise.all(animations.map(a=>a.finished.catch(()=>{}))).then(()=>{if(cleanup===remove)remove();});
   }
+  function add(origin){
+    if(reduce.matches||typeof Element.prototype.animate!=='function')return;
+    const layer=document.createElement('div');
+    layer.setAttribute('aria-hidden','true');
+    layer.style.cssText='position:fixed;inset:0;z-index:10020;pointer-events:none;overflow:hidden;';
+    document.body.appendChild(layer);
+    const x=Math.max(12,Math.min(innerWidth-12,origin?origin.left+origin.width/2:innerWidth/2));
+    const y=Math.max(12,Math.min(innerHeight-12,origin?origin.top+origin.height/2:innerHeight*.45));
+    const colors=['#f684b0','#d94b86','#ffb3cf','#ff7aa5'];
+    const animations=[];
+    for(let i=0;i<12;i++){
+      const heart=document.createElement('span'),angle=Math.PI*2*i/12+(Math.random()-.5)*.45,distance=42+Math.random()*54;
+      heart.setAttribute('aria-hidden','true');
+      heart.textContent='♥';
+      heart.style.cssText=`position:absolute;left:${x}px;top:${y}px;color:${colors[i%colors.length]};font-size:${11+Math.random()*9}px;line-height:1;`;
+      layer.appendChild(heart);
+      animations.push(heart.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
+        {opacity:1,transform:`translate(calc(-50% + ${Math.cos(angle)*distance*.65}px),calc(-50% + ${Math.sin(angle)*distance*.65}px - 12px)) scale(1)`,offset:.58},
+        {opacity:0,transform:`translate(calc(-50% + ${Math.cos(angle)*distance}px),calc(-50% + ${Math.sin(angle)*distance}px + 18px)) scale(.55)`}
+      ],{duration:760+Math.random()*180,easing:'cubic-bezier(.2,.8,.3,1)'}));
+    }
+    Promise.all(animations.map(a=>a.finished.catch(()=>{}))).then(()=>layer.remove());
+  }
   reduce.addEventListener?.('change',()=>{if(reduce.matches)cleanup?.();});
-  window.CramchyCelebrate={task};
+  window.CramchyCelebrate={task,add};
 })();

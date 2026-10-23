@@ -2469,13 +2469,13 @@ function removeCourse(courseId){
   saveState(); renderDynamicCourses(); renderDailyHome(); renderGradebook(); renderGwaCalculator(); showToast('course removed');
 }
 function scheduleRowMarkup(s={}){
-  const days=DAY_NAMES.map(d=>`<option value="${d}" ${s.day===d?'selected':''}>${d}</option>`).join('');
+  const selected=new Set(Array.isArray(s.days)?s.days:[]);
   return `<div class="schedule-row-edit" data-schedule-row>
-    <div><label>day</label><select data-sch-day><option value="">choose day</option>${days}</select></div>
+    <div class="schedule-days-field"><label>days</label><div class="schedule-day-picker" role="group" aria-label="Meeting days">${DAY_NAMES.map(d=>`<button type="button" data-sch-day="${d}" aria-label="${d}" aria-pressed="${selected.has(d)}">${d.slice(0,3)}</button>`).join('')}</div><div class="small-note" data-sch-days-summary aria-live="polite">No days selected yet</div></div>
     <div><label>start</label><input type="time" data-sch-start value="${escapeAttr(s.start||'')}"></div>
     <div><label>end</label><input type="time" data-sch-end value="${escapeAttr(s.end||'')}"></div>
     <div class="schedule-room"><label>room / place</label><input data-sch-room value="${escapeAttr(s.room||'')}" placeholder="Room 609"></div>
-    <button type="button" class="schedule-remove-btn" data-remove-schedule aria-label="Remove schedule">×</button>
+    <button type="button" class="schedule-remove-btn" data-remove-schedule aria-label="Remove schedule block">×</button>
   </div>`;
 }
 function nextCourseColor(existing=null){
@@ -2488,7 +2488,7 @@ function nextCourseColor(existing=null){
 function openCourseModal(courseId=null,focusSchedules=false){
   const existing=(state.courses||[]).find(c=>c.id===courseId);
   const initialColor=COURSE_COLORS[existing?.color]?existing.color:nextCourseColor(existing);
-  const schedules=existing?normalizeCourseSchedules(existing).filter(s=>!s.legacy):[];
+  const schedules=existing?window.CramchyScheduleEditor.group(normalizeCourseSchedules(existing).filter(s=>!s.legacy),DAY_NAMES):[];
   const scheme=courseScheme(existing);
   const scrim=document.createElement('div'); scrim.className='modal-scrim';
   scrim.innerHTML=`<div class="course-modal">
@@ -2502,7 +2502,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
       <div><label>default room</label><input id="courseRoom" value="${escapeAttr(existing?.room||'')}"></div>
       <div><label>term</label><input id="courseTerm" value="${escapeAttr(existing?.term||state.profile?.term||'Term 1')}"></div>
       <div class="course-color-field"><label>course color</label><input id="courseColor" type="hidden" value="${escapeAttr(initialColor)}"><div class="course-color-options" role="group" aria-label="Course color">${Object.entries(COURSE_COLORS).map(([name,color])=>`<button type="button" class="course-color-option${initialColor===name?' is-selected':''}" data-course-color="${name}" aria-label="${name}" aria-pressed="${initialColor===name}" title="${name}" style="--course-swatch:${color}"><span></span></button>`).join('')}</div></div>
-      <div class="schedule-editor" id="scheduleEditor"><div class="schedule-editor-head"><div><strong>class schedules</strong><div class="small-note">Add more than one meeting day if needed.</div></div><button type="button" class="more-shortcut" id="addScheduleRowBtn">+ schedule</button></div><div id="scheduleRows">${(schedules.length?schedules:[{}]).map(scheduleRowMarkup).join('')}</div></div>
+      <div class="schedule-editor" id="scheduleEditor"><div class="schedule-editor-head"><div><strong>class schedules</strong><div class="small-note">Group days that share the same time.</div></div><button type="button" class="more-shortcut" id="addScheduleRowBtn">+ schedule block</button></div><div id="scheduleRows">${(schedules.length?schedules:[{}]).map(scheduleRowMarkup).join('')}</div></div>
       <div class="weight-editor"><strong>grading weights</strong><div class="small-note">Default is your 30 / 20 / 10 / 40 system. Total must equal 100%.</div><div class="weight-grid">
         <div><label>Written & Quizzes</label><input id="weightWW" type="number" min="0" max="100" step="1" value="${scheme.ww}"></div>
         <div><label>Enabling Activities</label><input id="weightPT" type="number" min="0" max="100" step="1" value="${scheme.pt}"></div>
@@ -2518,9 +2518,10 @@ function openCourseModal(courseId=null,focusSchedules=false){
     scrim.querySelectorAll('[data-course-color]').forEach(option=>{const selected=option===button;option.classList.toggle('is-selected',selected);option.setAttribute('aria-pressed',String(selected));});
   }));
   const rows=scrim.querySelector('#scheduleRows');
-  const bindRemove=()=>scrim.querySelectorAll('[data-remove-schedule]').forEach(btn=>{btn.onclick=()=>{const row=btn.closest('[data-schedule-row]'); if(scrim.querySelectorAll('[data-schedule-row]').length>1)row.remove(); else{row.querySelectorAll('input').forEach(i=>i.value='');row.querySelector('select').value='';}}});
-  bindRemove();
-  scrim.querySelector('#addScheduleRowBtn').addEventListener('click',()=>{rows.insertAdjacentHTML('beforeend',scheduleRowMarkup({}));bindRemove();});
+  const bindRemove=()=>scrim.querySelectorAll('[data-remove-schedule]').forEach(btn=>{btn.onclick=()=>{const row=btn.closest('[data-schedule-row]'); if(scrim.querySelectorAll('[data-schedule-row]').length>1)row.remove(); else{row.querySelectorAll('input').forEach(i=>i.value='');row.querySelectorAll('[data-sch-day]').forEach(day=>day.setAttribute('aria-pressed','false'));}}});
+  const bindDays=scope=>scope.querySelectorAll('[data-sch-day]').forEach(button=>button.addEventListener('click',()=>{button.setAttribute('aria-pressed',String(button.getAttribute('aria-pressed')!=='true'));const row=button.closest('[data-schedule-row]'),selected=[...row.querySelectorAll('[data-sch-day][aria-pressed="true"]')].map(day=>day.textContent.trim());row.querySelector('[data-sch-days-summary]').textContent=selected.length?`Selected: ${selected.join(', ')}`:'No days selected yet';}));
+  bindRemove();bindDays(scrim);scrim.querySelectorAll('[data-schedule-row]').forEach(row=>{const selected=[...row.querySelectorAll('[data-sch-day][aria-pressed="true"]')].map(day=>day.textContent.trim());if(selected.length)row.querySelector('[data-sch-days-summary]').textContent=`Selected: ${selected.join(', ')}`;});
+  scrim.querySelector('#addScheduleRowBtn').addEventListener('click',()=>{rows.insertAdjacentHTML('beforeend',scheduleRowMarkup({}));bindRemove();bindDays(rows.lastElementChild);});
   const updateWeightTotal=()=>{const vals=['weightWW','weightPT','weightAttendance','weightExam'].map(id=>Number(scrim.querySelector('#'+id).value)||0);const total=vals.reduce((a,b)=>a+b,0);const el=scrim.querySelector('#weightTotal');el.textContent=`total: ${total}%${Math.abs(total-100)<0.001?' ✓':' — must equal 100%'}`;el.style.color=Math.abs(total-100)<0.001?'var(--matcha-dark)':'#a43f55';};
   ['weightWW','weightPT','weightAttendance','weightExam'].forEach(id=>scrim.querySelector('#'+id).addEventListener('input',updateWeightTotal));updateWeightTotal();
   scrim.querySelector('#cancelCourseModal').addEventListener('click',()=>scrim.remove());scrim.addEventListener('click',e=>{if(e.target===scrim)scrim.remove();});
@@ -2529,11 +2530,11 @@ function openCourseModal(courseId=null,focusSchedules=false){
     const name=scrim.querySelector('#courseName').value.trim();if(!name){scrim.querySelector('#courseName').focus();return;}
     const gradingScheme={ww:Number(scrim.querySelector('#weightWW').value)||0,pt:Number(scrim.querySelector('#weightPT').value)||0,attendance:Number(scrim.querySelector('#weightAttendance').value)||0,exam:Number(scrim.querySelector('#weightExam').value)||0};
     const totalW=Object.values(gradingScheme).reduce((a,b)=>a+b,0);if(Math.abs(totalW-100)>0.001){showToast('grading weights must total 100%');return;}
-    const newSchedules=[...scrim.querySelectorAll('[data-schedule-row]')].map(row=>({id:cryptoId(),day:row.querySelector('[data-sch-day]').value,start:row.querySelector('[data-sch-start]').value,end:row.querySelector('[data-sch-end]').value,room:row.querySelector('[data-sch-room]').value.trim().slice(0,50)})).filter(s=>s.day||s.start||s.end||s.room);
+    const newSchedules=[...scrim.querySelectorAll('[data-schedule-row]')].flatMap(row=>window.CramchyScheduleEditor.expand([...row.querySelectorAll('[data-sch-day][aria-pressed="true"]')].map(button=>button.dataset.schDay),row.querySelector('[data-sch-start]').value,row.querySelector('[data-sch-end]').value,row.querySelector('[data-sch-room]').value.trim().slice(0,50),cryptoId)).filter(s=>s.day||s.start||s.end||s.room);
     const course={id:existing?.id||cryptoId(),name:name.slice(0,80),code:scrim.querySelector('#courseCode').value.trim().slice(0,30),professor:scrim.querySelector('#courseProf').value.trim().slice(0,80),section:scrim.querySelector('#courseSection').value.trim().slice(0,40),units:Math.max(0,Math.min(20,Number(scrim.querySelector('#courseUnits').value)||0)),room:scrim.querySelector('#courseRoom').value.trim().slice(0,40),color:scrim.querySelector('#courseColor').value,term:scrim.querySelector('#courseTerm').value.trim().slice(0,30),academicYear:existing?.academicYear||state.profile?.academicYear||'2026–2027',schedule:'',schedules:newSchedules,gradingScheme,gwaFinalGrade:existing?.gwaFinalGrade||'',gwaMode:existing?.gwaMode||'auto'};
     if(existing)state.courses=state.courses.map(c=>c.id===existing.id?course:c);else state.courses.push(course);
     if(!state.gradebook)state.gradebook={};if(!state.gradebook[course.id])state.gradebook[course.id]={midterms:[],finals:[]};
-    saveState();renderDynamicCourses();renderDailyHome();renderGradebook();renderGwaCalculator();scrim.remove();showToast(existing?'course updated':'course added');
+    saveState();renderDynamicCourses();renderDailyHome();renderGradebook();renderGwaCalculator();if(!existing)window.CramchyCelebrate?.add(scrim.querySelector('#saveCourseModal').getBoundingClientRect());scrim.remove();showToast(existing?'course updated':'course added');
   });
 }
 
