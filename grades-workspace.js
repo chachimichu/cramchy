@@ -17,7 +17,7 @@
   const crumb=document.createElement('nav');crumb.className='gw-breadcrumb';crumb.setAttribute('aria-label','Grades navigation');header.insertAdjacentElement('afterend',crumb);
   function courses(){return (api.state.courses||[]).filter(c=>(c.academicYear||profileAcademicYear())===year&&(c.term||profileTerm())===term);}
   function courseAccents(list){
-    const palette=['pink','yellow',...Object.keys(COURSE_COLORS).filter(color=>color!=='pink'&&color!=='yellow')],used=new Set(),accents=new Map();
+    const palette=['pink','butter',...Object.keys(COURSE_COLORS).filter(color=>color!=='pink'&&color!=='butter')],used=new Set(),accents=new Map();
     list.forEach(c=>{
       let key=palette.includes(c.color)?c.color:'pink';
       if(used.has(key))key=palette.find(color=>!used.has(color))||key;
@@ -33,7 +33,7 @@
     crumb.querySelector('[data-gw-home]')?.addEventListener('click',()=>navigate('home'));
   }
   function courseAccents(list){
-    const palette=['pink','yellow',...Object.keys(COURSE_COLORS).filter(color=>color!=='pink'&&color!=='yellow')],used=new Set(),accents=new Map();
+    const palette=['pink','butter',...Object.keys(COURSE_COLORS).filter(color=>color!=='pink'&&color!=='butter')],used=new Set(),accents=new Map();
     list.forEach(c=>{
       let key=palette.includes(c.color)?c.color:'pink';
       if(used.has(key))key=palette.find(color=>!used.has(color))||key;

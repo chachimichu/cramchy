@@ -2302,7 +2302,7 @@ function initDailyHome(){
 
 
 /* ===================== COURSES v2 + GRADEBOOK ===================== */
-const COURSE_COLORS={pink:'#e98aa7',yellow:'#e6bd58',matcha:'#91aa78',lavender:'#9b82c7',blue:'#779cca',peach:'#d99678',rose:'#c96f83',mint:'#7fb8a4',sky:'#83b8d4',lilac:'#b49acb',butter:'#edd78e',coral:'#e78678',aqua:'#76bcb8',sage:'#a8ba8d',plum:'#b47f9f'};
+const COURSE_COLORS={"pink":'#e98aa7',"matcha":'#91aa78',"lavender":'#9b82c7',"blue":'#779cca',"peach":'#d99678',"rose":'#c96f83',"butter":'#f5d67a',"sherbet":'#c9e58a',"mint":'#8ed6b4',"seafoam":'#7fcfcb',"sky":'#8ec9ee',"periwinkle":'#a5b4f2',"orchid":'#d9a6e6',"mauve":'#c9a0b4',"coral":'#f7a399',"apricot":'#f7be8c',"milk tea":'#c8a98b',"storm":'#9fb1c7'};
 const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const GRADE_CATEGORIES={ww:'Written Works & Quizzes',pt:'Enabling Activities',attendance:'Attendance',exam:'Major Exam'};
 let selectedGradeCourseId=null;
