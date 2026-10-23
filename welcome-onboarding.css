@@ -21,8 +21,9 @@
  .cramchy-onboard-card{--onboard-ink:var(--text-main,#3d2420);--onboard-accent:var(--red-berry,#d94b86);--onboard-accent-soft:var(--pink-strawberry,#f684b0);--onboard-line:var(--text-main,#3d2420);--onboard-surface:var(--pink-cream,#fff);--onboard-button-ink:var(--text-main,#3d2420)}
 body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21}
 .onboard-mark{margin:0;color:var(--onboard-accent);font:400 clamp(2.8rem,6vw,3.9rem)/1 'DM Serif Display',Georgia,serif;letter-spacing:.01em}
+.cramchy-onboard-card .onboard-mark,.cramchy-onboard-card .onboard-mark span{font-family:'DM Serif Display',Georgia,serif!important;font-weight:400!important}
 .onboard-mark span{display:inline-block;animation:onboardLetterDrop .7s cubic-bezier(.3,1.7,.5,1) both;animation-delay:calc(var(--n)*.07s + .12s)}
- .onboard-tagline{margin:7px 0 10px;color:var(--onboard-ink);font:800 .95rem/1.4 'Nunito',system-ui,sans-serif}
+ .onboard-tagline{margin:7px 0 10px;color:var(--onboard-copy)!important;font:800 .95rem/1.4 'Nunito',system-ui,sans-serif}
  .onboard-step-label{display:inline-block;border:1px solid var(--onboard-line);border-radius:99px;padding:3px 13px;background:var(--onboard-surface);color:var(--onboard-ink);font-size:.8rem}
 .onboard-stage{position:relative;flex:1;display:grid;place-items:center;width:100%;min-height:190px}
 .onboard-study-illustration{position:relative;z-index:1;display:block;width:min(170px,75%);height:auto;overflow:visible;filter:none;transform-origin:center bottom;animation:onboardArtFloat 5s ease-in-out infinite}
@@ -120,3 +121,91 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21
   .cramchy-onboard-card,.onboard-mark span,.onboard-study-illustration,.theme-art img{animation:none!important}
   .cramchy-onboard-card .theme-choice,.cramchy-onboard-card .theme-art img,.cramchy-onboard-card .theme-check,.cramchy-onboard-card .onboard-start{transition:none!important}
 }
+
+/* Keep onboarding text theme-aware: black in light themes, soft cream in Dark Study. */
+.cramchy-onboard-card{--onboard-ink:#000;--onboard-copy:#000;--onboard-button-ink:#000}
+body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-ink:#f2e8ed;--onboard-copy:#f2e8ed;--onboard-button-ink:#1c1a21}
+.cramchy-onboard-card .onboard-label,
+.cramchy-onboard-card .onboard-field label,
+.cramchy-onboard-card .onboard-theme-heading small,
+.cramchy-onboard-card .onboard-pills label > span,
+.cramchy-onboard-card .theme-name,
+.cramchy-onboard-card input,
+.cramchy-onboard-card select,
+.cramchy-onboard-card .onboard-stepper output{
+  color:var(--onboard-copy)!important;
+}
+.cramchy-onboard-card .onboard-start{color:var(--onboard-button-ink)!important}
+.cramchy-onboard-card input::placeholder{color:var(--onboard-copy)!important;opacity:.72}
+
+/* Preserve the original mobile composition and make it fit phone viewports better. */
+@media(max-width:760px){
+  .cramchy-onboard{
+    align-items:center;
+    padding:8px 10px max(8px,env(safe-area-inset-bottom,0px));
+  }
+  .cramchy-onboard-card{
+    width:min(560px,100%);
+    max-height:calc(100svh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    border-radius:22px;
+  }
+  .onboard-hero{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 86px;
+    grid-template-rows:auto auto auto;
+    gap:2px 8px;
+    align-items:center;
+    text-align:left;
+    min-height:0;
+    padding:12px 15px 10px;
+  }
+  .onboard-mark,.onboard-tagline,.onboard-step-label{grid-column:1}
+  .onboard-mark{font-size:2.15rem}
+  .onboard-tagline{font-size:.76rem;margin:1px 0 3px}
+  .onboard-step-label{justify-self:start;font-size:.66rem;padding:3px 10px}
+  .onboard-stage{grid-column:2;grid-row:1/4;min-height:0;width:82px;height:86px}
+  .onboard-study-illustration{width:74px}
+  .onboard-greeting{grid-column:1/-1;justify-self:center;margin-top:5px;padding:5px 10px;font-size:.82rem}
+  .onboard-form{gap:8px;padding:12px 15px 14px}
+  .cramchy-onboard-card .onboard-label,
+  .cramchy-onboard-card .onboard-field label{margin-bottom:4px;font-size:.76rem}
+  .cramchy-onboard-card input,.cramchy-onboard-card select{min-height:40px;padding:8px 11px;font-size:.9rem}
+  .onboard-row{grid-template-columns:1fr;gap:7px}
+  .onboard-pills{gap:5px}
+  .onboard-pills label>span{padding:6px 9px;font-size:.73rem}
+  .onboard-theme-heading small{font-size:.68rem}
+  .cramchy-onboard-card .theme-picker{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:6px}
+  .cramchy-onboard-card .theme-choice{min-height:58px;gap:1px;padding:7px 3px 4px;border-radius:11px;font-size:.62rem}
+  .cramchy-onboard-card .theme-art{width:27px;height:24px}
+  .cramchy-onboard-card .theme-check{top:4px;right:4px;width:13px;height:13px;font-size:8px}
+  .cramchy-onboard-card .onboard-start{
+    box-sizing:border-box;
+    min-width:0;
+    min-height:42px;
+    margin-top:0;
+    padding:8px 6px;
+    font-size:clamp(.64rem,4vw,.9rem);
+    letter-spacing:-.025em;
+    white-space:nowrap;
+  }
+}
+@media(max-height:650px) and (max-width:760px){
+  .onboard-hero{padding-top:8px;padding-bottom:7px}
+  .onboard-stage{height:70px}
+  .onboard-study-illustration{width:62px}
+  .onboard-greeting{display:none}
+  .onboard-form{gap:7px;padding-top:9px;padding-bottom:10px}
+  .cramchy-onboard-card .theme-choice{min-height:51px}
+  .cramchy-onboard-card .theme-art{width:23px;height:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cramchy-onboard-card .theme-choice,
+  .cramchy-onboard-card .theme-art img,
+  .cramchy-onboard-card .theme-check,
+  .cramchy-onboard-card .onboard-start{transition:none!important}
+}
+
+/* Keep theme names intact and wrap only between words. */
+.cramchy-onboard-card .theme-name{overflow-wrap:normal;word-break:normal;hyphens:none}
