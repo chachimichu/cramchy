@@ -205,3 +205,6 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-copy:#f2e8ed}
   .cramchy-onboard-card .theme-check,
   .cramchy-onboard-card .onboard-start{transition:none!important}
 }
+
+/* Keep theme names intact and wrap only between words. */
+.cramchy-onboard-card .theme-name{overflow-wrap:normal;word-break:normal;hyphens:none}
