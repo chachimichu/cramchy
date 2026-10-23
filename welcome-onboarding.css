@@ -2,7 +2,7 @@
 .cramchy-onboard{
   position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;
   overflow-y:auto;overscroll-behavior:contain;padding:max(14px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px));
-  background:var(--pink-blush,#fff0f5);backdrop-filter:none;
+  background:radial-gradient(circle at 13% 16%,rgba(244,178,197,.32),transparent 35%),radial-gradient(circle at 88% 82%,rgba(185,207,174,.24),transparent 34%),rgba(68,40,52,.42);backdrop-filter:blur(7px);
 }
 .cramchy-onboard-card{
   position:relative;width:min(960px,100%);max-height:calc(100dvh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
