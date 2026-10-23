@@ -174,7 +174,7 @@
         research:[['Written outputs',25],['Consultations',15],['Research paper',35],['Presentation',25]]
       };
       const subjectNames={cogpsy:'Cognitive Psychology',anatomy:'Human Anatomy',research:'Research'};
-      let subject='cogpsy',level='k12',scale='five',weighted=true,toastTimer;
+      let subject='cogpsy',level='k12',scale='five',weighted=true,toastTimer,wasNuSchool=false;
       let periods=['Term 1','Term 2','Term 3'],periodMode='custom',periodsTouched=false,termCount=3;
       const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
       const list=$('#componentList');
@@ -224,16 +224,18 @@
         $('#k12Detail').innerHTML=message;
       }
       function setLevel(next){level=next;$$('.level-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===next)));$('#k12Fields').hidden=next!=='k12';$('#collegeFields').hidden=next!=='college';$('#otherFields').hidden=next!=='other';$('#summaryLevel').textContent=next==='k12'?'K–12':next==='college'?'Higher education':'Other';renderPeriods();if(next==='k12')updateK12Profile();refreshSummary();}
-      function setScale(next){if(isNuClark()&&next!=='four'){scale='four';$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale==='four')));showToast('NU Clark uses the 4.00-to-0.00 profile in this preview.');return;}scale=next;$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===next)));refreshSummary();}
+      function setScale(next){scale=next;$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===next)));if(isNu()&&next!=='four')$('#collegeProfileDetail').innerHTML=`<strong>NU starting profile.</strong> You selected ${escapeHtml(scaleLabel())}; confirm your current campus and program rules before calculating grades.`;refreshSummary();}
       function isNu(){return /\bnational university\b|\bnu\b/i.test($('#collegeName').value.trim());}
       function updateCollegeProfile(){
         const detail=$('#collegeProfileDetail');
-        if(isNu()){
-          scale='four';$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===scale)));
-          detail.innerHTML='<strong>NU profile · 4.00-to-0.00 scale.</strong> Midterms + Finals are selected as the starting period setup. The available NU handbook reference is from 2023–2024, so confirm your campus and program rules before using a grade conversion.';
+        const nu=isNu();
+        if(nu){
+          if(!wasNuSchool){scale='four';$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===scale)));}
+          detail.innerHTML=`<strong>NU profile · ${escapeHtml(scaleLabel())} selected.</strong> Midterms + Finals are the starting period setup. Confirm your current campus and program rules before using a grade conversion.`;
         } else {
           detail.innerHTML='<strong>Scale shape isn’t enough to calculate a school grade.</strong> We need a verified school mapping for passing marks, grade steps, and any special marks such as INC or W.';
         }
+        wasNuSchool=nu;
         if(level==='college')renderPeriods();
         refreshSummary();
       }
