@@ -1,5 +1,5 @@
 (function(){
-  const VERSION='2026-10-23-onboarding-serif-reference-1';
+  const VERSION='2026-10-23-course-schedule-days-2';
   const LEGACY_BASE_URL='app-base.js?v='+VERSION;
 
   function installFavicon(){
