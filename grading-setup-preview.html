@@ -108,12 +108,12 @@
           </div>
 
           <section class="period-config" aria-labelledby="period-title">
-            <div class="period-heading"><div><h3 id="period-title">How is your school year divided?</h3><p id="periodIntro">Set the grade periods your school reports.</p></div><span class="section-index">03</span></div>
-            <label class="field"><span class="muted-label">Period setup</span><select id="periodPreset"></select></label>
-            <label class="field" id="termCountWrap" hidden style="display:block;margin-top:10px"><span class="muted-label">Terms in this academic year</span><select id="termCount"><option value="1">1 term</option><option value="2">2 terms</option><option value="3" selected>3 terms</option><option value="4">4 terms</option></select></label>
-            <div class="period-list" id="periodList" aria-live="polite"></div>
-            <button class="add-button" id="addPeriod" type="button">＋ add a period</button>
-            <p class="component-note" id="periodNote">Edit period names to match your school. Cramchy will keep scores grouped under the period you select.</p>
+            <div class="period-heading"><div><h3 id="period-title">Set your school calendar</h3><p id="periodIntro">Terms and assessment periods are separate layers.</p></div><span class="section-index">03</span></div>
+            <label class="field"><span class="muted-label">Academic year structure</span><select id="termPreset"><option value="three">Three terms</option><option value="two">Two semesters</option><option value="tri">Three trimesters</option><option value="four">Four quarters</option><option value="custom">Custom terms</option></select></label>
+            <div class="period-list" id="termList" aria-label="Terms in this academic year"></div>
+            <label class="field" style="display:block;margin-top:14px"><span class="muted-label">Assessment periods inside each term</span><select id="assessmentPreset"><option value="midfinal">Midterms + Finals</option><option value="three">Prelims + Midterms + Finals</option><option value="single">One reporting period</option><option value="custom">Custom assessment periods</option></select></label>
+            <div class="period-list" id="assessmentList" aria-label="Assessment periods in each term"></div>
+            <p class="component-note" id="periodNote">Every course belongs to one term. Its assessment periods sit inside that term, so Term 1 Midterms stays separate from Term 1 Finals.</p>
           </section>
 
           <div class="scale-help"><div><strong>Not sure which one is yours?</strong><span>Send us your school name and we’ll help identify the right setup.</span></div><button class="outline-button" id="openHelp">Ask for help</button></div>
@@ -147,7 +147,7 @@
       <div class="onboarding-top"><div><p class="eyebrow">first-time setup · academic profile</p><h2 id="onboardingTitle">Let’s set up your grades.</h2></div><button class="close-help" id="closeOnboarding" aria-label="Close onboarding preview">×</button></div>
       <p class="onboarding-copy">A quick school and grade-period setup helps Cramchy fit your system. You can edit this later.</p>
       <div class="level-switch" role="group" aria-label="Education level" id="onboardingLevels"><button class="level-option" data-onboard-level="k12"><strong>K–12</strong><small>elementary · junior high · senior high</small></button><button class="level-option" data-onboard-level="college"><strong>College</strong><small>college or university</small></button><button class="level-option" data-onboard-level="other"><strong>Other</strong><small>another grading setup</small></button></div>
-      <div id="onboardCollegeFields" hidden><label class="field"><span class="field-label">School or university</span><input id="onboardCollegeName" list="collegeSchools" placeholder="Search or enter your school" autocomplete="off"></label><label class="field" id="onboardTermCountWrap" hidden><span class="field-label">Terms in this academic year</span><select id="onboardTermCount"><option value="1">1 term</option><option value="2">2 terms</option><option value="3" selected>3 terms</option><option value="4">4 terms</option></select></label><div class="onboarding-detail" id="onboardCollegeDetail"></div><div class="onboarding-chips" id="onboardCollegePeriods"></div></div>
+      <div id="onboardCollegeFields" hidden><label class="field"><span class="field-label">School or university</span><input id="onboardCollegeName" list="collegeSchools" placeholder="Search or enter your school" autocomplete="off"></label><div class="select-row"><label class="field"><span class="field-label">Academic year structure</span><select id="onboardTermPreset"><option value="three">Three terms</option><option value="two">Two semesters</option><option value="tri">Three trimesters</option><option value="four">Four quarters</option><option value="custom">Custom terms</option></select></label><label class="field"><span class="field-label">Assessment periods in each</span><select id="onboardAssessmentPreset"><option value="midfinal">Midterms + Finals</option><option value="three">Prelims + Midterms + Finals</option><option value="single">One reporting period</option><option value="custom">Custom</option></select></label></div><div class="onboarding-detail" id="onboardCollegeDetail"></div><div class="onboarding-chips" id="onboardCollegePeriods"></div></div>
       <div id="onboardK12Fields" hidden><div class="select-row"><label class="field"><span class="field-label">Grade level</span><select id="onboardGrade"><option value="k">Kindergarten</option><option value="g1">Grade 1</option><option value="g2">Grade 2</option><option value="g3">Grade 3</option><option value="g4">Grade 4</option><option value="g5">Grade 5</option><option value="g6">Grade 6</option><option value="g7">Grade 7</option><option value="g8">Grade 8</option><option value="g9">Grade 9</option><option value="g10">Grade 10</option><option value="g11">Grade 11</option><option value="g12">Grade 12</option></select></label><label class="field"><span class="field-label">School year</span><select id="onboardYear"><option>2026–2027</option><option>2027–2028</option><option>2028–2029</option><option>2025–2026 or earlier</option></select></label></div><label class="field" style="display:block;margin-top:10px"><span class="field-label">Grading policy</span><select id="onboardK12System"><option value="deped">DepEd K–12 profile</option><option value="school">My school has its own setup</option></select></label><div class="onboarding-detail" id="onboardK12Detail"></div><div class="onboarding-chips" id="onboardK12Periods"></div></div>
       <div id="onboardOtherFields" hidden><p class="onboarding-detail">Choose “Other” if your school uses a different calendar or grading format. You can ask Cramchy for help identifying it.</p></div>
       <div class="onboarding-actions"><small>Subject components like Written Works and Performance Tasks are set up after your courses are added.</small><button class="onboarding-save" id="applyOnboarding">Use this setup →</button></div>
@@ -175,7 +175,7 @@
       };
       const subjectNames={cogpsy:'Cognitive Psychology',anatomy:'Human Anatomy',research:'Research'};
       let subject='cogpsy',level='k12',scale='five',weighted=true,toastTimer,wasNuSchool=false;
-      let periods=['Term 1','Term 2','Term 3'],periodMode='custom',periodsTouched=false,termCount=3;
+      let terms=['Term 1','Term 2','Term 3'],assessmentPeriods=['Midterms','Finals'],termMode='three',assessmentMode='midfinal';
       const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
       const list=$('#componentList');
       function renderComponents(){
@@ -187,32 +187,19 @@
         refreshSummary();
       }
       function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-      function periodChoices(){
-        if(level==='college'){const common=[['college3','Prelims · Midterms · Finals',['Prelims','Midterms','Finals']],['semester','Two semesters',['Semester 1','Semester 2']],['tri','Three trimesters',['Trimester 1','Trimester 2','Trimester 3']],['custom','Custom periods',null]];return isNu()?[['nu-mf','NU · Midterms + Finals each term',null],...common]:common;}
-        if(level==='k12'){
-          const year=$('#schoolYear').value,depEd=$('#k12System').value==='deped';
-          const defaults=depEd&&year!=='2025–2026 or earlier'?['Term 1','Term 2','Term 3']:['Quarter 1','Quarter 2','Quarter 3','Quarter 4'];
-          return [['deped3',depEd&&year!=='2025–2026 or earlier'?'DepEd three-term calendar':'Three terms', ['Term 1','Term 2','Term 3']],['quarters','Four quarters',['Quarter 1','Quarter 2','Quarter 3','Quarter 4']],['semester','Two semesters',['Semester 1','Semester 2']],['custom','Custom periods',null]].map((x,i)=>x[0]==='deped3'?[x[0],x[1],defaults]:x);
-        }
-        return [['college3','Prelims · Midterms · Finals',['Prelims','Midterms','Finals']],['semester','Two semesters',['Semester 1','Semester 2']],['tri','Three trimesters',['Trimester 1','Trimester 2','Trimester 3']],['custom','Custom periods',null]];
-      }
-      function renderPeriods(preset){
-        const select=$('#periodPreset'),choices=periodChoices();
-        select.innerHTML=choices.map(([id,label])=>`<option value="${id}">${label}</option>`).join('');
-        const defaultId=level==='k12'&&$('#k12System').value==='deped'&&$('#schoolYear').value!=='2025–2026 or earlier'?'deped3':level==='k12'?'quarters':level==='college'?(isNu()?'nu-mf':'college3'):'custom';
-        const selected=preset||defaultId;select.value=choices.some(x=>x[0]===selected)?selected:defaultId;
-        const choice=choices.find(x=>x[0]===select.value);periodMode=choice[0];
-        $('#termCountWrap').hidden=periodMode!=='nu-mf';
-        if(periodMode==='nu-mf'){termCount=Number($('#termCount').value)||termCount;periods=Array.from({length:termCount},(_,i)=>[`Term ${i+1} · Midterms`,`Term ${i+1} · Finals`]).flat();}
-        else if(choice[2])periods=[...choice[2]];else if(!periodsTouched||!periods.length)periods=['Period 1','Period 2'];
-        $('#periodIntro').textContent=periodMode==='nu-mf'?'Each term gets its own Midterms and Finals scores.':level==='college'?'Colleges can run Prelims, Midterms, and Finals—or another schedule.':level==='k12'?'DepEd moved basic education to three terms starting SY 2026–2027. School-specific setups can use different periods.':'Set the reporting periods your school uses.';
-        $('#periodNote').textContent=level==='k12'&&$('#k12System').value==='deped'&&$('#schoolYear').value!=='2025–2026 or earlier'?'DepEd’s three-term calendar starts in SY 2026–2027. You can still customize names to match your school’s report card.':'You can rename, add, or remove periods to match the school calendar.';
-        const list=$('#periodList');list.innerHTML=periods.map((name,i)=>`<div class="period-row"><input aria-label="Period ${i+1} name" value="${escapeHtml(name)}" data-period="${i}"><button type="button" data-remove-period="${i}" aria-label="Remove period ${escapeHtml(name)}">×</button></div>`).join('');
-        list.querySelectorAll('[data-period]').forEach(el=>el.addEventListener('input',()=>{periods[Number(el.dataset.period)]=el.value;periodsTouched=true;periodMode='custom';select.value='custom';refreshSummary();}));
-        list.querySelectorAll('[data-remove-period]').forEach(el=>el.addEventListener('click',()=>{if(periods.length<=1){showToast('Keep at least one grading period.');return;}periods.splice(Number(el.dataset.removePeriod),1);periodsTouched=true;periodMode='custom';select.value='custom';renderPeriodRows();}));
+      const termDefaults={three:['Term 1','Term 2','Term 3'],two:['Semester 1','Semester 2'],tri:['Trimester 1','Trimester 2','Trimester 3'],four:['Quarter 1','Quarter 2','Quarter 3','Quarter 4']};
+      const assessmentDefaults={midfinal:['Midterms','Finals'],three:['Prelims','Midterms','Finals'],single:['Reporting period']};
+      function renderPeriods(){
+        $('#termPreset').value=termMode;$('#assessmentPreset').value=assessmentMode;
+        $('#termList').innerHTML=terms.map((name,i)=>`<div class="period-row"><input aria-label="Term ${i+1} name" value="${escapeHtml(name)}" data-term="${i}"></div>`).join('');
+        $('#assessmentList').innerHTML=assessmentPeriods.map((name,i)=>`<div class="period-row"><input aria-label="Assessment period ${i+1} name" value="${escapeHtml(name)}" data-assessment="${i}"></div>`).join('');
+        $('#termList [data-term]').forEach(el=>el.addEventListener('input',()=>{terms[Number(el.dataset.term)]=el.value;termMode='custom';$('#termPreset').value='custom';refreshSummary();}));
+        $('#assessmentList [data-assessment]').forEach(el=>el.addEventListener('input',()=>{assessmentPeriods[Number(el.dataset.assessment)]=el.value;assessmentMode='custom';$('#assessmentPreset').value='custom';refreshSummary();}));
+        $('#periodIntro').textContent=`${terms.length} ${termMode==='two'?'semesters':termMode==='tri'?'trimesters':termMode==='four'?'quarters':'terms'} in the academic year · ${assessmentPeriods.join(' + ')} inside each one.`;
         refreshSummary();
       }
-      function renderPeriodRows(){const list=$('#periodList');list.innerHTML=periods.map((name,i)=>`<div class="period-row"><input aria-label="Period ${i+1} name" value="${escapeHtml(name)}" data-period="${i}"><button type="button" data-remove-period="${i}" aria-label="Remove period ${escapeHtml(name)}">×</button></div>`).join('');list.querySelectorAll('[data-period]').forEach(el=>el.addEventListener('input',()=>{periods[Number(el.dataset.period)]=el.value;periodsTouched=true;periodMode='custom';$('#periodPreset').value='custom';refreshSummary();}));list.querySelectorAll('[data-remove-period]').forEach(el=>el.addEventListener('click',()=>{if(periods.length<=1){showToast('Keep at least one grading period.');return;}periods.splice(Number(el.dataset.removePeriod),1);periodsTouched=true;periodMode='custom';$('#periodPreset').value='custom';renderPeriodRows();}));refreshSummary();}
+      function setTermPreset(value){termMode=value;if(value!=='custom')terms=[...termDefaults[value]];renderPeriods();}
+      function setAssessmentPreset(value){assessmentMode=value;if(value!=='custom')assessmentPeriods=[...assessmentDefaults[value]];renderPeriods();}
       function updateK12Profile(){
         const grade=$('#gradeLevel').value,year=$('#schoolYear').value,depEd=$('#k12System').value==='deped',names={k:'Kindergarten',g1:'Grade 1',g2:'Grade 2',g3:'Grade 3',g4:'Grade 4',g5:'Grade 5',g6:'Grade 6',g7:'Grade 7',g8:'Grade 8',g9:'Grade 9',g10:'Grade 10',g11:'Grade 11',g12:'Grade 12'};
         let message;
@@ -244,7 +231,7 @@
       function scaleLabel(){if(level==='k12')return 'Needs confirmation';if(level==='other')return $('#otherFormat').value;if(scale==='five')return '1.00–5.00';if(scale==='four')return isNu()?'NU 4.0–1.0 + special marks':'0.00–4.00';return 'Letter grades';}
       function refreshSummary(){
         const rows=componentSets[subject],total=rows.reduce((sum,row)=>sum+(Number(row[1])||0),0),valid=!weighted||total===100;
-        $('#summaryLevel').textContent=level==='k12'?'K–12':level==='college'?'Higher education':'Other';$('#summaryScale').textContent=scaleLabel();$('#summarySubject').textContent=subjectNames[subject];$('#summaryComponents').textContent=rows.length;$('#summaryPeriods').textContent=periodMode==='nu-mf'?`${periods.length} · ${termCount} term${termCount===1?'':'s'}`:periods.length;$('#summaryWeight').textContent=weighted?`${total}%`:'not weighted';
+        $('#summaryLevel').textContent=level==='k12'?'K–12':level==='college'?'Higher education':'Other';$('#summaryScale').textContent=scaleLabel();$('#summarySubject').textContent=subjectNames[subject];$('#summaryComponents').textContent=rows.length;$('#summaryPeriods').textContent=`${terms.length} × ${assessmentPeriods.length}`;$('#summaryWeight').textContent=weighted?`${total}%`:'not weighted';
         const wt=$('#weightTotal');wt.classList.toggle('valid',valid&&weighted);wt.classList.toggle('invalid',!valid&&weighted);wt.querySelector('strong').textContent=weighted?`${total}%`:'off';
         $('#statusText').textContent=level==='k12'?'Grade policy needs confirmation':level==='other'?'Needs setup help':level==='college'&&$('#collegeName').value.trim()?'School mapping needs verification':'Ready to review';
       }
@@ -256,9 +243,12 @@
           if(['five','four','letter'].includes(saved.scaleId))scale=saved.scaleId;
           if(['cogpsy','anatomy','research'].includes(saved.subject))subject=saved.subject;
           if(typeof saved.weighted==='boolean')weighted=saved.weighted;
-          if(Number.isFinite(Number(saved.termCount))&&Number(saved.termCount)>=1&&Number(saved.termCount)<=4)termCount=Number(saved.termCount);
-          if(Array.isArray(saved.periods)&&saved.periods.length&&saved.periods.length<=20&&saved.periods.every(x=>typeof x==='string')){periods=saved.periods.map(x=>x.slice(0,50));periodsTouched=saved.periodsTouched===true;}
-          if(typeof saved.periodMode==='string')periodMode=saved.periodMode;
+          if(Array.isArray(saved.terms)&&saved.terms.length&&saved.terms.length<=8&&saved.terms.every(x=>typeof x==='string'))terms=saved.terms.map(x=>x.slice(0,50));
+          else if(saved.periodMode==='nu-mf'&&Number(saved.termCount)>0)terms=Array.from({length:Math.min(8,Number(saved.termCount))},(_,i)=>`Term ${i+1}`);
+          if(Array.isArray(saved.assessmentPeriods)&&saved.assessmentPeriods.length&&saved.assessmentPeriods.length<=8&&saved.assessmentPeriods.every(x=>typeof x==='string'))assessmentPeriods=saved.assessmentPeriods.map(x=>x.slice(0,50));
+          else if(saved.periodMode==='nu-mf')assessmentPeriods=['Midterms','Finals'];
+          if(['three','two','tri','four','custom'].includes(saved.termMode))termMode=saved.termMode;
+          if(['midfinal','three','single','custom'].includes(saved.assessmentMode))assessmentMode=saved.assessmentMode;
           const savedSets=saved.componentSets||(Array.isArray(saved.components)?{[saved.subject||subject]:saved.components}:null);
           if(savedSets&&typeof savedSets==='object')Object.keys(componentSets).forEach(key=>{const rows=savedSets[key];if(Array.isArray(rows)&&rows.length<=20&&rows.every(row=>Array.isArray(row)&&typeof row[0]==='string'))componentSets[key]=rows.map(row=>[row[0].slice(0,60),Math.max(0,Math.min(100,Number(row[1])||0))]);});
           $('#collegeName').value=typeof saved.school==='string'&&level==='college'?saved.school:'';
@@ -269,7 +259,6 @@
           }
           if(typeof saved.otherFormat==='string')$('#otherFormat').value=saved.otherFormat;
           if(saved.scaleId==='four'&&isNu())wasNuSchool=true;
-          $('#termCount').value=String(termCount);
           $('#weightedToggle').setAttribute('aria-checked',String(weighted));
           $$('.level-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===level)));
           $$('.subject-button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.subject===subject)));
@@ -281,16 +270,15 @@
       $$('.scale-option').forEach(b=>b.addEventListener('click',()=>setScale(b.dataset.scale)));
       $$('.subject-button').forEach(b=>b.addEventListener('click',()=>{subject=b.dataset.subject;$$('.subject-button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderComponents();}));
       $('#gradeLevel').addEventListener('change',()=>{updateK12Profile();renderPeriods();});$('#schoolYear').addEventListener('change',()=>{updateK12Profile();renderPeriods();});$('#k12System').addEventListener('change',()=>{updateK12Profile();renderPeriods();});
-      $('#periodPreset').addEventListener('change',()=>{periodsTouched=$('#periodPreset').value==='custom';renderPeriods($('#periodPreset').value);});
-      $('#termCount').addEventListener('change',()=>{termCount=Number($('#termCount').value)||3;renderPeriods('nu-mf');});
-      $('#addPeriod').addEventListener('click',()=>{periods.push(`Period ${periods.length+1}`);periodsTouched=true;periodMode='custom';$('#periodPreset').value='custom';renderPeriodRows();$('#periodList [data-period]:last-of-type')?.focus();});
+      $('#termPreset').addEventListener('change',()=>setTermPreset($('#termPreset').value));
+      $('#assessmentPreset').addEventListener('change',()=>setAssessmentPreset($('#assessmentPreset').value));
       $('#collegeName').addEventListener('input',updateCollegeProfile);$('#otherFormat').addEventListener('change',refreshSummary);
       $('#addComponent').addEventListener('click',()=>{componentSets[subject].push(['New component',0]);renderComponents();const input=list.querySelector(`[data-name="${componentSets[subject].length-1}"]`);input?.focus();input?.select();});
       $('#weightedToggle').addEventListener('click',()=>{weighted=!weighted;$('#weightedToggle').setAttribute('aria-checked',String(weighted));renderComponents();});
       const modal=$('#helpModal');function openHelp(){modal.classList.add('open');$('#helpSchool').focus();}function closeHelp(){modal.classList.remove('open');$('#openHelp').focus();}
       $('#openHelp').addEventListener('click',openHelp);$('#openHelp2').addEventListener('click',openHelp);$('#closeHelp').addEventListener('click',closeHelp);modal.addEventListener('click',e=>{if(e.target===modal)closeHelp();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeHelp();});
       $('#sendHelp').addEventListener('click',()=>{$('#helpResult').classList.add('show');$('#helpResult').scrollIntoView({block:'nearest',behavior:'smooth'});});
-      $('#savePreview').addEventListener('click',()=>{const total=componentSets[subject].reduce((sum,row)=>sum+(Number(row[1])||0),0);if(weighted&&total!==100){showToast('Make component weights total 100% before saving.');return;}const payload={version:2,educationLevel:level,school:level==='college'?$('#collegeName').value.trim():$('#k12System').value,scale:scaleLabel(),scaleId:scale,schoolYear:$('#schoolYear').value,gradeLevel:$('#gradeLevel').value,k12System:$('#k12System').value,otherFormat:$('#otherFormat').value,periodMode,termCount,periods:[...periods],periodsTouched,subject,componentSets,weighted};try{localStorage.setItem('cramchy-grading-setup-preview',JSON.stringify(payload));$('#savedMessage').classList.add('show');showToast('Saved in this preview only.');}catch{showToast('This browser could not save the preview.');}});
+      $('#savePreview').addEventListener('click',()=>{const total=componentSets[subject].reduce((sum,row)=>sum+(Number(row[1])||0),0);if(weighted&&total!==100){showToast('Make component weights total 100% before saving.');return;}const payload={version:3,educationLevel:level,school:level==='college'?$('#collegeName').value.trim():$('#k12System').value,scale:scaleLabel(),scaleId:scale,schoolYear:$('#schoolYear').value,gradeLevel:$('#gradeLevel').value,k12System:$('#k12System').value,otherFormat:$('#otherFormat').value,termMode,terms:[...terms],assessmentMode,assessmentPeriods:[...assessmentPeriods],subject,componentSets,weighted};try{localStorage.setItem('cramchy-grading-setup-preview',JSON.stringify(payload));$('#savedMessage').classList.add('show');showToast('Saved in this preview only.');}catch{showToast('This browser could not save the preview.');}});
       function showToast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
       const onboardingModal=$('#onboardingModal');let onboardingLevel='college';
       function renderOnboarding(){
@@ -298,26 +286,27 @@
         $$('[data-onboard-level]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.onboardLevel===onboardingLevel)));
         if(onboardingLevel==='college'){
           const name=$('#onboardCollegeName').value.trim(),nu=/\bnational university\b|\bnu\b/i.test(name);
-          $('#onboardTermCountWrap').hidden=!nu;
-          const count=Number($('#onboardTermCount').value)||3;
-          $('#onboardCollegeDetail').innerHTML=nu?`<strong>NU starting setup</strong> · ${count} term${count===1?'':'s'}, each with Midterms + Finals. The NU 4.0–1.0 grade-point profile is selected. The current handbook link is labeled 2023–2024; confirm it still applies to your campus and program before relying on a grade calculation.`:'Choose your school’s scale and reporting periods. If you’re unsure, Cramchy can help identify them.';
-          const labels=nu?Array.from({length:count},(_,i)=>[`Term ${i+1} · Midterms`,`Term ${i+1} · Finals`]).flat():['Prelims','Midterms','Finals'];
-          $('#onboardCollegePeriods').innerHTML=labels.map(x=>`<span class="onboarding-chip">${escapeHtml(x)}</span>`).join('');
+          $('#onboardTermPreset').value=termMode;$('#onboardAssessmentPreset').value=assessmentMode;
+          $('#onboardCollegeDetail').innerHTML=nu?'<strong>NU starting setup</strong> · three terms, each with Midterms + Finals. You can choose a different academic calendar and assessment pattern for any school. Confirm NU Clark’s current program rules before relying on a calculation.':'Set the academic year structure and the assessment periods used inside every term. These are independent choices.';
+          const previewTerms=termDefaults[$('#onboardTermPreset').value]||terms;
+          const previewAssessments=assessmentDefaults[$('#onboardAssessmentPreset').value]||assessmentPeriods;
+          $('#onboardCollegePeriods').innerHTML=previewTerms.map(t=>`<span class="onboarding-chip">${escapeHtml(t)}<br>${previewAssessments.map(escapeHtml).join(' · ')}</span>`).join('');
         }
         if(onboardingLevel==='k12'){
           const grade=$('#onboardGrade').value,year=$('#onboardYear').value,schoolPolicy=$('#onboardK12System').value==='school';
           const descriptiveGrades=year==='2026–2027'?['k','g1']:year==='2027–2028'?['k','g1','g2']:year==='2028–2029'?['k','g1','g2','g3']:[];
           const descriptive=descriptiveGrades.includes(grade);
-          $('#onboardK12Detail').innerHTML=schoolPolicy?'<strong>School-specific setup selected.</strong> We’ll ask for the grading scale and periods shown by your school instead of assuming DepEd rules.':year==='2025–2026 or earlier'?'<strong>Earlier school year selected.</strong> We’ll use the policy that applied to that year after confirmation.':'<strong>DepEd K–12 · '+escapeHtml(year)+'.</strong> '+(descriptive?'Descriptive reporting is in the phased rollout for this grade.':'Numeric grading applies, with rules depending on grade and rollout year.')+' Three terms are the starting calendar from SY 2026–2027; confirm your school’s reporting periods.';
-          $('#onboardK12Periods').innerHTML=(year==='2025–2026 or earlier'?['Quarter 1','Quarter 2','Quarter 3','Quarter 4']:['Term 1','Term 2','Term 3']).map(x=>`<span class="onboarding-chip">${x}</span>`).join('');
+          $('#onboardK12Detail').innerHTML=schoolPolicy?'<strong>School-specific setup selected.</strong> The school’s calendar and grading rules must be confirmed.':year==='2025–2026 or earlier'?'<strong>Earlier school year selected.</strong> Calendar and grade policy depend on that school year.':'<strong>DepEd K–12 starting profile · '+escapeHtml(year)+'.</strong> Use the school’s confirmed term calendar and reporting periods; this preview does not treat three terms as universal for every school.';
+          const k12Terms=year==='2025–2026 or earlier'?['Quarter 1','Quarter 2','Quarter 3','Quarter 4']:['Term 1','Term 2','Term 3'];
+          const assessments=assessmentDefaults[$('#onboardAssessmentPreset').value]||assessmentPeriods;$('#onboardK12Periods').innerHTML=k12Terms.map(t=>`<span class="onboarding-chip">${t}<br>${assessments.map(escapeHtml).join(' · ')}</span>`).join('');
         }
       }
-      $('#openOnboarding').addEventListener('click',()=>{onboardingLevel='college';$('#onboardCollegeName').value=$('#collegeName').value;$('#onboardGrade').value=$('#gradeLevel').value;$('#onboardYear').value=$('#schoolYear').value;$('#onboardK12System').value=$('#k12System').value;$('#onboardTermCount').value=String(termCount);renderOnboarding();onboardingModal.classList.add('open');$('#onboardCollegeName').focus();});
+      $('#openOnboarding').addEventListener('click',()=>{onboardingLevel='college';$('#onboardCollegeName').value=$('#collegeName').value;$('#onboardTermPreset').value=termMode;$('#onboardAssessmentPreset').value=assessmentMode;$('#onboardGrade').value=$('#gradeLevel').value;$('#onboardYear').value=$('#schoolYear').value;$('#onboardK12System').value=$('#k12System').value;renderOnboarding();onboardingModal.classList.add('open');$('#onboardCollegeName').focus();});
       $('#closeOnboarding').addEventListener('click',()=>onboardingModal.classList.remove('open'));onboardingModal.addEventListener('click',e=>{if(e.target===onboardingModal)onboardingModal.classList.remove('open');});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&onboardingModal.classList.contains('open'))onboardingModal.classList.remove('open');});
       $$('[data-onboard-level]').forEach(b=>b.addEventListener('click',()=>{onboardingLevel=b.dataset.onboardLevel;renderOnboarding();}));
-      $('#onboardCollegeName').addEventListener('input',renderOnboarding);$('#onboardGrade').addEventListener('change',renderOnboarding);$('#onboardYear').addEventListener('change',renderOnboarding);$('#onboardK12System').addEventListener('change',renderOnboarding);$('#onboardTermCount').addEventListener('change',renderOnboarding);
-      $('#applyOnboarding').addEventListener('click',()=>{setLevel(onboardingLevel);if(onboardingLevel==='college'){$('#collegeName').value=$('#onboardCollegeName').value;updateCollegeProfile();if(isNu()){$('#termCount').value=$('#onboardTermCount').value;termCount=Number($('#termCount').value)||3;renderPeriods('nu-mf');}}if(onboardingLevel==='k12'){$('#gradeLevel').value=$('#onboardGrade').value;$('#schoolYear').value=$('#onboardYear').value;$('#k12System').value=$('#onboardK12System').value;updateK12Profile();renderPeriods();}onboardingModal.classList.remove('open');document.querySelector('.layout').scrollIntoView({behavior:'smooth',block:'start'});});
-      const restored=restorePreview();renderComponents();renderPeriods(restored?periodMode:undefined);if(level==='college')updateCollegeProfile();else if(level==='k12')updateK12Profile();if(restored)$('#savedMessage').classList.add('show');refreshSummary();
+      $('#onboardTermPreset').addEventListener('change',()=>{const v=$('#onboardTermPreset').value;termMode=v;if(termDefaults[v])terms=[...termDefaults[v]];renderOnboarding();});$('#onboardAssessmentPreset').addEventListener('change',()=>{const v=$('#onboardAssessmentPreset').value;assessmentMode=v;if(assessmentDefaults[v])assessmentPeriods=[...assessmentDefaults[v]];renderOnboarding();});$('#onboardCollegeName').addEventListener('input',renderOnboarding);$('#onboardGrade').addEventListener('change',renderOnboarding);$('#onboardYear').addEventListener('change',renderOnboarding);$('#onboardK12System').addEventListener('change',renderOnboarding);
+      $('#applyOnboarding').addEventListener('click',()=>{setLevel(onboardingLevel);if(onboardingLevel==='college'){$('#collegeName').value=$('#onboardCollegeName').value;termMode=$('#onboardTermPreset').value;assessmentMode=$('#onboardAssessmentPreset').value;if(termDefaults[termMode])terms=[...termDefaults[termMode]];if(assessmentDefaults[assessmentMode])assessmentPeriods=[...assessmentDefaults[assessmentMode]];updateCollegeProfile();renderPeriods();}if(onboardingLevel==='k12'){termMode=$('#onboardTermPreset').value;assessmentMode=$('#onboardAssessmentPreset').value;if(termDefaults[termMode])terms=[...termDefaults[termMode]];if(assessmentDefaults[assessmentMode])assessmentPeriods=[...assessmentDefaults[assessmentMode]];$('#gradeLevel').value=$('#onboardGrade').value;$('#schoolYear').value=$('#onboardYear').value;$('#k12System').value=$('#onboardK12System').value;updateK12Profile();renderPeriods();}onboardingModal.classList.remove('open');document.querySelector('.layout').scrollIntoView({behavior:'smooth',block:'start'});});
+      const restored=restorePreview();renderComponents();renderPeriods();if(level==='college')updateCollegeProfile();else if(level==='k12')updateK12Profile();if(restored)$('#savedMessage').classList.add('show');refreshSummary();
     })();
   </script>
 </body>
