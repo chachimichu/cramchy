@@ -122,7 +122,7 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21
 }
 
 /* Keep onboarding text theme-aware: black in light themes, soft cream in Dark Study. */
-.cramchy-onboard-card{--onboard-copy:#000}
+.cramchy-onboard-card{--onboard-copy:#000;--onboard-button-ink:#000}
 body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-copy:#f2e8ed;--onboard-button-ink:#1c1a21}
 .cramchy-onboard-card .onboard-label,
 .cramchy-onboard-card .onboard-field label,
@@ -134,7 +134,7 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-copy:#f2e8ed;--onb
 .cramchy-onboard-card .onboard-stepper output{
   color:var(--onboard-copy)!important;
 }
-.cramchy-onboard-card .onboard-start{color:#000!important}
+.cramchy-onboard-card .onboard-start{color:var(--onboard-button-ink)!important}
 .cramchy-onboard-card input::placeholder{color:var(--onboard-copy)!important;opacity:.72}
 
 /* Preserve the original mobile composition and make it fit phone viewports better. */
