@@ -2146,7 +2146,6 @@ function openCourseModal(courseId=null){
     scrim.querySelectorAll('[data-course-color]').forEach(option=>{const selected=option===button;option.classList.toggle('is-selected',selected);option.setAttribute('aria-pressed',String(selected));});
   }));
   scrim.querySelector('#cancelCourseModal').addEventListener('click',()=>scrim.remove());
-  scrim.addEventListener('click',e=>{if(e.target===scrim)scrim.remove();});
   scrim.querySelector('#saveCourseModal').addEventListener('click',()=>{
     const name=scrim.querySelector('#courseName').value.trim(); if(!name){scrim.querySelector('#courseName').focus();return;}
     const course={
@@ -2524,7 +2523,7 @@ function openCourseModal(courseId=null,focusSchedules=false){
   scrim.querySelector('#addScheduleRowBtn').addEventListener('click',()=>{rows.insertAdjacentHTML('beforeend',scheduleRowMarkup({}));bindRemove();bindDays(rows.lastElementChild);});
   const updateWeightTotal=()=>{const vals=['weightWW','weightPT','weightAttendance','weightExam'].map(id=>Number(scrim.querySelector('#'+id).value)||0);const total=vals.reduce((a,b)=>a+b,0);const el=scrim.querySelector('#weightTotal');el.textContent=`total: ${total}%${Math.abs(total-100)<0.001?' ✓':' — must equal 100%'}`;el.style.color=Math.abs(total-100)<0.001?'var(--matcha-dark)':'#a43f55';};
   ['weightWW','weightPT','weightAttendance','weightExam'].forEach(id=>scrim.querySelector('#'+id).addEventListener('input',updateWeightTotal));updateWeightTotal();
-  scrim.querySelector('#cancelCourseModal').addEventListener('click',()=>scrim.remove());scrim.addEventListener('click',e=>{if(e.target===scrim)scrim.remove();});
+  scrim.querySelector('#cancelCourseModal').addEventListener('click',()=>scrim.remove());
   if(focusSchedules) setTimeout(()=>scrim.querySelector('#scheduleEditor')?.scrollIntoView({behavior:'smooth',block:'center'}),50);
   scrim.querySelector('#saveCourseModal').addEventListener('click',()=>{
     const name=scrim.querySelector('#courseName').value.trim();if(!name){scrim.querySelector('#courseName').focus();return;}

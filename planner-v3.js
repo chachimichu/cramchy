@@ -354,7 +354,6 @@
       const ev=e.target.closest('[data-planner-event]');if(ev){e.preventDefault();e.stopPropagation();openEvent(ev.dataset.plannerEvent);return}
       const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);setPlannerView('day');return}
       if(e.target.closest('[data-planner-close]')){e.preventDefault();closeModal();return}
-      if(e.target===$('#plannerModal'))closeModal();
     };
     section.addEventListener('click',onPlannerClick);$('#plannerModal').addEventListener('click',onPlannerClick);
     $('#plannerType').addEventListener('change',syncTaskFields);
