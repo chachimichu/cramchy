@@ -27,6 +27,7 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21
 .onboard-stage{position:relative;flex:1;display:grid;place-items:center;width:100%;min-height:190px}
 .onboard-study-illustration{position:relative;z-index:1;display:block;width:min(170px,75%);height:auto;overflow:visible;filter:none;transform-origin:center bottom;animation:onboardArtFloat 5s ease-in-out infinite}
  .onboard-greeting{margin:0;background:var(--onboard-surface);border:1px solid var(--onboard-line);border-radius:16px;padding:8px 16px;color:var(--onboard-ink);font:600 1rem/1.3 'Fredoka','Nunito',sans-serif}
+.onboard-greeting b{color:var(--onboard-accent);font-weight:600}
 .onboard-form{min-width:0;display:grid;gap:15px;align-content:start;padding:30px clamp(20px,4vw,38px) 28px}
 .cramchy-onboard-card .onboard-label,.cramchy-onboard-card .onboard-field label{display:block;margin:0 0 6px;color:var(--onboard-accent);font:700 .88rem/1.25 'Nunito',system-ui,sans-serif;letter-spacing:.015em}
 .onboard-field{min-width:0}
