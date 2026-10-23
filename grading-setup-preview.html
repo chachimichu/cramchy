@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#fff7f6">
+  <title>Grading setup preview · Cramchy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:light;--ink:#402d32;--muted:#806d73;--line:#dec8ce;--line-soft:#f1e2e5;--paper:#fffdfc;--wash:#fff7f6;--pink:#e56e98;--pink-soft:#ffe2eb;--green:#88a779;--green-soft:#edf5e9;--blue:#7da5cc;--blue-soft:#edf4fb;--gold:#d8ad56;--gold-soft:#fff6df;--shadow:0 14px 38px rgba(97,60,72,.07)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at top left,#fff0f4,transparent 38%),var(--wash);color:var(--ink);font:500 15px/1.55 'Nunito',sans-serif}.shell{width:min(1120px,calc(100% - 36px));margin:0 auto;padding:20px 0 54px}.topbar{min-height:64px;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,253,252,.92);border:1px solid var(--line);border-radius:20px;box-shadow:0 5px 18px rgba(97,60,72,.04)}.brand{display:flex;align-items:center;gap:10px;color:var(--pink);font:400 1.75rem/1 'DM Serif Display',Georgia,serif;letter-spacing:.01em}.brand small{font:700 .73rem/1.2 'Nunito',sans-serif;letter-spacing:.02em;color:var(--muted);border-left:1px solid var(--line);padding-left:10px}.back-link{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#fff;color:var(--ink);font:800 .8rem 'Nunito',sans-serif;text-decoration:none}.preview-tag{display:inline-flex;align-items:center;gap:7px;border:1px solid #e9c8d2;border-radius:10px;background:#fff2f5;padding:7px 10px;color:#98566d;font-size:.74rem;font-weight:800}.preview-tag i{width:8px;height:8px;border-radius:50%;background:var(--pink);display:inline-block}.hero{display:grid;grid-template-columns:1fr auto;align-items:end;gap:22px;padding:32px 4px 22px}.eyebrow{margin:0 0 7px;color:#a46078;font:700 .74rem 'Nunito',sans-serif;letter-spacing:.12em;text-transform:uppercase}.hero h1{max-width:740px;margin:0;color:var(--ink);font:600 clamp(2rem,4vw,3rem)/1.13 'Fredoka',sans-serif;letter-spacing:-.02em}.hero p{max-width:690px;margin:12px 0 0;color:var(--muted);font-size:.96rem}.steps{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.step{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--muted);font-size:.72rem;font-weight:800;white-space:nowrap}.step b{display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#f7ebee;color:#8a6671;font-size:.7rem}.step.active{border-color:#efacc1;background:var(--pink-soft);color:#87495f}.step.active b{background:#e7779b;color:#fff}.layout{display:grid;grid-template-columns:minmax(0,1fr) 315px;gap:18px;align-items:start}.main-col,.side-col{display:grid;gap:16px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:21px;box-shadow:var(--shadow)}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.panel-heading h2{margin:0;font:600 1.23rem/1.3 'Fredoka',sans-serif}.panel-heading p{margin:4px 0 0;color:var(--muted);font-size:.82rem}.section-index{flex:none;display:grid;place-items:center;width:31px;height:31px;border-radius:10px;background:var(--pink-soft);color:#934e67;font:700 .8rem 'Fredoka',sans-serif}.level-switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}.level-option{appearance:none;text-align:left;min-height:72px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--ink);cursor:pointer;transition:border-color .16s,background .16s,transform .16s}.level-option:hover{transform:translateY(-1px);border-color:#e7a6bb}.level-option[aria-pressed="true"]{border:1.5px solid #e57a9b;background:#fff0f4;box-shadow:inset 0 0 0 1px #f6d0db}.level-option strong{display:block;font:600 .99rem 'Fredoka',sans-serif}.level-option small{display:block;margin-top:3px;color:var(--muted);font-size:.7rem;line-height:1.35}.field-label{display:block;margin:0 0 6px;color:var(--ink);font-size:.78rem;font-weight:800}.select-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field select,.field input,.component-name,.component-weight,.help-field input,.help-field textarea,.help-field select{width:100%;min-width:0;min-height:43px;padding:9px 11px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);font:700 .83rem 'Nunito',sans-serif}.field select:focus,.field input:focus,.component-name:focus,.component-weight:focus,.help-field input:focus,.help-field textarea:focus,.help-field select:focus{outline:3px solid #f4cfdb;outline-offset:1px}.hint-box{display:flex;gap:10px;align-items:flex-start;padding:12px 13px;margin-top:13px;border:1px solid #e5d6d0;border-radius:13px;background:#fffaf3;color:#6d5c53;font-size:.76rem;line-height:1.5}.hint-mark{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#fff0ce;color:#8a6a24;font-weight:900}.scale-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.scale-option{position:relative;min-height:100px;padding:13px;text-align:left;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);cursor:pointer}.scale-option[aria-pressed="true"]{border:1.5px solid #e57a9b;background:#fff0f4;box-shadow:inset 0 0 0 1px #f6d0db}.scale-option .check{position:absolute;right:10px;top:10px;width:17px;height:17px;display:grid;place-items:center;border-radius:6px;background:#f6ecef;color:transparent;font-size:.65rem}.scale-option[aria-pressed="true"] .check{background:var(--pink);color:white}.scale-option strong{display:block;padding-right:18px;font:600 .9rem/1.25 'Fredoka',sans-serif}.scale-option small{display:block;margin-top:6px;color:var(--muted);font-size:.71rem;line-height:1.4}.scale-option .scale-icon{display:block;margin-bottom:7px;font-size:1.05rem}.scale-help{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding:13px 14px;border:1px solid #e3d9ce;border-radius:14px;background:#fffcf5}.scale-help strong{display:block;font:600 .93rem 'Fredoka',sans-serif}.scale-help span{display:block;margin-top:2px;color:var(--muted);font-size:.72rem}.outline-button,.small-button,.add-button,.save-button,.help-submit{appearance:none;min-height:39px;padding:8px 12px;border:1px solid #cdaeb8;border-radius:11px;background:#fff;color:#8c5066;font:800 .78rem 'Nunito',sans-serif;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}.outline-button:hover,.small-button:hover,.add-button:hover{background:#fff0f4;border-color:#e57a9b}.period-config{margin-top:16px;padding:15px;border:1px solid var(--line-soft);border-radius:15px;background:#fffafb}.period-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.period-heading h3{margin:0;font:600 1.02rem/1.25 'Fredoka',sans-serif}.period-heading p{margin:4px 0 0;color:var(--muted);font-size:.75rem}.period-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}.period-row{display:flex;align-items:center;gap:5px}.period-row input{width:100%;min-width:0;min-height:37px;padding:7px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:800 .74rem 'Nunito',sans-serif}.period-row button{flex:none;width:30px;height:30px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#997d86;cursor:pointer}.period-config>.add-button{min-height:34px;padding:6px 10px;font-size:.72rem}.profile-detail{margin-top:13px;padding:12px 13px;border-radius:13px;background:var(--blue-soft);border:1px solid #d5e2ef;color:#4f6780;font-size:.75rem;line-height:1.5}.profile-detail strong{color:#365473}.college-context{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}.muted-label{display:block;margin-bottom:5px;color:var(--muted);font-size:.7rem;font-weight:800}.subject-picker{display:flex;gap:7px;flex-wrap:wrap;margin:-3px 0 14px}.subject-button{appearance:none;padding:7px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#6b555c;font:800 .75rem 'Nunito',sans-serif;cursor:pointer}.subject-button[aria-pressed="true"]{border-color:#e6a4b8;background:#fff0f4;color:#8a4f66}.component-list{display:grid;gap:8px}.component-row{display:grid;grid-template-columns:minmax(0,1fr) 92px 39px;gap:8px;align-items:center;padding:8px;border:1px solid var(--line-soft);border-radius:12px;background:#fff}.component-row .component-name{min-height:39px;padding:8px 10px}.component-row .component-weight{min-height:39px;padding:8px 9px;text-align:right;font-variant-numeric:tabular-nums}.weight-input{position:relative}.weight-input::after{content:'%';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#947f85;font-size:.72rem;pointer-events:none}.weight-input input{padding-right:26px}.remove-component{appearance:none;display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#997d86;font-size:1rem;cursor:pointer}.remove-component:hover{border-color:#e8b5c3;background:#fff1f4;color:#ac4b6b}.component-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}.add-button{border-style:dashed}.weight-total{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.76rem;font-weight:800}.weight-total strong{font:700 .95rem 'Fredoka',sans-serif;color:#8d626f}.weight-total.valid strong{color:#618752}.weight-total.invalid strong{color:#bd5b61}.weight-dot{width:8px;height:8px;border-radius:50%;background:#c5adb5}.valid .weight-dot{background:#8daf79}.invalid .weight-dot{background:#da7c77}.component-note{margin:11px 0 0;color:var(--muted);font-size:.72rem;line-height:1.5}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line-soft)}.toggle-copy strong{display:block;font-size:.79rem}.toggle-copy small{display:block;margin-top:2px;color:var(--muted);font-size:.7rem}.toggle{position:relative;flex:none;width:44px;height:25px;border:1px solid #c8b5bb;border-radius:8px;background:#f4eaed;cursor:pointer}.toggle::after{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;border-radius:5px;background:#9b858d;transition:transform .18s,background .18s}.toggle[aria-checked="true"]{background:#ffe0e9;border-color:#e5a3b7}.toggle[aria-checked="true"]::after{transform:translateX(19px);background:#df6e94}.side-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:19px;box-shadow:var(--shadow)}.side-card h3{margin:0;font:600 1.05rem 'Fredoka',sans-serif}.side-card>p{margin:5px 0 14px;color:var(--muted);font-size:.76rem}.sample-grade{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-soft)}.sample-grade:last-of-type{border:0}.sample-grade span{color:var(--muted);font-size:.76rem}.sample-grade strong{font:600 1.02rem 'Fredoka',sans-serif}.status-pill{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 9px;border-radius:9px;background:var(--green-soft);color:#59744c;font-size:.7rem;font-weight:800}.status-pill i{width:7px;height:7px;border-radius:50%;background:#80a66d}.summary-line{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:.75rem}.summary-line span{color:var(--muted)}.summary-line strong{text-align:right}.summary-foot{margin:11px 0 0;color:var(--muted);font-size:.69rem;line-height:1.5}.save-button{width:100%;margin-top:16px;min-height:46px;background:linear-gradient(110deg,#f397b2,#e16d95);border:1px solid #cf6687;color:#fff;font:700 .94rem 'Fredoka',sans-serif;box-shadow:0 4px 0 #cf6687}.save-button:active{transform:translateY(2px);box-shadow:0 2px 0 #cf6687}.saved-message{display:none;margin-top:12px;padding:10px 11px;border-radius:11px;background:var(--green-soft);color:#59744c;font-size:.75rem;font-weight:800}.saved-message.show{display:block}.help-modal{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(43,30,34,.42)}.help-modal.open{display:flex}.help-card{width:min(500px,100%);max-height:min(90vh,730px);overflow:auto;padding:23px;border:1px solid var(--line);border-radius:21px;background:var(--paper);box-shadow:0 20px 60px rgba(34,20,27,.2)}.help-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.help-top h2{margin:0;font:600 1.35rem 'Fredoka',sans-serif}.help-top p{margin:5px 0 16px;color:var(--muted);font-size:.8rem}.close-help{width:35px;height:35px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-size:1.1rem;cursor:pointer}.help-field{display:grid;gap:5px;margin:10px 0}.help-field label{font-size:.75rem;font-weight:800}.help-field textarea{min-height:82px;resize:vertical}.help-note{margin:10px 0;padding:10px 11px;border:1px solid #eadfcf;border-radius:11px;background:#fffaf3;color:#766550;font-size:.72rem;line-height:1.45}.help-submit{width:100%;margin-top:7px;background:#e8769a;color:#fff;border-color:#d8698b}.help-result{display:none;margin-top:12px;padding:10px 12px;border:1px solid #cfe2c5;border-radius:11px;background:var(--green-soft);color:#536e48;font-size:.76rem;font-weight:800}.help-result.show{display:block}.footer-note{padding:15px 4px 0;text-align:center;color:#8a757b;font-size:.71rem}.footer-note a{color:#a25872;font-weight:800}.toast{position:fixed;bottom:20px;left:50%;z-index:20;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);box-shadow:var(--shadow);font-size:.8rem;font-weight:800;transition:opacity .18s,transform .18s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.onboarding-preview-cta{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 16px;padding:12px 15px;border:1px solid #e8d3da;border-radius:14px;background:rgba(255,253,252,.82)}.onboarding-preview-cta strong{display:block;font:600 .91rem 'Fredoka',sans-serif}.onboarding-preview-cta span{display:block;margin-top:2px;color:var(--muted);font-size:.72rem}.onboarding-card{width:min(540px,100%);max-height:min(92vh,780px);overflow:auto;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--paper);box-shadow:0 20px 60px rgba(34,20,27,.2)}.onboarding-card h2{margin:0;font:600 1.55rem/1.2 'Fredoka',sans-serif}.onboarding-copy{margin:7px 0 16px;color:var(--muted);font-size:.82rem}.onboarding-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.onboarding-detail{margin-top:12px;padding:12px;border:1px solid #d5e2ef;border-radius:12px;background:var(--blue-soft);color:#4f6780;font-size:.76rem;line-height:1.5}.onboarding-chips{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.onboarding-chip{padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#705961;font-size:.75rem;font-weight:800}.onboarding-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line-soft)}.onboarding-actions small{max-width:200px;color:var(--muted);font-size:.7rem}.onboarding-save{appearance:none;min-height:42px;padding:9px 15px;border:1px solid #cf6687;border-radius:11px;background:#e8769a;color:#fff;font:700 .88rem 'Fredoka',sans-serif;cursor:pointer}
+    @media(max-width:850px){.hero{grid-template-columns:1fr;align-items:start;padding-top:25px}.steps{justify-content:flex-start}.layout{grid-template-columns:1fr}.side-col{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:600px){.shell{width:min(100% - 22px,560px);padding-top:10px}.topbar{padding:8px 10px;border-radius:15px;min-height:54px}.brand{font-size:1.45rem}.brand small{font-size:.65rem}.back-link{padding:7px 9px;font-size:.7rem}.preview-tag{padding:6px 8px;font-size:.65rem}.hero{padding:23px 2px 17px;gap:14px}.hero h1{font-size:2.05rem}.hero p{font-size:.86rem}.steps{gap:5px}.step{padding:6px 8px;font-size:.65rem}.step b{width:19px;height:19px}.panel{padding:16px;border-radius:17px}.panel-heading h2{font-size:1.1rem}.level-switch{gap:6px}.level-option{min-height:70px;padding:9px}.level-option strong{font-size:.88rem}.level-option small{font-size:.64rem}.select-row,.college-context{grid-template-columns:1fr}.period-list{grid-template-columns:repeat(2,minmax(0,1fr))}.scale-grid{grid-template-columns:1fr}.scale-option{min-height:78px;padding:11px}.scale-option .scale-icon{display:inline-block;margin:0 7px 0 0}.scale-option strong{display:inline}.scale-option small{margin:4px 22px 0 24px}.scale-help{align-items:flex-start;flex-direction:column}.outline-button{width:100%}.component-row{grid-template-columns:minmax(0,1fr) 77px 36px;gap:5px;padding:6px}.component-row .component-name,.component-row .component-weight{min-height:37px;font-size:.74rem}.remove-component{width:35px;height:36px}.component-bottom{align-items:flex-start;flex-direction:column}.side-col{grid-template-columns:1fr}.side-card{padding:16px}.help-card{padding:18px}.footer-note{text-align:left}.onboarding-preview-cta{align-items:flex-start;flex-direction:column}.onboarding-preview-cta .small-button{width:100%}.onboarding-card{padding:17px}.onboarding-actions{align-items:stretch;flex-direction:column}.onboarding-actions small{max-width:none}.onboarding-save{width:100%}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">cramchy<small>grades · setup</small></div>
+      <div style="display:flex;align-items:center;gap:10px"><span class="preview-tag"><i></i> preview · sample data</span><a class="back-link" href="/">← back to app</a></div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">a setup that fits your school</p>
+        <h1>Make grading feel like <span style="color:var(--pink)">your</span> school.</h1>
+        <p>Choose your school’s grading approach, then shape each subject around the work your teachers actually count. Your grades stay tied to their original subject and term.</p>
+      </div>
+      <div class="steps" aria-label="Setup steps"><div class="step active"><b>1</b> school system</div><div class="step"><b>2</b> subject components</div><div class="step"><b>3</b> review</div></div>
+    </section>
+
+    <div class="onboarding-preview-cta"><div><strong>See how grade setup could appear during onboarding</strong><span>One short step up front; subject components can be set up later.</span></div><button class="small-button" id="openOnboarding">Preview onboarding step</button></div>
+
+    <main class="layout">
+      <div class="main-col">
+        <section class="panel" aria-labelledby="system-title">
+          <div class="panel-heading"><div><h2 id="system-title">Where are you studying?</h2><p>This helps Cramchy show the right grade format and term setup.</p></div><span class="section-index">01</span></div>
+          <div class="level-switch" role="group" aria-label="Education level">
+            <button class="level-option" data-level="k12" aria-pressed="true"><strong>K–12</strong><small>elementary · junior high · senior high</small></button>
+            <button class="level-option" data-level="college" aria-pressed="false"><strong>College</strong><small>college · university · graduate school</small></button>
+            <button class="level-option" data-level="other" aria-pressed="false"><strong>Other</strong><small>international or a different setup</small></button>
+          </div>
+
+          <div id="k12Fields">
+            <div class="select-row">
+              <label class="field"><span class="field-label">Grade level</span><select id="gradeLevel"><option value="k">Kindergarten</option><option value="g1">Grade 1</option><option value="g2">Grade 2</option><option value="g3">Grade 3</option><option value="g4">Grade 4</option><option value="g5">Grade 5</option><option value="g6">Grade 6</option><option value="g7">Grade 7</option><option value="g8">Grade 8</option><option value="g9">Grade 9</option><option value="g10">Grade 10</option><option value="g11">Grade 11</option><option value="g12">Grade 12</option></select></label>
+              <label class="field"><span class="field-label">School year</span><select id="schoolYear"><option>2026–2027</option><option>2027–2028</option><option>2028–2029</option><option>2025–2026 or earlier</option></select></label>
+            </div>
+            <label class="field" style="display:block;margin-top:10px"><span class="field-label">Which grading policy fits your school?</span><select id="k12System"><option value="deped">DepEd K–12 profile</option><option value="school">My school has its own grading setup</option></select></label>
+            <div class="profile-detail" id="k12Detail"></div>
+          </div>
+
+          <div id="collegeFields" hidden>
+            <p class="field-label">Choose the grade format your school uses</p>
+            <div class="scale-grid" role="group" aria-label="College grading scale">
+              <button class="scale-option" data-scale="five" aria-pressed="true"><span class="scale-icon">↘</span><span class="check">✓</span><strong>1.00–5.00</strong><small>1.00 is highest; 3.00 commonly passes. Your school’s exact rules can vary.</small></button>
+              <button class="scale-option" data-scale="four" aria-pressed="false"><span class="scale-icon">↗</span><span class="check">✓</span><strong>0.00–4.00</strong><small>4.00 is highest; 0.00 is lowest or failing in some systems.</small></button>
+              <button class="scale-option" data-scale="letter" aria-pressed="false"><span class="scale-icon">Aa</span><span class="check">✓</span><strong>Letter grades</strong><small>A, B+, B, and school-specific quality points.</small></button>
+            </div>
+            <div class="college-context">
+              <label class="field"><span class="muted-label">School or university</span><input id="collegeName" value="" list="collegeSchools" placeholder="Search or enter your school" autocomplete="off"><datalist id="collegeSchools">
+                <option value="National University – Clark (NU Clark)"></option>
+                <option value="National University – Manila"></option>
+                <option value="Ateneo de Manila University"></option>
+                <option value="De La Salle University"></option>
+                <option value="University of the Philippines Diliman"></option>
+                <option value="University of the Philippines Los Baños"></option>
+                <option value="University of Santo Tomas"></option>
+                <option value="Far Eastern University"></option>
+                <option value="FEU Institute of Technology"></option>
+                <option value="Polytechnic University of the Philippines"></option>
+                <option value="University of the East"></option>
+                <option value="Adamson University"></option>
+                <option value="Mapúa University"></option>
+                <option value="Miriam College"></option>
+                <option value="Holy Angel University"></option>
+                <option value="Angeles University Foundation"></option>
+                <option value="University of the Assumption"></option>
+                <option value="Don Honorio Ventura State University"></option>
+                <option value="Pampanga State Agricultural University"></option>
+                <option value="Tarlac State University"></option>
+                <option value="Bulacan State University"></option>
+                <option value="Central Luzon State University"></option>
+                <option value="University of San Carlos"></option>
+                <option value="University of Cebu"></option>
+                <option value="Silliman University"></option>
+                <option value="Ateneo de Davao University"></option>
+                <option value="Xavier University – Ateneo de Cagayan"></option>
+                <option value="Mindanao State University – Iligan Institute of Technology"></option>
+                <option value="University of Mindanao"></option>
+              </datalist></label>
+              <label class="field"><span class="muted-label">Academic year</span><select><option>2026–2027</option><option>2025–2026</option><option>Other</option></select></label>
+            </div>
+            <div class="profile-detail" id="collegeProfileDetail"><strong>Scale shape isn’t enough to calculate a school grade.</strong> We need a verified school mapping for passing marks, grade steps, and any special marks such as INC or W.</div>
+          </div>
+
+          <div id="otherFields" hidden>
+            <p class="field-label">Tell us a little about your grading system</p>
+            <div class="select-row">
+              <label class="field"><span class="field-label">Country or region</span><input id="otherRegion" placeholder="e.g., Philippines, international school"></label>
+              <label class="field"><span class="field-label">Grade format</span><select id="otherFormat"><option>Percentage</option><option>Letter grades</option><option>GPA / points</option><option>Descriptive / standards-based</option><option>I’m not sure</option></select></label>
+            </div>
+            <div class="profile-detail"><strong>We’ll help you identify a safe setup.</strong> The app can still track tasks and scores while a grade calculation is being confirmed.</div>
+          </div>
+
+          <section class="period-config" aria-labelledby="period-title">
+            <div class="period-heading"><div><h3 id="period-title">How is your school year divided?</h3><p id="periodIntro">Set the grade periods your school reports.</p></div><span class="section-index">03</span></div>
+            <label class="field"><span class="muted-label">Period setup</span><select id="periodPreset"></select></label>
+            <label class="field" id="termCountWrap" hidden style="display:block;margin-top:10px"><span class="muted-label">Terms in this academic year</span><select id="termCount"><option value="1">1 term</option><option value="2">2 terms</option><option value="3" selected>3 terms</option><option value="4">4 terms</option></select></label>
+            <div class="period-list" id="periodList" aria-live="polite"></div>
+            <button class="add-button" id="addPeriod" type="button">＋ add a period</button>
+            <p class="component-note" id="periodNote">Edit period names to match your school. Cramchy will keep scores grouped under the period you select.</p>
+          </section>
+
+          <div class="scale-help"><div><strong>Not sure which one is yours?</strong><span>Send us your school name and we’ll help identify the right setup.</span></div><button class="outline-button" id="openHelp">Ask for help</button></div>
+        </section>
+
+        <section class="panel" aria-labelledby="components-title">
+          <div class="panel-heading"><div><h2 id="components-title">Set up each subject’s components</h2><p>Different subjects can use different categories. Edit these examples or make your own.</p></div><span class="section-index">02</span></div>
+          <div class="subject-picker" role="group" aria-label="Choose subject">
+            <button class="subject-button" data-subject="cogpsy" aria-pressed="true">Cognitive Psychology</button>
+            <button class="subject-button" data-subject="anatomy" aria-pressed="false">Human Anatomy</button>
+            <button class="subject-button" data-subject="research" aria-pressed="false">Research</button>
+          </div>
+          <div class="component-list" id="componentList" aria-live="polite"></div>
+          <div class="component-bottom"><button class="add-button" id="addComponent">＋ add a component</button><div class="weight-total valid" id="weightTotal"><i class="weight-dot"></i><span>weight total</span><strong>100%</strong></div></div>
+          <p class="component-note">Component names and weights are subject-specific. A school or course template should be confirmed before Cramchy uses it to report an official-style grade.</p>
+          <div class="toggle-row"><div class="toggle-copy"><strong>This subject uses weighted components</strong><small>Turn this off for subjects where you only want to save scores.</small></div><button class="toggle" id="weightedToggle" role="switch" aria-checked="true" aria-label="This subject uses weighted components"></button></div>
+        </section>
+      </div>
+
+      <aside class="side-col">
+        <section class="side-card"><h3>What this setup changes</h3><p>Only the way Cramchy organizes and summarizes grades for this profile.</p><div class="summary-line"><span>Education level</span><strong id="summaryLevel">K–12</strong></div><div class="summary-line"><span>Grade format</span><strong id="summaryScale">Needs confirmation</strong></div><div class="summary-line"><span>Selected subject</span><strong id="summarySubject">Cognitive Psychology</strong></div><div class="summary-line"><span>Components</span><strong id="summaryComponents">4</strong></div><div class="summary-line"><span>Reporting periods</span><strong id="summaryPeriods">3</strong></div><div class="summary-line"><span>Weight total</span><strong id="summaryWeight">100%</strong></div><div class="status-pill"><i></i><span id="statusText">Ready to review</span></div><p class="summary-foot">Saved scores keep their original subject, category, period, and value. Changing a profile should never silently rewrite old scores.</p><button class="save-button" id="savePreview">Save this preview setup →</button><div class="saved-message" id="savedMessage" role="status">Preview setup saved on this device.</div></section>
+        <section class="side-card"><h3>Current subject scores</h3><p>Example view · existing gradebook cards stay familiar.</p><div class="sample-grade"><span>Midterms</span><strong>95.83%</strong></div><div class="sample-grade"><span>Finals</span><strong>95.67%</strong></div><div class="sample-grade"><span>Saved scores</span><strong>18</strong></div><div class="profile-detail" style="margin-top:14px;background:var(--green-soft);border-color:#d7e6cf;color:#5b7153"><strong style="color:#4c6545">No grade conversion is shown here.</strong> The preview keeps the current example values visible while we confirm each system’s official mapping.</div></section>
+        <section class="side-card"><h3>Need the school’s rules?</h3><p>You can ask for help instead of guessing a scale or setting up a conversion yourself.</p><button class="outline-button" id="openHelp2" style="width:100%">Ask Cramchy for help</button></section>
+      </aside>
+    </main>
+    <p class="footer-note">This is a design preview with sample data. Saving here only changes this preview on your device; it does not change your Cramchy account. <a href="https://www.deped.gov.ph/" target="_blank" rel="noreferrer">DepEd</a> · <a href="https://our.upd.edu.ph/files/acadinfo/GRADES.pdf" target="_blank" rel="noreferrer">UP grading example</a> · <a href="https://old.dlsu.edu.ph/offices/registrar/faculty-attendance/grades/" target="_blank" rel="noreferrer">DLSU grading example</a></p>
+  </div>
+
+  <div class="help-modal" id="onboardingModal" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+    <section class="onboarding-card">
+      <div class="onboarding-top"><div><p class="eyebrow">first-time setup · academic profile</p><h2 id="onboardingTitle">Let’s set up your grades.</h2></div><button class="close-help" id="closeOnboarding" aria-label="Close onboarding preview">×</button></div>
+      <p class="onboarding-copy">A quick school and grade-period setup helps Cramchy fit your system. You can edit this later.</p>
+      <div class="level-switch" role="group" aria-label="Education level" id="onboardingLevels"><button class="level-option" data-onboard-level="k12"><strong>K–12</strong><small>elementary · junior high · senior high</small></button><button class="level-option" data-onboard-level="college"><strong>College</strong><small>college or university</small></button><button class="level-option" data-onboard-level="other"><strong>Other</strong><small>another grading setup</small></button></div>
+      <div id="onboardCollegeFields" hidden><label class="field"><span class="field-label">School or university</span><input id="onboardCollegeName" list="collegeSchools" placeholder="Search or enter your school" autocomplete="off"></label><label class="field" id="onboardTermCountWrap" hidden><span class="field-label">Terms in this academic year</span><select id="onboardTermCount"><option value="1">1 term</option><option value="2">2 terms</option><option value="3" selected>3 terms</option><option value="4">4 terms</option></select></label><div class="onboarding-detail" id="onboardCollegeDetail"></div><div class="onboarding-chips" id="onboardCollegePeriods"></div></div>
+      <div id="onboardK12Fields" hidden><div class="select-row"><label class="field"><span class="field-label">Grade level</span><select id="onboardGrade"><option value="k">Kindergarten</option><option value="g1">Grade 1</option><option value="g2">Grade 2</option><option value="g3">Grade 3</option><option value="g4">Grade 4</option><option value="g5">Grade 5</option><option value="g6">Grade 6</option><option value="g7">Grade 7</option><option value="g8">Grade 8</option><option value="g9">Grade 9</option><option value="g10">Grade 10</option><option value="g11">Grade 11</option><option value="g12">Grade 12</option></select></label><label class="field"><span class="field-label">School year</span><select id="onboardYear"><option>2026–2027</option><option>2027–2028</option><option>2028–2029</option><option>2025–2026 or earlier</option></select></label></div><label class="field" style="display:block;margin-top:10px"><span class="field-label">Grading policy</span><select id="onboardK12System"><option value="deped">DepEd K–12 profile</option><option value="school">My school has its own setup</option></select></label><div class="onboarding-detail" id="onboardK12Detail"></div><div class="onboarding-chips" id="onboardK12Periods"></div></div>
+      <div id="onboardOtherFields" hidden><p class="onboarding-detail">Choose “Other” if your school uses a different calendar or grading format. You can ask Cramchy for help identifying it.</p></div>
+      <div class="onboarding-actions"><small>Subject components like Written Works and Performance Tasks are set up after your courses are added.</small><button class="onboarding-save" id="applyOnboarding">Use this setup →</button></div>
+    </section>
+  </div>
+
+  <div class="help-modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="help-card"><div class="help-top"><div><h2 id="helpTitle">Let’s figure out your grading system.</h2><p>Share the school and what you know. You don’t need to build the scale yourself.</p></div><button class="close-help" id="closeHelp" aria-label="Close help form">×</button></div>
+      <label class="help-field"><span>School or university</span><input id="helpSchool" placeholder="Type your school name"></label>
+      <label class="help-field"><span>Grade level or program</span><input id="helpProgram" placeholder="e.g., Grade 8, BS Psychology"></label>
+      <label class="help-field"><span>What are you unsure about?</span><select id="helpQuestion"><option>Which grading scale should I choose?</option><option>How are my subject components weighted?</option><option>How does my school convert grades?</option><option>Something else</option></select></label>
+      <label class="help-field"><span>Anything else you know (optional)</span><textarea id="helpDetails" placeholder="You can describe what your report card or syllabus shows."></textarea></label>
+      <div class="help-note">Please don’t include student numbers or private grades. In the finished app this form would go to Cramchy support; this preview only demonstrates the flow.</div>
+      <button class="help-submit" id="sendHelp">Send help request</button><div class="help-result" id="helpResult" role="status">This sample request is ready. The finished app would send it to support.</div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (()=>{
+      const componentSets={
+        cogpsy:[['Written Works',25],['Quizzes',25],['Performance Tasks',20],['Exams',30]],
+        anatomy:[['Lecture quizzes',25],['Lab activities',20],['Practical exams',25],['Major exams',30]],
+        research:[['Written outputs',25],['Consultations',15],['Research paper',35],['Presentation',25]]
+      };
+      const subjectNames={cogpsy:'Cognitive Psychology',anatomy:'Human Anatomy',research:'Research'};
+      let subject='cogpsy',level='k12',scale='five',weighted=true,toastTimer,wasNuSchool=false;
+      let periods=['Term 1','Term 2','Term 3'],periodMode='custom',periodsTouched=false,termCount=3;
+      const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+      const list=$('#componentList');
+      function renderComponents(){
+        const rows=componentSets[subject];
+        list.innerHTML=rows.map((row,index)=>`<div class="component-row"><input class="component-name" aria-label="Component ${index+1} name" value="${escapeHtml(row[0])}" placeholder="Component name" data-name="${index}"><div class="weight-input"><input class="component-weight" aria-label="${escapeHtml(row[0])} weight" type="number" min="0" max="100" step="1" value="${Number(row[1])}" data-weight="${index}" ${weighted?'':'disabled'}></div><button class="remove-component" data-remove="${index}" aria-label="Remove ${escapeHtml(row[0])}">×</button></div>`).join('');
+        list.querySelectorAll('[data-name]').forEach(el=>el.addEventListener('input',()=>{const i=Number(el.dataset.name);rows[i][0]=el.value;refreshSummary();}));
+        list.querySelectorAll('[data-weight]').forEach(el=>el.addEventListener('input',()=>{const i=Number(el.dataset.weight);rows[i][1]=Math.max(0,Math.min(100,Number(el.value)||0));refreshSummary();}));
+        list.querySelectorAll('[data-remove]').forEach(el=>el.addEventListener('click',()=>{rows.splice(Number(el.dataset.remove),1);renderComponents();}));
+        refreshSummary();
+      }
+      function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+      function periodChoices(){
+        if(level==='college'){const common=[['college3','Prelims · Midterms · Finals',['Prelims','Midterms','Finals']],['semester','Two semesters',['Semester 1','Semester 2']],['tri','Three trimesters',['Trimester 1','Trimester 2','Trimester 3']],['custom','Custom periods',null]];return isNu()?[['nu-mf','NU · Midterms + Finals each term',null],...common]:common;}
+        if(level==='k12'){
+          const year=$('#schoolYear').value,depEd=$('#k12System').value==='deped';
+          const defaults=depEd&&year!=='2025–2026 or earlier'?['Term 1','Term 2','Term 3']:['Quarter 1','Quarter 2','Quarter 3','Quarter 4'];
+          return [['deped3',depEd&&year!=='2025–2026 or earlier'?'DepEd three-term calendar':'Three terms', ['Term 1','Term 2','Term 3']],['quarters','Four quarters',['Quarter 1','Quarter 2','Quarter 3','Quarter 4']],['semester','Two semesters',['Semester 1','Semester 2']],['custom','Custom periods',null]].map((x,i)=>x[0]==='deped3'?[x[0],x[1],defaults]:x);
+        }
+        return [['college3','Prelims · Midterms · Finals',['Prelims','Midterms','Finals']],['semester','Two semesters',['Semester 1','Semester 2']],['tri','Three trimesters',['Trimester 1','Trimester 2','Trimester 3']],['custom','Custom periods',null]];
+      }
+      function renderPeriods(preset){
+        const select=$('#periodPreset'),choices=periodChoices();
+        select.innerHTML=choices.map(([id,label])=>`<option value="${id}">${label}</option>`).join('');
+        const defaultId=level==='k12'&&$('#k12System').value==='deped'&&$('#schoolYear').value!=='2025–2026 or earlier'?'deped3':level==='k12'?'quarters':level==='college'?(isNu()?'nu-mf':'college3'):'custom';
+        const selected=preset||defaultId;select.value=choices.some(x=>x[0]===selected)?selected:defaultId;
+        const choice=choices.find(x=>x[0]===select.value);periodMode=choice[0];
+        $('#termCountWrap').hidden=periodMode!=='nu-mf';
+        if(periodMode==='nu-mf'){termCount=Number($('#termCount').value)||termCount;periods=Array.from({length:termCount},(_,i)=>[`Term ${i+1} · Midterms`,`Term ${i+1} · Finals`]).flat();}
+        else if(choice[2])periods=[...choice[2]];else if(!periodsTouched||!periods.length)periods=['Period 1','Period 2'];
+        $('#periodIntro').textContent=periodMode==='nu-mf'?'Each term gets its own Midterms and Finals scores.':level==='college'?'Colleges can run Prelims, Midterms, and Finals—or another schedule.':level==='k12'?'DepEd moved basic education to three terms starting SY 2026–2027. School-specific setups can use different periods.':'Set the reporting periods your school uses.';
+        $('#periodNote').textContent=level==='k12'&&$('#k12System').value==='deped'&&$('#schoolYear').value!=='2025–2026 or earlier'?'DepEd’s three-term calendar starts in SY 2026–2027. You can still customize names to match your school’s report card.':'You can rename, add, or remove periods to match the school calendar.';
+        const list=$('#periodList');list.innerHTML=periods.map((name,i)=>`<div class="period-row"><input aria-label="Period ${i+1} name" value="${escapeHtml(name)}" data-period="${i}"><button type="button" data-remove-period="${i}" aria-label="Remove period ${escapeHtml(name)}">×</button></div>`).join('');
+        list.querySelectorAll('[data-period]').forEach(el=>el.addEventListener('input',()=>{periods[Number(el.dataset.period)]=el.value;periodsTouched=true;periodMode='custom';select.value='custom';refreshSummary();}));
+        list.querySelectorAll('[data-remove-period]').forEach(el=>el.addEventListener('click',()=>{if(periods.length<=1){showToast('Keep at least one grading period.');return;}periods.splice(Number(el.dataset.removePeriod),1);periodsTouched=true;periodMode='custom';select.value='custom';renderPeriodRows();}));
+        refreshSummary();
+      }
+      function renderPeriodRows(){const list=$('#periodList');list.innerHTML=periods.map((name,i)=>`<div class="period-row"><input aria-label="Period ${i+1} name" value="${escapeHtml(name)}" data-period="${i}"><button type="button" data-remove-period="${i}" aria-label="Remove period ${escapeHtml(name)}">×</button></div>`).join('');list.querySelectorAll('[data-period]').forEach(el=>el.addEventListener('input',()=>{periods[Number(el.dataset.period)]=el.value;periodsTouched=true;periodMode='custom';$('#periodPreset').value='custom';refreshSummary();}));list.querySelectorAll('[data-remove-period]').forEach(el=>el.addEventListener('click',()=>{if(periods.length<=1){showToast('Keep at least one grading period.');return;}periods.splice(Number(el.dataset.removePeriod),1);periodsTouched=true;periodMode='custom';$('#periodPreset').value='custom';renderPeriodRows();}));refreshSummary();}
+      function updateK12Profile(){
+        const grade=$('#gradeLevel').value,year=$('#schoolYear').value,depEd=$('#k12System').value==='deped',names={k:'Kindergarten',g1:'Grade 1',g2:'Grade 2',g3:'Grade 3',g4:'Grade 4',g5:'Grade 5',g6:'Grade 6',g7:'Grade 7',g8:'Grade 8',g9:'Grade 9',g10:'Grade 10',g11:'Grade 11',g12:'Grade 12'};
+        let message;
+        if(!depEd)message='<strong>School-specific setup selected.</strong> Tell Cramchy the grade scale, grading periods, and component weights from your school. We won’t assume DepEd rules.';
+        else if(year==='2026–2027')message=`<strong>DepEd profile · ${names[grade]} · SY ${year}.</strong> DepEd’s new guidelines start this year with a three-term calendar and phased grading changes. Kindergarten and Grade 1 begin descriptive reporting; Grades 4–12 use the transition grading rules. We’ll keep the grade calculation pending confirmation for the selected grade.`;
+        else if(year==='2027–2028')message=`<strong>DepEd profile · ${names[grade]} · SY ${year}.</strong> Zero-based grading starts for Grades 4–12, while descriptive reporting expands to Grade 2. Other grade levels follow their phase-in schedule. This preview does not calculate grades until the matching grade-level rule is confirmed.`;
+        else if(year==='2028–2029')message=`<strong>DepEd profile · ${names[grade]} · SY ${year}.</strong> The rollout schedule expands descriptive reporting through Grade 3; Grades 4–12 use zero-based grading. Confirm your school’s current implementation before relying on a calculation.`;
+        else message=`<strong>Earlier DepEd school year selected · ${names[grade]}.</strong> Use the policy that applied in that specific year. The old four-quarter setup is shown as a starting point; this preview won’t calculate a grade until the right rule is verified.`;
+        $('#k12Detail').innerHTML=message;
+      }
+      function setLevel(next){level=next;$$('.level-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===next)));$('#k12Fields').hidden=next!=='k12';$('#collegeFields').hidden=next!=='college';$('#otherFields').hidden=next!=='other';$('#summaryLevel').textContent=next==='k12'?'K–12':next==='college'?'Higher education':'Other';renderPeriods();if(next==='k12')updateK12Profile();refreshSummary();}
+      function setScale(next){scale=next;$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===next)));if(isNu()&&next!=='four')$('#collegeProfileDetail').innerHTML=`<strong>NU starting profile.</strong> You selected ${escapeHtml(scaleLabel())}; confirm your current campus and program rules before calculating grades.`;refreshSummary();}
+      function isNu(){return /\bnational university\b|\bnu\b/i.test($('#collegeName').value.trim());}
+      function updateCollegeProfile(){
+        const detail=$('#collegeProfileDetail');
+        const nu=isNu();
+        const fourScale=$('.scale-option[data-scale="four"]');
+        if(fourScale){fourScale.querySelector('strong').textContent=nu?'NU grade points · 4.00–1.00':'0.00–4.00';fourScale.querySelector('small').textContent=nu?'4.00 is highest; 1.00 is the lowest numeric passing grade. Special marks include R, 0.00, INC, Dr, P, and F.':'4.00 is highest; 0.00 is lowest or failing in some systems.';}
+        if(nu){
+          if(!wasNuSchool){scale='four';$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===scale)));}
+          detail.innerHTML=`<strong>NU starting profile · ${escapeHtml(scaleLabel())} selected.</strong> The <a href="https://www.nu.edu.ph/academics" target="_blank" rel="noreferrer">NU Student Handbook</a> currently linked by NU is labeled 2023–2024. It lists 4.0 (96–100), 3.5 (90–95), 3.0 (84–89), 2.5 (78–83), 2.0 (72–77), 1.5 (66–71), 1.0 (60–65), and R below 60. It does not define your course component weights or a universal Midterms/Finals blend. Confirm current NU Clark BS Psychology rules before relying on a calculation.`;
+        } else {
+          detail.innerHTML='<strong>Scale shape isn’t enough to calculate a school grade.</strong> We need a verified school mapping for passing marks, grade steps, and any special marks such as INC or W.';
+        }
+        wasNuSchool=nu;
+        if(level==='college')renderPeriods();
+        refreshSummary();
+      }
+      function scaleLabel(){if(level==='k12')return 'Needs confirmation';if(level==='other')return $('#otherFormat').value;if(scale==='five')return '1.00–5.00';if(scale==='four')return isNu()?'NU 4.0–1.0 + special marks':'0.00–4.00';return 'Letter grades';}
+      function refreshSummary(){
+        const rows=componentSets[subject],total=rows.reduce((sum,row)=>sum+(Number(row[1])||0),0),valid=!weighted||total===100;
+        $('#summaryLevel').textContent=level==='k12'?'K–12':level==='college'?'Higher education':'Other';$('#summaryScale').textContent=scaleLabel();$('#summarySubject').textContent=subjectNames[subject];$('#summaryComponents').textContent=rows.length;$('#summaryPeriods').textContent=periodMode==='nu-mf'?`${periods.length} · ${termCount} term${termCount===1?'':'s'}`:periods.length;$('#summaryWeight').textContent=weighted?`${total}%`:'not weighted';
+        const wt=$('#weightTotal');wt.classList.toggle('valid',valid&&weighted);wt.classList.toggle('invalid',!valid&&weighted);wt.querySelector('strong').textContent=weighted?`${total}%`:'off';
+        $('#statusText').textContent=level==='k12'?'Grade policy needs confirmation':level==='other'?'Needs setup help':level==='college'&&$('#collegeName').value.trim()?'School mapping needs verification':'Ready to review';
+      }
+      function restorePreview(){
+        try{
+          const saved=JSON.parse(localStorage.getItem('cramchy-grading-setup-preview')||'null');
+          if(!saved||typeof saved!=='object')return false;
+          if(['k12','college','other'].includes(saved.educationLevel))level=saved.educationLevel;
+          if(['five','four','letter'].includes(saved.scaleId))scale=saved.scaleId;
+          if(['cogpsy','anatomy','research'].includes(saved.subject))subject=saved.subject;
+          if(typeof saved.weighted==='boolean')weighted=saved.weighted;
+          if(Number.isFinite(Number(saved.termCount))&&Number(saved.termCount)>=1&&Number(saved.termCount)<=4)termCount=Number(saved.termCount);
+          if(Array.isArray(saved.periods)&&saved.periods.length&&saved.periods.length<=20&&saved.periods.every(x=>typeof x==='string')){periods=saved.periods.map(x=>x.slice(0,50));periodsTouched=saved.periodsTouched===true;}
+          if(typeof saved.periodMode==='string')periodMode=saved.periodMode;
+          const savedSets=saved.componentSets||(Array.isArray(saved.components)?{[saved.subject||subject]:saved.components}:null);
+          if(savedSets&&typeof savedSets==='object')Object.keys(componentSets).forEach(key=>{const rows=savedSets[key];if(Array.isArray(rows)&&rows.length<=20&&rows.every(row=>Array.isArray(row)&&typeof row[0]==='string'))componentSets[key]=rows.map(row=>[row[0].slice(0,60),Math.max(0,Math.min(100,Number(row[1])||0))]);});
+          $('#collegeName').value=typeof saved.school==='string'&&level==='college'?saved.school:'';
+          if(level==='k12'){
+            if(typeof saved.schoolYear==='string')$('#schoolYear').value=saved.schoolYear;
+            if(typeof saved.gradeLevel==='string')$('#gradeLevel').value=saved.gradeLevel;
+            if(['deped','school'].includes(saved.k12System))$('#k12System').value=saved.k12System;
+          }
+          if(typeof saved.otherFormat==='string')$('#otherFormat').value=saved.otherFormat;
+          if(saved.scaleId==='four'&&isNu())wasNuSchool=true;
+          $('#termCount').value=String(termCount);
+          $('#weightedToggle').setAttribute('aria-checked',String(weighted));
+          $$('.level-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===level)));
+          $$('.subject-button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.subject===subject)));
+          $('#k12Fields').hidden=level!=='k12';$('#collegeFields').hidden=level!=='college';$('#otherFields').hidden=level!=='other';
+          return true;
+        }catch{return false;}
+      }
+      $$('.level-option').forEach(b=>b.addEventListener('click',()=>setLevel(b.dataset.level)));
+      $$('.scale-option').forEach(b=>b.addEventListener('click',()=>setScale(b.dataset.scale)));
+      $$('.subject-button').forEach(b=>b.addEventListener('click',()=>{subject=b.dataset.subject;$$('.subject-button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderComponents();}));
+      $('#gradeLevel').addEventListener('change',()=>{updateK12Profile();renderPeriods();});$('#schoolYear').addEventListener('change',()=>{updateK12Profile();renderPeriods();});$('#k12System').addEventListener('change',()=>{updateK12Profile();renderPeriods();});
+      $('#periodPreset').addEventListener('change',()=>{periodsTouched=$('#periodPreset').value==='custom';renderPeriods($('#periodPreset').value);});
+      $('#termCount').addEventListener('change',()=>{termCount=Number($('#termCount').value)||3;renderPeriods('nu-mf');});
+      $('#addPeriod').addEventListener('click',()=>{periods.push(`Period ${periods.length+1}`);periodsTouched=true;periodMode='custom';$('#periodPreset').value='custom';renderPeriodRows();$('#periodList [data-period]:last-of-type')?.focus();});
+      $('#collegeName').addEventListener('input',updateCollegeProfile);$('#otherFormat').addEventListener('change',refreshSummary);
+      $('#addComponent').addEventListener('click',()=>{componentSets[subject].push(['New component',0]);renderComponents();const input=list.querySelector(`[data-name="${componentSets[subject].length-1}"]`);input?.focus();input?.select();});
+      $('#weightedToggle').addEventListener('click',()=>{weighted=!weighted;$('#weightedToggle').setAttribute('aria-checked',String(weighted));renderComponents();});
+      const modal=$('#helpModal');function openHelp(){modal.classList.add('open');$('#helpSchool').focus();}function closeHelp(){modal.classList.remove('open');$('#openHelp').focus();}
+      $('#openHelp').addEventListener('click',openHelp);$('#openHelp2').addEventListener('click',openHelp);$('#closeHelp').addEventListener('click',closeHelp);modal.addEventListener('click',e=>{if(e.target===modal)closeHelp();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeHelp();});
+      $('#sendHelp').addEventListener('click',()=>{$('#helpResult').classList.add('show');$('#helpResult').scrollIntoView({block:'nearest',behavior:'smooth'});});
+      $('#savePreview').addEventListener('click',()=>{const total=componentSets[subject].reduce((sum,row)=>sum+(Number(row[1])||0),0);if(weighted&&total!==100){showToast('Make component weights total 100% before saving.');return;}const payload={version:2,educationLevel:level,school:level==='college'?$('#collegeName').value.trim():$('#k12System').value,scale:scaleLabel(),scaleId:scale,schoolYear:$('#schoolYear').value,gradeLevel:$('#gradeLevel').value,k12System:$('#k12System').value,otherFormat:$('#otherFormat').value,periodMode,termCount,periods:[...periods],periodsTouched,subject,componentSets,weighted};try{localStorage.setItem('cramchy-grading-setup-preview',JSON.stringify(payload));$('#savedMessage').classList.add('show');showToast('Saved in this preview only.');}catch{showToast('This browser could not save the preview.');}});
+      function showToast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
+      const onboardingModal=$('#onboardingModal');let onboardingLevel='college';
+      function renderOnboarding(){
+        $('#onboardCollegeFields').hidden=onboardingLevel!=='college';$('#onboardK12Fields').hidden=onboardingLevel!=='k12';$('#onboardOtherFields').hidden=onboardingLevel!=='other';
+        $$('[data-onboard-level]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.onboardLevel===onboardingLevel)));
+        if(onboardingLevel==='college'){
+          const name=$('#onboardCollegeName').value.trim(),nu=/\bnational university\b|\bnu\b/i.test(name);
+          $('#onboardTermCountWrap').hidden=!nu;
+          const count=Number($('#onboardTermCount').value)||3;
+          $('#onboardCollegeDetail').innerHTML=nu?`<strong>NU starting setup</strong> · ${count} term${count===1?'':'s'}, each with Midterms + Finals. The NU 4.0–1.0 grade-point profile is selected. The current handbook link is labeled 2023–2024; confirm it still applies to your campus and program before relying on a grade calculation.`:'Choose your school’s scale and reporting periods. If you’re unsure, Cramchy can help identify them.';
+          const labels=nu?Array.from({length:count},(_,i)=>[`Term ${i+1} · Midterms`,`Term ${i+1} · Finals`]).flat():['Prelims','Midterms','Finals'];
+          $('#onboardCollegePeriods').innerHTML=labels.map(x=>`<span class="onboarding-chip">${escapeHtml(x)}</span>`).join('');
+        }
+        if(onboardingLevel==='k12'){
+          const grade=$('#onboardGrade').value,year=$('#onboardYear').value,schoolPolicy=$('#onboardK12System').value==='school';
+          const descriptiveGrades=year==='2026–2027'?['k','g1']:year==='2027–2028'?['k','g1','g2']:year==='2028–2029'?['k','g1','g2','g3']:[];
+          const descriptive=descriptiveGrades.includes(grade);
+          $('#onboardK12Detail').innerHTML=schoolPolicy?'<strong>School-specific setup selected.</strong> We’ll ask for the grading scale and periods shown by your school instead of assuming DepEd rules.':year==='2025–2026 or earlier'?'<strong>Earlier school year selected.</strong> We’ll use the policy that applied to that year after confirmation.':'<strong>DepEd K–12 · '+escapeHtml(year)+'.</strong> '+(descriptive?'Descriptive reporting is in the phased rollout for this grade.':'Numeric grading applies, with rules depending on grade and rollout year.')+' Three terms are the starting calendar from SY 2026–2027; confirm your school’s reporting periods.';
+          $('#onboardK12Periods').innerHTML=(year==='2025–2026 or earlier'?['Quarter 1','Quarter 2','Quarter 3','Quarter 4']:['Term 1','Term 2','Term 3']).map(x=>`<span class="onboarding-chip">${x}</span>`).join('');
+        }
+      }
+      $('#openOnboarding').addEventListener('click',()=>{onboardingLevel='college';$('#onboardCollegeName').value=$('#collegeName').value;$('#onboardGrade').value=$('#gradeLevel').value;$('#onboardYear').value=$('#schoolYear').value;$('#onboardK12System').value=$('#k12System').value;$('#onboardTermCount').value=String(termCount);renderOnboarding();onboardingModal.classList.add('open');$('#onboardCollegeName').focus();});
+      $('#closeOnboarding').addEventListener('click',()=>onboardingModal.classList.remove('open'));onboardingModal.addEventListener('click',e=>{if(e.target===onboardingModal)onboardingModal.classList.remove('open');});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&onboardingModal.classList.contains('open'))onboardingModal.classList.remove('open');});
+      $$('[data-onboard-level]').forEach(b=>b.addEventListener('click',()=>{onboardingLevel=b.dataset.onboardLevel;renderOnboarding();}));
+      $('#onboardCollegeName').addEventListener('input',renderOnboarding);$('#onboardGrade').addEventListener('change',renderOnboarding);$('#onboardYear').addEventListener('change',renderOnboarding);$('#onboardK12System').addEventListener('change',renderOnboarding);$('#onboardTermCount').addEventListener('change',renderOnboarding);
+      $('#applyOnboarding').addEventListener('click',()=>{setLevel(onboardingLevel);if(onboardingLevel==='college'){$('#collegeName').value=$('#onboardCollegeName').value;updateCollegeProfile();if(isNu()){$('#termCount').value=$('#onboardTermCount').value;termCount=Number($('#termCount').value)||3;renderPeriods('nu-mf');}}if(onboardingLevel==='k12'){$('#gradeLevel').value=$('#onboardGrade').value;$('#schoolYear').value=$('#onboardYear').value;$('#k12System').value=$('#onboardK12System').value;updateK12Profile();renderPeriods();}onboardingModal.classList.remove('open');document.querySelector('.layout').scrollIntoView({behavior:'smooth',block:'start'});});
+      const restored=restorePreview();renderComponents();renderPeriods(restored?periodMode:undefined);if(level==='college')updateCollegeProfile();else if(level==='k12')updateK12Profile();if(restored)$('#savedMessage').classList.add('show');refreshSummary();
+    })();
+  </script>
+</body>
+</html>
