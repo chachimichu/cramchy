@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cramchy guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap">
+<style>
+/* THEME TOKENS: swap values to match the app's real themes */
+:root,[data-theme="strawberry-milk"]{--bg:#fff0f5;--card:#fff;--ink:#3d2420;--line:#3d2420;--accent:#f684b0;--accent-strong:#d94b86;--soft:#ffd9e6;--secondary:#b8d4b4;--on-accent:#3d2420}
+[data-theme="strawberry-matcha"]{--bg:#f6f4e8;--card:#fffef9;--ink:#33402a;--line:#33402a;--accent:#f08fb0;--accent-strong:#cc4a78;--soft:#dfe9c8;--secondary:#9db97a;--on-accent:#33402a}
+[data-theme="matcha-latte"]{--bg:#f4f1e1;--card:#fffef8;--ink:#2f3a24;--line:#2f3a24;--accent:#a5c47e;--accent-strong:#5f8a3a;--soft:#e3ecce;--secondary:#e8dcc0;--on-accent:#2f3a24}
+[data-theme="lavender"]{--bg:#f4effb;--card:#fff;--ink:#3b2b52;--line:#3b2b52;--accent:#b9a3e3;--accent-strong:#7a56c2;--soft:#e3d9f7;--secondary:#cfd9f5;--on-accent:#3b2b52}
+[data-theme="mocha"]{--bg:#f6ece2;--card:#fffaf5;--ink:#3a2418;--line:#3a2418;--accent:#c9956f;--accent-strong:#8a4b2a;--soft:#ead7c4;--secondary:#d8b89a;--on-accent:#3a2418}
+[data-theme="blueberry-milk"]{--bg:#eef3fc;--card:#fff;--ink:#1f2f5c;--line:#1f2f5c;--accent:#7f9de0;--accent-strong:#3f5fc0;--soft:#d6e2f8;--secondary:#c7d6f5;--on-accent:#1f2f5c}
+[data-theme="dark-study"]{--bg:#1c1a21;--card:#27232e;--ink:#f2e8ee;--line:#6b6178;--accent:#9fbf9a;--accent-strong:#f2a0bd;--soft:#332f3a;--secondary:#8fa98a;--on-accent:#1c1a21}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:600 1rem/1.6 Nunito,system-ui,sans-serif;display:grid;place-items:center;transition:background .4s}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent-strong);outline-offset:3px}
+[hidden]{display:none!important}
+.shell{text-align:center;padding:20px}.shell h1{font:600 2.4rem Fredoka,sans-serif;margin:0 0 12px}
+/* dialog */
+.dlg{position:fixed;inset:0;display:grid;place-items:center;background:rgba(40,24,32,.45);backdrop-filter:blur(4px);z-index:20;padding:12px}
+.box:focus{outline:none}.box{position:relative;width:min(900px,100%);height:min(620px,calc(100dvh - 24px));display:grid;grid-template-columns:minmax(260px,38%) 1fr;background:var(--card);border:1.5px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:6px 6px 0 var(--accent);animation:in .5s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes in{from{opacity:0;transform:translateY(24px) scale(.96)}}
+.art{background:var(--soft);border-right:1.5px solid var(--line);display:grid;place-items:center;padding:18px;min-height:0;transition:background .4s}
+.art svg{width:100%;height:100%;max-height:300px;overflow:visible}
+.x{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);font-size:1.1rem;line-height:1;z-index:3;transition:transform .2s,background .2s}.x:hover{transform:rotate(90deg);background:var(--soft)}
+.main{display:flex;flex-direction:column;min-height:0;min-width:0}
+.pane{flex:1;overflow:auto;padding:30px 32px 10px}
+.pane.sl{animation:sl .45s cubic-bezier(.2,.9,.3,1)}.pane.sr{animation:sr .45s cubic-bezier(.2,.9,.3,1)}
+@keyframes sl{from{opacity:0;transform:translateX(28px)}}@keyframes sr{from{opacity:0;transform:translateX(-28px)}}
+.eb{display:inline-block;background:var(--soft);border-radius:99px;padding:1px 12px;font-size:.85rem;font-weight:800;color:var(--accent-strong);margin:0 0 10px;max-width:calc(100% - 50px)}
+h2{font:600 clamp(1.7rem,3.4vw,2.3rem)/1.1 Fredoka,sans-serif;margin:0 0 14px;padding-right:44px}
+.pane p{margin:0 0 12px}.pane b{font-weight:800}
+.hello{color:var(--accent-strong);font-weight:800}
+.sig{font:italic 600 1.3rem 'Playfair Display',Georgia,serif;color:var(--accent-strong);margin:0}.sig small{display:block;font-size:.95rem;opacity:.85}
+.c2{border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;margin:0 0 12px;background:var(--card)}
+.c2 h3{font:600 1.05rem Fredoka,sans-serif;margin:0 0 2px}.c2 p{margin:0;font-size:.95rem}
+.lab{font-size:.8rem;font-weight:800;color:var(--accent-strong)}
+.note{border-left:4px solid var(--accent);background:var(--soft);border-radius:4px 12px 12px 4px;padding:9px 14px;font-size:.9rem;margin:0 0 12px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:4px 14px;font-weight:800;font-size:.9rem;transition:background .2s,transform .2s}
+.tabs button:hover{transform:translateY(-2px)}.tabs button[aria-selected="true"]{background:var(--accent);color:var(--on-accent)}
+.nums{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:8px}
+.nums li{display:flex;gap:10px;align-items:center;opacity:0;animation:up .5s both;animation-delay:calc(var(--n)*.2s + .2s)}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+.nums i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--soft);border:1.5px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:.8rem;font-weight:800}
+.demo{display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;margin:0 0 12px}
+.demo .day{font-size:.8rem;font-weight:800;color:var(--accent-strong)}
+.demo small{display:block;opacity:.75;font-size:.82rem}
+.flow{display:flex;gap:10px;align-items:center;justify-content:center;margin:0 0 12px;background:var(--soft);border-radius:14px;padding:10px;font-weight:800;font-size:.85rem}
+.flow span{background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:3px 14px}.flow em{font-style:normal;color:var(--accent-strong)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+.seg button{border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:9px;font-weight:800;transition:background .2s,transform .2s cubic-bezier(.3,1.6,.5,1)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);transform:translateY(-3px)}
+.quote{text-align:center;font:italic 600 1.25rem 'Playfair Display',Georgia,serif;color:var(--accent-strong)}.quote small{display:block;font:600 .85rem Nunito,sans-serif;color:var(--ink);opacity:.75}
+/* footer */
+.foot{display:flex;align-items:center;gap:12px;padding:12px 24px 18px;flex-wrap:wrap}
+.hearts{display:flex;gap:3px;flex:1 1 100%;align-items:center}
+.hearts button{width:22px;height:22px;border:0;background:none;padding:0;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}.hearts button:hover{transform:scale(1.25)}
+.hearts svg{width:100%;fill:var(--soft);stroke:var(--line);stroke-width:1.4;transition:fill .3s}.hearts .on svg{fill:var(--accent-strong)}.hearts .cur svg{fill:var(--accent)}
+.hearts span{margin-left:auto;font-size:.82rem;font-weight:800;opacity:.8}
+.b{border:1.5px solid var(--line);background:var(--card);border-radius:99px;font-weight:800;padding:9px 20px;transition:transform .15s,background .2s}
+.b:hover:not(:disabled){transform:translateY(-2px);background:var(--soft)}.b:disabled{opacity:.35;cursor:not-allowed}
+.b.round{width:42px;height:42px;padding:0;display:grid;place-items:center;font-size:1.1rem}
+.b.next{flex:1;background:var(--accent);color:var(--on-accent);box-shadow:3px 3px 0 var(--line);padding:11px 20px}
+.b.next:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--line);background:var(--accent)}.b.next:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+/* scene animation */
+.st{stroke:var(--line);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.pop,.flt,.letter,.drop,.ring,.bar,.spin,.dot,.fly,.grow,.seg1{transform-box:fill-box;transform-origin:center}
+.pop{animation:popin .6s cubic-bezier(.3,1.8,.5,1) both}@keyframes popin{from{transform:scale(0)}}
+.flt{animation:flt 4s ease-in-out infinite}@keyframes flt{50%{transform:translateY(-9px)}}
+.letter{animation:lift 1s .3s cubic-bezier(.3,1.4,.5,1) both}@keyframes lift{from{transform:translateY(36px)}}
+.drop{animation:drop 1s .3s cubic-bezier(.3,1.5,.5,1) both}@keyframes drop{from{transform:translateY(-100px) scale(1.4);opacity:0}}
+.ring{animation:ringp 2s 1.2s ease-out infinite;opacity:0}@keyframes ringp{from{opacity:.9;transform:scale(.8)}to{opacity:0;transform:scale(1.5)}}
+.dash{fill:none;stroke:var(--accent-strong);stroke-width:2.5;stroke-dasharray:5 7;animation:dash 1s linear infinite}@keyframes dash{to{stroke-dashoffset:-24}}
+.bar{transform-origin:left center;animation:gw .9s cubic-bezier(.2,.9,.3,1.1) both;animation-delay:calc(var(--n)*.12s + .3s)}@keyframes gw{from{transform:scaleX(0)}}
+.spin{animation:spin 8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.dot{animation:bn 1s ease-in-out infinite;animation-delay:calc(var(--n)*.15s)}@keyframes bn{50%{transform:translateY(-6px)}}
+.fly{animation:fly 3s 1s ease-in-out infinite}@keyframes fly{0%,15%{transform:translate(0,0)}60%,100%{transform:translate(100px,46px)}}
+.tk{stroke:var(--accent-strong);stroke-width:3;fill:none;stroke-dasharray:20;animation:tk 3s 1s infinite}@keyframes tk{0%,60%{stroke-dashoffset:20}75%,100%{stroke-dashoffset:0}}
+.grow{transform-origin:50% 100%;animation:gr 1.6s .2s cubic-bezier(.3,1.4,.5,1) both}@keyframes gr{from{transform:scale(.25)}}
+.mid,.fin{transform-box:fill-box;transform-origin:center;transition:transform .5s cubic-bezier(.3,1.5,.5,1),opacity .4s}
+.fin{transform:scale(.88);opacity:.55}.art.f .mid{transform:scale(.88);opacity:.55}.art.f .fin{transform:scale(1.1);opacity:1}
+.mh{position:fixed;pointer-events:none;z-index:99;line-height:0}.mh svg{display:block;width:100%;fill:currentColor}
+/* PREVIEW ONLY: delete .themes and its script when integrating */
+.themes{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:6px 12px;z-index:30}
+.themes button{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);padding:0}
+@media(max-width:700px){.box{grid-template-columns:1fr;grid-template-rows:150px 1fr;height:calc(100dvh - 24px);max-height:640px}.art{border-right:0;border-bottom:1.5px solid var(--line);padding:8px}.art svg{max-height:134px}.pane{padding:20px 20px 8px}.foot{padding:10px 16px 14px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.nums li{opacity:1}.ring{opacity:0}}
+
+html[data-embedded="true"] body{display:block;min-height:100vh;background:transparent;transition:none}
+html[data-embedded="true"] .shell,html[data-embedded="true"] .themes{display:none!important}
+html[data-embedded="true"] .dlg{position:fixed;inset:0;width:100%;height:100%;padding:12px}
+html[data-embedded="true"] .box{width:min(900px,100%);height:min(620px,calc(100dvh - 24px))}
+@media(max-width:700px){html[data-embedded="true"] .box{height:calc(100dvh - 24px);max-height:640px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="hp" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/><path id="sp" d="M0-12C1.5-4 4-1.5 12 0C4 1.5 1.5 4 0 12C-1.5 4-4 1.5-12 0C-4-1.5-1.5-4 0-12Z"/></defs></svg>
+
+<div class="shell"><h1>cramchy.</h1><button class="b next" id="reopen" style="flex:none">open the guide</button></div>
+
+<div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="gt">
+ <div class="box">
+  <button class="x" id="close" aria-label="Close guide">&times;</button>
+  <div class="art" id="art" aria-hidden="true"></div>
+  <div class="main">
+   <div class="pane" id="pane"></div>
+   <div class="foot">
+    <div class="hearts" id="hearts"></div>
+    <button class="b round" id="back" aria-label="Previous step">&larr;</button>
+    <button class="b" id="skip">skip guide</button>
+    <button class="b next" id="next">next &rarr;</button>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="themes" id="themes" aria-label="Preview theme (delete when integrating)"></div>
+
+<script>
+(function(){
+ var $=function(i){return document.getElementById(i)},rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ var embedded=new URLSearchParams(location.search).get('embedded')==='1';
+ if(embedded){document.documentElement.dataset.embedded='true';var theme=new URLSearchParams(location.search).get('theme');if(theme)document.documentElement.dataset.theme=theme;}
+
+ var HP='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',cols=['#f684b0','#d94b86','#ffb3cf','#ff7aa5'];
+ function hr(x,y,s,f,c,d){return '<g class="'+c+'" style="animation-delay:'+d+'s"><use href="#hp" transform="translate('+x+' '+y+') scale('+s+')" fill="'+f+'" class="st"/></g>'}
+ function sp(x,y,s,d){return '<g class="flt" style="animation-delay:'+d+'s"><use href="#sp" transform="translate('+x+' '+y+') scale('+s+')" fill="var(--secondary)" class="st"/></g>'}
+ var V='<svg viewBox="0 0 240 220">',E='</svg>',A='var(--accent)',AS='var(--accent-strong)';
+ var S={
+ env:V+'<g class="st"><rect x="56" y="98" width="128" height="86" rx="10" fill="var(--secondary)"/><g class="letter"><rect x="72" y="66" width="96" height="80" rx="6" fill="var(--card)"/><path d="M84 84h72M84 96h72M84 108h46" stroke="'+A+'" stroke-width="2.5"/></g><path d="M56 108L120 154L184 108V174a10 10 0 0 1-10 10H66a10 10 0 0 1-10-10Z" fill="'+A+'"/></g>'+hr(146,18,1.6,AS,'pop',.9)+hr(40,60,1,A,'flt',0)+hr(186,96,.9,A,'flt',1.2)+sp(190,40,.7,.3)+E,
+ phone:V+'<g class="st"><rect x="78" y="18" width="84" height="172" rx="16" fill="var(--card)"/><rect x="108" y="26" width="24" height="5" rx="2.5" fill="var(--line)"/><g fill="var(--soft)"><rect x="90" y="48" width="26" height="26" rx="7"/><rect x="124" y="48" width="26" height="26" rx="7"/><rect x="90" y="84" width="26" height="26" rx="7"/><rect x="124" y="84" width="26" height="26" rx="7"/><rect x="90" y="120" width="26" height="26" rx="7"/></g></g><circle class="ring" cx="137" cy="133" r="20" fill="none" stroke="'+AS+'" stroke-width="2.5"/><g class="drop"><rect x="124" y="120" width="26" height="26" rx="7" class="st" fill="'+A+'"/><use href="#hp" transform="translate(130 126) scale(.58)" fill="var(--card)"/></g>'+sp(42,60,.8,0)+sp(204,120,.6,1)+E,
+ sync:V+'<path class="st" d="M92 86h58a22 22 0 0 0 2-44a32 32 0 0 0-60-4a24 24 0 0 0 0 48Z" fill="var(--card)"/>'+hr(112,44,1.3,AS,'flt',0)+'<path class="dash" d="M104 90C84 106 68 118 62 134"/><path class="dash" d="M140 90C160 106 174 120 180 140"/><g class="st"><rect x="36" y="132" width="44" height="68" rx="9" fill="var(--card)"/><rect x="48" y="138" width="20" height="4" rx="2" fill="var(--line)"/><rect x="150" y="140" width="64" height="44" rx="6" fill="var(--card)"/><path d="M142 192h80" /></g>'+hr(176,150,.9,A,'pop',1)+E,
+ course:V+'<g class="st"><rect x="40" y="44" width="160" height="124" rx="14" fill="var(--card)"/><path d="M40 58a14 14 0 0 1 14-14h14v124H54a14 14 0 0 1-14-14Z" fill="'+A+'"/><g fill="var(--card)"><circle cx="54" cy="72" r="4.5"/><circle cx="54" cy="106" r="4.5"/><circle cx="54" cy="140" r="4.5"/></g><rect x="82" y="60" width="74" height="11" rx="5.5" fill="var(--line)"/><rect x="82" y="78" width="46" height="13" rx="6.5" fill="var(--soft)"/><g fill="var(--card)"><circle cx="90" cy="108" r="8"/><circle cx="112" cy="108" r="8" fill="'+A+'"/><circle cx="134" cy="108" r="8"/><circle cx="156" cy="108" r="8" fill="'+A+'"/><circle cx="178" cy="108" r="8"/></g><rect class="bar" style="--n:0" x="82" y="126" width="104" height="14" rx="7" fill="var(--soft)"/><rect class="bar" style="--n:1" x="82" y="146" width="72" height="14" rx="7" fill="var(--soft)"/></g>'+hr(176,26,1.1,AS,'pop',.8)+sp(212,150,.6,.5)+E,
+ plan:V+'<g class="st"><rect x="18" y="40" width="108" height="96" rx="12" fill="var(--card)"/><path d="M18 56a12 12 0 0 1 12-12h84a12 12 0 0 1 12 12v10H18Z" fill="'+A+'"/><path d="M18 90h108M18 114h108M54 66v70M90 66v70" stroke-width="1.2"/><rect x="132" y="104" width="92" height="96" rx="12" fill="var(--card)"/><rect x="144" y="118" width="14" height="14" rx="4" fill="var(--soft)"/><path d="M168 125h44" stroke-width="2.5" stroke="'+A+'"/><rect x="144" y="146" width="14" height="14" rx="4" fill="var(--soft)"/><path d="M168 153h34" stroke-width="2.5" stroke="'+A+'"/></g><path class="tk" d="M146 126l4 5l8-10"/><g class="fly"><rect class="st" x="56" y="94" width="38" height="16" rx="8" fill="'+A+'"/><text x="75" y="106" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="10" fill="var(--on-accent)">quiz</text></g>'+hr(186,44,1,AS,'flt',0)+E,
+ grade:V+'<g class="st"><rect x="26" y="78" width="188" height="28" rx="14" fill="var(--card)"/></g><g class="st"><rect class="bar" style="--n:0" x="28" y="80" width="54" height="24" rx="12" fill="'+AS+'" fill-opacity=".3"/><rect class="bar" style="--n:1" x="82" y="80" width="38" height="24" fill="'+AS+'" fill-opacity=".5"/><rect class="bar" style="--n:2" x="120" y="80" width="20" height="24" fill="'+AS+'" fill-opacity=".7"/><rect class="bar" style="--n:3" x="140" y="80" width="72" height="24" rx="12" fill="'+AS+'"/></g><g class="st"><circle cx="120" cy="158" r="30" fill="var(--card)"/></g><circle class="spin" cx="120" cy="158" r="22" fill="none" stroke="'+A+'" stroke-width="6" stroke-dasharray="40 100" stroke-linecap="round"/>'+hr(108,146,1,AS,'pop',.6)+hr(184,30,1,A,'flt',0)+sp(40,40,.8,.6)+E,
+ exam:V+'<g class="mid"><rect class="st" x="22" y="48" width="92" height="124" rx="12" fill="var(--card)"/><path class="st" d="M22 60a12 12 0 0 1 12-12h68a12 12 0 0 1 12 12v14H22Z" fill="'+A+'"/><text x="68" y="68" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="13" fill="var(--on-accent)">midterms</text><path class="st" d="M36 94h64M36 110h64M36 126h40" stroke="var(--soft)" stroke-width="4"/></g><g class="fin"><rect class="st" x="126" y="48" width="92" height="124" rx="12" fill="var(--card)"/><path class="st" d="M126 60a12 12 0 0 1 12-12h68a12 12 0 0 1 12 12v14H126Z" fill="'+AS+'"/><text x="172" y="68" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="13" fill="var(--bg)">finals</text><path class="st" d="M140 94h64M140 110h64M140 126h40" stroke="var(--soft)" stroke-width="4"/></g>'+sp(120,30,.8,0)+E,
+ chat:V+'<g class="st"><path d="M40 52a14 14 0 0 1 14-14h84a14 14 0 0 1 14 14v26a14 14 0 0 1-14 14H64l-16 14v-14h-0a8 8 0 0 1-8-8Z" fill="var(--card)"/><path d="M62 56h68M62 70h40" stroke="'+A+'" stroke-width="2.5"/><path d="M90 108a14 14 0 0 1 14-14h82a14 14 0 0 1 14 14v22a14 14 0 0 1-14 14h-6l14 14l-28-14h-62a14 14 0 0 1-14-14Z" fill="'+A+'"/><rect x="40" y="164" width="64" height="32" rx="16" fill="var(--card)"/></g><g fill="var(--line)"><circle class="dot" style="--n:0" cx="58" cy="180" r="4.5"/><circle class="dot" style="--n:1" cx="72" cy="180" r="4.5"/><circle class="dot" style="--n:2" cx="86" cy="180" r="4.5"/></g><g class="spin"><use href="#sp" transform="translate(200 44) scale(1.3)" fill="'+AS+'" class="st"/></g>'+E,
+ rhythm:V+'<ellipse cx="120" cy="196" rx="52" ry="5" fill="var(--bg)" opacity=".7"/><g class="grow"><path class="st" d="M120 150C120 130 124 112 120 88" fill="none" stroke-width="3"/><path class="st" d="M120 130c-22-14-36-4-40 8c14 10 30 4 40-8Z" fill="var(--secondary)"/><path class="st" d="M120 112c22-14 36-4 40 8c-14 10-30 4-40-8Z" fill="var(--secondary)"/><circle class="st" cx="120" cy="82" r="9" fill="'+A+'"/></g><path class="st" d="M92 152h56l-6 42H98Z" fill="'+A+'"/><rect class="st" x="86" y="142" width="68" height="14" rx="6" fill="'+AS+'"/><g class="flt"><circle class="st" cx="40" cy="70" r="7" fill="'+AS+'"/><path class="st" d="M47 70V44l14 4" fill="none"/></g><g class="flt" style="animation-delay:1.4s"><circle class="st" cx="196" cy="110" r="6" fill="'+A+'"/><path class="st" d="M202 110V88l12 4" fill="none"/></g>'+hr(180,40,1,AS,'pop',1)+E};
+ var STEPS=[
+ {e:'a little note from chachi',t:'i’m so glad you’re here',s:'env',h:'<p class="hello">Hello, my dear user!</p><p>I’m Charlene Mikaela Caco, a Psychology student from NU Clark and the person behind Cramchy.</p><p>I made this little study space to make busy school days feel more manageable. Your plans, progress, and small wins all deserve a place to land.</p><p>Let’s get you settled in. I’ll show you around, one small step at a time.</p><p class="sig"><small>With love,</small>Chachi</p>'},
+ {e:'01 · choose how to open it',t:'your study space can go anywhere',s:'phone',h:'<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="0">iPhone or iPad</button><button role="tab" aria-selected="false" data-tab="1">Android</button><button role="tab" aria-selected="false" data-tab="2">web</button></div><div class="c2 tp" data-p="0"><h3>On iPhone or iPad</h3><p>Open Cramchy in your browser. Tap the <b>three dots → Share → View More → Add to Home Screen → Add</b>. Open your new Cramchy icon whenever you want to study.</p></div><div class="c2 tp" data-p="1" hidden><h3>On Android</h3><p>Open Cramchy in Chrome. Tap ⋮, then scroll the menu for <b>Install app</b> or <b>Install and create shortcut</b>. Follow the prompt to install it; if Chrome offers <b>Create shortcut</b>, tap it, then tap <b>Add</b>.</p></div><div class="c2 tp" data-p="2" hidden><h3>On the web</h3><p>Open Cramchy in your browser and keep using it there. You can sign in whenever you’re ready.</p></div><div class="note">Chrome’s menu wording can vary a little by device. If you don’t see the install option right away, scroll the three-dot menu.</div>'},
+ {e:'02 · keep your progress',t:'sign in when you want to sync',s:'sync',h:'<p>Tap ☁ <b>sign in</b>, enter your email, then type the 8-digit code sent to your inbox. Your signed-in account can sync your progress across devices.</p><ol class="nums"><li style="--n:0"><i>1</i><span>Enter your email and tap <b>send code</b>.</span></li><li style="--n:1"><i>2</i><span>Check your inbox for the 8-digit code.</span></li><li style="--n:2"><i>3</i><span>Enter the code and tap <b>sign in</b>.</span></li></ol><div class="note">You can also keep using Cramchy as a guest on this device. Guest work stays local until you choose to sign in.</div>'},
+ {e:'03 · start with your classes',t:'add courses once, use them everywhere',s:'course',h:'<p>In <b>Courses</b>, add each subject with its professor, class days and times, room, and grading weights. Your repeating weekly schedule becomes easy to scan in the schedule viewer.</p><div class="demo"><span class="day">MON</span><div><b>your class</b><small>time · room · course color</small></div></div><p>Those courses are also ready to choose in your gradebook and exam season.</p>'},
+ {e:'04 · plan the week',t:'planner events show up in tasks',s:'plan',h:'<p>Add a quiz, study block, assignment, or reminder in the <b>Planner</b>. Choose its date and type so it’s easy to spot on your calendar.</p><div class="flow"><span>quiz</span><em>→</em><span>to do in Tasks</span></div><p>Planner items automatically appear in <b>Tasks</b>. Check them off in Tasks when they’re done; the Planner stays a calendar view of what’s happening.</p>'},
+ {e:'05 · see how you’re doing',t:'your grades, with the context',s:'grade',h:'<p>Open <b>Grades → Course Gradebook</b> and choose a course. It’s built with National University (NU) students in mind: add scores in the categories your class uses and set weights to match your syllabus. The weights are flexible for other schools, too.</p><div class="c2"><span class="lab">current standing</span><h3>weighted by your course setup</h3><p>scores · category weights · equivalent grade</p></div><p>The dashboard brings your scores, category percentages, and equivalent grade together. <b>Term GWA</b> gives you a separate term-wide view.</p>'},
+ {e:'06 · midterms & finals',t:'two exam seasons, kept separate',s:'exam',h:'<p>Choose <b>Midterms</b> or <b>Finals</b> in Exam Mode. Cramchy keeps NU’s two exam seasons separate, each with its own schedule, subjects, topics, notes, and study progress for the selected term.</p><div class="seg"><button data-season="m" aria-pressed="true">midterms</button><button data-season="f" aria-pressed="false">finals</button></div><p>Use the exam workspace to keep the details for that season together while your course list stays in Courses.</p>'},
+ {e:'07 · ask for help',t:'meet ask cramchy',s:'chat',h:'<p>Open <b>Ask Cramchy</b> from its chat button to ask how to use the app or ask about your saved courses, tasks, Planner, and grades. Suggested prompts can help you get started.</p><div class="c2"><h3>Need open-ended study help?</h3><p>Enable AI inside the chat for explanations, practice questions, or help planning a study session. It’s optional, and you can switch it off anytime.</p></div><div class="note">For questions about saved school data, ask about one course or term at a time for clearer answers.</div>'},
+ {e:'08 · make it yours',t:'find a rhythm that feels good',s:'rhythm',h:'<p>Open the <b>Study</b> tab for a focused timer session. Choose a study space theme in <b>More → Appearance</b> whenever you want a change of scenery.</p><div class="c2"><h3>Choose a study sound</h3><p>On the Study timer, pick Gamma waves, White noise, café ambience, rain, or lo-fi study beats. Tap play or pause and adjust the volume.</p></div><div class="c2 quote">small steps count, too.<small>you can change your plans as you go.</small></div><p>You’re all set. Start wherever you are; Cramchy can grow with your routine.</p>'}];
+ var cur=0,art=$('art'),pane=$('pane'),hs=$('hearts'),N=STEPS.length;
+ hs.innerHTML=STEPS.map(function(s,i){return '<button data-go="'+i+'" aria-label="Go to step '+(i+1)+'"><svg viewBox="0 0 24 24"><path d="'+HP+'"/></svg></button>'}).join('')+'<span id="cnt"></span>';
+ function burst(x,y,n){if(rm)return;for(var i=0;i<n;i++){var e=document.createElement('span');e.className='mh';e.innerHTML='<svg viewBox="0 0 24 24"><path d="'+HP+'"/></svg>';e.style.cssText='left:'+x+'px;top:'+y+'px;width:'+(10+Math.random()*14)+'px;color:'+cols[i%4];document.body.appendChild(e);var a=Math.PI*2*i/n+Math.random()*.5,d=50+Math.random()*100;
+  e.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:1},{transform:'translate(calc(-50% + '+Math.cos(a)*d+'px),calc(-50% + '+(Math.sin(a)*d-20)+'px)) scale(1)',opacity:1,offset:.6},{transform:'translate(calc(-50% + '+Math.cos(a)*d*1.2+'px),calc(-50% + '+(Math.sin(a)*d*1.2+30)+'px)) scale(.3)',opacity:0}],{duration:900+Math.random()*400,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=(function(el){return function(){el.remove()}})(e)}}
+ function show(i,dir){cur=i;var s=STEPS[i];art.innerHTML=S[s.s];art.classList.remove('f');
+  pane.innerHTML='<p class="eb">'+s.e+'</p><h2 id="gt">'+s.t+'</h2>'+s.h;pane.className='pane';void pane.offsetWidth;pane.className='pane '+(dir>=0?'sl':'sr');pane.scrollTop=0;
+  [].forEach.call(hs.querySelectorAll('button'),function(b,k){b.className=k<i?'on':k===i?'cur':''});
+  $('cnt').textContent=(i+1)+' of '+N;$('back').disabled=i===0;
+  var last=i===N-1;$('next').innerHTML=last?'let’s get started ✓':'next &rarr;';$('skip').hidden=last}
+ function go(i){i=Math.max(0,Math.min(N-1,i));if(i!==cur)show(i,i>cur?1:-1)}
+ function close(){$('dlg').hidden=true;if(embedded)parent.postMessage({type:'cramchy-guide-close'},'*')}
+ $('next').addEventListener('click',function(e){if(cur===N-1){var r=e.currentTarget.getBoundingClientRect();burst(r.left+r.width/2,r.top,22);setTimeout(close,500)}else go(cur+1)});
+ $('back').addEventListener('click',function(){go(cur-1)});
+ $('skip').addEventListener('click',close);$('close').addEventListener('click',close);
+ $('reopen')?.addEventListener('click',function(){$('dlg').hidden=false;show(0,1)});
+ hs.addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(b)go(+b.dataset.go)});
+ pane.addEventListener('click',function(e){
+  var t=e.target.closest('[data-tab]');if(t){pane.querySelectorAll('[data-tab]').forEach(function(x){x.setAttribute('aria-selected',x===t)});pane.querySelectorAll('.tp').forEach(function(p){p.hidden=p.dataset.p!==t.dataset.tab})}
+  var s=e.target.closest('[data-season]');if(s){pane.querySelectorAll('[data-season]').forEach(function(x){x.setAttribute('aria-pressed',x===s)});art.classList.toggle('f',s.dataset.season==='f')}});
+ addEventListener('keydown',function(e){if($('dlg').hidden)return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);if(e.key==='Escape')close()});
+ show(0,1);document.querySelector('.box').setAttribute('tabindex','-1');document.querySelector('.box').focus({preventScroll:true});
+ if(!embedded){ [['strawberry-milk','#f684b0'],['strawberry-matcha','#cfe3a8'],['matcha-latte','#a5c47e'],['lavender','#b9a3e3'],['mocha','#c9956f'],['blueberry-milk','#7f9de0'],['dark-study','#27232e']].forEach(function(t){var b=document.createElement('button');b.title=t[0];b.setAttribute('aria-label',t[0]);b.style.background=t[1];b.addEventListener('click',function(){document.documentElement.dataset.theme=t[0]});$('themes').appendChild(b)});}
+})();
+</script>
+</body>
+</html>
