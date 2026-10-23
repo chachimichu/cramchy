@@ -1959,7 +1959,7 @@ const CRAMCHY_THEMES=[
 {id:'blueberry-milk',label:'Blueberry Milk',colors:['#708fc0','#dce8f7']},
 {id:'dark-study',label:'Dark Study',colors:['#352833','#8ba181']}];
 
-function themeIllustration(id){return `assets/theme-icons/${CRAMCHY_THEMES.some(t=>t.id===id)?id:'strawberry-matcha'}.webp`;}
+function themeIllustration(id){const key=CRAMCHY_THEMES.some(t=>t.id===id)?id:'strawberry-matcha';return `assets/theme-icons/${key}.svg`;}
 
 function cramchyName(){const n=state?.profile?.name?.trim();return n||'girl';}
 function getCramchyGreeting(){
