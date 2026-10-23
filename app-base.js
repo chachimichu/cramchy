@@ -2089,8 +2089,14 @@ function renderDynamicCourses(){
     state.courses=state.courses.filter(c=>c.id!==b.dataset.deleteCourse); saveState(); renderDynamicCourses();
   }));
 }
+function nextCourseColor(){
+  const colors=Object.keys(COURSE_COLORS),term=state.profile?.term||'Term 1',year=state.profile?.academicYear||'2026–2027';
+  const used=new Set((state.courses||[]).filter(c=>(c.term||term)===term&&(c.academicYear||year)===year).map(c=>c.color).filter(color=>colors.includes(color)));
+  return colors.find(color=>!used.has(color))||colors[(state.courses||[]).length%colors.length];
+}
 function openCourseModal(courseId=null){
   const existing=(state.courses||[]).find(c=>c.id===courseId);
+  const initialColor=existing?.color||nextCourseColor();
   const scrim=document.createElement('div'); scrim.className='modal-scrim';
   scrim.innerHTML=`<div class="course-modal">
     <h3 style="color:var(--red-deep);">${existing?'edit course':'add course'}</h3>
@@ -2102,11 +2108,16 @@ function openCourseModal(courseId=null){
       <div><label>section</label><input id="courseSection" value="${escapeAttr(existing?.section||'')}"></div>
       <div><label>room</label><input id="courseRoom" value="${escapeAttr(existing?.room||'')}"></div>
       <div><label>term</label><select id="courseTerm">${['Term 1','Term 2','Term 3'].map(t=>`<option value="${t}" ${t===(existing?.term||state.profile?.term||'Term 1')?'selected':''}>${t}</option>`).join('')}</select></div>
-      <div class="full"><label>schedule</label><input id="courseSchedule" value="${escapeAttr(existing?.schedule||'')}" placeholder="Sat · 11:00 AM–1:00 PM · Room 609"></div>
+      <div class="course-color-field"><label>course color</label><input id="courseColor" type="hidden" value="${escapeAttr(initialColor)}"><div class="course-color-options" role="group" aria-label="Course color">${Object.entries(COURSE_COLORS).map(([name,color])=>`<button type="button" class="course-color-option${initialColor===name?' is-selected':''}" data-course-color="${name}" aria-label="${name}" aria-pressed="${initialColor===name}" title="${name}" style="--course-swatch:${color}"><span></span></button>`).join('')}</div></div>
+    <div class="full"><label>schedule</label><input id="courseSchedule" value="${escapeAttr(existing?.schedule||'')}" placeholder="Sat · 11:00 AM–1:00 PM · Room 609"></div>
     </div>
     <div class="modal-actions"><button class="more-shortcut" id="cancelCourseModal">cancel</button><button class="btn" id="saveCourseModal">${existing?'save changes':'add course'}</button></div>
   </div>`;
   document.body.appendChild(scrim);
+  scrim.querySelectorAll('[data-course-color]').forEach(button=>button.addEventListener('click',()=>{
+    scrim.querySelector('#courseColor').value=button.dataset.courseColor;
+    scrim.querySelectorAll('[data-course-color]').forEach(option=>{const selected=option===button;option.classList.toggle('is-selected',selected);option.setAttribute('aria-pressed',String(selected));});
+  }));
   scrim.querySelector('#cancelCourseModal').addEventListener('click',()=>scrim.remove());
   scrim.addEventListener('click',e=>{if(e.target===scrim)scrim.remove();});
   scrim.querySelector('#saveCourseModal').addEventListener('click',()=>{
@@ -2118,7 +2129,7 @@ function openCourseModal(courseId=null){
       section:scrim.querySelector('#courseSection').value.trim().slice(0,40),
       units:Math.max(0,Math.min(20,Number(scrim.querySelector('#courseUnits').value)||0)),
       room:scrim.querySelector('#courseRoom').value.trim().slice(0,40),
-      color:existing?.color||'pink',
+      color:scrim.querySelector('#courseColor').value,
       academicYear:existing?.academicYear||state.profile?.academicYear||'2026–2027',
       term:scrim.querySelector('#courseTerm').value.trim().slice(0,30),
       schedule:scrim.querySelector('#courseSchedule').value.trim().slice(0,120),
@@ -2291,7 +2302,7 @@ function initDailyHome(){
 
 
 /* ===================== COURSES v2 + GRADEBOOK ===================== */
-const COURSE_COLORS={pink:'#e98aa7',matcha:'#91aa78',lavender:'#9b82c7',blue:'#779cca',peach:'#d99678',rose:'#c96f83'};
+const COURSE_COLORS={pink:'#e98aa7',yellow:'#e6bd58',matcha:'#91aa78',lavender:'#9b82c7',blue:'#779cca',peach:'#d99678',rose:'#c96f83',mint:'#7fb8a4',sky:'#83b8d4',lilac:'#b49acb',butter:'#edd78e',coral:'#e78678',aqua:'#76bcb8',sage:'#a8ba8d',plum:'#b47f9f'};
 const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const GRADE_CATEGORIES={ww:'Written Works & Quizzes',pt:'Enabling Activities',attendance:'Attendance',exam:'Major Exam'};
 let selectedGradeCourseId=null;
