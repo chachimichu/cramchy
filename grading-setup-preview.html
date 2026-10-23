@@ -58,10 +58,10 @@
               <button class="scale-option" data-scale="letter" aria-pressed="false"><span class="scale-icon">Aa</span><span class="check">✓</span><strong>Letter grades</strong><small>A, B+, B, and school-specific quality points.</small></button>
             </div>
             <div class="college-context">
-              <label class="field"><span class="muted-label">School or university</span><input id="collegeName" value="" placeholder="Search or enter your school"></label>
+              <label class="field"><span class="muted-label">School or university</span><input id="collegeName" value="" list="collegeSchools" placeholder="Search or enter your school" autocomplete="off"><datalist id="collegeSchools"><option value="National University – Clark (NU Clark)"></option><option value="National University – Manila"></option><option value="National University – Other campus"></option></datalist></label>
               <label class="field"><span class="muted-label">Academic year</span><select><option>2026–2027</option><option>2025–2026</option><option>Other</option></select></label>
             </div>
-            <div class="profile-detail"><strong>Scale shape isn’t enough to calculate a school grade.</strong> We need a verified school mapping for passing marks, grade steps, and any special marks such as INC or W.</div>
+            <div class="profile-detail" id="collegeProfileDetail"><strong>Scale shape isn’t enough to calculate a school grade.</strong> We need a verified school mapping for passing marks, grade steps, and any special marks such as INC or W.</div>
           </div>
 
           <div id="otherFields" hidden>
@@ -132,7 +132,18 @@
       }
       function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
       function setLevel(next){level=next;$$('.level-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===next)));$('#k12Fields').hidden=next!=='k12';$('#collegeFields').hidden=next!=='college';$('#otherFields').hidden=next!=='other';$('#summaryLevel').textContent=next==='k12'?'K–12':next==='college'?'Higher education':'Other';refreshSummary();}
-      function setScale(next){scale=next;$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===next)));refreshSummary();}
+      function setScale(next){if(isNuClark()&&next!=='four'){scale='four';$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale==='four')));showToast('NU Clark uses the 4.00-to-0.00 profile in this preview.');return;}scale=next;$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===next)));refreshSummary();}
+      function isNuClark(){return /national university.*clark|nu\s*clark/i.test($('#collegeName').value.trim());}
+      function updateCollegeProfile(){
+        const detail=$('#collegeProfileDetail');
+        if(isNuClark()){
+          scale='four';$$('.scale-option').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scale===scale)));
+          detail.innerHTML='<strong>NU Clark · university-wide handbook profile.</strong> The NU Student Handbook lists 4.0 = 96–100, 3.5 = 90–95, 3.0 = 84–89, 2.5 = 78–83, 2.0 = 72–77, 1.5 = 66–71, 1.0 = 60–65; R is repeat below 60 and 0.0 is fail. The handbook is 2023–2024; confirm current Clark and program rules before using a conversion.';
+        } else {
+          detail.innerHTML='<strong>Scale shape isn’t enough to calculate a school grade.</strong> We need a verified school mapping for passing marks, grade steps, and any special marks such as INC or W.';
+        }
+        refreshSummary();
+      }
       function scaleLabel(){if(level==='k12')return 'Needs confirmation';if(level==='other')return $('#otherFormat').value;if(scale==='five')return '1.00–5.00';if(scale==='four')return '0.00–4.00';return 'Letter grades';}
       function refreshSummary(){
         const rows=componentSets[subject],total=rows.reduce((sum,row)=>sum+(Number(row[1])||0),0),valid=!weighted||total===100;
@@ -145,13 +156,13 @@
       $$('.subject-button').forEach(b=>b.addEventListener('click',()=>{subject=b.dataset.subject;$$('.subject-button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderComponents();}));
       $('#gradeLevel').addEventListener('change',()=>{const values={k3:'Kindergarten–Grade 3',g46:'Grades 4–6',g710:'Grades 7–10',g1112:'Grades 11–12'},year=$('#schoolYear').value;$('#k12Detail').innerHTML=`<strong>We’ll check the matching DepEd setup.</strong> ${values[$('#gradeLevel').value]} · ${escapeHtml(year)}. K–12 rules depend on grade level and school year; this preview won’t apply a calculation until the right profile is confirmed.`;refreshSummary();});
       $('#schoolYear').addEventListener('change',()=>$('#gradeLevel').dispatchEvent(new Event('change')));
-      $('#collegeName').addEventListener('input',refreshSummary);$('#otherFormat').addEventListener('change',refreshSummary);
+      $('#collegeName').addEventListener('input',updateCollegeProfile);$('#otherFormat').addEventListener('change',refreshSummary);
       $('#addComponent').addEventListener('click',()=>{componentSets[subject].push(['New component',0]);renderComponents();const input=list.querySelector(`[data-name="${componentSets[subject].length-1}"]`);input?.focus();input?.select();});
       $('#weightedToggle').addEventListener('click',()=>{weighted=!weighted;$('#weightedToggle').setAttribute('aria-checked',String(weighted));renderComponents();});
       const modal=$('#helpModal');function openHelp(){modal.classList.add('open');$('#helpSchool').focus();}function closeHelp(){modal.classList.remove('open');$('#openHelp').focus();}
       $('#openHelp').addEventListener('click',openHelp);$('#openHelp2').addEventListener('click',openHelp);$('#closeHelp').addEventListener('click',closeHelp);modal.addEventListener('click',e=>{if(e.target===modal)closeHelp();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeHelp();});
       $('#sendHelp').addEventListener('click',()=>{$('#helpResult').classList.add('show');$('#helpResult').scrollIntoView({block:'nearest',behavior:'smooth'});});
-      $('#savePreview').addEventListener('click',()=>{const total=componentSets[subject].reduce((sum,row)=>sum+(Number(row[1])||0),0);if(weighted&&total!==100){showToast('Make component weights total 100% before saving.');return;}const payload={educationLevel:level,scale:scaleLabel(),schoolYear:$('#schoolYear').value,gradeLevel:$('#gradeLevel').value,subject,components:componentSets[subject],weighted};try{localStorage.setItem('cramchy-grading-setup-preview',JSON.stringify(payload));$('#savedMessage').classList.add('show');showToast('Saved in this preview only.');}catch{showToast('This browser could not save the preview.');}});
+      $('#savePreview').addEventListener('click',()=>{const total=componentSets[subject].reduce((sum,row)=>sum+(Number(row[1])||0),0);if(weighted&&total!==100){showToast('Make component weights total 100% before saving.');return;}const payload={educationLevel:level,school:$('#collegeName').value.trim(),scale:scaleLabel(),schoolYear:$('#schoolYear').value,gradeLevel:$('#gradeLevel').value,subject,components:componentSets[subject],weighted};try{localStorage.setItem('cramchy-grading-setup-preview',JSON.stringify(payload));$('#savedMessage').classList.add('show');showToast('Saved in this preview only.');}catch{showToast('This browser could not save the preview.');}});
       function showToast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
       renderComponents();
     })();
