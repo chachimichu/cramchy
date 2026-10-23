@@ -121,19 +121,21 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21
   .cramchy-onboard-card .theme-choice,.cramchy-onboard-card .theme-art img,.cramchy-onboard-card .theme-check,.cramchy-onboard-card .onboard-start{transition:none!important}
 }
 
-/* Keep onboarding form text black in every theme. */
+/* Keep onboarding text theme-aware: black in light themes, soft cream in Dark Study. */
+.cramchy-onboard-card{--onboard-copy:#171216}
+body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-copy:#f2e8ed}
 .cramchy-onboard-card .onboard-label,
 .cramchy-onboard-card .onboard-field label,
 .cramchy-onboard-card .onboard-theme-heading small,
 .cramchy-onboard-card .onboard-pills label > span,
 .cramchy-onboard-card .theme-name,
-.cramchy-onboard-card .onboard-start,
 .cramchy-onboard-card input,
 .cramchy-onboard-card select,
 .cramchy-onboard-card .onboard-stepper output{
-  color:#171216!important;
+  color:var(--onboard-copy)!important;
 }
-.cramchy-onboard-card input::placeholder{color:#51494d!important;opacity:.78}
+.cramchy-onboard-card .onboard-start{color:var(--onboard-button-ink)!important}
+.cramchy-onboard-card input::placeholder{color:var(--onboard-copy)!important;opacity:.72}
 
 /* Preserve the original mobile composition and make it fit phone viewports better. */
 @media(max-width:760px){
@@ -177,7 +179,16 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21
   .cramchy-onboard-card .theme-choice{min-height:58px;gap:1px;padding:7px 3px 4px;border-radius:11px;font-size:.62rem}
   .cramchy-onboard-card .theme-art{width:27px;height:24px}
   .cramchy-onboard-card .theme-check{top:4px;right:4px;width:13px;height:13px;font-size:8px}
-  .cramchy-onboard-card .onboard-start{min-height:42px;margin-top:0;padding:9px 14px;font-size:.96rem}
+  .cramchy-onboard-card .onboard-start{
+    box-sizing:border-box;
+    min-width:0;
+    min-height:42px;
+    margin-top:0;
+    padding:8px 6px;
+    font-size:clamp(.64rem,4vw,.9rem);
+    letter-spacing:-.025em;
+    white-space:nowrap;
+  }
 }
 @media(max-height:650px) and (max-width:760px){
   .onboard-hero{padding-top:8px;padding-bottom:7px}
