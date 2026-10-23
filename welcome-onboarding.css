@@ -120,3 +120,60 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21
   .cramchy-onboard-card,.onboard-mark span,.onboard-study-illustration,.theme-art img{animation:none!important}
   .cramchy-onboard-card .theme-choice,.cramchy-onboard-card .theme-art img,.cramchy-onboard-card .theme-check,.cramchy-onboard-card .onboard-start{transition:none!important}
 }
+
+/* Keep onboarding form prompts readable in every theme. */
+.cramchy-onboard-card .onboard-label,
+.cramchy-onboard-card .onboard-field label,
+.cramchy-onboard-card .onboard-theme-heading small,
+.cramchy-onboard-card .onboard-pills label > span,
+.cramchy-onboard-card .theme-name,
+.cramchy-onboard-card .onboard-start,
+.cramchy-onboard-card input,
+.cramchy-onboard-card select,
+.cramchy-onboard-card .onboard-stepper output{
+  color:#171216!important;
+}
+.cramchy-onboard-card input::placeholder{color:#51494d!important;opacity:.78}
+
+/* On phones, make the welcome header compact and keep the setup in view. */
+@media(max-width:760px){
+  .cramchy-onboard{align-items:center;padding:8px}
+  .cramchy-onboard-card{
+    width:min(560px,100%);
+    max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+    overflow:auto;border-radius:22px
+  }
+  .onboard-hero{
+    display:flex;flex-direction:row;justify-content:space-between;gap:10px;
+    min-height:0;padding:10px 16px;border-right:0;border-bottom:1px solid var(--onboard-line)
+  }
+  .onboard-mark{font-size:2rem}
+  .onboard-tagline,.onboard-stage,.onboard-greeting{display:none}
+  .onboard-step-label{font-size:.68rem;padding:3px 10px}
+  .onboard-form{gap:9px;padding:12px 16px 14px}
+  .cramchy-onboard-card .onboard-label,
+  .cramchy-onboard-card .onboard-field label{margin-bottom:4px;font-size:.78rem}
+  .cramchy-onboard-card input,.cramchy-onboard-card select{min-height:40px;padding:8px 11px;font-size:.9rem}
+  .onboard-row{grid-template-columns:1fr 1fr;gap:8px}
+  .onboard-pills{gap:5px}
+  .onboard-pills label>span{padding:6px 9px;font-size:.74rem}
+  .onboard-theme-heading small{font-size:.68rem}
+  .cramchy-onboard-card .theme-picker{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-top:6px}
+  .cramchy-onboard-card .theme-choice{min-height:54px;gap:1px;padding:7px 2px 4px;border-radius:11px;font-size:.6rem}
+  .cramchy-onboard-card .theme-art{width:26px;height:23px}
+  .cramchy-onboard-card .theme-check{top:4px;right:4px;width:13px;height:13px;font-size:8px}
+  .cramchy-onboard-card .onboard-start{min-height:42px;margin-top:0;padding:9px 14px;font-size:.96rem}
+}
+@media(max-width:360px){
+  .onboard-form{padding-left:12px;padding-right:12px}
+  .onboard-row{gap:6px}
+  .cramchy-onboard-card .onboard-label,
+  .cramchy-onboard-card .onboard-field label{font-size:.73rem}
+  .cramchy-onboard-card .theme-picker{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-height:640px) and (max-width:760px){
+  .onboard-hero{padding-top:7px;padding-bottom:7px}
+  .onboard-form{gap:7px;padding-top:9px;padding-bottom:10px}
+  .cramchy-onboard-card .theme-choice{min-height:48px}
+  .cramchy-onboard-card .theme-art{width:22px;height:19px}
+}
