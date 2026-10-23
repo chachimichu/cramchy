@@ -7,18 +7,18 @@
 .cramchy-onboard-card{
   position:relative;width:min(960px,100%);max-height:calc(100dvh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
   display:grid;grid-template-columns:minmax(250px,40%) minmax(0,1fr);overflow:auto;overscroll-behavior:contain;margin:auto;
-  border:1px solid var(--pink-soft,#ffd9e3);border-radius:28px;background:var(--pink-cream,#fffdfc);font-family:'Nunito',system-ui,sans-serif;box-shadow:6px 6px 0 var(--pink-strawberry,#f684b0),0 22px 70px rgba(62,35,46,.2);
+  border:1.5px solid var(--text-main,#3d2420);border-radius:28px;background:var(--ivory,#fffdfc);font-family:'Nunito',system-ui,sans-serif;box-shadow:6px 6px 0 var(--pink-strawberry,#f684b0);
   animation:onboardCardIn .5s cubic-bezier(.2,.9,.3,1.1) both;
 }
 .onboard-hero{
   position:relative;isolation:isolate;overflow:hidden;min-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;
-  padding:34px 26px 28px;background:var(--pink-soft,#ffd9e6);border-right:1px solid var(--pink-soft,#ffd9e6);
+  padding:34px 26px 28px;background:var(--pink-soft,#ffd9e6);border-right:1.5px solid var(--text-main,#3d2420);
 }
 
 .onboard-mark,.onboard-tagline,.onboard-step-label,.onboard-stage,.onboard-greeting{position:relative;z-index:1}
 .onboard-pearl{position:absolute;z-index:0;bottom:-14px;border-radius:50%;background:var(--pink-strawberry,#f684b0);border:1.5px solid var(--red-berry,#c8465e);opacity:.8;pointer-events:none;animation:onboardPearlRise linear infinite}
 @keyframes onboardPearlRise{to{transform:translateY(-110vh) translateX(18px)}}
- .cramchy-onboard-card{--onboard-ink:var(--text-main,#3d2420);--onboard-accent:var(--red-berry,#d94b86);--onboard-accent-soft:var(--pink-strawberry,#f684b0);--onboard-line:var(--pink-soft,#ffd9e6);--onboard-surface:var(--pink-cream,#fff);--onboard-button-ink:var(--text-main,#3d2420)}
+ .cramchy-onboard-card{--onboard-ink:var(--text-main,#3d2420);--onboard-accent:var(--red-berry,#d94b86);--onboard-accent-soft:var(--pink-strawberry,#f684b0);--onboard-line:var(--text-main,#3d2420);--onboard-surface:var(--pink-cream,#fff);--onboard-button-ink:var(--text-main,#3d2420)}
 body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-button-ink:#1c1a21}
 .onboard-mark{margin:0;color:var(--onboard-accent);font:400 clamp(2.8rem,6vw,3.9rem)/1 'DM Serif Display',Georgia,serif;letter-spacing:.01em}
 .onboard-mark span{display:inline-block;animation:onboardLetterDrop .7s cubic-bezier(.3,1.7,.5,1) both;animation-delay:calc(var(--n)*.07s + .12s)}
