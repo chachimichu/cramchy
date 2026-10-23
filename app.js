@@ -215,6 +215,7 @@
   window.__cramchySplashFontsReady=window.__cramchySplashFontsReady||prepareBootSplashFonts();
   refreshStyles()
     .then(()=>forceFreshBaseBundle())
+    .then(()=>loadScript('js/course-schedule-editor.js?v='+VERSION))
     .then(()=>loadScript('boot-resilience-v11.js?v='+VERSION))
     .then(()=>loadScript('js/quick-gwa-rules.js?v='+VERSION))
     .then(()=>loadScript('js/backup-data.js?v='+VERSION))
