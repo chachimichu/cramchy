@@ -1,78 +1,111 @@
+/* Cramchy welcome onboarding, based on the welcome screen design. */
 .cramchy-onboard{
-  z-index:600;align-items:center;overflow-y:auto;overscroll-behavior:contain;
-  padding:max(14px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px));
-  background:radial-gradient(circle at 13% 16%,rgba(244,178,197,.32),transparent 35%),
-    radial-gradient(circle at 88% 82%,rgba(185,207,174,.24),transparent 34%),rgba(68,40,52,.36);
+  position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;
+  overflow-y:auto;overscroll-behavior:contain;padding:max(14px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px));
+  background:radial-gradient(circle at 13% 16%,rgba(244,178,197,.32),transparent 35%),radial-gradient(circle at 88% 82%,rgba(185,207,174,.24),transparent 34%),rgba(68,40,52,.42);
 }
 .cramchy-onboard-card{
-  width:min(550px,100%);max-height:min(900px,calc(100dvh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
-  overflow:auto;overscroll-behavior:contain;margin:auto;padding:23px 26px 22px;border:1px solid rgba(255,255,255,.94);
-  border-radius:30px;background:radial-gradient(circle at 100% 0%,rgba(255,236,241,.9),transparent 31%),
-    linear-gradient(150deg,#fffdfb 0%,#fff8f7 55%,#f9f4ea 100%);
-  box-shadow:0 28px 90px rgba(62,35,46,.24),0 7px 25px rgba(100,57,72,.1);
-  animation:onboardCardIn .42s cubic-bezier(.2,.8,.2,1) both;
+  position:relative;width:min(960px,100%);max-height:calc(100dvh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+  display:grid;grid-template-columns:minmax(250px,40%) minmax(0,1fr);overflow:auto;overscroll-behavior:contain;margin:auto;
+  border:1px solid #ffd9e3;border-radius:28px;background:#fffdfc;box-shadow:6px 6px 0 #f684b0,0 22px 70px rgba(62,35,46,.2);
+  animation:onboardCardIn .5s cubic-bezier(.2,.9,.3,1.1) both;
 }
-.onboard-hero{display:grid;grid-template-columns:minmax(0,1fr) 142px;align-items:center;gap:8px;margin:0 0 14px;padding:0 1px 12px;border-bottom:1px solid #f1dfe4}
-.onboard-hero-copy{min-width:0;text-align:center}
-.onboard-wordmark{display:block;width:min(245px,100%);height:auto;margin:0 auto 4px}
-.onboard-tagline{margin:0;color:#855d68;font:800 13px/1.35 'Nunito',system-ui,sans-serif;letter-spacing:.015em}
-.onboard-step-label{display:inline-block;margin-top:7px;padding:4px 9px;border:1px solid #f0d4dc;border-radius:999px;background:#fff7f8;color:#b45c78;font:850 9px/1.2 'Nunito',system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase}
-.onboard-study-illustration{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 5px 6px rgba(139,78,96,.08));transform-origin:center bottom;animation:onboardArtFloat 5s ease-in-out infinite}
-.theme-art{width:46px;height:40px;display:grid;place-items:center;flex:0 0 auto}
-.theme-art img{display:block;width:92%;height:92%;object-fit:contain;pointer-events:none;transition:transform .2s ease;animation:themeIconFloat 5s ease-in-out infinite;will-change:transform}
-.theme-choice:nth-child(even) .theme-art img{animation-delay:-2.5s}
-#settingsThemePicker .theme-choice{min-width:0;min-height:82px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;overflow:hidden;padding:9px 6px 7px;border:1.5px solid var(--pink-soft);border-radius:16px;background:var(--pink-cream);color:var(--text-main);font:800 .72rem/1.2 'Nunito',system-ui,sans-serif;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
-#settingsThemePicker .theme-choice:hover{transform:translateY(-2px);border-color:var(--red-berry);box-shadow:0 7px 15px rgba(128,69,89,.1)}
-#settingsThemePicker .theme-choice:hover .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.02)}
-#settingsThemePicker .theme-choice.selected{border-color:var(--red-berry);box-shadow:0 0 0 3px color-mix(in srgb,var(--red-berry) 17%,transparent)}
-#settingsThemePicker .theme-dot{position:absolute;top:0;left:0;width:100%;height:4px;margin:0;border:0;border-radius:0;box-shadow:none}
-#settingsThemePicker .theme-art{width:38px;height:34px}
-#settingsThemePicker .theme-name{max-width:100%;overflow-wrap:anywhere;text-align:center}
-#settingsThemePicker .theme-check{position:absolute;top:6px;right:6px;width:15px;height:15px;display:grid;place-items:center;border-radius:50%;background:var(--red-berry);color:#fff;font:900 9px/1 'Nunito',system-ui,sans-serif;opacity:0;transform:scale(.75);transition:opacity .16s ease,transform .16s ease}
-#settingsThemePicker .theme-choice.selected .theme-check{opacity:1;transform:scale(1)}
-.cramchy-onboard-card>label,.cramchy-onboard-card .onboard-field label,.cramchy-onboard-card .onboard-theme-heading label{display:block;margin:9px 0 5px;color:#99566d;font:850 11px/1.25 'Nunito',system-ui,sans-serif;letter-spacing:.025em}
-.cramchy-onboard-card input,.cramchy-onboard-card select{width:100%;min-width:0;min-height:42px;box-sizing:border-box;border:1.5px solid #efd5dd;border-radius:14px;padding:9px 12px;background:rgba(255,255,255,.9);color:#563843;font:650 14px/1.3 'Nunito',system-ui,sans-serif;outline:none;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
-.cramchy-onboard-card input:focus,.cramchy-onboard-card select:focus{border-color:#df7f9d;background:white;box-shadow:0 0 0 4px rgba(221,117,147,.13)}
+.onboard-hero{
+  position:relative;isolation:isolate;overflow:hidden;min-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:34px 26px 28px;background:#fff0f5;border-right:1px solid #ffd9e3;
+}
+.onboard-hero:before,.onboard-hero:after{content:"";position:absolute;z-index:-1;border-radius:50%;background:rgba(255,255,255,.43);pointer-events:none}
+.onboard-hero:before{width:250px;height:250px;top:-105px;right:-95px}
+.onboard-hero:after{width:185px;height:185px;left:-85px;bottom:-80px;background:rgba(255,217,227,.5)}
+.onboard-mark{margin:0;color:#d94b86;font:400 clamp(2.8rem,6vw,3.9rem)/1 'DM Serif Display','Playfair Display',Georgia,serif;letter-spacing:.01em}
+.onboard-mark span{display:inline-block;animation:onboardLetterDrop .7s cubic-bezier(.3,1.7,.5,1) both;animation-delay:calc(var(--n)*.07s + .12s)}
+.onboard-tagline{margin:7px 0 10px;color:#855d68;font:800 .95rem/1.4 'Nunito',system-ui,sans-serif}
+.onboard-step-label{display:inline-block;border:1px solid #ffd9e3;border-radius:99px;padding:3px 13px;background:#fff;color:#8a6268;font-size:.8rem}
+.onboard-stage{position:relative;flex:1;display:grid;place-items:center;width:100%;min-height:190px}
+.onboard-study-illustration{position:relative;z-index:1;display:block;width:min(170px,75%);height:auto;overflow:visible;filter:drop-shadow(0 6px 7px rgba(139,78,96,.12));transform-origin:center bottom;animation:onboardArtFloat 5s ease-in-out infinite}
+.onboard-shadow{position:absolute;bottom:16%;width:100px;height:12px;border-radius:50%;background:#e76f91;opacity:.24;animation:onboardShadowPulse 4s ease-in-out infinite}
+.onboard-greeting{margin:0;background:#fff;border:1px solid #f0d4dc;border-radius:16px;padding:8px 16px;color:#72545e;font:600 1rem/1.3 'Fredoka','Nunito',sans-serif}
+.onboard-form{min-width:0;display:grid;gap:15px;align-content:start;padding:30px clamp(20px,4vw,38px) 28px}
+.cramchy-onboard-card .onboard-label,.cramchy-onboard-card .onboard-field label{display:block;margin:0 0 6px;color:#99566d;font:850 .84rem/1.25 'Nunito',system-ui,sans-serif;letter-spacing:.015em}
+.onboard-field{min-width:0}
+.cramchy-onboard-card input,.cramchy-onboard-card select{width:100%;min-width:0;min-height:44px;box-sizing:border-box;border:1px solid #efd5dd;border-radius:14px;padding:10px 14px;background:rgba(255,255,255,.96);color:#563843;font:650 .98rem/1.3 'Nunito',system-ui,sans-serif;outline:none;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.cramchy-onboard-card input:focus,.cramchy-onboard-card select:focus{border-color:#df7f9d;background:#fff;box-shadow:0 0 0 3px rgba(221,117,147,.13)}
 .cramchy-onboard-card input::placeholder{color:#b699a1}
-.cramchy-onboard-card>div[style*="grid-template-columns"]{gap:11px!important}
-.onboard-field{margin:0 0 1px}
-.onboard-theme-section{margin-top:9px}
-.onboard-theme-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.cramchy-onboard-card .onboard-theme-heading label{margin-bottom:2px}
-.onboard-theme-heading>span{color:#9a7b83;font:650 10px/1.35 'Nunito',system-ui,sans-serif;text-align:right}
-.cramchy-onboard-card .theme-picker{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.onboard-row{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;align-items:end}
+.onboard-stepper{min-height:44px;display:flex;align-items:stretch;overflow:hidden;border:1px solid #efd5dd;border-radius:14px;background:#fff}
+.onboard-stepper button{width:40px;flex:0 0 40px;border:0;background:#fff0f5;color:#855d68;font-size:1.3rem;line-height:1;transition:background .18s}
+.onboard-stepper button:hover{background:#ffd9e3}
+.onboard-stepper output{flex:1;display:grid;place-items:center;color:#563843;font-weight:850;font-variant-numeric:tabular-nums}
+.onboard-pills{display:flex;gap:6px;flex-wrap:wrap}
+.onboard-pills label{position:relative;cursor:pointer}
+.onboard-pills input{position:absolute!important;opacity:0!important;inset:0;width:100%;height:100%;min-height:0!important;margin:0;padding:0!important;cursor:pointer}
+.onboard-pills label>span{display:block;border:1px solid #efd5dd;border-radius:99px;padding:7px 12px;background:#fff;color:#72545e;font-size:.83rem;line-height:1.2;white-space:nowrap;transition:transform .18s ease,background .18s ease}
+.onboard-pills label:hover>span{transform:translateY(-1px)}
+.onboard-pills input:checked+span{border-color:#df7f9d;background:#fce4eb;color:#85455b}
+.onboard-pills input:focus-visible+span{outline:3px solid #d94b86;outline-offset:2px}
+.onboard-motivations{gap:7px}
+.onboard-theme-section{min-width:0}
+.onboard-theme-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.onboard-theme-heading .onboard-label{margin:0}
+.onboard-theme-heading small{color:#9a7b83;font:650 .76rem/1.35 'Nunito',system-ui,sans-serif}
+.cramchy-onboard-card .theme-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
 .cramchy-onboard-card .theme-choice{
-  position:relative;min-width:0;min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  overflow:hidden;padding:10px 4px 7px;border:1.5px solid #f0e5e4;border-radius:16px;
-  background:linear-gradient(155deg,rgba(255,255,255,.98),rgba(255,250,248,.88));
-  box-shadow:0 3px 9px rgba(102,64,76,.045);color:#72545e;font:800 9.5px/1.15 'Nunito',system-ui,sans-serif;
-  cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
+  position:relative;min-width:0;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  overflow:hidden;padding:12px 5px 7px;border:1px solid #f0e5e4;border-radius:15px;background:#fffaf8;color:#72545e;
+  font:800 .74rem/1.15 'Nunito',system-ui,sans-serif;cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
 }
-.cramchy-onboard-card .theme-choice:hover{transform:translateY(-2px);border-color:#edbdcb;box-shadow:0 7px 15px rgba(128,69,89,.11)}
-.cramchy-onboard-card .theme-choice.selected{border-color:#dc6c8b;background:linear-gradient(155deg,#fff,#fff4f6);box-shadow:0 0 0 3px rgba(221,117,147,.13),0 7px 15px rgba(128,69,89,.09);color:#754254}
+.cramchy-onboard-card .theme-choice:hover{transform:translateY(-2px);border-color:#edbdcb;box-shadow:0 6px 14px rgba(128,69,89,.1)}
+.cramchy-onboard-card .theme-choice.selected{border-color:#df7f9d;background:#fff1f5;box-shadow:0 0 0 2px rgba(221,117,147,.13);color:#754254}
 .cramchy-onboard-card .theme-dot{position:absolute;top:0;left:0;width:100%;height:4px;margin:0;border:0;border-radius:0;box-shadow:none}
-.cramchy-onboard-card .theme-art{width:39px;height:32px;margin-top:1px}
-.cramchy-onboard-card .theme-choice:hover .theme-art img,.cramchy-onboard-card .theme-choice.selected .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.02)}
+.cramchy-onboard-card .theme-art{width:42px;height:38px;margin-top:1px}
+.cramchy-onboard-card .theme-art img{display:block;width:92%;height:92%;object-fit:contain;pointer-events:none;transition:transform .2s ease;animation:themeIconFloat 5s ease-in-out infinite}
+.cramchy-onboard-card .theme-choice:nth-child(even) .theme-art img{animation-delay:-2.5s}
+.cramchy-onboard-card .theme-choice:hover .theme-art img,.cramchy-onboard-card .theme-choice.selected .theme-art img{animation-play-state:paused;transform:translateY(-1px) scale(1.03)}
 .cramchy-onboard-card .theme-name{max-width:100%;display:block;overflow-wrap:anywhere;text-align:center}
-.cramchy-onboard-card .theme-check{position:absolute;top:7px;right:7px;width:15px;height:15px;display:grid;place-items:center;border-radius:50%;background:#d86f8e;color:white;font:900 9px/1 'Nunito',system-ui,sans-serif;opacity:0;transform:scale(.7);transition:opacity .16s ease,transform .16s ease}
+.cramchy-onboard-card .theme-check{position:absolute;top:6px;right:6px;width:16px;height:16px;display:grid;place-items:center;border-radius:50%;background:#d86f8e;color:#fff;font:900 9px/1 'Nunito',system-ui,sans-serif;opacity:0;transform:scale(.7);transition:opacity .16s ease,transform .16s ease}
 .cramchy-onboard-card .theme-choice.selected .theme-check{opacity:1;transform:scale(1)}
-.cramchy-onboard-card .onboard-start{min-height:47px;margin-top:15px;border-radius:16px;background:linear-gradient(105deg,#f18da7,#dc5d7d);box-shadow:0 8px 18px rgba(201,75,108,.2);font:900 14px 'Nunito',system-ui,sans-serif;letter-spacing:.01em;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
-.cramchy-onboard-card .onboard-start:hover{transform:translateY(-2px);box-shadow:0 11px 22px rgba(201,75,108,.25);filter:saturate(1.05)}
+.cramchy-onboard-card .onboard-start{width:100%;min-height:49px;margin-top:2px;border:1px solid #c8465e;border-radius:99px;background:#f684b0;color:#563843;box-shadow:4px 4px 0 #c8465e;padding:11px 20px;font:600 1.08rem/1.2 'Fredoka','Nunito',sans-serif;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,filter .15s ease}
+.cramchy-onboard-card .onboard-start:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:6px 6px 0 #c8465e;filter:saturate(1.05)}
+.cramchy-onboard-card .onboard-start:active:not(:disabled){transform:translate(3px,3px);box-shadow:1px 1px 0 #c8465e}
+.cramchy-onboard-card .onboard-start i{display:inline-block;margin-left:3px;font-style:normal;transition:transform .18s ease}
+.cramchy-onboard-card .onboard-start:hover i{transform:translateX(4px)}
+.cramchy-onboard-card .onboard-start:disabled{opacity:.78;cursor:wait}
 .cramchy-onboard-card .onboard-start:focus-visible,.cramchy-onboard-card .theme-choice:focus-visible{outline:3px solid rgba(199,76,110,.38);outline-offset:3px}
 @keyframes onboardCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
-@keyframes onboardArtFloat{0%,100%{transform:translateY(1px) rotate(0)}50%{transform:translateY(-4px) rotate(-1deg)}}
+@keyframes onboardLetterDrop{from{opacity:0;transform:translateY(-24px) rotate(-6deg)}to{opacity:1;transform:none}}
+@keyframes onboardArtFloat{0%,100%{transform:translateY(1px) rotate(0)}50%{transform:translateY(-5px) rotate(-1deg)}}
+@keyframes onboardShadowPulse{0%,100%{transform:scale(1);opacity:.24}50%{transform:scale(.8);opacity:.14}}
 @keyframes themeIconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
-@media(max-width:600px){
-  .cramchy-onboard{padding-left:11px;padding-right:11px}
-  .cramchy-onboard-card{width:min(510px,100%);max-height:calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:17px 17px 16px;border-radius:25px}
-  .onboard-hero{grid-template-columns:minmax(0,1fr) 104px;gap:2px;margin-bottom:10px;padding-bottom:8px}
-  .onboard-wordmark{width:min(205px,100%)}.onboard-tagline{font-size:11px}.onboard-step-label{margin-top:5px;font-size:8px}
-  .cramchy-onboard-card>div[style*="grid-template-columns"]{gap:8px!important}
-  .cramchy-onboard-card .theme-picker{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-  .cramchy-onboard-card .theme-choice{min-height:70px;border-radius:14px;padding:8px 3px 6px;font-size:9px}
-  .cramchy-onboard-card .theme-art{width:35px;height:28px}
-  .cramchy-onboard-card input,.cramchy-onboard-card select{min-height:40px;padding:8px 10px;font-size:13px}
-  .cramchy-onboard-card .onboard-start{min-height:44px;margin-top:12px;font-size:13px}
+@media(max-width:760px){
+  .cramchy-onboard{align-items:flex-start;padding:11px}
+  .cramchy-onboard-card{width:min(620px,100%);max-height:calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));grid-template-columns:1fr;border-radius:25px}
+  .onboard-hero{display:grid;grid-template-columns:minmax(0,1fr) 112px;grid-template-rows:auto auto auto;gap:2px 8px;align-items:center;text-align:left;min-height:0;padding:16px 20px 13px;border-right:0;border-bottom:1px solid #ffd9e3}
+  .onboard-mark,.onboard-tagline,.onboard-step-label{grid-column:1}
+  .onboard-mark{font-size:2.45rem}
+  .onboard-tagline{font-size:.8rem;margin:2px 0 4px}
+  .onboard-step-label{justify-self:start;font-size:.7rem}
+  .onboard-stage{grid-column:2;grid-row:1/4;min-height:0;width:112px;height:112px}
+  .onboard-study-illustration{width:98px}
+  .onboard-shadow{bottom:17%;width:70px}
+  .onboard-greeting{grid-column:1/-1;justify-self:center;margin-top:9px;padding:6px 12px;font-size:.9rem}
+  .onboard-form{gap:11px;padding:16px 20px 19px}
+  .onboard-row{grid-template-columns:.9fr 1.2fr;gap:9px}
+  .cramchy-onboard-card .theme-picker{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .cramchy-onboard-card .theme-choice{min-height:69px;border-radius:13px;padding:9px 3px 5px;font-size:.66rem}
+  .cramchy-onboard-card .theme-art{width:34px;height:29px}
+  .cramchy-onboard-card .onboard-start{min-height:45px;font-size:1rem}
 }
-@media(max-width:350px){.cramchy-onboard-card{padding:14px 13px}.onboard-hero{grid-template-columns:minmax(0,1fr) 85px}.onboard-tagline{font-size:10px}.cramchy-onboard-card .theme-picker{gap:5px}}
-@media(prefers-reduced-motion:reduce){.cramchy-onboard-card,.onboard-study-illustration,.theme-art img{animation:none!important}.cramchy-onboard-card .theme-choice,.cramchy-onboard-card .theme-art img,.cramchy-onboard-card .theme-check,.cramchy-onboard-card .onboard-start,#settingsThemePicker .theme-choice,#settingsThemePicker .theme-check{transition:none!important}}
+@media(max-width:420px){
+  .onboard-hero{grid-template-columns:minmax(0,1fr) 88px;padding:14px 15px 11px}
+  .onboard-stage{width:88px;height:96px}
+  .onboard-study-illustration{width:82px}
+  .onboard-form{padding:14px 15px 17px}
+  .onboard-row{grid-template-columns:1fr;gap:10px}
+  .onboard-theme-heading small{font-size:.68rem}
+  .cramchy-onboard-card .theme-picker{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cramchy-onboard-card .theme-choice{min-height:68px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cramchy-onboard-card,.onboard-mark span,.onboard-study-illustration,.onboard-shadow,.theme-art img{animation:none!important}
+  .cramchy-onboard-card .theme-choice,.cramchy-onboard-card .theme-art img,.cramchy-onboard-card .theme-check,.cramchy-onboard-card .onboard-start{transition:none!important}
+}
