@@ -2027,7 +2027,7 @@ function openCramchyOnboarding(){
   }
   overlay.querySelector('#onboardMark').innerHTML='cramchy.'.split('').map((character,index)=>'<span style="--n:'+index+'" aria-hidden="true">'+character+'</span>').join('');
   const setYear=()=>{overlay.querySelector('#onboardYearValue').textContent=year+'–'+(year+1);};
-  const updateGreeting=()=>{const hour=new Date().getHours(),period=hour<12?'morning':hour<18?'afternoon':'evening',name=overlay.querySelector('#onboardName').value.trim();overlay.querySelector('#onboardGreeting').textContent='good '+period+(name?', '+name:'')+'.';};
+  const updateGreeting=()=>{const hour=new Date().getHours(),period=hour<12?'morning':hour<18?'afternoon':'evening',name=overlay.querySelector('#onboardName').value.trim();overlay.querySelector('#onboardGreeting').innerHTML='good '+period+(name?', <b>'+escapeHtml(name)+'</b>':'')+'.';};
   setYear();updateGreeting();
   const selectedTerm=state.profile?.term||'Term 1';
   const termRadio=overlay.querySelector('input[name="onboardTerm"][value="'+selectedTerm+'"]');
