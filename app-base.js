@@ -2471,7 +2471,7 @@ function removeCourse(courseId){
 function scheduleRowMarkup(s={}){
   const selected=new Set(Array.isArray(s.days)?s.days:[]);
   return `<div class="schedule-row-edit" data-schedule-row>
-    <div class="schedule-days-field"><label>days</label><div class="schedule-day-picker" role="group" aria-label="Meeting days">${DAY_NAMES.map(d=>`<button type="button" data-sch-day="${d}" aria-label="${d}" aria-pressed="${selected.has(d)}">${d.slice(0,3)}</button>`).join('')}</div><div class="small-note">Choose every day with this same time.</div></div>
+    <div class="schedule-days-field"><label>days</label><div class="schedule-day-picker" role="group" aria-label="Meeting days">${DAY_NAMES.map(d=>`<button type="button" data-sch-day="${d}" aria-label="${d}" aria-pressed="${selected.has(d)}">${d.slice(0,3)}</button>`).join('')}</div><div class="small-note" data-sch-days-summary aria-live="polite">No days selected yet</div></div>
     <div><label>start</label><input type="time" data-sch-start value="${escapeAttr(s.start||'')}"></div>
     <div><label>end</label><input type="time" data-sch-end value="${escapeAttr(s.end||'')}"></div>
     <div class="schedule-room"><label>room / place</label><input data-sch-room value="${escapeAttr(s.room||'')}" placeholder="Room 609"></div>
@@ -2519,8 +2519,8 @@ function openCourseModal(courseId=null,focusSchedules=false){
   }));
   const rows=scrim.querySelector('#scheduleRows');
   const bindRemove=()=>scrim.querySelectorAll('[data-remove-schedule]').forEach(btn=>{btn.onclick=()=>{const row=btn.closest('[data-schedule-row]'); if(scrim.querySelectorAll('[data-schedule-row]').length>1)row.remove(); else{row.querySelectorAll('input').forEach(i=>i.value='');row.querySelectorAll('[data-sch-day]').forEach(day=>day.setAttribute('aria-pressed','false'));}}});
-  const bindDays=scope=>scope.querySelectorAll('[data-sch-day]').forEach(button=>button.addEventListener('click',()=>button.setAttribute('aria-pressed',String(button.getAttribute('aria-pressed')!=='true'))));
-  bindRemove();bindDays(scrim);
+  const bindDays=scope=>scope.querySelectorAll('[data-sch-day]').forEach(button=>button.addEventListener('click',()=>{button.setAttribute('aria-pressed',String(button.getAttribute('aria-pressed')!=='true'));const row=button.closest('[data-schedule-row]'),selected=[...row.querySelectorAll('[data-sch-day][aria-pressed="true"]')].map(day=>day.textContent.trim());row.querySelector('[data-sch-days-summary]').textContent=selected.length?`Selected: ${selected.join(', ')}`:'No days selected yet';}));
+  bindRemove();bindDays(scrim);scrim.querySelectorAll('[data-schedule-row]').forEach(row=>{const selected=[...row.querySelectorAll('[data-sch-day][aria-pressed="true"]')].map(day=>day.textContent.trim());if(selected.length)row.querySelector('[data-sch-days-summary]').textContent=`Selected: ${selected.join(', ')}`;});
   scrim.querySelector('#addScheduleRowBtn').addEventListener('click',()=>{rows.insertAdjacentHTML('beforeend',scheduleRowMarkup({}));bindRemove();bindDays(rows.lastElementChild);});
   const updateWeightTotal=()=>{const vals=['weightWW','weightPT','weightAttendance','weightExam'].map(id=>Number(scrim.querySelector('#'+id).value)||0);const total=vals.reduce((a,b)=>a+b,0);const el=scrim.querySelector('#weightTotal');el.textContent=`total: ${total}%${Math.abs(total-100)<0.001?' ✓':' — must equal 100%'}`;el.style.color=Math.abs(total-100)<0.001?'var(--matcha-dark)':'#a43f55';};
   ['weightWW','weightPT','weightAttendance','weightExam'].forEach(id=>scrim.querySelector('#'+id).addEventListener('input',updateWeightTotal));updateWeightTotal();
