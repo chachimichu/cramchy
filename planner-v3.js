@@ -380,7 +380,7 @@
           if(plannerSaved){try{saveEvents();}catch(rollbackError){console.warn('Planner conversion rollback kept in memory.',rollbackError);}}
           showTimeError('Could not save this task. Your previous entry and this form were kept.');return;
         }
-        closeModal();if(item.date){selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);}renderAllPlanner();return;
+        if(!editingId)window.CramchyCelebrate?.add($('#plannerSaveBtn')?.getBoundingClientRect());closeModal();if(item.date){selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);}renderAllPlanner();return;
       }
       const previous=events;
       const convertingTask=editingId&&window.CramchyTaskBridge?.tasks.some(t=>t.id===editingId);
@@ -394,7 +394,7 @@
         if(plannerSaved){try{saveEvents();}catch(rollbackError){console.warn('Planner conversion rollback kept in memory.',rollbackError);}}
         showTimeError('Could not save this event. Your previous entry and this form were kept.');return;
       }
-      selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);closeModal();setPlannerView('day');
+      if(!editingId)window.CramchyCelebrate?.add($('#plannerSaveBtn')?.getBoundingClientRect());selectedDate=item.date;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);closeModal();setPlannerView('day');
     });
     $('#plannerDeleteBtn')?.addEventListener('click',()=>{
       if(!editingId)return;
