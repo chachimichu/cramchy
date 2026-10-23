@@ -14,7 +14,7 @@
   gap:10px;
 }
 .course-modal .schedule-row-edit>*{min-width:0;}
-.course-modal .schedule-row-edit>div:first-child{grid-column:1/-1;}
+.course-modal .schedule-row-edit .schedule-days-field{grid-column:1/-1;}
 .course-modal .schedule-row-edit .schedule-room{grid-column:1/-1;}
 .course-modal .schedule-remove-btn{justify-self:end;min-width:44px;min-height:44px;}
 /* Explicit border-box sizing also contains the native iPad date/time editor.
