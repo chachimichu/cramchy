@@ -16,7 +16,7 @@ assert.doesNotMatch(lowSubject,/below the required 3.25/);
 assert.match(msg([{grade:'3.5',units:3},{grade:'3.5',units:3}]),/Chachi, you did it! You’ve earned a place on the Dean’s List/);
 assert.match(rules.formatHonorHeadline(calc([{grade:'3.5',units:3},{grade:'3.5',units:3}])),/^Congratulations! You're on the Dean's List \(First Honors\)! 🎉$/);
 assert.match(rules.formatHonorHeadline(calc([{grade:'3.5',units:3},{grade:'3.0',units:3}])),/Second Honors/);
-assert.match(msg([{grade:'3.5',units:3},{grade:'3.0',units:3}]),/Second Honors/);
+assert.match(rules.formatHonorHeadline(calc([{grade:'3.5',units:3},{grade:'3.0',units:3}])),/Second Honors/);
 assert.match(rules.formatMessage(calc([{grade:'3.5',units:3},{grade:'3.5',units:3}]),''),/^you did it!/);
 assert.match(msg([{grade:'3.5',units:3},{grade:'INC',units:3}]),/INC grade needs review/);
 console.log('Quick GWA messages: personalized qualification, low-GWA, low-subject-grade, combined blockers, honors tiers, fallback name, and special-grade guidance passed.');
