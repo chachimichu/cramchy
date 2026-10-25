@@ -29,7 +29,6 @@
     const result=document.querySelector('#quickGwaRoot .quick-gwa-result.show');
     if(!result) return;
 
-    result.querySelector('.quick-gwa-honor')?.remove();
     const eligible=result.dataset.dlEligible==='yes';
     const message=result.dataset.dlReason||'';
     const sub=result.querySelector('.quick-gwa-sub');
