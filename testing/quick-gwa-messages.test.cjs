@@ -1,5 +1,6 @@
 const assert=require('node:assert/strict');
-const rules=require('../js/quick-gwa-rules.js');
+require('../js/quick-gwa-rules.js');
+const rules=globalThis.CramchyModules.quickGwaRules;
 const calc=rows=>rules.compute(rows);
 const msg=(rows,name='Chachi')=>rules.formatMessage(calc(rows),name);
 const both=msg([{grade:'2.0',units:3},{grade:'3.0',units:3}]);
