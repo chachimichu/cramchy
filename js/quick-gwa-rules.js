@@ -51,12 +51,11 @@
     const prefix=String(name||'').trim();
     const address=prefix?prefix+', ':'';
     if(result.eligible){
-      const honors=result.gwa>=3.50?'First Honors':'Second Honors';
-      return `${address}you did it! Your grades meet the calculator’s criteria for the Dean’s List (${honors}). You should be proud of yourself! 💗`;
+      return `${address}you did it! You’ve earned a place on the Dean’s List. I’m so proud of the work you put in. Celebrate this win! 💗`;
     }
     const reasons=[];
-    if(result.blockers?.some(item=>item.reason==='grade below 2.5'))reasons.push('at least one of your subject grades was below 2.5');
     if(result.gwa<3.25)reasons.push(`your GWA of ${result.gwa.toFixed(2)} was below the required 3.25`);
+    if(result.blockers?.some(item=>item.reason==='grade below 2.5'))reasons.push('at least one of your subject grades was below 2.5');
     const special=result.blockers?.filter(item=>item.reason==='incomplete grade'||item.reason==='repeat grade')||[];
     if(special.length){
       const labels=[...new Set(special.map(item=>item.grade))];
@@ -65,9 +64,15 @@
     }
     if(!reasons.length)reasons.push('your results did not meet the Dean’s List criteria used by this estimate');
     const explanation=reasons.length===1?reasons[0]:reasons.slice(0,-1).join(', ')+', and '+reasons[reasons.length-1];
-    const followUp=special.length?' Please check with your campus how those grades affect eligibility.':' Keep going—you can work toward it again next term.';
-    return `${address}you didn’t qualify under the calculator’s Dean’s List criteria because ${explanation}. This doesn’t erase your effort.${followUp} 💗`;
+    const followUp=special.length?' Please check with your campus how those grades affect eligibility.':' Keep going—you can aim for it again next term.';
+    return `${address}you worked hard this term, and you still have progress to be proud of. You didn’t qualify for the Dean’s List because ${explanation}. ${followUp.trim()} 💗`;
   }
 
-  root.CramchyModules.quickGwaRules={numericGrades:[...NUMERIC],specialGrades:[...SPECIAL],allowedGrades:['',...NUMERIC,...SPECIAL],options:OPTIONS.map(item=>({...item})),normalize,compute,formatMessage};
+  function formatHonorHeadline(result){
+    if(!result?.eligible)return '';
+    const honors=result.gwa>=3.50?'First Honors':'Second Honors';
+    return `Congratulations! You're on the Dean's List (${honors})! 🎉`;
+  }
+
+  root.CramchyModules.quickGwaRules={numericGrades:[...NUMERIC],specialGrades:[...SPECIAL],allowedGrades:['',...NUMERIC,...SPECIAL],options:OPTIONS.map(item=>({...item})),normalize,compute,formatMessage,formatHonorHeadline};
 })(typeof window==='undefined'?globalThis:window);
