@@ -2847,7 +2847,7 @@ function launchQuickConfetti(){
         {opacity:1,transform:'translate(-50%,-50%) scale(1) rotate(30deg)',offset:.12},
         {opacity:1,transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin*.55}deg)`,offset:.62},
         {opacity:0,transform:`translate(calc(-50% + ${dx*1.18}px),calc(-50% + ${dy+92}px)) rotate(${spin}deg)`}
-      ],{duration:1450+Math.random()*650,delay:index*115+Math.random()*100,easing:'cubic-bezier(.16,.65,.35,1)',fill:'forwards'}));
+      ],{duration:1450+Math.random()*650,delay:index*115+Math.random()*100,easing:'cubic-bezier(.16,.65,.35,1)',fill:'both'}));
     }
   });
   for(let i=0;i<110;i++){
@@ -2861,7 +2861,7 @@ function launchQuickConfetti(){
       {opacity:1,transform:`translate3d(${drift*.35}px,35px,0) rotate(${spin*.35}deg)`,offset:.18},
       {opacity:.95,transform:`translate3d(${drift}px,${130+Math.random()*280}px,0) rotate(${spin}deg)`,offset:.72},
       {opacity:0,transform:`translate3d(${drift*1.2}px,${230+Math.random()*380}px,0) rotate(${spin*1.3}deg)`}
-    ],{duration:1700+Math.random()*1000,delay:Math.random()*650,easing:'cubic-bezier(.18,.65,.4,1)',fill:'forwards'}));
+    ],{duration:1700+Math.random()*1000,delay:Math.random()*650,easing:'cubic-bezier(.18,.65,.4,1)',fill:'both'}));
   }
   const cleanup=()=>{animations.forEach(animation=>animation.cancel());layer.remove();if(quickGwaCelebrationCleanup===cleanup)quickGwaCelebrationCleanup=null;};
   quickGwaCelebrationCleanup=cleanup;
