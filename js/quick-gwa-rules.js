@@ -60,7 +60,8 @@
     const special=result.blockers?.filter(item=>item.reason==='incomplete grade'||item.reason==='repeat grade')||[];
     if(special.length){
       const labels=[...new Set(special.map(item=>item.grade))];
-      reasons.push(`${labels.join(' and ')} grade${labels.length===1?'':'s'} need review, so this estimate can’t confirm your eligibility`);
+      const gradeNoun=labels.length===1?'grade':'grades',verb=labels.length===1?'needs':'need';
+      reasons.push(`${labels.join(' and ')} ${gradeNoun} ${verb} review, so this estimate can’t confirm your eligibility`);
     }
     if(!reasons.length)reasons.push('your results did not meet the Dean’s List criteria used by this estimate');
     const explanation=reasons.length===1?reasons[0]:reasons.slice(0,-1).join(', ')+', and '+reasons[reasons.length-1];
