@@ -2813,7 +2813,7 @@ function resetQuickGwa(){
   saveState();renderQuickGwa();
 }
 function quickGwaHonorLabel(calc){
-  return calc?.honorLabel||'';
+  return quickGwaRules.formatHonorHeadline(calc);
 }
 function quickGwaMessage(calc){
   return quickGwaRules.formatMessage(calc,state.profile?.name||'');
@@ -2833,19 +2833,10 @@ function launchQuickConfetti(){
     {x:.61,y:.43},{x:.93,y:.50},{x:.39,y:.76},{x:.79,y:.81}
   ];
   bursts.forEach((point,index)=>{
-    const x=Math.round(innerWidth*point.x),y=Math.round(innerHeight*point.y),color=palette[index%palette.length];
-    const ring=document.createElement('span');
-    ring.className='quick-gwa-firework-ring';
-    ring.style.left=`${x}px`;ring.style.top=`${y}px`;ring.style.borderColor=color;
-    layer.appendChild(ring);
-    animations.push(ring.animate([
-      {opacity:.9,transform:'translate(-50%,-50%) scale(.12)'},
-      {opacity:.55,transform:'translate(-50%,-50%) scale(5.2)',offset:.38},
-      {opacity:0,transform:'translate(-50%,-50%) scale(9.5)'}
-    ],{duration:930,delay:index*115,easing:'cubic-bezier(.14,.7,.3,1)'}));
-    const count=24;
+    const x=Math.round(innerWidth*point.x),y=Math.round(innerHeight*point.y);
+    const count=30;
     for(let i=0;i<count;i++){
-      const piece=document.createElement('span'),angle=Math.PI*2*i/count+(Math.random()-.5)*.3,distance=55+Math.random()*120;
+      const piece=document.createElement('span'),angle=Math.PI*2*i/count+(Math.random()-.5)*.3,distance=55+Math.random()*125;
       const dx=Math.cos(angle)*distance,dy=Math.sin(angle)*distance,spin=Math.round((Math.random()-.5)*900);
       piece.className='quick-gwa-firework-piece';
       piece.style.left=`${x}px`;piece.style.top=`${y}px`;piece.style.background=palette[(i+index)%palette.length];
@@ -2856,7 +2847,7 @@ function launchQuickConfetti(){
         {opacity:1,transform:'translate(-50%,-50%) scale(1) rotate(30deg)',offset:.12},
         {opacity:1,transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin*.55}deg)`,offset:.62},
         {opacity:0,transform:`translate(calc(-50% + ${dx*1.18}px),calc(-50% + ${dy+92}px)) rotate(${spin}deg)`}
-      ],{duration:1450+Math.random()*650,delay:index*115+Math.random()*100,easing:'cubic-bezier(.16,.65,.35,1)'}));
+      ],{duration:1450+Math.random()*650,delay:index*115+Math.random()*100,easing:'cubic-bezier(.16,.65,.35,1)',fill:'forwards'}));
     }
   });
   for(let i=0;i<110;i++){
@@ -2870,7 +2861,7 @@ function launchQuickConfetti(){
       {opacity:1,transform:`translate3d(${drift*.35}px,35px,0) rotate(${spin*.35}deg)`,offset:.18},
       {opacity:.95,transform:`translate3d(${drift}px,${130+Math.random()*280}px,0) rotate(${spin}deg)`,offset:.72},
       {opacity:0,transform:`translate3d(${drift*1.2}px,${230+Math.random()*380}px,0) rotate(${spin*1.3}deg)`}
-    ],{duration:1700+Math.random()*1000,delay:Math.random()*650,easing:'cubic-bezier(.18,.65,.4,1)'}));
+    ],{duration:1700+Math.random()*1000,delay:Math.random()*650,easing:'cubic-bezier(.18,.65,.4,1)',fill:'forwards'}));
   }
   const cleanup=()=>{animations.forEach(animation=>animation.cancel());layer.remove();if(quickGwaCelebrationCleanup===cleanup)quickGwaCelebrationCleanup=null;};
   quickGwaCelebrationCleanup=cleanup;
