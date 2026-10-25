@@ -1,20 +1,4 @@
 (function(){
-  const FIRST=3.50;
-  const SECOND=3.25;
-
-  function getGwa(){
-    const text=document.querySelector('#quickGwaRoot .quick-gwa-result.show .number')?.textContent?.trim();
-    const gwa=Number(text);
-    return Number.isFinite(gwa)?gwa:null;
-  }
-
-  function honorMessage(gwa){
-    if(gwa===null) return '';
-    if(gwa>=FIRST) return "Congratulations! You're on the Dean's List (First Honors)! 🎉";
-    if(gwa>=SECOND) return "Congratulations! You're on the Dean's List (Second Honors)! 🎉";
-    return '';
-  }
-
   function patchLabels(){
     const tab=document.querySelector('#view-grades .grades-main-tabs [data-grades-mode="quickgwa"]');
     if(tab){
@@ -45,10 +29,8 @@
     const result=document.querySelector('#quickGwaRoot .quick-gwa-result.show');
     if(!result) return;
 
-    result.querySelector('.quick-gwa-honor')?.remove();
-    const gwa=getGwa();
     const eligible=result.dataset.dlEligible==='yes';
-    const message=eligible?honorMessage(gwa):(result.dataset.dlReason||'');
+    const message=result.dataset.dlReason||'';
     const sub=result.querySelector('.quick-gwa-sub');
 
     result.classList.toggle('quick-gwa-dean',eligible&&Boolean(message));

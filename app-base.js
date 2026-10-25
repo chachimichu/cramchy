@@ -2813,27 +2813,59 @@ function resetQuickGwa(){
   saveState();renderQuickGwa();
 }
 function quickGwaHonorLabel(calc){
-  return calc?.honorLabel||'';
+  return quickGwaRules.formatHonorHeadline(calc);
 }
 function quickGwaMessage(calc){
-  return calc?.message||'';
+  return quickGwaRules.formatMessage(calc,state.profile?.name||'');
 }
+let quickGwaCelebrationCleanup=null;
 function launchQuickConfetti(){
-  const layer=document.getElementById('quickConfettiLayer'); if(!layer)return;
-  layer.innerHTML='';
-  const palette=['#e85d75','#ffb6c9','#a8c69f','#f3c86a','#b8a6d9'];
-  const count=34;
-  for(let i=0;i<count;i++){
-    const p=document.createElement('span');
-    p.className='quick-confetti-piece';
-    p.style.left=`${Math.random()*100}%`;
-    p.style.background=palette[i%palette.length];
-    p.style.setProperty('--drift',`${Math.round((Math.random()-.5)*110)}px`);
-    p.style.setProperty('--spin',`${Math.round(240+Math.random()*540)}deg`);
-    p.style.animationDelay=`${Math.random()*.18}s`;
-    layer.appendChild(p);
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||typeof Element==='undefined'||typeof Element.prototype.animate!=='function')return;
+  quickGwaCelebrationCleanup?.();
+  const layer=document.createElement('div');
+  layer.className='quick-gwa-fireworks-layer';
+  layer.setAttribute('aria-hidden','true');
+  document.body.appendChild(layer);
+  const palette=['#e85d75','#ff8fad','#ffb6c9','#f3c86a','#a8c69f','#b8a6d9','#70c8df'];
+  const animations=[];
+  const bursts=[
+    {x:.08,y:.19},{x:.37,y:.13},{x:.78,y:.18},{x:.20,y:.44},
+    {x:.61,y:.43},{x:.93,y:.50},{x:.39,y:.76},{x:.79,y:.81}
+  ];
+  bursts.forEach((point,index)=>{
+    const x=Math.round(innerWidth*point.x),y=Math.round(innerHeight*point.y);
+    const count=30;
+    for(let i=0;i<count;i++){
+      const piece=document.createElement('span'),angle=Math.PI*2*i/count+(Math.random()-.5)*.3,distance=55+Math.random()*125;
+      const dx=Math.cos(angle)*distance,dy=Math.sin(angle)*distance,spin=Math.round((Math.random()-.5)*900);
+      piece.className='quick-gwa-firework-piece';
+      piece.style.left=`${x}px`;piece.style.top=`${y}px`;piece.style.background=palette[(i+index)%palette.length];
+      piece.style.width=`${5+Math.random()*5}px`;piece.style.height=`${7+Math.random()*8}px`;
+      layer.appendChild(piece);
+      animations.push(piece.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.25) rotate(0deg)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1) rotate(30deg)',offset:.12},
+        {opacity:1,transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin*.55}deg)`,offset:.62},
+        {opacity:0,transform:`translate(calc(-50% + ${dx*1.18}px),calc(-50% + ${dy+92}px)) rotate(${spin}deg)`}
+      ],{duration:1450+Math.random()*650,delay:index*115+Math.random()*100,easing:'cubic-bezier(.16,.65,.35,1)',fill:'both'}));
+    }
+  });
+  for(let i=0;i<110;i++){
+    const piece=document.createElement('span'),drift=Math.round((Math.random()-.5)*220),spin=Math.round(240+Math.random()*900);
+    piece.className='quick-gwa-firework-piece';
+    piece.style.left=`${Math.random()*100}%`;piece.style.top=`${Math.random()*68}%`;
+    piece.style.background=palette[i%palette.length];piece.style.width=`${4+Math.random()*6}px`;piece.style.height=`${7+Math.random()*11}px`;
+    layer.appendChild(piece);
+    animations.push(piece.animate([
+      {opacity:0,transform:'translate3d(0,-24px,0) rotate(0deg)'},
+      {opacity:1,transform:`translate3d(${drift*.35}px,35px,0) rotate(${spin*.35}deg)`,offset:.18},
+      {opacity:.95,transform:`translate3d(${drift}px,${130+Math.random()*280}px,0) rotate(${spin}deg)`,offset:.72},
+      {opacity:0,transform:`translate3d(${drift*1.2}px,${230+Math.random()*380}px,0) rotate(${spin*1.3}deg)`}
+    ],{duration:1700+Math.random()*1000,delay:Math.random()*650,easing:'cubic-bezier(.18,.65,.4,1)',fill:'both'}));
   }
-  setTimeout(()=>{if(layer)layer.innerHTML='';},1900);
+  const cleanup=()=>{animations.forEach(animation=>animation.cancel());layer.remove();if(quickGwaCelebrationCleanup===cleanup)quickGwaCelebrationCleanup=null;};
+  quickGwaCelebrationCleanup=cleanup;
+  Promise.all(animations.map(animation=>animation.finished.catch(()=>{}))).then(()=>{if(quickGwaCelebrationCleanup===cleanup)cleanup();});
 }
 function calculateQuickGwa(){
   // Pull the current values directly from the visible inputs first.
@@ -2893,7 +2925,7 @@ function renderQuickGwa(){
     <button class="quick-gwa-calc-btn" id="quickGwaCalculateBtn" type="button">calculate GWA ✦</button>
 
     <div class="quick-gwa-result ${calc?.gwa!=null?'show':''}" data-dl-eligible="${calc?.eligible?'yes':'no'}" data-dl-reason="${escapeAttr(message)}" aria-live="polite">
-      <div class="quick-confetti-layer" id="quickConfettiLayer"></div>
+
       <div class="label">Term GWA</div>
       <div class="number">${result}</div>
       ${honor?`<div class="quick-gwa-honor">${escapeHtml(honor)}</div>`:''}
