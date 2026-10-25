@@ -34,9 +34,11 @@
   to{box-shadow:0 18px 38px rgba(126,76,91,.10),inset 0 1px 0 rgba(255,255,255,.85)}
 }
 
-/* v43 used a second 76-piece confetti burst. Disable it permanently.
-   The original Cramchy 34-piece burst remains the only celebration. */
-.quick-confetti-extra{display:none!important;animation:none!important;}
+/* Full-screen scattered fireworks for a Dean’s List result. */
+.quick-gwa-fireworks-layer{position:fixed;inset:0;z-index:10030;pointer-events:none;overflow:hidden;isolation:isolate;}
+.quick-gwa-firework-ring{position:absolute;width:12px;height:12px;border:2px solid;border-radius:50%;box-shadow:0 0 16px currentColor;will-change:transform,opacity;}
+.quick-gwa-firework-piece{position:absolute;display:block;border-radius:2px;box-shadow:0 0 5px rgba(255,255,255,.28);will-change:transform,opacity;}
+@media(prefers-reduced-motion:reduce){.quick-gwa-fireworks-layer{display:none!important;}}
 
 /* Replace the old single-string pseudo guide with the same real structure as step 01. */
 #gradebookRoot::before{
