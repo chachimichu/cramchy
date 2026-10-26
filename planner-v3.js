@@ -222,10 +222,10 @@
     const days=Array.from({length:7},(_,i)=>addDays(start,i));
     const range=TIME.range(events.filter(event=>days.includes(event.date)));
     const hours=Array.from({length:range.endHour-range.firstHour},(_,i)=>i+range.firstHour);
-    const hourHeight=window.matchMedia('(max-width: 760px)').matches?52:HOUR_HEIGHT;
+    const hourHeight=window.matchMedia('(max-width: 760px)').matches?48:HOUR_HEIGHT;
     const height=hours.length*hourHeight;
     let html='<div class="planner-week-head blank"></div>'+days.map(d=>`<button type="button" class="planner-week-head ${d===selectedDate?'selected':''}" data-planner-date="${d}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><span>${dateObj(d).getDate()}</span></button>`).join('');
-    html+='<div class="planner-time-label">all day / check time</div>'+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
+    html+=(window.matchMedia('(max-width: 760px)').matches?'<div class="planner-time-label planner-all-day-label">all day</div>':'<div class="planner-time-label">all day / check time</div>')+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
     html+='<div class="planner-week-timeline"><div class="planner-week-times">'+hours.map(hour=>`<div class="planner-time-label">${timeLabel(pad(hour)+':00')}</div>`).join('')+'</div>';
     days.forEach(d=>{
       html+=`<div class="planner-week-day" style="height:${height}px">`;
