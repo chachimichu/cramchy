@@ -439,3 +439,72 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
     animation-iteration-count:1!important;transition-duration:.01ms!important
   }
 }
+
+
+/* Give the Planner date navigation a clear focal point and make zoom controls feel intentional. */
+@media(max-width:760px){
+  #view-planner .planner-nav,
+  body.planner-week-mode #view-planner .planner-nav{
+    display:grid!important;
+    grid-template-columns:44px minmax(0,1fr) 44px!important;
+    align-items:center!important;gap:9px!important;
+    margin:10px 8px 14px!important;padding:0!important
+  }
+  #view-planner .planner-nav strong,
+  body.planner-week-mode #view-planner .planner-nav strong{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    min-height:48px!important;padding:8px 10px!important;
+    border:1px solid color-mix(in srgb,var(--planner-pink,#ed80a0) 44%,white)!important;
+    border-radius:16px!important;
+    background:linear-gradient(135deg,#fff9f7 0%,#fff0f5 100%)!important;
+    box-shadow:0 4px 12px rgba(145,65,91,.08),inset 0 1px 0 rgba(255,255,255,.9)!important;
+    color:var(--red-deep,#8f294b)!important;
+    text-align:center!important;font-size:clamp(.9rem,4.1vw,1.1rem)!important;
+    font-weight:900!important;letter-spacing:-.025em!important;
+    white-space:nowrap!important
+  }
+  #view-planner .planner-nav button,
+  body.planner-week-mode #view-planner .planner-nav button{
+    display:grid!important;place-items:center!important;
+    width:44px!important;height:44px!important;min-width:44px!important;
+    border:1px solid rgba(255,255,255,.62)!important;border-radius:15px!important;
+    background:linear-gradient(145deg,#f58cac,#e96d93)!important;
+    box-shadow:0 4px 10px rgba(176,69,103,.18),inset 0 1px 0 rgba(255,255,255,.35)!important;
+    color:white!important;font-size:1.45rem!important;font-weight:900!important;
+    line-height:1!important
+  }
+  #view-planner .planner-nav button:hover{
+    filter:brightness(1.035)!important;transform:translateY(-1px)!important
+  }
+  #view-planner .planner-week-controls{
+    display:flex!important;align-items:center!important;justify-content:flex-end!important;
+    gap:7px!important;margin:0 8px 10px!important;padding:0!important
+  }
+  #view-planner .planner-week-controls span{
+    padding:7px 10px!important;border:1px solid rgba(237,128,160,.24)!important;
+    border-radius:12px!important;background:rgba(255,247,248,.8)!important;
+    color:var(--text-soft,#80636c)!important;font-size:.72rem!important;
+    font-weight:850!important;letter-spacing:.015em!important
+  }
+  #view-planner .planner-week-controls button{
+    width:42px!important;height:42px!important;min-width:42px!important;
+    border:1px solid rgba(237,128,160,.32)!important;border-radius:14px!important;
+    background:linear-gradient(145deg,#fffaf8,#ffeef3)!important;
+    box-shadow:0 3px 9px rgba(145,65,91,.08)!important;
+    color:var(--red-deep,#a93e5e)!important;font-size:1.4rem!important;
+    font-weight:900!important;transition:transform .16s ease,box-shadow .16s ease!important
+  }
+  #view-planner .planner-week-controls button:hover{
+    box-shadow:0 5px 12px rgba(145,65,91,.14)!important;transform:translateY(-1px)!important
+  }
+  #view-planner .planner-week-controls button:disabled{filter:grayscale(.18)!important}
+  body[data-theme="dark-study"] #view-planner .planner-nav strong,
+  body[data-theme="dark-study"] #view-planner .planner-week-controls span{
+    background:linear-gradient(135deg,#38212b,#422532)!important;color:#ffe6ed!important;
+    border-color:rgba(255,186,207,.2)!important
+  }
+  body[data-theme="dark-study"] #view-planner .planner-week-controls button{
+    background:linear-gradient(145deg,#422532,#512b3a)!important;color:#ffdce7!important;
+    border-color:rgba(255,186,207,.24)!important
+  }
+}
