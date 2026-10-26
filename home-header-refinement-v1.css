@@ -894,3 +894,26 @@ body[data-theme="dark-study"] #view-planner :is(.planner-week-event.personal,.pl
 
 /* Use the exact outline token already used by the Home header across Planner. */
 #view-planner{--planner-line:var(--cramchy-outline)!important}
+
+/* Selected controls use the active theme accent; outlines reuse Home's exact token. */
+#view-tasks :is(.tw-status,.tw-filters button),
+#view-timer :is(.timer-mode-switch,.preset-row,.timer-settings),
+#view-exam .exam-context-picker,
+#view-exam .exam-context-picker select,
+#view-more .settings-panel select{
+  border-color:var(--cramchy-outline)!important
+}
+#view-exam .exam-context-picker,
+#view-exam .exam-context-picker select,
+#view-more .settings-panel select{
+  background:var(--app-bg-2)!important;color:var(--text-main)!important
+}
+#view-tasks :is(.tw-status button[aria-pressed="true"],.tw-filters button[aria-pressed="true"]),
+#view-timer :is(.timer-mode-choice.is-active,.preset-row button[aria-pressed="true"]){
+  background:color-mix(in srgb,var(--red-berry) 18%,var(--app-bg-2))!important;
+  border-color:var(--red-berry)!important;color:var(--text-main)!important
+}
+#view-more .settings-panel select:focus-visible{
+  border-color:var(--red-berry)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--red-berry) 18%,transparent)!important
+}
