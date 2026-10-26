@@ -234,3 +234,6 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(239,137,164,.1
   #view-planner .planner-tabs button,
   #view-timer :is(.timer-mode-choice,.preset-row button){transition:none}
 }
+
+/* Give Planner outlines the same deeper strawberry-pink contrast as its accents. */
+#view-planner{--planner-line:var(--planner-rose,#cf5d7b)}
