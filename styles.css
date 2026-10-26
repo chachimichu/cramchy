@@ -53,7 +53,7 @@ main{max-width:1180px!important;}
   font-family:var(--font-ui)!important;
 }
 .btn:not(.ghost):not(.secondary):not(.danger),.quick-add-main,.ask-cramchy-send{
-  background:linear-gradient(135deg,#f48ca5,#df6686)!important;
+  background:linear-gradient(135deg,var(--pink-strawberry,#f48ca5),var(--red-berry,#df6686))!important;
   color:#fff!important;
   box-shadow:var(--planner-shadow-small)!important;
 }
