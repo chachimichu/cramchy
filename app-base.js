@@ -457,6 +457,18 @@ function showToast(msg, opts){
 /* ===================== NAV ===================== */
 const navButtons = document.querySelectorAll('.navbtn');
 const views = document.querySelectorAll('.view');
+function resetPageScrollAfterNavigation(){
+  const reset=()=>{
+    window.scrollTo(0,0);
+    const scroller=document.scrollingElement||document.documentElement;
+    scroller.scrollTop=0;
+    document.body.scrollTop=0;
+  };
+  requestAnimationFrame(()=>{reset();requestAnimationFrame(reset);});
+}
+document.addEventListener('click',event=>{
+  if(event.target.closest('.topnav .navbtn[data-tab]'))resetPageScrollAfterNavigation();
+},true);
 function switchTab(tab){
   navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
@@ -1053,6 +1065,27 @@ function addTopic(){
 /* ===================== STUDY TIMER ===================== */
 let timerState=readStudyTimer();
 let timerIntervalId=null;
+let studyPlant=null,studyPlantBloomed=false,studyPlantFinishedBeforeMount=false;
+function mountStudyPlant(){
+  if(studyPlant)return;
+  const slot=document.getElementById('plantSlot');
+  if(!slot||!window.CramchyPlant)return;
+  studyPlant=window.CramchyPlant.mount(slot);
+  const remaining=CramchyStudyTimer.remaining(timerState,Date.now());
+  const totalSeconds=CramchyStudyTimer.phaseMinutes(timerState)*60;
+  const lastSessionFinished=!timerState.session&&!timerState.running&&Array.isArray(state.studyHistory)&&state.studyHistory.length>0;
+  if(studyPlantFinishedBeforeMount||lastSessionFinished||(timerState.phase==='focus'&&timerState.session&&remaining===0)){
+    studyPlantBloomed=true;
+    studyPlantFinishedBeforeMount=false;
+    studyPlant.bloom({silent:true});
+    return;
+  }
+  if(timerState.phase==='focus'&&timerState.session){
+    const elapsedSeconds=totalSeconds-remaining;
+    studyPlant.setProgress(elapsedSeconds/totalSeconds);
+  }
+  studyPlant.setRunning(Boolean(timerState.running));
+}
 function readStudyTimer(){
   try{return CramchyStudyTimer.clean(JSON.parse(localStorage.getItem(CramchyStudyTimer.KEY)||'null'));}
   catch(error){console.warn('Study timer could not be loaded.',error);return CramchyStudyTimer.fresh();}
@@ -1071,6 +1104,13 @@ function updateTimerDisplay(){
   const duration=CramchyStudyTimer.phaseMinutes(timerState)*60;
   const fraction=Math.max(0,Math.min(1,remaining/duration));
   const elapsed=1-fraction;
+  if(studyPlant){
+    if(timerState.phase==='focus'&&!studyPlantBloomed){
+      const elapsedSeconds=duration-remaining;
+      studyPlant.setProgress(elapsedSeconds/duration);
+    }
+    studyPlant.setRunning(Boolean(timerState.running));
+  }
   document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(fraction*100));
   const dial=document.getElementById('timerDial');
   const tickGroup=document.getElementById('timerDialTicks');
@@ -1095,8 +1135,6 @@ function updateTimerDisplay(){
     dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
     dial.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.focusStage=sceneStage;
-    const deskScene=dial.nextElementSibling;
-    if(deskScene&&deskScene.classList.contains('timer-desk-scene'))deskScene.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.running=String(Boolean(timerState.running));
     dial.dataset.phase=timerState.phase;
     const caption=document.getElementById('timerSceneCaption');
@@ -1157,6 +1195,8 @@ function tickStudyTimer(){
       if(typeof cloudLoading!=='undefined'&&cloudLoading){updateTimerDisplay();return;}
       const nextTimer=timerState.mode==='pomodoro'?timerAfterPomodoroFocus(timerState):CramchyStudyTimer.reset(timerState);
       if(!logStudySession(timerState.session,nextTimer))return;
+      if(studyPlant&&!studyPlantBloomed){studyPlant.bloom();studyPlantBloomed=true;}
+      else if(!studyPlant)studyPlantFinishedBeforeMount=true;
       clearInterval(timerIntervalId);timerIntervalId=null;
       showToast(timerState.mode==='pomodoro'?'focus round complete · break time':'study session complete ✧');
       chaowiReact('complete');
@@ -1190,12 +1230,17 @@ document.querySelectorAll('[data-mins]').forEach(btn=>btn.addEventListener('clic
 }));
 document.getElementById('timerStartBtn').addEventListener('click',()=>{
   if(timerState.running)return;
+  const startingNewFocus=timerState.phase==='focus'&&!timerState.session;
   const course=(state.courses||[]).find(c=>`course-${c.id}`===timerState.subject);
   const next=CramchyStudyTimer.start(timerState,Date.now(),{
     id:cryptoId(),subjectName:course?.name||(timerState.subject==='general'?'General Study':examSubjectNameById(timerState.subject)),
     academicKey:state.examPeriod?activeAcademicKey():dailyAcademicKey(),period:state.examPeriod||''
   });
   if(!persistStudyTimer(next))return;
+  if(studyPlant){
+    if(startingNewFocus){studyPlant.reset();studyPlantBloomed=false;studyPlant.setProgress(0);}
+    studyPlant.setRunning(true);
+  }
   chaowiReact('start');runStudyTimer();tickStudyTimer();
 });
 document.getElementById('timerPauseBtn').addEventListener('click',()=>{
@@ -1206,6 +1251,7 @@ document.getElementById('timerPauseBtn').addEventListener('click',()=>{
 });
 document.getElementById('timerResetBtn').addEventListener('click',()=>{
   if(!persistStudyTimer(CramchyStudyTimer.reset(timerState)))return;
+  if(studyPlant){studyPlant.reset();studyPlantBloomed=false;studyPlant.setProgress(0);studyPlant.setRunning(false);}
   clearInterval(timerIntervalId);timerIntervalId=null;renderTimerTab();
 });
 document.getElementById('timerSkipBreakBtn').addEventListener('click',()=>{
@@ -3364,6 +3410,7 @@ function renderSubjectDetail(){
 
 function renderTimerTab(){
   const sel=document.getElementById('timerSubjectSelect');if(!sel)return;
+  mountStudyPlant();
   const catalog=state.examPeriod?examSubjectCatalog():coursesForCurrentTerm().map(c=>({id:`course-${c.id}`,name:c.name}));
   const choices=catalog.length?catalog:[{id:'general',name:'General Study'}];
   if(!choices.some(x=>x.id===timerState.subject)){
@@ -3399,19 +3446,43 @@ function studyHistorySubjectName(h){
   const [year,term]=(h.academicKey||activeAcademicKey()).split('::');
   return examSubjectNameById(h.subject,year||activeExamYear(),term||activeExamTerm());
 }
+let studyHistoryExpanded=false;
 function renderHistory(){
   const list=document.getElementById('historyList');if(!list)return;
-  const totalMins=state.studyHistory.reduce((sum,h)=>sum+h.minutes,0);
+  const history=state.studyHistory||[];
+  const totalMins=history.reduce((sum,h)=>sum+(Number(h.minutes)||0),0);
   const hrs=Math.floor(totalMins/60),mins=totalMins%60;
-  document.getElementById('totalFocusTime').textContent=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
-  if(!state.studyHistory.length){list.innerHTML='<div class="empty-state">No sessions logged yet.</div>';return;}
-  list.innerHTML='';
-  state.studyHistory.slice(0,25).forEach(h=>{
-    const d=new Date(h.timestamp),dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'}),timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-    const row=document.createElement('div');row.className='history-item';
-    row.innerHTML=`<div><div class="subj">${escapeHtml(studyHistorySubjectName(h))}</div><div class="when">${dateStr} • ${timeStr}${h.period?` • ${h.period}`:''}</div></div><div class="mins">${h.minutes}m</div>`;
-    list.appendChild(row);
-  });
+  const total=document.getElementById('totalFocusTime');
+  if(total)total.textContent=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
+  const count=document.getElementById('studyHistoryCount');
+  if(count)count.textContent=`${history.length} session${history.length===1?'':'s'}`;
+  const toggle=document.getElementById('historyToggleBtn');
+  const card=document.getElementById('studyHistoryCard');
+  if(!history.length){
+    list.innerHTML='<div class="study-history-empty">No sessions logged yet. Your focused time will show up here.</div>';
+    studyHistoryExpanded=false;
+  }else{
+    const limit=studyHistoryExpanded?history.length:Math.min(4,history.length);
+    list.innerHTML=history.slice(0,limit).map(h=>{
+      const d=new Date(h.timestamp);
+      const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      return `<div class="history-item"><div><div class="subj">${escapeHtml(studyHistorySubjectName(h))}</div><div class="when">${dateStr} · ${timeStr}${h.period?` · ${escapeHtml(h.period)}`:''}</div></div><div class="mins">${Number(h.minutes)||0}m</div></div>`;
+    }).join('');
+  }
+  if(card)card.classList.toggle('is-expanded',studyHistoryExpanded);
+  if(toggle){
+    toggle.hidden=history.length<=4;
+    toggle.textContent=studyHistoryExpanded?'show less':`show all ${history.length} sessions`;
+    toggle.setAttribute('aria-expanded',String(studyHistoryExpanded));
+    if(toggle.dataset.bound!=='1'){
+      toggle.dataset.bound='1';
+      toggle.addEventListener('click',()=>{
+        studyHistoryExpanded=!studyHistoryExpanded;
+        renderHistory();
+      });
+    }
+  }
 }
 
 function renderDailyCountdown(){

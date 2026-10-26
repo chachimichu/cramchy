@@ -11,6 +11,7 @@
   let legacyTasks=events.filter(e=>window.CramchySharedTasks.actionable(e));
   let selectedDate=isoDate(new Date());
   let activeView='month';
+  let weekZoom=0;
   let editingId=null;
   let monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);
 
@@ -125,10 +126,10 @@
             </aside>
 
             <div class="planner-card">
-              <div class="planner-head"><div><h2>Planner</h2><p>Switch between month, week, and day so nothing jumpscares you later.</p></div><div class="planner-tabs"><button class="active" aria-pressed="true" data-planner-show="month" type="button">Month</button><button aria-pressed="false" data-planner-show="week" type="button">Week</button><button aria-pressed="false" data-planner-show="day" type="button">Day</button></div></div>
+              <div class="planner-head"><div><h2>Planner</h2></div><div class="planner-tabs"><button class="active" aria-pressed="true" data-planner-show="month" type="button">Month</button><button aria-pressed="false" data-planner-show="week" type="button">Week</button><button aria-pressed="false" data-planner-show="day" type="button">Day</button></div></div>
               <div class="planner-nav"><button type="button" data-planner-nav="prev" aria-label="previous">‹</button><strong id="plannerLabel"></strong><button type="button" data-planner-nav="next" aria-label="next">›</button></div>
               <div class="planner-view active" id="plannerMonthView"><div class="planner-month-grid" id="plannerMonthGrid"></div></div>
-              <div class="planner-view" id="plannerWeekView"><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; scroll horizontally for other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
+              <div class="planner-view" id="plannerWeekView"><div class="planner-week-controls" role="group" aria-label="Week calendar zoom"><span>zoom</span><button type="button" data-planner-week-zoom="-1" aria-label="Zoom out">−</button><button type="button" data-planner-week-zoom="1" aria-label="Zoom in">+</button></div><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; swipe to view other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
               <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><button class="planner-add planner-day-add" id="plannerDayAdd" data-planner-add type="button" aria-label="Add event for the selected date">+ add event</button><div class="planner-agenda" id="plannerAgenda"></div></div></div></div>
             </div>
           </div>
@@ -193,6 +194,7 @@
   function setPlannerView(view){
     if(!['month','week','day'].includes(view))return;
     activeView=view;
+    document.body.classList.toggle('planner-week-mode',view==='week');
     $all('[data-planner-show]','#view-planner').forEach(b=>{b.classList.toggle('active',b.dataset.plannerShow===view);b.setAttribute('aria-pressed',String(b.dataset.plannerShow===view));});
     $all('.planner-view','#view-planner').forEach(v=>v.classList.remove('active'));
     $('#planner'+view[0].toUpperCase()+view.slice(1)+'View')?.classList.add('active');
@@ -222,16 +224,19 @@
     const days=Array.from({length:7},(_,i)=>addDays(start,i));
     const range=TIME.range(events.filter(event=>days.includes(event.date)));
     const hours=Array.from({length:range.endHour-range.firstHour},(_,i)=>i+range.firstHour);
-    const height=hours.length*HOUR_HEIGHT;
+    const mobileWeek=window.matchMedia('(max-width: 760px)').matches;
+    const hourHeight=mobileWeek?[48,52,58,64][weekZoom]:HOUR_HEIGHT;
+    grid.dataset.weekZoom=String(weekZoom);
+    const height=hours.length*hourHeight;
     let html='<div class="planner-week-head blank"></div>'+days.map(d=>`<button type="button" class="planner-week-head ${d===selectedDate?'selected':''}" data-planner-date="${d}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><span>${dateObj(d).getDate()}</span></button>`).join('');
-    html+='<div class="planner-time-label">all day / check time</div>'+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
+    html+=(window.matchMedia('(max-width: 760px)').matches?'<div class="planner-time-label planner-all-day-label">all day</div>':'<div class="planner-time-label">all day / check time</div>')+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
     html+='<div class="planner-week-timeline"><div class="planner-week-times">'+hours.map(hour=>`<div class="planner-time-label">${timeLabel(pad(hour)+':00')}</div>`).join('')+'</div>';
     days.forEach(d=>{
       html+=`<div class="planner-week-day" style="height:${height}px">`;
       html+=hours.map(hour=>`<div class="planner-week-slot" data-planner-date="${d}" data-planner-hour="${hour}"></div>`).join('');
       html+=TIME.layout(byDate(d)).map(item=>{
-        const eventHeight=Math.max(18,item.point?36:(item.end-item.start)*HOUR_HEIGHT/60-4);
-        const top=Math.min(height-eventHeight,(item.start-range.firstHour*60)*HOUR_HEIGHT/60+2);
+        const eventHeight=Math.max(18,item.point?36:(item.end-item.start)*hourHeight/60-4);
+        const top=Math.min(height-eventHeight,(item.start-range.firstHour*60)*hourHeight/60+2);
         const width=100/item.lanes,left=width*item.lane;
         const style=`top:${top}px;height:${eventHeight}px;left:calc(${left}% + 3px);width:calc(${width}% - 6px)`;
         return weekEventHtml(item.event,style);
@@ -348,11 +353,12 @@
     });
     const onPlannerClick=e=>{
       const show=e.target.closest('[data-planner-show]');if(show){e.preventDefault();setPlannerView(show.dataset.plannerShow);return}
+      const zoom=e.target.closest('[data-planner-week-zoom]');if(zoom){e.preventDefault();weekZoom=Math.max(0,Math.min(3,weekZoom+Number(zoom.dataset.plannerWeekZoom)));renderAllPlanner();return}
       const nav=e.target.closest('[data-planner-nav]');if(nav){e.preventDefault();moveCalendar(nav.dataset.plannerNav==='next'?1:-1);return}
       if(e.target.closest('[data-planner-add-course-exam]')){e.preventDefault();window.CramchySchedules?.add();return;}
       const add=e.target.closest('[data-planner-add]');if(add){e.preventDefault();openModal('study');return}
       const ev=e.target.closest('[data-planner-event]');if(ev){e.preventDefault();e.stopPropagation();openEvent(ev.dataset.plannerEvent);return}
-      const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);setPlannerView('day');return}
+      const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);if(activeView==='week'&&window.matchMedia('(max-width: 760px)').matches)renderAllPlanner();else setPlannerView('day');return}
       if(e.target.closest('[data-planner-close]')){e.preventDefault();closeModal();return}
     };
     section.addEventListener('click',onPlannerClick);$('#plannerModal').addEventListener('click',onPlannerClick);
