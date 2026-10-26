@@ -45,3 +45,9 @@
     margin:0!important;padding:0 3px;box-sizing:border-box;touch-action:pan-x
   }
 }
+
+/* Match the study sound choice tiles to the height of the app's other touch controls. */
+#view-timer .study-sound-choice{min-height:88px}
+@media(max-width:600px){
+  #view-timer .study-sound-choice{min-height:84px}
+}
