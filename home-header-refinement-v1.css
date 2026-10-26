@@ -356,3 +356,86 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
   #view-planner .planner-head{margin-bottom:4px!important}
   #view-planner .planner-tabs{min-height:48px!important}
 }
+
+
+/* Mobile Planner hierarchy and motion polish. */
+@media(max-width:760px){
+  #view-planner .planner-page{padding-top:8px!important}
+  #view-planner .planner-hero-card{
+    position:relative!important;isolation:isolate!important;overflow:hidden!important;
+    margin-bottom:18px!important;padding:17px 16px 16px!important;
+    box-shadow:0 8px 22px rgba(118,68,82,.10)!important;
+    animation:plannerCardEnter .42s cubic-bezier(.2,.75,.25,1) both
+  }
+  #view-planner .planner-hero-copy h2{
+    font-size:clamp(1.55rem,6.4vw,1.95rem)!important;
+    line-height:1.08!important;letter-spacing:-.035em!important
+  }
+  #view-planner .planner-hero-copy p{
+    max-width:34ch!important;margin:7px 0 13px!important;
+    font-size:.88rem!important;line-height:1.48!important
+  }
+  #view-planner .planner-hero-card .planner-actions button{
+    min-height:40px!important;padding:8px 14px!important;font-size:.8rem!important;
+    transition:transform .16s ease,box-shadow .16s ease,filter .16s ease!important
+  }
+  #view-planner .planner-head{
+    display:block!important;margin:0 0 7px!important;padding:0 8px!important
+  }
+  #view-planner .planner-head>div:first-child{display:none!important}
+  #view-planner .planner-tabs{
+    min-height:50px!important;padding:4px!important;margin:0!important;
+    border-radius:17px!important;background:var(--app-bg-2,#fffdfc)!important;
+    box-shadow:0 3px 12px rgba(118,68,82,.055)!important
+  }
+  #view-planner .planner-tabs button{
+    min-height:42px!important;border-radius:13px!important;
+    font-size:.88rem!important;font-weight:800!important;
+    transition:background-color .2s ease,color .2s ease,transform .18s ease!important
+  }
+  #view-planner .planner-tabs button:active,
+  #view-planner .planner-nav button:active,
+  #view-planner .planner-week-controls button:active{transform:scale(.94)!important}
+  #view-planner .planner-nav{
+    margin:8px 8px 14px!important;gap:8px!important
+  }
+  #view-planner .planner-nav strong{
+    font-size:clamp(.94rem,4.4vw,1.13rem)!important;
+    font-weight:900!important;letter-spacing:-.02em!important
+  }
+  #view-planner .planner-nav button{
+    transition:transform .16s ease,background-color .16s ease!important
+  }
+  #view-planner .planner-view.active{
+    animation:plannerViewEnter .28s cubic-bezier(.2,.75,.25,1) both
+  }
+  #view-planner .planner-month-grid .planner-day-cell{
+    animation:plannerCellEnter .22s ease both
+  }
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n + 1){animation-delay:.015s}
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n + 2){animation-delay:.03s}
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n + 3){animation-delay:.045s}
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n + 4){animation-delay:.06s}
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n + 5){animation-delay:.075s}
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n + 6){animation-delay:.09s}
+  #view-planner .planner-month-grid .planner-day-cell:nth-child(7n){animation-delay:.105s}
+  #view-planner .planner-agenda-item,
+  #view-planner .planner-week-event{
+    animation:plannerItemEnter .24s ease both
+  }
+  #view-planner .planner-agenda-item:active,
+  #view-planner .planner-event-pill:active,
+  #view-planner .planner-week-event:active{transform:scale(.985)}
+}
+@keyframes plannerCardEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes plannerViewEnter{from{opacity:.45;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes plannerCellEnter{from{opacity:.55;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@keyframes plannerItemEnter{from{opacity:.65;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){
+  #view-planner *,
+  #view-planner *::before,
+  #view-planner *::after{
+    scroll-behavior:auto!important;animation-duration:.01ms!important;
+    animation-iteration-count:1!important;transition-duration:.01ms!important
+  }
+}
