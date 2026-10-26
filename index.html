@@ -342,25 +342,15 @@
     <h2 style="color:var(--red-deep); margin-bottom:14px;">Study Timer</h2>
     <div class="card study-timer-card" id="studyTimerCard">
       <div class="timer-layout">
-        <div class="timer-setup">
-          <div class="timer-mode-switch" role="group" aria-label="Timer style">
-            <button class="timer-mode-choice is-active" type="button" data-timer-mode="focus" aria-pressed="true">focus timer</button>
-            <button class="timer-mode-choice" type="button" data-timer-mode="pomodoro" aria-pressed="false">pomodoro</button>
-          </div>
-          <p class="timer-mode-hint" id="timerModeHint">Focus at your own pace, with no scheduled breaks.</p>
-          <label class="field-label" for="timerSubjectSelect">Studying:</label>
-          <select id="timerSubjectSelect" style="width:100%; margin-bottom:14px;"></select>
-          <div class="preset-row">
-            <button class="btn ghost" data-mins="25">25 min</button>
-            <button class="btn ghost" data-mins="45">45 min</button>
-            <button class="btn ghost" data-mins="60">60 min</button>
-          </div>
+        <div class="timer-mode-switch" role="group" aria-label="Timer style">
+          <button class="timer-mode-choice is-active" type="button" data-timer-mode="focus" aria-pressed="true">focus timer</button>
+          <button class="timer-mode-choice" type="button" data-timer-mode="pomodoro" aria-pressed="false">pomodoro</button>
+        </div>
+        <div class="timer-visual">
           <div class="timer-phase-status" aria-live="polite">
             <strong id="timerPhaseLabel">focus</strong>
             <span id="timerRoundLabel">no scheduled breaks</span>
           </div>
-        </div>
-        <div class="timer-visual">
           <div class="study-timer-dial" id="timerDial" role="progressbar" aria-label="Study time remaining" aria-valuemin="0" aria-valuemax="1500" aria-valuenow="1500" aria-valuetext="25 minutes remaining">
             <svg class="study-timer-ring" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
               <g id="timerDialTicks"></g>
@@ -405,6 +395,19 @@
             </svg>
           </div>
         </div>
+        <details class="timer-settings">
+          <summary><span aria-hidden="true">⚙</span><span>timer settings</span></summary>
+          <div class="timer-settings-content">
+            <p class="timer-mode-hint" id="timerModeHint">Focus at your own pace, with no scheduled breaks.</p>
+            <label class="field-label" for="timerSubjectSelect">Studying:</label>
+            <select id="timerSubjectSelect" style="width:100%; margin-bottom:14px;"></select>
+            <div class="preset-row">
+              <button class="btn ghost" data-mins="25">25 min</button>
+              <button class="btn ghost" data-mins="45">45 min</button>
+              <button class="btn ghost" data-mins="60">60 min</button>
+            </div>
+          </div>
+        </details>
       </div>
       <div class="timer-controls">
         <button class="btn" id="timerStartBtn">start</button>
