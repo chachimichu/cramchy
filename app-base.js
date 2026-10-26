@@ -1097,7 +1097,7 @@ function updateTimerDisplay(){
     dial.dataset.focusStage=sceneStage;
     const deskScene=dial.nextElementSibling;
     if(deskScene&&deskScene.classList.contains('timer-desk-scene')){
-      const plantProgress=(timerState.phase==='shortBreak'||timerState.phase==='longBreak')?1:(.12+elapsed*.88);
+      const plantProgress=(timerState.phase==='shortBreak'||timerState.phase==='longBreak')?1:(.25+elapsed*.75);
       deskScene.style.setProperty('--focus-growth',String(plantProgress));
       const stem=deskScene.querySelector('.desk-plant-stem');
       if(stem){stem.style.strokeDasharray='58px';stem.style.strokeDashoffset=(58*(1-plantProgress))+'px';}
