@@ -320,10 +320,12 @@
 }
 
 
-/* Align timer, sounds, and history cards to one shared full width. */
-#view-timer .study-timer-card,
-#view-timer .study-history-card{
-  width:100%!important;max-width:none!important;
-  margin-left:0!important;margin-right:0!important;
-  box-sizing:border-box!important
+/* On web/tablet, align the timer and history cards to the sounds card width. */
+@media(min-width:761px){
+  #view-timer .study-timer-card,
+  #view-timer .study-history-card{
+    width:100%!important;max-width:none!important;
+    margin-left:0!important;margin-right:0!important;
+    box-sizing:border-box!important
+  }
 }
