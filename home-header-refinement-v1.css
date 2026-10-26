@@ -252,3 +252,20 @@ main .section-title{margin:14px 0 7px!important}
 main .upcoming-list,main .course-strip{gap:7px!important}
 main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
 }
+
+/* Keep the Google Calendar-style seven-day timetable on phones; scale its tracks. */
+@media(max-width:760px){
+  #view-planner .planner-week-scroll{overflow-x:hidden!important;overflow-y:visible!important}
+  #view-planner .planner-week-grid{display:grid!important;grid-template-columns:36px repeat(7,minmax(0,1fr))!important;width:100%!important;min-width:0!important;overflow:hidden!important;border-radius:12px!important}
+  #view-planner .planner-week-grid>.planner-week-head{min-width:0!important;min-height:44px!important;padding:3px 1px!important;gap:2px!important;font-size:.62rem!important}
+  #view-planner .planner-week-grid>.planner-week-head small{font-size:.5rem!important}
+  #view-planner .planner-week-grid>.planner-week-head.selected span{width:21px!important;height:21px!important;font-size:.68rem!important}
+  #view-planner .planner-week-timeline{display:grid!important;grid-template-columns:36px repeat(7,minmax(0,1fr))!important;min-width:0!important}
+  #view-planner .planner-week-times .planner-time-label{height:52px!important;min-height:52px!important;padding:3px 1px!important;font-size:.48rem!important;line-height:1.15!important;overflow:hidden!important}
+  #view-planner .planner-week-day{height:auto!important;min-width:0!important}
+  #view-planner .planner-week-day .planner-week-slot{height:52px!important;min-height:52px!important}
+  #view-planner .planner-week-event{padding:3px 2px!important;border-radius:6px!important;font-size:.54rem!important;line-height:1.1!important;overflow:hidden!important}
+  #view-planner .planner-week-event strong{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:3!important;overflow:hidden!important;overflow-wrap:anywhere!important}
+  #view-planner .planner-week-event span,#view-planner .planner-week-time-warning{display:none!important}
+  #view-planner .planner-week-mobile-days,#view-planner .planner-week-mobile-agenda{display:none!important}
+}
