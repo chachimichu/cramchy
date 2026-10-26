@@ -457,6 +457,18 @@ function showToast(msg, opts){
 /* ===================== NAV ===================== */
 const navButtons = document.querySelectorAll('.navbtn');
 const views = document.querySelectorAll('.view');
+function resetPageScrollAfterNavigation(){
+  const reset=()=>{
+    window.scrollTo(0,0);
+    const scroller=document.scrollingElement||document.documentElement;
+    scroller.scrollTop=0;
+    document.body.scrollTop=0;
+  };
+  requestAnimationFrame(()=>{reset();requestAnimationFrame(reset);});
+}
+document.addEventListener('click',event=>{
+  if(event.target.closest('.topnav .navbtn[data-tab]'))resetPageScrollAfterNavigation();
+},true);
 function switchTab(tab){
   navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
