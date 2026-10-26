@@ -329,3 +329,66 @@
     box-sizing:border-box!important
   }
 }
+
+
+/* Simplify the timer: keep modes visible, tuck setup choices into an accessible panel. */
+#view-timer .study-timer-card{max-width:none!important;width:100%!important}
+#view-timer .timer-layout{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  gap:14px!important;width:100%
+}
+#view-timer .timer-mode-switch{order:0!important;margin:0 auto!important}
+#view-timer .timer-visual{
+  order:1!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;width:100%;gap:0
+}
+#view-timer .timer-phase-status{order:0;margin:0 auto 7px!important}
+#view-timer .study-timer-dial{
+  order:1;width:min(350px,78vw)!important;margin:0 auto!important
+}
+#view-timer #timerDisplay{font-size:clamp(3.3rem,8vw,4.4rem)!important}
+#view-timer .timer-desk-scene{
+  order:2;width:190px!important;height:120px!important;margin:0 auto!important;
+  padding:0 8px 2px!important
+}
+#view-timer .timer-desk-scene .timer-desk-plant{
+  width:150px!important;max-width:100%;height:100%;object-fit:contain
+}
+#view-timer .timer-settings{
+  order:2;width:min(560px,100%);border:1px solid var(--pink-soft);
+  border-radius:16px;background:var(--app-bg-1);overflow:hidden
+}
+#view-timer .timer-settings summary{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  min-height:46px;padding:10px 14px;list-style:none;cursor:pointer;
+  color:var(--red-deep);font-size:.84rem;font-weight:850
+}
+#view-timer .timer-settings summary::-webkit-details-marker{display:none}
+#view-timer .timer-settings summary::after{
+  content:"⌄";margin-left:3px;font-size:1rem;transition:transform .18s ease
+}
+#view-timer .timer-settings[open] summary::after{transform:rotate(180deg)}
+#view-timer .timer-settings-content{
+  display:grid;gap:8px;padding:3px 16px 16px;border-top:1px solid var(--pink-soft)
+}
+#view-timer .timer-settings-content .timer-mode-hint{margin:7px 0 4px;text-align:center}
+#view-timer .timer-settings-content>.field-label{margin:0 0 -3px}
+#view-timer .timer-settings-content #timerSubjectSelect{width:100%!important;max-width:none;margin:0!important}
+#view-timer .timer-settings-content .preset-row{margin:0 auto!important}
+#view-timer .timer-controls{order:3;margin:0 auto!important}
+#view-timer .timer-footnote{max-width:800px;margin:9px auto 0!important}
+#view-timer .desk-plant-leaf{fill:#78a761!important;stroke:#5c8d4a!important}
+#view-timer .desk-plant-stem{stroke:#659451!important}
+#view-timer .desk-plant-leaf-vein{stroke:#f3f8ee!important}
+@media(max-width:760px){
+  #view-timer .timer-layout{gap:11px!important}
+  #view-timer .study-timer-dial{width:min(320px,82vw)!important}
+  #view-timer #timerDisplay{font-size:clamp(3.2rem,13vw,4rem)!important}
+  #view-timer .timer-desk-scene{width:172px!important;height:108px!important}
+  #view-timer .timer-desk-scene .timer-desk-plant{width:136px!important}
+  #view-timer .timer-settings{width:100%}
+  #view-timer .timer-settings-content{padding:3px 12px 13px}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-timer .timer-settings summary::after{transition:none!important}
+}
