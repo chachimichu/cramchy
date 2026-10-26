@@ -858,3 +858,36 @@ body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-age
     background:transparent!important;border-color:transparent!important
   }
 }
+
+
+/* Retain the existing dark-theme event tints and contrast. */
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.class,.planner-agenda-item.class,.planner-event-pill.class),
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.assignment,.planner-agenda-item.assignment,.planner-event-pill.assignment){
+  background:color-mix(in srgb,#8baee8 18%,var(--dark-surface))!important;border-color:#8baee8!important;color:var(--text-main)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.task,.planner-agenda-item.task,.planner-event-pill.task){
+  background:color-mix(in srgb,#ef89a4 18%,var(--dark-surface))!important;border-color:#ef89a4!important;color:var(--text-main)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.exam,.planner-agenda-item.exam,.planner-event-pill.exam){
+  background:color-mix(in srgb,#ee9299 18%,var(--dark-surface))!important;border-color:#ee9299!important;color:var(--text-main)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.quiz,.planner-agenda-item.quiz,.planner-event-pill.quiz){
+  background:color-mix(in srgb,#b899ed 18%,var(--dark-surface))!important;border-color:#b899ed!important;color:var(--text-main)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.study,.planner-agenda-item.study,.planner-event-pill.study){
+  background:color-mix(in srgb,#8eb480 18%,var(--dark-surface))!important;border-color:#8eb480!important;color:var(--text-main)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event.personal,.planner-agenda-item.personal,.planner-event-pill.personal){
+  background:color-mix(in srgb,#e9a55d 18%,var(--dark-surface))!important;border-color:#e9a55d!important;color:var(--text-main)!important
+}
+@media(max-width:760px){
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.class,
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.task,
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.exam,
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.quiz,
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.study,
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.assignment,
+  body[data-theme="dark-study"] #view-planner .planner-event-pill.personal{
+    background:transparent!important;border-color:transparent!important
+  }
+}
