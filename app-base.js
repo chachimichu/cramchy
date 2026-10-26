@@ -1096,7 +1096,26 @@ function updateTimerDisplay(){
     dial.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.focusStage=sceneStage;
     const deskScene=dial.nextElementSibling;
-    if(deskScene&&deskScene.classList.contains('timer-desk-scene'))deskScene.style.setProperty('--focus-growth',String(elapsed));
+    if(deskScene&&deskScene.classList.contains('timer-desk-scene')){
+      const plantProgress=(timerState.phase==='shortBreak'||timerState.phase==='longBreak')?1:elapsed;
+      deskScene.style.setProperty('--focus-growth',String(plantProgress));
+      const stem=deskScene.querySelector('.desk-plant-stem');
+      if(stem){stem.style.strokeDasharray='58px';stem.style.strokeDashoffset=(58*(1-plantProgress))+'px';}
+      const clamp01=value=>Math.max(0,Math.min(1,value));
+      [['.plant-leaf-one',.12],['.plant-leaf-two',.32],['.plant-leaf-three',.52]].forEach(([selector,start])=>{
+        const leaf=deskScene.querySelector(selector);if(!leaf)return;
+        const growth=clamp01((plantProgress-start)/.22);
+        leaf.style.opacity=String(growth);
+        leaf.style.transform='scale('+(0.45+growth*.55)+')';
+      });
+      const flower=deskScene.querySelector('.timer-desk-flower');
+      const petals=deskScene.querySelector('.desk-flower-petals');
+      const center=deskScene.querySelector('.desk-flower-center');
+      const bloom=clamp01((plantProgress-.32)/.68);
+      if(flower)flower.style.opacity=String(bloom);
+      if(petals)petals.style.transform='scale('+(0.12+bloom*.88)+')';
+      if(center){center.style.opacity=String(bloom);center.style.transform='scale('+(0.35+bloom*.65)+')';}
+    }
     dial.dataset.running=String(Boolean(timerState.running));
     dial.dataset.phase=timerState.phase;
     const caption=document.getElementById('timerSceneCaption');
@@ -3399,19 +3418,43 @@ function studyHistorySubjectName(h){
   const [year,term]=(h.academicKey||activeAcademicKey()).split('::');
   return examSubjectNameById(h.subject,year||activeExamYear(),term||activeExamTerm());
 }
+let studyHistoryExpanded=false;
 function renderHistory(){
   const list=document.getElementById('historyList');if(!list)return;
-  const totalMins=state.studyHistory.reduce((sum,h)=>sum+h.minutes,0);
+  const history=state.studyHistory||[];
+  const totalMins=history.reduce((sum,h)=>sum+(Number(h.minutes)||0),0);
   const hrs=Math.floor(totalMins/60),mins=totalMins%60;
-  document.getElementById('totalFocusTime').textContent=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
-  if(!state.studyHistory.length){list.innerHTML='<div class="empty-state">No sessions logged yet.</div>';return;}
-  list.innerHTML='';
-  state.studyHistory.slice(0,25).forEach(h=>{
-    const d=new Date(h.timestamp),dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'}),timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-    const row=document.createElement('div');row.className='history-item';
-    row.innerHTML=`<div><div class="subj">${escapeHtml(studyHistorySubjectName(h))}</div><div class="when">${dateStr} • ${timeStr}${h.period?` • ${h.period}`:''}</div></div><div class="mins">${h.minutes}m</div>`;
-    list.appendChild(row);
-  });
+  const total=document.getElementById('totalFocusTime');
+  if(total)total.textContent=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
+  const count=document.getElementById('studyHistoryCount');
+  if(count)count.textContent=`${history.length} session${history.length===1?'':'s'}`;
+  const toggle=document.getElementById('historyToggleBtn');
+  const card=document.getElementById('studyHistoryCard');
+  if(!history.length){
+    list.innerHTML='<div class="study-history-empty">No sessions logged yet. Your focused time will show up here.</div>';
+    studyHistoryExpanded=false;
+  }else{
+    const limit=studyHistoryExpanded?history.length:Math.min(4,history.length);
+    list.innerHTML=history.slice(0,limit).map(h=>{
+      const d=new Date(h.timestamp);
+      const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      return `<div class="history-item"><div><div class="subj">${escapeHtml(studyHistorySubjectName(h))}</div><div class="when">${dateStr} · ${timeStr}${h.period?` · ${escapeHtml(h.period)}`:''}</div></div><div class="mins">${Number(h.minutes)||0}m</div></div>`;
+    }).join('');
+  }
+  if(card)card.classList.toggle('is-expanded',studyHistoryExpanded);
+  if(toggle){
+    toggle.hidden=history.length<=4;
+    toggle.textContent=studyHistoryExpanded?'show less':`show all ${history.length} sessions`;
+    toggle.setAttribute('aria-expanded',String(studyHistoryExpanded));
+    if(toggle.dataset.bound!=='1'){
+      toggle.dataset.bound='1';
+      toggle.addEventListener('click',()=>{
+        studyHistoryExpanded=!studyHistoryExpanded;
+        renderHistory();
+      });
+    }
+  }
 }
 
 function renderDailyCountdown(){
