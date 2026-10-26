@@ -11,6 +11,7 @@
   let legacyTasks=events.filter(e=>window.CramchySharedTasks.actionable(e));
   let selectedDate=isoDate(new Date());
   let activeView='month';
+  let weekZoom=0;
   let editingId=null;
   let monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);
 
@@ -128,7 +129,7 @@
               <div class="planner-head"><div><h2>Planner</h2><p>Switch between month, week, and day so nothing jumpscares you later.</p></div><div class="planner-tabs"><button class="active" aria-pressed="true" data-planner-show="month" type="button">Month</button><button aria-pressed="false" data-planner-show="week" type="button">Week</button><button aria-pressed="false" data-planner-show="day" type="button">Day</button></div></div>
               <div class="planner-nav"><button type="button" data-planner-nav="prev" aria-label="previous">‹</button><strong id="plannerLabel"></strong><button type="button" data-planner-nav="next" aria-label="next">›</button></div>
               <div class="planner-view active" id="plannerMonthView"><div class="planner-month-grid" id="plannerMonthGrid"></div></div>
-              <div class="planner-view" id="plannerWeekView"><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; scroll horizontally for other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
+              <div class="planner-view" id="plannerWeekView"><div class="planner-week-controls" role="group" aria-label="Week calendar zoom"><span>zoom</span><button type="button" data-planner-week-zoom="-1" aria-label="Zoom out">−</button><button type="button" data-planner-week-zoom="1" aria-label="Zoom in">+</button></div><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; swipe to view other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
               <div class="planner-view" id="plannerDayView"><div class="planner-day-grid"><div><div class="planner-today"><h3 id="plannerDayTitle"></h3><p id="plannerDaySummary"></p><div id="plannerDayHighlight"></div></div><button class="planner-add planner-day-add" id="plannerDayAdd" data-planner-add type="button" aria-label="Add event for the selected date">+ add event</button><div class="planner-agenda" id="plannerAgenda"></div></div></div></div>
             </div>
           </div>
@@ -222,7 +223,9 @@
     const days=Array.from({length:7},(_,i)=>addDays(start,i));
     const range=TIME.range(events.filter(event=>days.includes(event.date)));
     const hours=Array.from({length:range.endHour-range.firstHour},(_,i)=>i+range.firstHour);
-    const hourHeight=window.matchMedia('(max-width: 760px)').matches?48:HOUR_HEIGHT;
+    const mobileWeek=window.matchMedia('(max-width: 760px)').matches;
+    const hourHeight=mobileWeek?[48,52,58,64][weekZoom]:HOUR_HEIGHT;
+    grid.dataset.weekZoom=String(weekZoom);
     const height=hours.length*hourHeight;
     let html='<div class="planner-week-head blank"></div>'+days.map(d=>`<button type="button" class="planner-week-head ${d===selectedDate?'selected':''}" data-planner-date="${d}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><span>${dateObj(d).getDate()}</span></button>`).join('');
     html+=(window.matchMedia('(max-width: 760px)').matches?'<div class="planner-time-label planner-all-day-label">all day</div>':'<div class="planner-time-label">all day / check time</div>')+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
@@ -349,6 +352,7 @@
     });
     const onPlannerClick=e=>{
       const show=e.target.closest('[data-planner-show]');if(show){e.preventDefault();setPlannerView(show.dataset.plannerShow);return}
+      const zoom=e.target.closest('[data-planner-week-zoom]');if(zoom){e.preventDefault();weekZoom=Math.max(0,Math.min(3,weekZoom+Number(zoom.dataset.plannerWeekZoom)));renderAllPlanner();return}
       const nav=e.target.closest('[data-planner-nav]');if(nav){e.preventDefault();moveCalendar(nav.dataset.plannerNav==='next'?1:-1);return}
       if(e.target.closest('[data-planner-add-course-exam]')){e.preventDefault();window.CramchySchedules?.add();return;}
       const add=e.target.closest('[data-planner-add]');if(add){e.preventDefault();openModal('study');return}
