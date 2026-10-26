@@ -437,3 +437,11 @@
 }
 #view-timer .timer-settings{margin-bottom:16px}
 #view-timer .timer-controls{margin:14px auto 0!important}
+
+/* Match timer borders to Home while keeping the progress ring softly pink. */
+#view-timer{
+  --planner-line:var(--cramchy-outline);
+  --timer-line:var(--cramchy-outline);
+  --control-border:var(--cramchy-outline)
+}
+#view-timer .timer-settings{border-color:var(--cramchy-outline)!important}
