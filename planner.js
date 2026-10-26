@@ -100,14 +100,6 @@
   }
   function renderWeek(){
     const grid=$('#plannerWeekGrid');if(!grid)return;
-    if(window.matchMedia('(max-width: 640px)').matches){
-      const activeDate=weekDates.includes(selectedDate)?selectedDate:weekDates[3];
-      const days=`<div class="planner-week-mobile-days" role="group" aria-label="Choose a day">${weekDates.map(d=>`<button type="button" class="planner-week-mobile-day ${d===activeDate?'selected':''}" data-planner-date="${d}" aria-pressed="${d===activeDate}"><small>${weekdays[new Date(d+'T12:00:00').getDay()]}</small><strong>${Number(d.slice(-2))}</strong></button>`).join('')}</div>`;
-      const list=byDate(activeDate);
-      const agenda=list.length?`<div class="planner-week-mobile-agenda">${list.map(e=>`<button class="planner-agenda-item ${escapeHtml(e.type)}" data-planner-event="${escapeHtml(e.id)}" type="button"><div class="planner-agenda-time">${shortTime(e.start)}</div><div><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||typeLabel[e.type])}${e.notes?' · '+escapeHtml(e.notes):''}</span></div><i>›</i></button>`).join('')}</div>`:`<div class="planner-empty">nothing planned for this day yet</div>`;
-      grid.innerHTML=days+agenda;
-      return;
-    }
     let html='<div class="planner-week-head blank"></div>'+weekDates.map(d=>`<button type="button" class="planner-week-head ${d===selectedDate?'selected':''}" data-planner-date="${d}"><small>${weekdays[new Date(d+'T12:00:00').getDay()]}</small><span>${Number(d.slice(-2))}</span></button>`).join('');
     hours.forEach(h=>{html+=`<div class="planner-time-label">${h>12?h-12:h} ${h>=12?'PM':'AM'}</div>`;weekDates.forEach(d=>{const slotEvents=byDate(d).filter(e=>Number((e.start||'99:99').slice(0,2))===h);html+=`<div class="planner-week-slot" data-planner-date="${d}" data-planner-hour="${h}">${slotEvents.map(e=>`<button class="planner-week-event ${escapeHtml(e.type)}" data-planner-event="${escapeHtml(e.id)}" type="button"><strong>${escapeHtml(e.title)}</strong><span>${compactTime(e.start)}${e.end?'–'+compactTime(e.end):''}${e.course?' · '+escapeHtml(e.course):''}</span></button>`).join('')}</div>`;});});
     grid.innerHTML=html;
@@ -156,7 +148,7 @@
       const addTask=e.target.closest('[data-planner-add-task]');if(addTask){e.preventDefault();openModal('task');}
       const eventBtn=e.target.closest('[data-planner-event]');if(eventBtn){e.preventDefault();e.stopPropagation();openEvent(eventBtn.dataset.plannerEvent);}
       const toggle=e.target.closest('[data-planner-toggle-task]');if(toggle){e.preventDefault();e.stopPropagation();const item=events.find(ev=>ev.id===toggle.dataset.plannerToggleTask);if(item){item.done=!item.done;saveEvents();renderPlanner();}}
-      const dateTarget=e.target.closest('[data-planner-date]');if(dateTarget&&!e.target.closest('[data-planner-event]')){selectedDate=dateTarget.dataset.plannerDate;if(activeView==='week'&&window.matchMedia('(max-width: 640px)').matches)renderPlanner();else if(activeView!=='day')setPlannerView('day');else renderPlanner();}
+      const dateTarget=e.target.closest('[data-planner-date]');if(dateTarget&&!e.target.closest('[data-planner-event]')){selectedDate=dateTarget.dataset.plannerDate;if(activeView!=='day')setPlannerView('day');else renderPlanner();}
       if(e.target.closest('[data-planner-close]')){e.preventDefault();closeModal();}
       const modal=$('#plannerModal');if(modal&&e.target===modal)closeModal();
     });
