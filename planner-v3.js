@@ -194,6 +194,7 @@
   function setPlannerView(view){
     if(!['month','week','day'].includes(view))return;
     activeView=view;
+    document.body.classList.toggle('planner-week-mode',view==='week');
     $all('[data-planner-show]','#view-planner').forEach(b=>{b.classList.toggle('active',b.dataset.plannerShow===view);b.setAttribute('aria-pressed',String(b.dataset.plannerShow===view));});
     $all('.planner-view','#view-planner').forEach(v=>v.classList.remove('active'));
     $('#planner'+view[0].toUpperCase()+view.slice(1)+'View')?.classList.add('active');
