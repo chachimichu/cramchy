@@ -287,13 +287,24 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
   #view-planner .planner-week-time-warning{display:none!important}
   #view-planner .planner-week-mobile-days,#view-planner .planner-week-mobile-agenda{display:none!important}
 }
+
+/* Mobile week mode feels like an open calendar page, without nested cards. */
 @media(max-width:760px){
   body.planner-week-mode #view-planner{width:calc(100vw - 12px)!important;max-width:none!important;margin-left:-6px!important;margin-right:-6px!important}
-  body.planner-week-mode #view-planner .planner-hero-card,
+  body.planner-week-mode #view-planner .planner-hero-card{display:block!important;width:100%!important;margin:0!important;padding:4px 14px 12px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;text-align:left!important}
+  body.planner-week-mode #view-planner .planner-hero-card::before{display:none!important}
+  body.planner-week-mode #view-planner .planner-logo-wrap,
   body.planner-week-mode #view-planner .planner-sidebar{display:none!important}
+  body.planner-week-mode #view-planner .planner-hero-copy{display:block!important;width:100%!important;max-width:none!important}
+  body.planner-week-mode #view-planner .planner-hero-copy h2{margin:0!important;color:var(--red-deep,#a93e5e)!important;font-size:clamp(1.45rem,6vw,1.9rem)!important;line-height:1.18!important;letter-spacing:-.02em!important}
+  body.planner-week-mode #view-planner .planner-hero-copy p{max-width:40ch!important;margin:4px 0 8px!important;color:var(--text-soft,#80636c)!important;font-size:.78rem!important;line-height:1.4!important}
+  body.planner-week-mode #view-planner .planner-actions{display:flex!important;gap:7px!important;margin:0!important}
+  body.planner-week-mode #view-planner .planner-actions button{min-height:36px!important;padding:7px 11px!important;border-radius:12px!important;font-size:.74rem!important}
+  body.planner-week-mode #view-planner .planner-actions [data-planner-show="week"],
+  body.planner-week-mode #view-planner .planner-actions [data-planner-add-course-exam]{display:none!important}
   body.planner-week-mode #view-planner .planner-layout{display:block!important;width:100%!important;margin:0!important}
-  body.planner-week-mode #view-planner .planner-card{width:100%!important;margin:0!important;padding:8px 0 12px!important;border-radius:16px!important}
-  body.planner-week-mode #view-planner .planner-head{padding:0 10px!important}
+  body.planner-week-mode #view-planner .planner-card{width:100%!important;margin:0!important;padding:4px 0 12px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+  body.planner-week-mode #view-planner .planner-head{padding:0 10px!important;border:0!important}
   body.planner-week-mode #view-planner .planner-head>div:first-child{display:none!important}
   body.planner-week-mode #view-planner .planner-tabs{width:100%!important;margin:0!important}
   body.planner-week-mode #view-planner .planner-nav{padding:0 10px!important}
