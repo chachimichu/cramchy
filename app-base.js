@@ -1053,6 +1053,26 @@ function addTopic(){
 /* ===================== STUDY TIMER ===================== */
 let timerState=readStudyTimer();
 let timerIntervalId=null;
+let studyPlant=null,studyPlantBloomed=false,studyPlantFinishedBeforeMount=false;
+function mountStudyPlant(){
+  if(studyPlant)return;
+  const slot=document.getElementById('plantSlot');
+  if(!slot||!window.CramchyPlant)return;
+  studyPlant=window.CramchyPlant.mount(slot);
+  const remaining=CramchyStudyTimer.remaining(timerState,Date.now());
+  const totalSeconds=CramchyStudyTimer.phaseMinutes(timerState)*60;
+  if(studyPlantFinishedBeforeMount||(timerState.phase==='focus'&&timerState.session&&remaining===0)){
+    studyPlantBloomed=true;
+    studyPlantFinishedBeforeMount=false;
+    studyPlant.bloom({silent:true});
+    return;
+  }
+  if(timerState.phase==='focus'&&timerState.session){
+    const elapsedSeconds=totalSeconds-remaining;
+    studyPlant.setProgress(elapsedSeconds/totalSeconds);
+  }
+  studyPlant.setRunning(Boolean(timerState.running));
+}
 function readStudyTimer(){
   try{return CramchyStudyTimer.clean(JSON.parse(localStorage.getItem(CramchyStudyTimer.KEY)||'null'));}
   catch(error){console.warn('Study timer could not be loaded.',error);return CramchyStudyTimer.fresh();}
@@ -1071,6 +1091,13 @@ function updateTimerDisplay(){
   const duration=CramchyStudyTimer.phaseMinutes(timerState)*60;
   const fraction=Math.max(0,Math.min(1,remaining/duration));
   const elapsed=1-fraction;
+  if(studyPlant){
+    if(timerState.phase==='focus'&&!studyPlantBloomed){
+      const elapsedSeconds=duration-remaining;
+      studyPlant.setProgress(elapsedSeconds/duration);
+    }
+    studyPlant.setRunning(Boolean(timerState.running));
+  }
   document.getElementById('timerRingProgress')?.setAttribute('stroke-dashoffset',String(fraction*100));
   const dial=document.getElementById('timerDial');
   const tickGroup=document.getElementById('timerDialTicks');
@@ -1095,27 +1122,6 @@ function updateTimerDisplay(){
     dial.style.setProperty('--focus-turn',String(elapsed*360)+'deg');
     dial.style.setProperty('--focus-growth',String(elapsed));
     dial.dataset.focusStage=sceneStage;
-    const deskScene=dial.nextElementSibling;
-    if(deskScene&&deskScene.classList.contains('timer-desk-scene')){
-      const plantProgress=(timerState.phase==='shortBreak'||timerState.phase==='longBreak')?1:(.25+elapsed*.75);
-      deskScene.style.setProperty('--focus-growth',String(plantProgress));
-      const stem=deskScene.querySelector('.desk-plant-stem');
-      if(stem){stem.style.strokeDasharray='58px';stem.style.strokeDashoffset=(58*(1-plantProgress))+'px';}
-      const clamp01=value=>Math.max(0,Math.min(1,value));
-      [['.plant-leaf-one',.12],['.plant-leaf-two',.32],['.plant-leaf-three',.52]].forEach(([selector,start])=>{
-        const leaf=deskScene.querySelector(selector);if(!leaf)return;
-        const growth=clamp01((plantProgress-start)/.22);
-        leaf.style.opacity=String(growth);
-        leaf.style.transform='scale('+(0.45+growth*.55)+')';
-      });
-      const flower=deskScene.querySelector('.timer-desk-flower');
-      const petals=deskScene.querySelector('.desk-flower-petals');
-      const center=deskScene.querySelector('.desk-flower-center');
-      const bloom=clamp01((plantProgress-.32)/.68);
-      if(flower)flower.style.opacity=String(bloom);
-      if(petals)petals.style.transform='scale('+(0.12+bloom*.88)+')';
-      if(center){center.style.opacity=String(bloom);center.style.transform='scale('+(0.35+bloom*.65)+')';}
-    }
     dial.dataset.running=String(Boolean(timerState.running));
     dial.dataset.phase=timerState.phase;
     const caption=document.getElementById('timerSceneCaption');
@@ -1176,6 +1182,8 @@ function tickStudyTimer(){
       if(typeof cloudLoading!=='undefined'&&cloudLoading){updateTimerDisplay();return;}
       const nextTimer=timerState.mode==='pomodoro'?timerAfterPomodoroFocus(timerState):CramchyStudyTimer.reset(timerState);
       if(!logStudySession(timerState.session,nextTimer))return;
+      if(studyPlant&&!studyPlantBloomed){studyPlant.bloom();studyPlantBloomed=true;}
+      else if(!studyPlant)studyPlantFinishedBeforeMount=true;
       clearInterval(timerIntervalId);timerIntervalId=null;
       showToast(timerState.mode==='pomodoro'?'focus round complete · break time':'study session complete ✧');
       chaowiReact('complete');
@@ -1209,12 +1217,17 @@ document.querySelectorAll('[data-mins]').forEach(btn=>btn.addEventListener('clic
 }));
 document.getElementById('timerStartBtn').addEventListener('click',()=>{
   if(timerState.running)return;
+  const startingNewFocus=timerState.phase==='focus'&&!timerState.session;
   const course=(state.courses||[]).find(c=>`course-${c.id}`===timerState.subject);
   const next=CramchyStudyTimer.start(timerState,Date.now(),{
     id:cryptoId(),subjectName:course?.name||(timerState.subject==='general'?'General Study':examSubjectNameById(timerState.subject)),
     academicKey:state.examPeriod?activeAcademicKey():dailyAcademicKey(),period:state.examPeriod||''
   });
   if(!persistStudyTimer(next))return;
+  if(studyPlant){
+    if(startingNewFocus){studyPlant.reset();studyPlantBloomed=false;studyPlant.setProgress(0);}
+    studyPlant.setRunning(true);
+  }
   chaowiReact('start');runStudyTimer();tickStudyTimer();
 });
 document.getElementById('timerPauseBtn').addEventListener('click',()=>{
@@ -1225,6 +1238,7 @@ document.getElementById('timerPauseBtn').addEventListener('click',()=>{
 });
 document.getElementById('timerResetBtn').addEventListener('click',()=>{
   if(!persistStudyTimer(CramchyStudyTimer.reset(timerState)))return;
+  if(studyPlant){studyPlant.reset();studyPlantBloomed=false;studyPlant.setProgress(0);studyPlant.setRunning(false);}
   clearInterval(timerIntervalId);timerIntervalId=null;renderTimerTab();
 });
 document.getElementById('timerSkipBreakBtn').addEventListener('click',()=>{
@@ -3383,6 +3397,7 @@ function renderSubjectDetail(){
 
 function renderTimerTab(){
   const sel=document.getElementById('timerSubjectSelect');if(!sel)return;
+  mountStudyPlant();
   const catalog=state.examPeriod?examSubjectCatalog():coursesForCurrentTerm().map(c=>({id:`course-${c.id}`,name:c.name}));
   const choices=catalog.length?catalog:[{id:'general',name:'General Study'}];
   if(!choices.some(x=>x.id===timerState.subject)){
