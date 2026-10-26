@@ -414,3 +414,11 @@
 }
 
 #view-timer .timer-settings{margin-top:18px}
+
+/* Match the timer's outlines to Cramchy's deeper pink accents. */
+#view-timer{
+  --timer-line:var(--planner-rose,#cf5d7b);
+  --planner-line:var(--planner-rose,#cf5d7b);
+  --control-border:var(--planner-rose,#cf5d7b)
+}
+#view-timer .timer-settings{border-color:var(--timer-line);margin-top:18px}
