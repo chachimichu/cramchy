@@ -616,3 +616,117 @@ body[data-theme] #view-planner .planner-exam-banner{
     background:linear-gradient(135deg,var(--app-bg-2),var(--app-bg-1))!important
   }
 }
+
+
+/* Full Planner theme mapping for desktop, tablet, and mobile. */
+body[data-theme] #view-planner{
+  --planner-deep:var(--text-main);
+  --planner-text:var(--text-main);
+  --planner-muted:var(--text-soft);
+  --planner-line:color-mix(in srgb,var(--red-berry) 26%,var(--app-bg-3));
+  --planner-card:var(--app-bg-2);
+  --planner-soft:color-mix(in srgb,var(--pink-blush) 70%,var(--app-bg-2));
+  --planner-rose:var(--red-berry);
+  --planner-pink:var(--red-berry);
+  --planner-shadow:0 14px 34px color-mix(in srgb,var(--text-main) 10%,transparent);
+  --planner-shadow-small:0 7px 18px color-mix(in srgb,var(--text-main) 8%,transparent);
+}
+body[data-theme] #view-planner .planner-page{color:var(--text-main)!important}
+body[data-theme] #view-planner :is(.planner-hero-card,.planner-next,.planner-rec,.planner-today){
+  background:linear-gradient(120deg,var(--app-bg-1),var(--app-bg-2) 56%,var(--app-bg-3))!important;
+  border-color:var(--planner-line)!important;color:var(--text-main)!important
+}
+body[data-theme] #view-planner .planner-hero-card::before{
+  background:radial-gradient(circle at 11% 22%,color-mix(in srgb,var(--app-bg-2) 72%,transparent) 0 2px,transparent 3px),
+    radial-gradient(circle at 54% 16%,color-mix(in srgb,var(--app-bg-2) 82%,transparent) 0 2px,transparent 3px),
+    radial-gradient(circle at 73% 34%,color-mix(in srgb,var(--red-berry) 16%,transparent) 0 16px,transparent 18px)!important
+}
+body[data-theme] #view-planner :is(.planner-card,.planner-panel,.planner-tasks,.planner-agenda-item,.planner-day-cell,.planner-week-grid,.planner-week-slot,.planner-week-head,.planner-time-label,.planner-empty){
+  background:var(--app-bg-2)!important;border-color:var(--planner-line)!important;color:var(--text-main)!important
+}
+body[data-theme] #view-planner :is(.planner-hero-copy h2,.planner-head h2,.planner-panel h3,.planner-today h3,.planner-tasks h3,.planner-next strong,.planner-agenda-item strong,.planner-task-row strong,.planner-date-num,.planner-week-head){
+  color:var(--text-main)!important
+}
+body[data-theme] #view-planner :is(.planner-hero-copy p,.planner-head p,.planner-rec p,.planner-legend span,.planner-weekday,.planner-time-label,.planner-agenda-time,.planner-agenda-item span,.planner-task-row span,.planner-week-event span){
+  color:var(--text-soft)!important
+}
+body[data-theme] #view-planner .planner-tabs{
+  border-color:var(--planner-line)!important;
+  background:color-mix(in srgb,var(--pink-blush) 54%,var(--app-bg-2))!important
+}
+body[data-theme] #view-planner .planner-tabs button{color:var(--text-soft)!important}
+body[data-theme] #view-planner .planner-tabs button.active{
+  background:color-mix(in srgb,var(--red-berry) 22%,var(--app-bg-2))!important;
+  color:var(--text-main)!important;box-shadow:0 5px 12px color-mix(in srgb,var(--red-berry) 12%,transparent)!important
+}
+body[data-theme] #view-planner .planner-nav{border-color:var(--planner-line)!important}
+body[data-theme] #view-planner .planner-nav strong{
+  display:flex;justify-content:center;align-items:center;
+  min-height:46px;padding:8px 16px;border:1px solid var(--planner-line)!important;
+  border-radius:16px;background:linear-gradient(135deg,var(--app-bg-2),var(--app-bg-1))!important;
+  color:var(--text-main)!important;box-shadow:0 4px 12px color-mix(in srgb,var(--text-main) 8%,transparent)!important
+}
+body[data-theme] #view-planner .planner-nav button{
+  border-color:color-mix(in srgb,var(--red-berry) 35%,var(--app-bg-2))!important;
+  background:linear-gradient(145deg,var(--red-berry),var(--pink-strawberry))!important;
+  color:var(--app-bg-2)!important;
+  box-shadow:0 4px 12px color-mix(in srgb,var(--red-berry) 18%,transparent)!important
+}
+body[data-theme] #view-planner :is(.planner-day-cell:hover,.planner-day-cell.selected){
+  background:color-mix(in srgb,var(--red-berry) 12%,var(--app-bg-2))!important
+}
+body[data-theme] #view-planner .planner-day-cell.selected{outline-color:color-mix(in srgb,var(--red-berry) 40%,transparent)!important}
+body[data-theme] #view-planner :is(.planner-date-num.today,.planner-week-head.selected span){
+  background:var(--red-berry)!important;color:var(--app-bg-2)!important
+}
+body[data-theme] #view-planner :is(.planner-event-pill,.planner-week-event,.planner-agenda-item){
+  background:color-mix(in srgb,var(--red-berry) 13%,var(--app-bg-2))!important;
+  border:1px solid color-mix(in srgb,var(--red-berry) 22%,var(--app-bg-2))!important;
+  color:var(--text-main)!important
+}
+body[data-theme] #view-planner .planner-agenda-item i,
+body[data-theme] #view-planner .planner-next-date,
+body[data-theme] #view-planner .planner-exam-icon{
+  background:color-mix(in srgb,var(--red-berry) 16%,var(--app-bg-2))!important;
+  border-color:var(--planner-line)!important;color:var(--red-deep)!important
+}
+body[data-theme] #view-planner .planner-exam-banner{
+  background:color-mix(in srgb,var(--pink-blush) 68%,var(--app-bg-2))!important;
+  border-color:var(--planner-line)!important;color:var(--text-main)!important
+}
+body[data-theme] #view-planner .planner-check{
+  background:var(--app-bg-2)!important;border-color:var(--planner-line)!important
+}
+body[data-theme] #view-planner .planner-check.done{
+  background:var(--red-berry)!important;border-color:var(--red-berry)!important
+}
+body[data-theme] #view-planner .planner-task-row{border-color:var(--planner-line)!important}
+body[data-theme] #view-planner .planner-empty{
+  background:color-mix(in srgb,var(--pink-blush) 55%,var(--app-bg-2))!important
+}
+body[data-theme] #view-planner .planner-primary,
+body[data-theme] #view-planner .planner-add{
+  background:linear-gradient(135deg,var(--red-berry),var(--pink-strawberry))!important;color:var(--app-bg-2)!important
+}
+body[data-theme] #view-planner .planner-light{
+  background:var(--app-bg-2)!important;border-color:var(--planner-line)!important;color:var(--red-deep)!important
+}
+body[data-theme] #plannerModal .planner-modal{
+  background:var(--app-bg-2)!important;border-color:var(--planner-line)!important;color:var(--text-main)!important
+}
+body[data-theme] #plannerModal :is(.planner-modal-head h3,.planner-form label){color:var(--text-main)!important}
+body[data-theme] #plannerModal :is(.planner-modal-head button,.planner-form input,.planner-form select,.planner-form textarea){
+  background:var(--app-bg-1)!important;border-color:var(--planner-line)!important;color:var(--text-main)!important
+}
+body[data-theme] #plannerModal .planner-form input::placeholder,
+body[data-theme] #plannerModal .planner-form textarea::placeholder{color:var(--text-soft)!important}
+body[data-theme] #plannerModal .planner-modal-backdrop{background:color-mix(in srgb,var(--text-main) 28%,transparent)!important}
+@media(max-width:760px){
+  body[data-theme] #view-planner .planner-nav strong{min-height:48px!important;padding:8px 10px!important}
+  body[data-theme] #view-planner .planner-week-controls span{
+    border-color:var(--planner-line)!important;background:var(--app-bg-2)!important;color:var(--text-soft)!important
+  }
+  body[data-theme] #view-planner .planner-week-controls button{
+    border-color:var(--planner-line)!important;background:linear-gradient(145deg,var(--app-bg-2),var(--pink-blush))!important;color:var(--red-deep)!important
+  }
+}
