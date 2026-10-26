@@ -126,7 +126,7 @@
             </aside>
 
             <div class="planner-card">
-              <div class="planner-head"><div><h2>Planner</h2><p>Switch between month, week, and day so nothing jumpscares you later.</p></div><div class="planner-tabs"><button class="active" aria-pressed="true" data-planner-show="month" type="button">Month</button><button aria-pressed="false" data-planner-show="week" type="button">Week</button><button aria-pressed="false" data-planner-show="day" type="button">Day</button></div></div>
+              <div class="planner-head"><div><h2>Planner</h2></div><div class="planner-tabs"><button class="active" aria-pressed="true" data-planner-show="month" type="button">Month</button><button aria-pressed="false" data-planner-show="week" type="button">Week</button><button aria-pressed="false" data-planner-show="day" type="button">Day</button></div></div>
               <div class="planner-nav"><button type="button" data-planner-nav="prev" aria-label="previous">‹</button><strong id="plannerLabel"></strong><button type="button" data-planner-nav="next" aria-label="next">›</button></div>
               <div class="planner-view active" id="plannerMonthView"><div class="planner-month-grid" id="plannerMonthGrid"></div></div>
               <div class="planner-view" id="plannerWeekView"><div class="planner-week-controls" role="group" aria-label="Week calendar zoom"><span>zoom</span><button type="button" data-planner-week-zoom="-1" aria-label="Zoom out">−</button><button type="button" data-planner-week-zoom="1" aria-label="Zoom in">+</button></div><div class="planner-week-scroll" tabindex="0" role="region" aria-label="Weekly calendar; swipe to view other days"><div class="planner-week-grid" id="plannerWeekGrid"></div></div></div>
