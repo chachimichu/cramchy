@@ -730,3 +730,10 @@ body[data-theme] #plannerModal .planner-modal-backdrop{background:color-mix(in s
     border-color:var(--planner-line)!important;background:linear-gradient(145deg,var(--app-bg-2),var(--pink-blush))!important;color:var(--red-deep)!important
   }
 }
+
+/* Remove the isolated decorative orb from the Planner intro card. */
+body[data-theme] #view-planner .planner-hero-card::before{
+  background:
+    radial-gradient(circle at 11% 22%,color-mix(in srgb,var(--app-bg-2) 72%,transparent) 0 2px,transparent 3px),
+    radial-gradient(circle at 54% 16%,color-mix(in srgb,var(--app-bg-2) 82%,transparent) 0 2px,transparent 3px)!important
+}
