@@ -405,10 +405,12 @@
   justify-self:center;align-self:center;
   --accent:var(--red-berry);--accent-strong:var(--red-deep);
   --soft:var(--pink-blush);--secondary:var(--matcha);
-  --line:#2b2026;--card:var(--ivory)
+  --line:var(--planner-rose,#cf5d7b);--card:var(--ivory)
 }
 @media(max-width:760px){
   #view-timer .timer-visual{grid-template-columns:minmax(0,1fr) minmax(90px,120px);gap:8px}
   #view-timer .study-timer-dial{width:min(320px,calc(100vw - 150px))!important}
   #view-timer #plantSlot{width:clamp(90px,24vw,120px)}
 }
+
+#view-timer .timer-settings{margin-top:18px}
