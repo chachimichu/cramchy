@@ -82,7 +82,7 @@ body{--cramchy-outline:color-mix(in srgb,var(--pink-soft,#f5d3dc) 68%,var(--text
   font-weight:800!important;
 }
 body[data-theme="dark-study"] #view-dashboard .cramchy-home-actions .quick-add-main{
-  background:#a33660!important;
+  background:var(--red-berry,#a33660)!important;
   color:#fff!important;
 }
 
