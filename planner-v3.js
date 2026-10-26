@@ -220,6 +220,14 @@
     const grid=$('#plannerWeekGrid');if(!grid)return;
     const start=startOfWeek(selectedDate);
     const days=Array.from({length:7},(_,i)=>addDays(start,i));
+    if(window.matchMedia('(max-width: 760px)').matches){
+      const agendaDate=days.includes(selectedDate)?selectedDate:days[0];
+      const dayPicker=`<div class="planner-week-mobile-days" role="group" aria-label="Choose a day">${days.map(d=>`<button type="button" class="planner-week-mobile-day ${d===agendaDate?'selected':''}" data-planner-date="${d}" aria-pressed="${d===agendaDate}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><strong>${dateObj(d).getDate()}</strong></button>`).join('')}</div>`;
+      const items=byDate(agendaDate);
+      const agenda=items.length?`<div class="planner-week-mobile-agenda">${items.map(e=>`<button class="planner-agenda-item ${e.type} ${e.done?'shared-task-done':''}" data-planner-event="${escapeHtml(e.id)}" type="button"><div class="planner-agenda-time">${timeLabel(e.start)}</div><div><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||TYPE_LABEL[e.type])}${e.notes?' · '+escapeHtml(e.notes):''}</span></div><i>›</i></button>`).join('')}</div>`:'<div class="planner-empty">nothing planned for this day yet</div>';
+      grid.innerHTML=dayPicker+agenda;
+      return;
+    }
     const range=TIME.range(events.filter(event=>days.includes(event.date)));
     const hours=Array.from({length:range.endHour-range.firstHour},(_,i)=>i+range.firstHour);
     const height=hours.length*HOUR_HEIGHT;
@@ -352,7 +360,7 @@
       if(e.target.closest('[data-planner-add-course-exam]')){e.preventDefault();window.CramchySchedules?.add();return;}
       const add=e.target.closest('[data-planner-add]');if(add){e.preventDefault();openModal('study');return}
       const ev=e.target.closest('[data-planner-event]');if(ev){e.preventDefault();e.stopPropagation();openEvent(ev.dataset.plannerEvent);return}
-      const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);setPlannerView('day');return}
+      const date=e.target.closest('[data-planner-date]');if(date){selectedDate=date.dataset.plannerDate;monthCursor=new Date(dateObj(selectedDate).getFullYear(),dateObj(selectedDate).getMonth(),1,12);if(activeView==='week'&&window.matchMedia('(max-width: 760px)').matches)renderAllPlanner();else setPlannerView('day');return}
       if(e.target.closest('[data-planner-close]')){e.preventDefault();closeModal();return}
     };
     section.addEventListener('click',onPlannerClick);$('#plannerModal').addEventListener('click',onPlannerClick);
