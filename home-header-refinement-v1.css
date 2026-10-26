@@ -329,3 +329,30 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
   #view-planner #plannerMonthView{margin:8px 8px 14px!important;padding:8px!important;border:1px solid var(--cramchy-outline,var(--planner-line))!important;border-radius:18px!important;background:var(--app-bg-2,#fff)!important;box-shadow:0 5px 18px rgba(97,60,72,.05)!important}
   #view-planner #plannerDayView{padding:0 8px 12px!important}
 }
+
+/* Keep the familiar Cramchy intro card; separate view tabs from date navigation. */
+@media(max-width:760px){
+  #view-planner .planner-hero-card,
+  body.planner-week-mode #view-planner .planner-hero-card{
+    display:block!important;width:100%!important;margin:0 0 14px!important;padding:16px!important;
+    border:1px solid var(--cramchy-outline,var(--planner-line))!important;border-radius:21px!important;
+    background:linear-gradient(125deg,rgba(255,224,234,.96),rgba(255,248,242,.96))!important;
+    box-shadow:0 6px 18px rgba(118,68,82,.08)!important;text-align:left!important
+  }
+  #view-planner .planner-hero-card::before,
+  body.planner-week-mode #view-planner .planner-hero-card::before{display:block!important;opacity:.35}
+  #view-planner .planner-hero-copy,
+  body.planner-week-mode #view-planner .planner-hero-copy{position:relative!important;z-index:1!important}
+  #view-planner .planner-hero-copy h2,
+  body.planner-week-mode #view-planner .planner-hero-copy h2{font-size:clamp(1.4rem,6vw,1.8rem)!important;line-height:1.18!important}
+  #view-planner .planner-hero-copy p,
+  body.planner-week-mode #view-planner .planner-hero-copy p{margin:5px 0 10px!important;font-size:.8rem!important;line-height:1.45!important}
+  #view-planner .planner-nav,
+  body.planner-week-mode #view-planner .planner-nav{display:flex!important;align-items:center!important;gap:10px!important;margin:14px 10px 10px!important;padding:0!important}
+  #view-planner .planner-nav button,
+  body.planner-week-mode #view-planner .planner-nav button{flex:0 0 42px!important;width:42px!important;height:42px!important}
+  #view-planner .planner-nav strong,
+  body.planner-week-mode #view-planner .planner-nav strong{flex:1!important;min-width:0!important;text-align:center!important;font-size:clamp(.93rem,4.2vw,1.15rem)!important}
+  #view-planner .planner-head{margin-bottom:4px!important}
+  #view-planner .planner-tabs{min-height:48px!important}
+}
