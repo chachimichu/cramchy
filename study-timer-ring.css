@@ -392,3 +392,23 @@
 @media(prefers-reduced-motion:reduce){
   #view-timer .timer-settings summary::after{transition:none!important}
 }
+
+/* Module supplied plant sits beside the unchanged timer dial. */
+#view-timer .timer-visual{
+  grid-template-columns:minmax(0,350px) clamp(90px,12vw,140px);
+  justify-content:center;gap:8px 14px
+}
+#view-timer .timer-phase-status{grid-column:1/-1;width:100%;justify-content:center}
+#view-timer .study-timer-dial{grid-column:1;width:min(350px,76vw)!important;margin:0}
+#view-timer #plantSlot{
+  grid-column:2;grid-row:2;width:clamp(90px,12vw,140px);min-width:90px;
+  justify-self:center;align-self:center;
+  --accent:var(--red-berry);--accent-strong:var(--red-deep);
+  --soft:var(--pink-blush);--secondary:var(--matcha);
+  --line:var(--pink-soft);--card:var(--ivory)
+}
+@media(max-width:760px){
+  #view-timer .timer-visual{grid-template-columns:minmax(0,1fr) minmax(90px,120px);gap:8px}
+  #view-timer .study-timer-dial{width:min(320px,calc(100vw - 150px))!important}
+  #view-timer #plantSlot{width:clamp(90px,24vw,120px)}
+}
