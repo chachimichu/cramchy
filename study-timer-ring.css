@@ -405,7 +405,7 @@
   justify-self:center;align-self:center;
   --accent:var(--red-berry);--accent-strong:var(--red-deep);
   --soft:var(--pink-blush);--secondary:var(--matcha);
-  --line:var(--pink-soft);--card:var(--ivory)
+  --line:#2b2026;--card:var(--ivory)
 }
 @media(max-width:760px){
   #view-timer .timer-visual{grid-template-columns:minmax(0,1fr) minmax(90px,120px);gap:8px}
