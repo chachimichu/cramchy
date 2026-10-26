@@ -798,3 +798,63 @@ body[data-theme] #view-planner .planner-hero-card::before{
     padding-inline:5px!important;font-size:clamp(.59rem,.74vw,.68rem)!important
   }
 }
+
+
+/* Keep event types visually distinct within every app theme. */
+body[data-theme] #view-planner .planner-week-event.class,
+body[data-theme] #view-planner .planner-agenda-item.class,
+body[data-theme] #view-planner .planner-event-pill.class{
+  --event-color:#8baee8;background:#e8f2ff!important;border-color:#c8d9f2!important;color:var(--planner-deep)!important
+}
+body[data-theme] #view-planner .planner-week-event.task,
+body[data-theme] #view-planner .planner-agenda-item.task,
+body[data-theme] #view-planner .planner-event-pill.task{
+  --event-color:#ef89a4;background:#fff0f5!important;border-color:#f3ceda!important;color:var(--planner-deep)!important
+}
+body[data-theme] #view-planner .planner-week-event.exam,
+body[data-theme] #view-planner .planner-agenda-item.exam,
+body[data-theme] #view-planner .planner-event-pill.exam{
+  --event-color:#ee9299;background:#ffe8eb!important;border-color:#f3cbd0!important;color:var(--planner-deep)!important
+}
+body[data-theme] #view-planner .planner-week-event.quiz,
+body[data-theme] #view-planner .planner-agenda-item.quiz,
+body[data-theme] #view-planner .planner-event-pill.quiz{
+  --event-color:#b899ed;background:#ede0fa!important;border-color:#ddcff0!important;color:var(--planner-deep)!important
+}
+body[data-theme] #view-planner .planner-week-event.study,
+body[data-theme] #view-planner .planner-agenda-item.study,
+body[data-theme] #view-planner .planner-event-pill.study{
+  --event-color:#8eb480;background:#edf7e9!important;border-color:#d0e5c8!important;color:var(--planner-deep)!important
+}
+body[data-theme] #view-planner .planner-week-event.assignment,
+body[data-theme] #view-planner .planner-agenda-item.assignment,
+body[data-theme] #view-planner .planner-event-pill.assignment{
+  --event-color:#8baee8;background:#eaf1fc!important;border-color:#cbd9f0!important;color:#3f5f8e!important
+}
+body[data-theme] #view-planner .planner-week-event.personal,
+body[data-theme] #view-planner .planner-agenda-item.personal,
+body[data-theme] #view-planner .planner-event-pill.personal{
+  --event-color:#e9a55d;background:#fff2df!important;border-color:#f1ddc3!important;color:var(--planner-deep)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill){
+  background:color-mix(in srgb,var(--event-color) 18%,var(--dark-surface))!important;
+  border-color:var(--event-color)!important;color:var(--text-main)!important
+}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).class,
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).assignment{--event-color:#8baee8}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).task{--event-color:#ef89a4}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).exam{--event-color:#ee9299}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).quiz{--event-color:#b899ed}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).study{--event-color:#8eb480}
+body[data-theme="dark-study"] #view-planner :is(.planner-week-event,.planner-agenda-item,.planner-event-pill).personal{--event-color:#e9a55d}
+@media(max-width:760px){
+  body[data-theme] #view-planner .planner-event-pill.class,
+  body[data-theme] #view-planner .planner-event-pill.task,
+  body[data-theme] #view-planner .planner-event-pill.exam,
+  body[data-theme] #view-planner .planner-event-pill.quiz,
+  body[data-theme] #view-planner .planner-event-pill.study,
+  body[data-theme] #view-planner .planner-event-pill.assignment,
+  body[data-theme] #view-planner .planner-event-pill.personal{
+    background:transparent!important;border-color:transparent!important
+  }
+}
