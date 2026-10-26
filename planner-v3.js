@@ -220,17 +220,10 @@
     const grid=$('#plannerWeekGrid');if(!grid)return;
     const start=startOfWeek(selectedDate);
     const days=Array.from({length:7},(_,i)=>addDays(start,i));
-    if(window.matchMedia('(max-width: 760px)').matches){
-      const agendaDate=days.includes(selectedDate)?selectedDate:days[0];
-      const dayPicker=`<div class="planner-week-mobile-days" role="group" aria-label="Choose a day">${days.map(d=>`<button type="button" class="planner-week-mobile-day ${d===agendaDate?'selected':''}" data-planner-date="${d}" aria-pressed="${d===agendaDate}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><strong>${dateObj(d).getDate()}</strong></button>`).join('')}</div>`;
-      const items=byDate(agendaDate);
-      const agenda=items.length?`<div class="planner-week-mobile-agenda">${items.map(e=>`<button class="planner-agenda-item ${e.type} ${e.done?'shared-task-done':''}" data-planner-event="${escapeHtml(e.id)}" type="button"><div class="planner-agenda-time">${timeLabel(e.start)}</div><div><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.course||TYPE_LABEL[e.type])}${e.notes?' · '+escapeHtml(e.notes):''}</span></div><i>›</i></button>`).join('')}</div>`:'<div class="planner-empty">nothing planned for this day yet</div>';
-      grid.innerHTML=dayPicker+agenda;
-      return;
-    }
     const range=TIME.range(events.filter(event=>days.includes(event.date)));
     const hours=Array.from({length:range.endHour-range.firstHour},(_,i)=>i+range.firstHour);
-    const height=hours.length*HOUR_HEIGHT;
+    const hourHeight=window.matchMedia('(max-width: 760px)').matches?52:HOUR_HEIGHT;
+    const height=hours.length*hourHeight;
     let html='<div class="planner-week-head blank"></div>'+days.map(d=>`<button type="button" class="planner-week-head ${d===selectedDate?'selected':''}" data-planner-date="${d}"><small>${dateObj(d).toLocaleDateString('en-US',{weekday:'short'})}</small><span>${dateObj(d).getDate()}</span></button>`).join('');
     html+='<div class="planner-time-label">all day / check time</div>'+days.map(d=>`<div class="planner-week-slot">${byDate(d).filter(e=>!TIME.interval(e)).map(e=>weekEventHtml(e)).join('')}</div>`).join('');
     html+='<div class="planner-week-timeline"><div class="planner-week-times">'+hours.map(hour=>`<div class="planner-time-label">${timeLabel(pad(hour)+':00')}</div>`).join('')+'</div>';
@@ -238,8 +231,8 @@
       html+=`<div class="planner-week-day" style="height:${height}px">`;
       html+=hours.map(hour=>`<div class="planner-week-slot" data-planner-date="${d}" data-planner-hour="${hour}"></div>`).join('');
       html+=TIME.layout(byDate(d)).map(item=>{
-        const eventHeight=Math.max(18,item.point?36:(item.end-item.start)*HOUR_HEIGHT/60-4);
-        const top=Math.min(height-eventHeight,(item.start-range.firstHour*60)*HOUR_HEIGHT/60+2);
+        const eventHeight=Math.max(18,item.point?36:(item.end-item.start)*hourHeight/60-4);
+        const top=Math.min(height-eventHeight,(item.start-range.firstHour*60)*hourHeight/60+2);
         const width=100/item.lanes,left=width*item.lane;
         const style=`top:${top}px;height:${eventHeight}px;left:calc(${left}% + 3px);width:calc(${width}% - 6px)`;
         return weekEventHtml(item.event,style);
