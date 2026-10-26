@@ -313,3 +313,19 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
   body.planner-week-mode #view-planner .planner-week-grid{border-left:0!important;border-right:0!important;border-radius:0!important}
   body.planner-week-mode #view-planner #plannerWeekView{min-height:calc(100dvh - 250px)!important}
 }
+/* Mobile Planner uses one open page layout across Month, Week, and Day. */
+@media(max-width:760px){
+  #view-planner .planner-hero-card{display:block!important;width:100%!important;margin:0 0 10px!important;padding:4px 12px 10px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;text-align:left!important}
+  #view-planner .planner-hero-card::before{display:none!important}
+  #view-planner .planner-logo-wrap{display:none!important}
+  #view-planner .planner-hero-copy{display:block!important;width:100%!important;min-width:0!important;max-width:none!important}
+  #view-planner .planner-hero-copy h2{margin:0!important;color:var(--red-deep,#a93e5e)!important;font-size:clamp(1.4rem,6vw,1.85rem)!important;line-height:1.18!important}
+  #view-planner .planner-hero-copy p{max-width:42ch!important;margin:4px 0 8px!important;color:var(--text-soft,#80636c)!important;font-size:.78rem!important;line-height:1.4!important}
+  #view-planner .planner-hero-card .planner-actions{display:flex!important;flex-wrap:wrap!important;gap:7px!important;margin:0!important}
+  #view-planner .planner-hero-card .planner-actions button{width:auto!important;min-height:36px!important;padding:7px 11px!important;border-radius:12px!important;font-size:.74rem!important}
+  #view-planner .planner-card{width:100%!important;margin:0!important;padding:8px 0 12px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+  #view-planner .planner-head{padding:0 10px!important;border:0!important}
+  #view-planner .planner-nav{padding:0 10px!important}
+  #view-planner #plannerMonthView{margin:8px 8px 14px!important;padding:8px!important;border:1px solid var(--cramchy-outline,var(--planner-line))!important;border-radius:18px!important;background:var(--app-bg-2,#fff)!important;box-shadow:0 5px 18px rgba(97,60,72,.05)!important}
+  #view-planner #plannerDayView{padding:0 8px 12px!important}
+}
