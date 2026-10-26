@@ -1061,7 +1061,8 @@ function mountStudyPlant(){
   studyPlant=window.CramchyPlant.mount(slot);
   const remaining=CramchyStudyTimer.remaining(timerState,Date.now());
   const totalSeconds=CramchyStudyTimer.phaseMinutes(timerState)*60;
-  if(studyPlantFinishedBeforeMount||(timerState.phase==='focus'&&timerState.session&&remaining===0)){
+  const lastSessionFinished=!timerState.session&&!timerState.running&&Array.isArray(state.studyHistory)&&state.studyHistory.length>0;
+  if(studyPlantFinishedBeforeMount||lastSessionFinished||(timerState.phase==='focus'&&timerState.session&&remaining===0)){
     studyPlantBloomed=true;
     studyPlantFinishedBeforeMount=false;
     studyPlant.bloom({silent:true});
