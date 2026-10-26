@@ -422,3 +422,18 @@
   --control-border:var(--planner-rose,#cf5d7b)
 }
 #view-timer .timer-settings{border-color:var(--timer-line);margin-top:18px}
+
+/* Final plant and timer color adjustments from the supplied module. */
+#view-timer{
+  --timer-accent:#f09ab0;
+  --timer-accent-strong:#ef91aa
+}
+#view-timer #plantSlot{
+  --accent:#f4bdcb;
+  --accent-strong:#eca0b3;
+  --secondary:#86a96c;
+  --soft:#fff0f4;
+  --line:#111;
+}
+#view-timer .timer-settings{margin-bottom:16px}
+#view-timer .timer-controls{margin:14px auto 0!important}
