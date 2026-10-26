@@ -287,3 +287,18 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
   #view-planner .planner-week-time-warning{display:none!important}
   #view-planner .planner-week-mobile-days,#view-planner .planner-week-mobile-agenda{display:none!important}
 }
+@media(max-width:760px){
+  body.planner-week-mode #view-planner{width:calc(100vw - 12px)!important;max-width:none!important;margin-left:-6px!important;margin-right:-6px!important}
+  body.planner-week-mode #view-planner .planner-hero-card,
+  body.planner-week-mode #view-planner .planner-sidebar{display:none!important}
+  body.planner-week-mode #view-planner .planner-layout{display:block!important;width:100%!important;margin:0!important}
+  body.planner-week-mode #view-planner .planner-card{width:100%!important;margin:0!important;padding:8px 0 12px!important;border-radius:16px!important}
+  body.planner-week-mode #view-planner .planner-head{padding:0 10px!important}
+  body.planner-week-mode #view-planner .planner-head>div:first-child{display:none!important}
+  body.planner-week-mode #view-planner .planner-tabs{width:100%!important;margin:0!important}
+  body.planner-week-mode #view-planner .planner-nav{padding:0 10px!important}
+  body.planner-week-mode #view-planner .planner-week-controls{padding:0 12px!important}
+  body.planner-week-mode #view-planner .planner-week-scroll{width:100%!important;border-radius:0!important}
+  body.planner-week-mode #view-planner .planner-week-grid{border-left:0!important;border-right:0!important;border-radius:0!important}
+  body.planner-week-mode #view-planner #plannerWeekView{min-height:calc(100dvh - 250px)!important}
+}
