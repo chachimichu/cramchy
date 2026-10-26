@@ -254,19 +254,31 @@ main .gw-period-tabs,main .gw-context{flex-wrap:wrap!important}
 }
 
 
-/* Google Calendar-style mobile week grid: readable day columns with swipe navigation. */
+
+/* Google Calendar-style mobile week grid with adjustable zoom. */
+.planner-week-controls{display:none}
 @media(max-width:760px){
+  #view-planner .planner-week-controls{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0 0 9px;color:var(--text-soft);font-size:.72rem;font-weight:800}
+  #view-planner .planner-week-controls button{width:40px;height:40px;border:1px solid var(--cramchy-outline);border-radius:12px;background:var(--app-bg-2,#fff);color:var(--text-main);font:700 1.25rem/1 var(--cramchy-readable,system-ui);touch-action:manipulation}
+  #view-planner .planner-week-controls button:disabled{opacity:.48}
   #view-planner .planner-week-scroll{overflow-x:auto!important;overflow-y:hidden!important;max-width:100%!important;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-  #view-planner .planner-week-grid{display:grid!important;grid-template-columns:44px repeat(7,minmax(84px,1fr))!important;width:max-content!important;min-width:632px!important;overflow:hidden!important;border-radius:12px!important}
+  #view-planner .planner-week-grid{display:grid!important;grid-template-columns:44px repeat(7,var(--planner-mobile-day-width,47px))!important;width:max-content!important;min-width:373px!important;overflow:hidden!important;border-radius:12px!important}
+  #view-planner .planner-week-grid[data-week-zoom="1"]{--planner-mobile-day-width:68px;min-width:520px!important}
+  #view-planner .planner-week-grid[data-week-zoom="2"]{--planner-mobile-day-width:88px;min-width:660px!important}
+  #view-planner .planner-week-grid[data-week-zoom="3"]{--planner-mobile-day-width:108px;min-width:800px!important}
   #view-planner .planner-week-grid>.planner-week-head{min-width:0!important;min-height:48px!important;padding:3px!important;gap:2px!important;font-size:.7rem!important}
   #view-planner .planner-week-grid>.planner-week-head small{font-size:.58rem!important}
   #view-planner .planner-week-grid>.planner-week-head.selected span{width:23px!important;height:23px!important;font-size:.72rem!important}
-  #view-planner .planner-week-grid>.planner-time-label,
-  #view-planner .planner-week-grid>.planner-week-slot{height:108px!important;min-height:108px!important;padding:4px!important}
+  #view-planner .planner-week-grid>.planner-time-label,#view-planner .planner-week-grid>.planner-week-slot{height:108px!important;min-height:108px!important;padding:4px!important}
   #view-planner .planner-week-grid>.planner-all-day-label{display:flex!important;align-items:center!important;justify-content:center!important;padding:3px!important;font-size:.62rem!important;line-height:1.1!important;white-space:normal!important}
-  #view-planner .planner-week-timeline{display:grid!important;grid-template-columns:44px repeat(7,minmax(84px,1fr))!important;width:max-content!important;min-width:632px!important}
-  #view-planner .planner-week-times .planner-time-label,
-  #view-planner .planner-week-day .planner-week-slot{height:48px!important;min-height:48px!important}
+  #view-planner .planner-week-timeline{display:grid!important;grid-template-columns:44px repeat(7,var(--planner-mobile-day-width,47px))!important;width:max-content!important;min-width:373px!important}
+  #view-planner .planner-week-grid[data-week-zoom="1"] .planner-week-timeline{min-width:520px!important}
+  #view-planner .planner-week-grid[data-week-zoom="2"] .planner-week-timeline{min-width:660px!important}
+  #view-planner .planner-week-grid[data-week-zoom="3"] .planner-week-timeline{min-width:800px!important}
+  #view-planner .planner-week-times .planner-time-label,#view-planner .planner-week-day .planner-week-slot{height:var(--planner-mobile-hour-height,48px)!important;min-height:var(--planner-mobile-hour-height,48px)!important}
+  #view-planner .planner-week-grid[data-week-zoom="1"]{--planner-mobile-hour-height:52px}
+  #view-planner .planner-week-grid[data-week-zoom="2"]{--planner-mobile-hour-height:58px}
+  #view-planner .planner-week-grid[data-week-zoom="3"]{--planner-mobile-hour-height:64px}
   #view-planner .planner-week-times .planner-time-label{padding:3px 1px!important;font-size:.56rem!important;line-height:1.15!important;overflow:hidden!important}
   #view-planner .planner-week-day{height:auto!important;min-width:0!important}
   #view-planner .planner-week-event{padding:3px 4px!important;border-radius:7px!important;font-size:.62rem!important;line-height:1.12!important;overflow:hidden!important}
