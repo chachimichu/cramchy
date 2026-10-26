@@ -267,3 +267,54 @@
   #view-timer .desk-plant-stem,#view-timer .plant-leaf,#view-timer .timer-desk-flower,
   #view-timer .desk-flower-petals,#view-timer .desk-flower-center{transition:none!important}
 }
+
+
+/* Restore the familiar centered timer composition, at a calmer scale. */
+#view-timer .study-timer-card{max-width:900px!important;padding:clamp(17px,2.2vw,26px)!important}
+#view-timer .timer-layout{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  gap:8px!important;width:100%
+}
+#view-timer .timer-setup{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  width:min(620px,100%);text-align:center
+}
+#view-timer .timer-mode-switch{margin:0 auto 5px!important}
+#view-timer .timer-mode-hint{margin:0 auto 10px!important;text-align:center!important}
+#view-timer .timer-setup>.field-label{align-self:center!important;margin:0 0 5px!important}
+#view-timer #timerSubjectSelect{width:min(100%,540px)!important;margin:0 auto 12px!important}
+#view-timer .timer-setup .preset-row{margin:0 auto 10px!important}
+#view-timer .timer-phase-status{justify-content:center!important;margin:0 auto!important}
+#view-timer .timer-visual{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  width:100%;gap:0
+}
+#view-timer .study-timer-dial{width:min(290px,40vw)!important;margin:0 auto 1px!important}
+#view-timer #timerDisplay{font-size:clamp(2.85rem,5vw,3.75rem)!important}
+#view-timer .timer-desk-scene{
+  width:190px!important;height:112px;margin:0 auto 0!important;padding:0 8px 3px!important
+}
+#view-timer .timer-desk-scene .timer-desk-plant{width:142px!important;max-width:100%;height:100%;object-fit:contain}
+#view-timer .timer-controls{margin:8px auto 0!important}
+#view-timer .timer-footnote{margin-top:9px!important}
+#view-timer .desk-pot-eye{fill:#3b2934!important}
+#view-timer .desk-pot-eye-glint{fill:#fff!important;stroke:none!important}
+#view-timer .desk-pot-face{stroke-width:1.8!important;stroke-linecap:round}
+#view-timer .desk-pot-cheek{opacity:.9!important}
+#view-timer .desk-pot-detail{display:none!important}
+@media(max-width:760px){
+  #view-timer .study-timer-card{max-width:560px!important;padding:14px!important}
+  #view-timer .timer-layout{gap:7px!important}
+  #view-timer .timer-setup{width:100%}
+  #view-timer .timer-mode-hint{margin-bottom:6px!important}
+  #view-timer #timerSubjectSelect{margin-bottom:9px!important}
+  #view-timer .timer-setup .preset-row{margin-bottom:7px!important}
+  #view-timer .study-timer-dial{width:min(270px,72vw)!important}
+  #view-timer #timerDisplay{font-size:clamp(2.8rem,12vw,3.5rem)!important}
+  #view-timer .timer-desk-scene{width:168px!important;height:100px!important}
+  #view-timer .timer-desk-scene .timer-desk-plant{width:128px!important}
+  #view-timer .timer-controls{margin-top:5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-timer .desk-pot-eye-glint{transition:none!important}
+}
