@@ -37,7 +37,7 @@ nav.topnav{
 .topnav .brand .brand-wordmark.brand-full-logo{width:120px;max-height:54px;height:auto;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(170,80,110,.14));}
 .navbtn{border-radius:999px!important;font-weight:900!important;letter-spacing:0!important;color:#76545d!important;}
 .navbtn:hover{background:#fff2f5!important;color:var(--planner-deep)!important;}
-.navbtn.active{background:#ffdce5!important;color:var(--planner-deep)!important;box-shadow:0 8px 16px rgba(164,78,100,.10)!important;}
+.navbtn.active{background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry))!important;color:#fff!important;box-shadow:0 8px 16px color-mix(in srgb,var(--red-berry) 20%,transparent)!important;}
 .save-indicator,.cloud-btn{font-family:var(--font-ui)!important;border-radius:999px!important;font-weight:900!important;}
 
 main{max-width:1180px!important;}
