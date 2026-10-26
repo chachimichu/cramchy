@@ -423,17 +423,18 @@
 }
 #view-timer .timer-settings{border-color:var(--timer-line);margin-top:18px}
 
-/* Final plant and timer color adjustments from the supplied module. */
+/* Theme-aware timer accents with a soft pot, green leaves, and black plant outlines. */
 #view-timer{
-  --timer-accent:#f09ab0;
-  --timer-accent-strong:#ef91aa
+  --timer-accent:var(--pink-strawberry,var(--red-berry));
+  --timer-accent-strong:var(--pink-strawberry,var(--red-berry))
 }
 #view-timer #plantSlot{
-  --accent:#f4bdcb;
-  --accent-strong:#eca0b3;
+  --accent:color-mix(in srgb,var(--pink-strawberry,var(--red-berry)) 50%,var(--app-bg-2,#fff));
+  --accent-strong:color-mix(in srgb,var(--pink-strawberry,var(--red-berry)) 68%,var(--app-bg-2,#fff));
   --secondary:#86a96c;
-  --soft:#fff0f4;
+  --soft:var(--pink-blush);
   --line:#111;
+  --card:var(--app-bg-2)
 }
 #view-timer .timer-settings{margin-bottom:16px}
 #view-timer .timer-controls{margin:14px auto 0!important}
