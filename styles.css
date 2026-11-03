@@ -237,37 +237,3 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(239,137,164,.1
 
 /* Give Planner outlines the same deeper strawberry-pink contrast as its accents. */
 #view-planner{--planner-line:var(--planner-rose,#cf5d7b)}
-
-
-/* Cramchy mascot identity for the nav and Planner. */
-.topnav .brand.brand-lockup{
-  display:flex;align-items:center;gap:9px;min-height:50px;
-  padding-right:13px;margin-right:7px;border-right:1px solid color-mix(in srgb,var(--red-berry,#cf5d7b) 18%,transparent)!important;
-}
-.topnav .brand-mascot{
-  display:block;width:40px;height:40px;flex:0 0 40px;object-fit:cover;
-  border:1px solid color-mix(in srgb,var(--red-berry,#cf5d7b) 24%,transparent);
-  border-radius:12px;background:#fff8e8;box-shadow:0 4px 9px rgba(119,54,72,.12);
-}
-.topnav .brand-name{
-  color:var(--red-berry,#c85f7e);font-family:'Fredoka',var(--font-ui,system-ui,sans-serif);
-  font-size:21px;font-weight:600;line-height:1;letter-spacing:-.045em;
-}
-.planner-mascot-lockup{display:flex;flex-direction:column;align-items:center;gap:8px}
-.planner-mascot-badge{
-  display:block;width:min(100%,218px);aspect-ratio:1;object-fit:cover;
-  border:1px solid color-mix(in srgb,var(--red-berry,#cf5d7b) 25%,transparent);
-  border-radius:28px;background:#fff8e8;box-shadow:0 14px 26px rgba(107,42,58,.15);
-}
-.planner-mascot-wordmark{
-  color:var(--planner-deep,#7b3048);font-family:'Fredoka',var(--font-ui,system-ui,sans-serif);
-  font-size:2rem;font-weight:600;line-height:1;letter-spacing:-.045em;
-}
-.planner-mascot-watermark{
-  position:absolute;right:-30px;bottom:-35px;width:132px;height:132px;object-fit:cover;
-  border-radius:22px;opacity:.18;pointer-events:none;
-}
-@media(max-width:760px){
-  .planner-mascot-badge{width:min(48vw,178px);border-radius:24px}
-  .planner-mascot-wordmark{font-size:1.8rem}
-}
