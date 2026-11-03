@@ -110,7 +110,7 @@
       <section class="view" id="view-planner">
         <div class="planner-page">
           <div class="planner-hero-card">
-            <div class="planner-logo-wrap"><img class="planner-logo-sync planner-main-logo" src="${escapeHtml(getLogoSrc())}" alt="Cramchy logo"></div>
+            <div class="planner-logo-wrap"><div class="planner-mascot-lockup"><img class="planner-mascot-badge" src="assets/cramchy-cat-mascot.webp" alt="Cramchy cat mascot"><span class="planner-mascot-wordmark">cramchy.</span></div></div>
             <div class="planner-hero-copy">
               <h2>plan at your own pace</h2>
               <p>Keep your classes, quizzes, deadlines, and study plans in one place.</p>
@@ -122,7 +122,7 @@
             <aside class="planner-sidebar">
               <div class="planner-panel"><button class="planner-add" data-planner-add type="button">+ add event</button><div class="planner-legend"><span><i class="planner-dot class"></i>Classes</span><span><i class="planner-dot task"></i>Tasks</span><span><i class="planner-dot exam"></i>Exams</span><span><i class="planner-dot quiz"></i>Quizzes</span><span><i class="planner-dot study"></i>Study blocks</span><span><i class="planner-dot assignment"></i>Assignments</span><span><i class="planner-dot personal"></i>Personal</span></div></div>
               <div class="planner-panel" id="plannerNextPanel"></div>
-              <div class="planner-panel planner-rec"><h3>Cramchy recommends</h3><p id="plannerRecText">Add an exam or deadline and Cramchy will help you see what needs attention.</p><img class="planner-logo-sync" src="${escapeHtml(getLogoSrc())}" alt=""></div>
+              <div class="planner-panel planner-rec"><h3>Cramchy recommends</h3><p id="plannerRecText">Add an exam or deadline and Cramchy will help you see what needs attention.</p><img class="planner-mascot-watermark" src="assets/cramchy-cat-mascot.webp" alt=""></div>
             </aside>
 
             <div class="planner-card">
