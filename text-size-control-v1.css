@@ -22,15 +22,15 @@ html[data-cramchy-font-size="large"]{font-size:112.5%}
   transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease
 }
 .font-size-option[aria-pressed="true"]{
-  border-color:var(--planner-rose,#cf5d7b);background:var(--planner-soft,#fff2f5);
-  box-shadow:0 0 0 2px color-mix(in srgb,var(--planner-rose,#cf5d7b) 14%,transparent)
+  border-color:var(--red-berry);background:color-mix(in srgb,var(--red-berry) 14%,var(--app-bg-2));
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--red-berry) 18%,transparent)
 }
 .font-size-option:active{transform:scale(.98)}
 .font-size-sample{font-family:var(--font-ui,system-ui,sans-serif);font-weight:850;line-height:1}
 .font-size-sample.is-small{font-size:1rem}
 .font-size-sample.is-default{font-size:1.2rem}
 .font-size-sample.is-large{font-size:1.4rem}
-body[data-theme="dark-study"] .font-size-option{background:#29252d;color:#f1dde4;border-color:#514654}
-body[data-theme="dark-study"] .font-size-option[aria-pressed="true"]{background:#3a3038;border-color:#d47794}
+body[data-theme="dark-study"] .font-size-option{background:var(--app-bg-2);color:var(--text-main);border-color:var(--cramchy-outline)}
+body[data-theme="dark-study"] .font-size-option[aria-pressed="true"]{background:color-mix(in srgb,var(--red-berry) 20%,var(--app-bg-2));border-color:var(--red-berry)}
 @media(max-width:420px){.font-size-options{gap:6px}.font-size-option{gap:5px;padding:8px 5px;font-size:.74rem}}
 @media(prefers-reduced-motion:reduce){.font-size-option{transition:none}}

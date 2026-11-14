@@ -28,3 +28,26 @@
   #view-timer .study-sound-choice{transition:none}
 }
 #view-timer .study-sound-icon{display:block;width:15px;height:15px;flex:0 0 15px;fill:currentColor}
+
+
+/* Keep the volume slider comfortably inside its control on touch screens. */
+@media(max-width:600px){
+  #view-timer .study-sounds-controls{align-items:stretch!important;gap:10px!important}
+  #view-timer .study-sound-volume{
+    display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:center;
+    gap:12px!important;width:100%!important;min-width:0;padding:9px 12px;
+    border:1px solid var(--pink-soft);border-radius:14px;background:var(--app-bg-2);
+    box-sizing:border-box
+  }
+  #view-timer .study-sound-volume span{white-space:nowrap}
+  #view-timer .study-sound-volume input{
+    display:block;width:100%!important;min-width:0!important;max-width:100%;
+    margin:0!important;padding:0 3px;box-sizing:border-box;touch-action:pan-x
+  }
+}
+
+/* Match the study sound choice tiles to the height of the app's other touch controls. */
+#view-timer .study-sound-choice{min-height:88px}
+@media(max-width:600px){
+  #view-timer .study-sound-choice{min-height:84px}
+}

@@ -29,7 +29,7 @@
   .topnav>.navbtn[data-tab="dashboard"]{order:1!important}.topnav>.mobile-nav-group[data-nav-group="plan"]{order:2!important}.topnav>.navbtn[data-tab="subjects"]{order:3!important}
   .topnav>.mobile-nav-group[data-nav-group="study"]{order:4!important}.topnav>.navbtn[data-tab="grades"]{order:5!important}.topnav>.navbtn[data-tab="more"]{order:6!important}
   .topnav>.navbtn[data-tab].active,.topnav>.mobile-nav-group.is-active>.mobile-nav-group-trigger{
-    background:linear-gradient(180deg,#ffe8ee,#ffdae4)!important;color:#8f4057!important
+    background:linear-gradient(135deg,var(--pink-strawberry),var(--red-berry))!important;color:#fff!important
   }
   .topnav .nav-icon,.topnav .mobile-nav-icon{width:20px;height:20px;flex-basis:20px}
   .topnav .navbtn.active .nav-icon{transform:none}
@@ -48,7 +48,7 @@
   .mobile-nav-menu-icon{width:19px;height:19px;flex:0 0 19px;color:var(--planner-rose)}
   .mobile-nav-menu-icon svg{width:100%;height:100%}
   body[data-theme="dark-study"] .mobile-nav-group-trigger{color:#d7c7cf}
-  body[data-theme="dark-study"] .mobile-nav-group.is-active>.mobile-nav-group-trigger{background:rgba(232,93,117,.24)!important;color:#ffd9e3!important}
+  body[data-theme="dark-study"] .mobile-nav-group.is-active>.mobile-nav-group-trigger{background:color-mix(in srgb,var(--red-berry) 24%,var(--app-bg-2))!important;color:var(--text-main)!important}
   body[data-theme="dark-study"] .mobile-nav-menu{background:#29252d;border-color:#514654}
   body[data-theme="dark-study"] .mobile-nav-menu-item{color:#f1dde4}
   body[data-theme="dark-study"] .mobile-nav-menu-item:hover,body[data-theme="dark-study"] .mobile-nav-menu-item:focus-visible{background:#35303a}
@@ -57,7 +57,7 @@
   body.mobile-nav-menu-open #chaowiNook,body.mobile-nav-menu-open #askCramchyLauncher{visibility:hidden!important;pointer-events:none!important}
   body[data-theme="dark-study"] nav.topnav{background:rgba(36,32,40,.97)!important;border-color:#514654!important;box-shadow:0 -8px 28px rgba(0,0,0,.25)!important}
   body[data-theme="dark-study"] .topnav>.navbtn[data-tab]{color:#d7c7cf!important}
-  body[data-theme="dark-study"] .topnav>.navbtn[data-tab].active{background:rgba(232,93,117,.24)!important;color:#ffd9e3!important}
+  body[data-theme="dark-study"] .topnav>.navbtn[data-tab].active{background:color-mix(in srgb,var(--red-berry) 24%,var(--app-bg-2))!important;color:var(--text-main)!important}
   body.exam-mode-active .topnav>.navbtn[data-tab]{display:none!important}
   body.exam-mode-active .topnav>.mobile-nav-group{display:none!important}
   body.exam-mode-active nav.topnav{display:flex!important;justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important}

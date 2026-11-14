@@ -209,3 +209,6 @@ body[data-theme="dark-study"] .cramchy-onboard-card{--onboard-ink:#f2e8ed;--onbo
 
 /* Keep theme names intact and wrap only between words. */
 .cramchy-onboard-card .theme-name{overflow-wrap:normal;word-break:normal;hyphens:none}
+
+/* Keep the selected theme state accessible without the decorative checkmark. */
+.theme-check{display:none!important}
