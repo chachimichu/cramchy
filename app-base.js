@@ -2292,17 +2292,26 @@ function nextCourseLabel(){
 function renderDailyTasks(){
   const wrap=document.getElementById('dailyTaskList'); if(!wrap) return;
   const allTasks=(state.missions||[]).filter(Boolean);
-  const tasks=allTasks.filter(task=>!task.done).slice(0,5);
+  const tasks=allTasks.filter(task=>!task.done).sort((a,b)=>{
+    const dateA=a.date||'9999-12-31',dateB=b.date||'9999-12-31';
+    return dateA.localeCompare(dateB)||(a.start||'99:99').localeCompare(b.start||'99:99');
+  }).slice(0,5);
   if(!tasks.length){
     const title=allTasks.length?'all caught up!':'nothing due here';
     const message=allTasks.length?'You’ve finished your tasks for now. Add another whenever you need.':'Add a task and it will show up on your daily dashboard.';
     wrap.innerHTML=`<div class="shell-empty" style="padding:18px 10px;"><div class="big">${title}</div><p>${message}</p></div>`;
     return;
   }
-  wrap.innerHTML=tasks.map(m=>`<label class="daily-task-row ${m.done?'done':''}">
+  const todayIso=`2026-11-14`;
+  wrap.innerHTML=tasks.map(m=>{
+    const dateLabel=m.date?(window.CramchySharedTasks?.dateLabel(m.date)||m.date):'';
+    const dueLabel=dateLabel?(m.date<todayIso?'overdue · ':m.date===todayIso?'today · ':'')+dateLabel:'';
+    return `<label class="daily-task-row ${m.done?'done':''}">
     <input type="checkbox" data-daily-task="${escapeAttr(m.id)}" ${m.done?'checked':''}>
     <span class="task-text">${escapeHtml(m.text)}</span>
-  </label>`).join('');
+    ${dueLabel?`<span class="task-deadline" style="font-size:.72rem;color:var(--text-soft);font-weight:700;white-space:nowrap;">${escapeHtml(dueLabel)}</span>`:''}
+  </label>`;
+  }).join('');
   wrap.querySelectorAll('[data-daily-task]').forEach(el=>el.addEventListener('change',()=>{
     if(typeof window!=='undefined'&&window.CramchyTaskBridge){try{window.CramchyTaskBridge.toggle(el.dataset.dailyTask);}catch{el.checked=!el.checked;showToast('Could not save completion. Please try again.');}return;}
     const item=state.missions.find(m=>m.id===el.dataset.dailyTask); if(item)item.done=el.checked;
