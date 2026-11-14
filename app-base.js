@@ -2302,7 +2302,7 @@ function renderDailyTasks(){
     wrap.innerHTML=`<div class="shell-empty" style="padding:18px 10px;"><div class="big">${title}</div><p>${message}</p></div>`;
     return;
   }
-  const todayIso=`2026-11-14`;
+  const now=new Date(),todayIso=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   wrap.innerHTML=tasks.map(m=>{
     const dateLabel=m.date?(window.CramchySharedTasks?.dateLabel(m.date)||m.date):'';
     const dueLabel=dateLabel?(m.date<todayIso?'overdue · ':m.date===todayIso?'today · ':'')+dateLabel:'';
